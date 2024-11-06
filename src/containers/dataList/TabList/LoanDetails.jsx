@@ -56,7 +56,7 @@ function LoanDetails({getTab, classname, data, receive, User ,creditisEdit, load
                     updateData();
                 }
             } else {
-                if (Marketing_valid) {
+                if (false) {
                     api['warning']({
                         message: 'Incomplete Details',
                         description: 'Please complete all required details.',
@@ -82,20 +82,19 @@ function LoanDetails({getTab, classname, data, receive, User ,creditisEdit, load
                 Tab: 1,
                 BorrowersCode: data.ofwBorrowersCode,
                 Dpa: 1,
-                Product: data.loanProd,
-                BranchId: data.loanBranchId,
-                Purpose: data.loanPurpose,
-                LoanType: data.loanType,
+                Product: data.loanProd || null,
+                BranchId: data.loanBranchId || null,
+                Purpose: data.loanPurpose || null,
+                LoanType: data.loanType || null,
                 DepartureDate: data.ofwDeptDate ? mmddyy(data.ofwDeptDate) : '',
-                Amount: parseFloat(data.loanAmount.toString().replaceAll(',', '')),
-                Terms: data.loanTerms,
-                Channel: data.channelId, //check
-                Consultant: data.consultName,
-                ConsultantNo: data.consultNumber,
-                ConsultantProfile: data.consultantfblink,
-                ReferredBy: 0,
+                Amount:data.loanAmount ? parseFloat(data.loanAmount.toString().replaceAll(',', '')) : 0.00,
+                Terms: data.loanTerms || null,
+                Channel: data.channelId || null, //check
+                Consultant: data.consultName || '',
+                ConsultantNo: data.consultNumber || '',
+                ConsultantProfile: data.consultantfblink || '',
+               // ReferredBy: null,
                 ModUser:jwtDecode(token).USRID
-                
             };
             
             console.log('testtset',value)
@@ -116,22 +115,22 @@ function LoanDetails({getTab, classname, data, receive, User ,creditisEdit, load
     
         } else {
             //var BranchCode = await GetBranchCode(data.loanBranch);
-            var PurposeId = await GetPurposeId(data.loanPurpose);
+            //var PurposeId = await GetPurposeId(data.loanPurpose);
             const value = {
                 LoanAppId: data.loanIdCode,
                 Tab: 1,
                 BorrowersCode: data.ofwBorrowersCode,
-                Product: data.loanProd,
-                DepartureDate: data.ofwDeptDate? data.ofwDeptDate:'',
-                Purpose: data.loanPurpose,
-                LoanType: data.loanType,
-                BranchId: data.loanBranchId,
-                Amount: parseFloat(data.loanAmount.toString().replaceAll(',', '')),
-                Channel: data.channelId,
-                Terms: data.loanTerms,
-                Consultant: data.consultName,
-                ConsultantNo: data.consultNumber,
-                ConsultantProfile: data.consultantfblink,
+                Product: data.loanProd || null,
+                DepartureDate: data.ofwDeptDate? mmddyy(data.ofwDeptDate) :'',
+                Purpose: data.loanPurpose || null,
+                LoanType: data.loanType || null,
+                BranchId: data.loanBranchId || null,
+                Amount:data.loanAmount? parseFloat(data.loanAmount.toString().replaceAll(',', '')) : 0.00,
+                Channel: data.channelId || null,
+                Terms: data.loanTerms || null,
+                Consultant: data.consultName || '',
+                ConsultantNo: data.consultNumber || '',
+                ConsultantProfile: data.consultantfblink || '',
                 ModUser:jwtDecode(token).USRID
 
             };

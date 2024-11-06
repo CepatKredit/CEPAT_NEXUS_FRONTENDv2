@@ -94,7 +94,7 @@ function LoanApplication() {
 
   const applyDirectLoan = () => {
     directLoan(direct)
-    resetAppDetails();
+   // resetAppDetails();
   };
 
   const cancelModal = () => {

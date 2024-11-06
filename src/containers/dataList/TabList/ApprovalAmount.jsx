@@ -5,11 +5,8 @@ import { FloatButton, notification, ConfigProvider } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
-import { mmddyy } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
-import { GetBranchCode, GetPurposeId } from '@api/base-api/BaseApi';
 import StatusRemarks from './StatusRemarks';
-import { Hckfi } from '@utils/FixedData';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
 
@@ -45,11 +42,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             setEdit(true);
         }
     };
-
-    function GetChannelId(command) {
-        var getId = Hckfi().find(x => x.value === command || x.label === command).value;
-        return getId;
-    }
 
     async function updateData() {
         const value = {
