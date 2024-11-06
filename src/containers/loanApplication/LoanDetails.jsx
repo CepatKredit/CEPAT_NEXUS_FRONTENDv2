@@ -117,7 +117,7 @@ function LoanDetails({
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Select Loan Product"}
+          label={<>Select Loan Product <span className="text-red-500">*</span></>}
           // value={getAppDetails.loanProd}
         //   receive={(e) => {
         //     receive({
@@ -138,7 +138,7 @@ function LoanDetails({
             className_dmain={classname_main}
             className_label={className_label}
             className_dsub={className_dsub}
-            label={"OFW Departure Date"}
+            label={<>OFW Departure Date <span className="text-red-500">*</span></>}
             // value={getAppDetails.loanDateDep}
             // receive={(e) => {
             //   receive({
@@ -159,7 +159,7 @@ function LoanDetails({
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Select Loan Purpose"}
+          label={<>Select Loan Purpose <span className="text-red-500">*</span></>}
           // value={getAppDetails.loanPurpose}
         //   receive={(e) => {
         //     receive({
@@ -177,7 +177,7 @@ function LoanDetails({
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Loan Amount"}
+          label={<>Loan Amount <span className="text-red-500">*</span></>}
           fieldName="loanAmount"
           // value={getAppDetails.loanAmount}
           // receive={(e) => {
@@ -195,7 +195,7 @@ function LoanDetails({
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Loan Terms (in Months)"}
+          label={<>Loan Terms (in Months) <span className="text-red-500">*</span></>}
           fieldName="loanTerms"
           // value={getAppDetails.loanTerms}
           data={LoanTerms(12)}
@@ -217,7 +217,7 @@ function LoanDetails({
             className_dmain={classname_main}
             className_label={className_label}
             className_dsub={className_dsub}
-            label={"How did you know about Cepat Kredit Financing?"}
+            label={<>How did you know about Cepat Kredit Financing? <span className="text-red-500">*</span></>}
             fieldName="hckfi"
             // value={getAppDetails.hckfi}
             data={Hckfi()}
@@ -268,7 +268,7 @@ function LoanDetails({
                 className_dmain={classname_main}
                 className_label={className_label}
                 className_dsub={className_dsub}
-                label={"Loan Consultant Name"}
+                label={<>Loan Consultant Name<span className="text-red-500">*</span></>}
                 fieldName="consultName"
                 // value={getAppDetails.consultName}
                 placeHolder="Consultant Fullname"
@@ -290,7 +290,7 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={"Loan Consultant Name"}
+              label={<>Loan Consultant Name<span className="text-red-500">*</span></>}
               fieldName="consultName"
               // value={getAppDetails.consultName}
               placeHolder="Consultant Fullname"
@@ -392,7 +392,7 @@ function LoanDetails({
                   className_dmain={classname_main}
                   className_label={className_label}
                   className_dsub={className_dsub}
-                  label={"Select Branch "}
+                  label={<>Select Branch <span className="text-red-500">*</span></>}
                   // value={getAppDetails.loanBranch}
                   // placeHolder={"Branch"}
                   // receive={(e) => {
@@ -421,7 +421,7 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={"Select Branch "}
+              label={<>Select Branch <span className="text-red-500">*</span></>}
               // value={getAppDetails.loanBranch}
               placeHolder={"Branch"}
               // receive={(e) => {
@@ -451,7 +451,7 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={"Referred By"}
+              label={<>Referred By <span className="text-red-500">*</span></>}
               data={ReferredBy()}
               showSearch={true}
               fieldName="loanReferredBy"
