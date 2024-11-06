@@ -40,10 +40,12 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
     const { GetStatus } = ApplicationStatus();
-    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || '');
+    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
     function onChangeTab(e) {
+        //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
+        //if(validate)
         setActiveKey(e);
         localStorage.setItem('activeTab', e);
         navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
@@ -602,7 +604,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
     return (
         <>
             {contextHolder}
-            <Tabs defaultActiveKey={tabs} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
+            <Tabs defaultActiveKey={tabs} activeKey={activeKey} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
             {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && (
                 <FloatButton.Group shape="circle" style={{ right: 24, bottom: 24 }}>
                     {isEdit ? (
