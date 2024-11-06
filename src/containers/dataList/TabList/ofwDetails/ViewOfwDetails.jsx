@@ -186,8 +186,9 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         //User === 'Credit' && { key: '60', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-orange-500'}`}>Relationship to the OFW</span>, children: data.landmark || '' },
         (User === 'Credit' || User === 'Lp') && {  key: '56', label: <span className={`font-semibold ${data.AllotAmount ? 'text-black' : 'text-orange-500'}`}>Remittance or Allotment Amount</span>, children: data.AllotAmount || '' },
         //User === 'Credit' && { key: '55', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-orange-500'}`}>Remittance or Allotment Schedule</span>, children: data.ofwallotsched || '' },
-        (User === 'Credit' || User === 'Lp') && { key: '57', label: <span className={`font-semibold ${data.AllotChannel ? 'text-black' : 'text-orange-500'} w-[12rem]`}>Remittance / Allotment Channel (Gcash, Bank etc)</span>, children: AllotChannel().find(AllotChannel => AllotChannel.value === data.AllotChannel)?.label || '' },
-        (User === 'Credit' || User === 'Lp') && { key: '58',label: <span className="font-semibold text-black w-[12rem]">Unlimited Contract</span>, children: (<Checkbox checked={data.UnliContract}></Checkbox>)},
+        (User === 'Credit' || User === 'Lp') && { key: '57', label: <span className={`font-semibold ${data.AllotChannel ? 'text-black' : 'text-orange-500'} w-[11rem]`}>Remittance / Allotment Channel (Gcash, Bank etc)</span>, children: AllotChannel().find(AllotChannel => AllotChannel.value === data.AllotChannel)?.label || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '58',label: <span className="font-semibold text-black w-[8rem]">Unlimited Contract</span>, children: (<Checkbox checked={data.UnliContract}></Checkbox>)},
+        (User === 'Credit' || User === 'Lp') && data.PossVacation && {key: '65',label: <span className="font-semibold text-black">Possible Vacation</span>,children: data.PossVacation}
     ];
 
     const eduItems = [];
@@ -203,7 +204,6 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         (User === 'Credit' || User === 'Lp') && {  key: '62', label: <span className={`font-semibold ${data.VesselName ? 'text-black' : 'text-orange-500'}`}>Name of Vessel</span>, children: data.VesselName || '' },
         (User === 'Credit' || User === 'Lp') && {  key: '63', label: <span className={`font-semibold ${data.VesselType ? 'text-black' : 'text-orange-500'}`}>Type of Vessel</span>, children: data.VesselType || '' },
         (User === 'Credit' || User === 'Lp') && {  key: '64', label: <span className="font-semibold text-black">Exact Location</span>, children: data.ExactLocation || '' },
-        (User === 'Credit' || User === 'Lp') && {  key: '65', label: <span className="font-semibold text-black">Possible Vacation</span>, children: data.PossVacation || '' },
         (User === 'Credit' || User === 'Lp') && {  key: '66', label: <span className={`font-semibold ${data.VesselIMO ? 'text-black' : 'text-orange-500'}`}>IMO Vessel</span>, children: data.VesselIMO || '' },
         (User === 'Credit' || User === 'Lp') && {  key: '67', label: <span className="font-semibold text-black">Information of the Vessel</span>, children: data.VesselInfo || '' },
         

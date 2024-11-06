@@ -230,7 +230,7 @@ const provinceList = useQuery({
                     className_dmain={className_dmain}
                     className_label={className_label}
                     className_dsub={className_dsub}
-                    label={'Area / Province'}
+                    label={<>Area / Province <span className="text-red-500">*</span></>}
                     placeHolder={'Select Area/Province'}
                     rendered = {rendered}
                     data={data}
@@ -282,7 +282,7 @@ const provinceList = useQuery({
                     className_dmain={className_dmain}
                     className_label={className_label}
                     className_dsub={className_dsub}
-                    label={'City / Municipality'}
+                    label={<>City / Municipality <span className="text-red-500">*</span></>}
                     placeHolder={'Select City/Municipality'}
                     rendered={rendered}
                     data={data}
@@ -338,7 +338,7 @@ const provinceList = useQuery({
                     className_dmain={className_dmain}
                     className_label={className_label}
                     className_dsub={className_dsub}
-                    label={'Barangay'}
+                    label={<>Barangay <span className="text-red-500">*</span></>}
                     placeHolder={'Select Barangay'}
                     rendered = {rendered}
                     data={data}
@@ -424,7 +424,7 @@ const provinceList = useQuery({
                                 });
                             }}
                             placeHolder={'Block / Unit / Street'}
-                            label={'Block / Unit / Street'}
+                            label={<>Block / Unit / Street <span className="text-red-500">*</span></>}
                             disabled={disabled}
                             className_dmain={className_dmain}
                             className_label={className_label}
@@ -433,7 +433,7 @@ const provinceList = useQuery({
                         />
                     : category === 'marketing'
                         ? <LabeledInput_AddressStreet
-                            label={'Street'}
+                            label={<>Street <span className="text-red-500">*</span></>}
                             data={data}
                             type={type}
                             className={className_dmain}

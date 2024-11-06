@@ -1,6 +1,6 @@
 import React from 'react';
 import { MaritalStatus } from '@utils/FixedData'
-import { Radio, Checkbox, Input, ConfigProvider} from 'antd';
+import { Radio, Checkbox,Input, ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import LabeledSelect from '@components/loanApplication/LabeledSelect';
@@ -47,16 +47,16 @@ function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, pr
                     rendered = {benrendered}
                 />
                 <div className={`${classname_main} flex items-center space-x-2`}>
-                    <label className="mb-5 sm:mb-5 sm:mr-4 w-full sm:w-[200px]">
+                    <label className={'mb-5 sm:mb-5 sm:mr-4 w-full sm:w-[200px]'}>
                         Middle Name
                     </label>
                     <ConfigProvider
-                        theme={{
-                            components: {
+                        theme={{components: {
                                 Input: {
-                                    controlHeight: 42,
+                                    controlHeight: 42, 
                                 },
-                            }, }}>
+                            },
+                        }}>
                         <div className="relative flex items-center w-full sm:w-[420px] mb-5">
                             <Input
                                 className="w-full"
@@ -72,16 +72,14 @@ function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, pr
                                 disabled={getAppDetails.withBenMName || !getAppDetails.dataPrivacy}
                                 addonAfter={
                                     <Checkbox
-                                        checked={getAppDetails.withOfwMName}
+                                        checked={getAppDetails.withBenMName}
                                         onClick={() => {
                                             updateAppDetails({
                                                 name: 'withBenMName',
-                                                fieldName: 'withBenMName',
-                                                value: !getAppDetails.withBenMName,
+                                                value: !getAppDetails.withBenMName
                                             });
                                             handleAddressCases({
                                                 name: 'resetBenMiddleName',
-                                                fieldName: 'resetBenMiddleName', 
                                                 value: '',
                                             });
                                         }}
@@ -94,7 +92,7 @@ function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, pr
                             />
                         </div>
                     </ConfigProvider>
-                </div>
+                    </div>
                 <LabeledInput_Fullname
                     className_dmain={classname_main}
                     className_label={className_label}
@@ -129,6 +127,7 @@ function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, pr
                     category={'direct'}
                     placeHolder={'Suffix'}
                     rendered = {benrendered}
+                    showSearch
                 />
                 <DatePicker_BDate
                     className_dmain={classname_main}
@@ -239,6 +238,7 @@ function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, pr
                     category={'direct'}
                     placeHolder={'Relationship'}
                     rendered = {benrendered}
+                    showSearch
                 />
                 <h2 className=' mt-[5%]'><b>PRESENT ADDRESS</b></h2>
                 <AddressGroup_Component
