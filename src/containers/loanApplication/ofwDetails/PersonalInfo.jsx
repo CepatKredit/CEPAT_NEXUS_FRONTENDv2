@@ -30,7 +30,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
     return (
         <>
             <h2 className='mb-[2%]'><b>PERSONAL INFO</b></h2>
-            {/*LabeledInput_UpperCase.jsx */}
             <LabeledInput_Fullname
                 className_dmain={classname_main}
                 className_label={className_label}
@@ -135,10 +134,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
                 placeHolder={'Suffix'}
                 disabled={!direct && !getAppDetails.dataPrivacy}
                 rendered = {ofwrendered}
-                showSearch 
-                filterOption={(input, option) =>
-                    option.label.toLowerCase().includes(input.toLowerCase())
-                }
+                showSearch
             />
             <DatePicker_BDate
                 className_dmain={classname_main}
@@ -306,8 +302,8 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
                 }
             />
             
-               {getAppDetails.ofwresidences === 3 || getAppDetails.ofwresidences === 2
-                    ? (<LabeledCurrencyInput
+            {(data.ofwresidences === 3 || data.ofwresidences === 2) && (
+                <LabeledCurrencyInput
                         className_dmain={classname_main}
                         className_label={className_label}
                         className_dsub={className_dsub}
@@ -323,11 +319,9 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
                         category={'direct'}
                         placeHolder={getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         disabled={!direct && !getAppDetails.dataPrivacy}
-
                         rendered={ofwrendered && getRentRender}
                     />
-                ) : (<></>)}
-            
+                )}
         </>
     )
 }
