@@ -71,7 +71,10 @@ function LabeledSelect_Relationship({rendered, showSearch, placeHolder, label, v
                     disabled={disabled}
                     size='large'
                     placeholder={placeHolder}
-                    showSearch={showSearch}
+                    showSearch 
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                        }
                     onChange={(e) => { onChange(e) }}
                     onBlur={(e) => { onBlur(e) }}
                     readOnly={readOnly}

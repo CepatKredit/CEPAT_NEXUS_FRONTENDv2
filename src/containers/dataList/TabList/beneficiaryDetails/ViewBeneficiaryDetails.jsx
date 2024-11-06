@@ -78,12 +78,12 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
 
 
     const beneficiaryAddressItems = [
-        { key: '26', label: <span className='font-semibold text-black'>Present Area/Province</span>, children: data.benpresprovname || '' },
-        { key: '27', label: <span className='font-semibold text-black'>Present City/Municipality</span>, children: data.benpresmunicipalityname || '' },
-        { key: '28', label: <span className='font-semibold text-black'>Present Barangay</span>, children: data.benpresbarangayname || '' },
-        { key: '29', label: <span className='font-semibold text-black'>Present Street</span>, children: data.benpresstreet || '' },
+        { key: '26', label: <span className={`font-semibold ${data.benpresprovname ? 'text-black' : 'text-orange-500'}`}>Present Area/Province</span>, children: data.benpresprovname || '' },
+        { key: '27', label: <span className={`font-semibold ${data.benpresmunicipalityname ? 'text-black' : 'text-orange-500'}`}>Present City/Municipality</span>, children: data.benpresmunicipalityname || '' },
+        { key: '28', label: <span className={`font-semibold ${data.benpresbarangayname ? 'text-black' : 'text-orange-500'}`}>Present Barangay</span>, children: data.benpresbarangayname || '' },
+        { key: '29', label: <span className={`font-semibold ${data.benpresstreet ? 'text-black' : 'text-orange-500'}`}>Present Street</span>, children: data.benpresstreet || '' },
         { key: '30', label: <span className={`font-semibold ${data.benstaymonths && data.benstayyears ? 'text-black' : 'text-orange-500'}`}>Length of Stay</span>, children: `${data.benstaymonths ? `${data.benstaymonths} months` : ''}${data.benstayyears ? ` and ${data.benstayyears} years` : ''}` },
-        { key: '31', label: <span className='font-semibold text-black'>Type of Residences</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
+        { key: '31', label: <span className={`font-semibold ${data.benresidences ? 'text-black' : 'text-orange-500'}`}>Type of Residences</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
         data.benresidences === 3 && { key: '32', label: <span className='font-semibold text-black'>Rent Amount</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenRentAmount)).toString() },
         (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className='font-semibold text-black'>Landmark</span>, children: data.BenLandMark || '' },
         (User === 'Credit' || User === 'Lp') && { key: '34', label: <span className='font-semibold text-black'>Proof of Billing Remarks</span>, children: data.BenPoBRemarks || '' },     
