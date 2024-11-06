@@ -1,0 +1,349 @@
+import * as React from 'react'
+import { useNavigate } from 'react-router-dom';
+import { Card } from 'antd'
+import { motion } from 'framer-motion'
+
+import { TbUserScreen } from 'react-icons/tb';
+import { FaFileCircleExclamation } from 'react-icons/fa6';
+import { FaFileCircleQuestion } from 'react-icons/fa6';
+import { LuClipboardCheck } from 'react-icons/lu';
+import { FaFileShield } from 'react-icons/fa6';
+import { FaPersonWalkingDashedLineArrowRight } from 'react-icons/fa6';
+import { FaPersonWalking } from 'react-icons/fa6';
+import { RxEnter } from 'react-icons/rx';
+import { MdLabelImportant } from 'react-icons/md';
+import { HiMiniQueueList } from 'react-icons/hi2';
+import { FaRegCreditCard } from 'react-icons/fa';
+import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
+import { RxExit } from 'react-icons/rx';
+import { LuFileBox } from 'react-icons/lu';
+import { TbFileIsr } from 'react-icons/tb';
+import { PiKeyReturnBold } from 'react-icons/pi';
+import { MdOutlineSevereCold } from 'react-icons/md';
+import { MdPhoneCallback } from 'react-icons/md';
+import { BsPersonFillExclamation } from 'react-icons/bs';
+import { GiConfirmed } from 'react-icons/gi';
+import { FaFileSignature } from 'react-icons/fa';
+import { FaRegMoneyBillAlt } from 'react-icons/fa';
+import { FaBoxOpen } from 'react-icons/fa';
+import { MdEditDocument } from 'react-icons/md';
+import { MdCancel } from 'react-icons/md';
+import { FaThumbsDown } from 'react-icons/fa';
+import { BiRedo } from 'react-icons/bi';
+
+function AnimatedCard({ value, path }) {
+
+    const colorList = ['#283618', '#29274c', '#FF8C00', '#3bceac', '#532b88',
+        '#DB7093', '#8B4513', '#006d77', '#B8860B', '#008B8B',
+        '#293241', '#00a6fb', '#003566', '#4a4e69', '#0f4c5c',
+        '#3d5a80', '#7B68EE','#c6249a', '#2d6a4f', '#6d597a', '#2f2f2f',
+        '#008080', '#20B2AA', '#90EE90', '#FFD700', '#228B22',
+        '#32CD32', '#F08080', '#2E8B57', '#006400', '#FF7F50',
+        '#1c1c1c', '#FF0000', '#708090']
+    let name = ''
+    const navigate = useNavigate()
+
+    function Data() {
+        if (path === '/ckfi/under-marketing') {
+            name = 'UNDER MARKETING'
+            let value = {
+                icon: <LuClipboardCheck style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[0]
+            }
+            return value
+        }
+        else if (path === '/ckfi/received') {
+            name = 'RECEIVED'
+            let value = {
+                icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[1]
+            }
+            return value
+        }
+        else if (path === '/ckfi/lack-of-documents/complied') {
+            name = 'COMPLIED - LACK OF DOCUMENTS'
+            let value = {
+                icon: <FaFileCircleQuestion style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[2]
+            }
+            return value
+        }
+        else if (path === '/ckfi/walk-in') {
+            name = 'FOR WALK-IN'
+            let value = {
+                icon: <FaPersonWalking style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[3]
+            }
+            return value
+        }
+        else if (path === '/ckfi/for-initial-interview') {
+            name = 'FOR INITIAL INTERVIEW'
+            let value = {
+                icon: <FaPersonWalkingDashedLineArrowRight style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[4]
+            }
+            return value
+        }
+        else if (path === '/ckfi/reassessed-to-marketing') {
+            name = 'REASSESSED TO MARKETING'
+            let value = {
+                icon: <TbFileIsr style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[5]
+            }
+            return value
+        }
+        else if (path === '/ckfi/lack-of-documents') {
+            name = 'LACK OF DOCUMENTS'
+            let value = {
+                icon: <FaFileCircleExclamation style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[6]
+            }
+            return value
+        }
+        else if (path === '/ckfi/credit-assessment-list') {
+            name = 'CREDIT ASSESSMENT LIST'
+            let value = {
+                icon: <FaRegCreditCard style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[7]
+            }
+            return value
+        }
+        else if (path === '/ckfi/credit-assessment/special-lane') {
+            name = 'SPECIAL LANE'
+            let value = {
+                icon: <MdLabelImportant style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[8]
+            }
+            return value
+        }
+        else if (path === '/ckfi/credit-assessment') {
+            name = 'FOR CREDIT ASSESSEMENT'
+            let value = {
+                icon: <RxEnter style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[9]
+            }
+            return value
+        }
+        else if (path === '/ckfi/under-credit') {
+            name = 'UNDER CREDIT'
+            let value = {
+                icon: <FaRegCreditCard style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[10]
+            }
+            return value
+        }
+        else if (path === '/ckfi/queue-bucket') {
+            name = 'QUEUE BUCKET'
+            let value = {
+                icon: <HiMiniQueueList style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[11]
+            }
+            return value
+        }
+        else if (path === '/ckfi/for-verification') {
+            name = 'FOR VERIFICATION'
+            let value = {
+                icon: <FaFileShield style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[12]
+            }
+            return value
+        }
+        else if (path === '/ckfi/pre-check') {
+            name = 'PRE-CHECK'
+            let value = {
+                icon: <FaFileSignature style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[13]
+            }
+            return value
+        }
+        else if (path === '/ckfi/return/credit-associate') {
+            name = 'RETURN TO CREDIT ASSOCIATE'
+            let value = {
+                icon: <LuClipboardCheck style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[14]
+            }
+            return value
+        }
+        else if (path === '/ckfi/return/credit-officer') {
+            name = 'RETURN TO CREDIT OFFICER'
+            let value = {
+                icon: <MdOutlineSevereCold style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[15]
+            }
+            return value
+        }
+        else if (path === '/ckfi/reassessed/credit-officer') {
+            name = 'REASSESSED TO CREDIT OFFICER'
+            let value = {
+                icon: <TbFileIsr style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[16]
+            }
+            return value
+        }
+        else if (path === '/ckfi/pre-approval') {
+            name = 'PRE APPROVAL'
+            let value = {
+                icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[17]
+            }
+            return value
+        }
+        else if (path === '/ckfi/for-approval') {
+            name = 'FOR APPROVAL'
+            let value = {
+                icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[18]
+            }
+            return value
+        }
+        else if (path === '/ckfi/approved') {
+            name = 'APPROVED (TRANS-OUT)'
+            let value = {
+                icon: <RxExit style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[19]
+            }
+            return value
+        }
+        else if (path === '/ckfi/under-loan-processor') {
+            name = 'UNDER LP'
+            let value = {
+                icon: <LuClipboardCheck style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[20]
+            }
+            return value
+        }
+        else if (path === '/ckfi/for-docusign') {
+            name = 'FOR DOCUSIGN'
+            let value = {
+                icon: <MdEditDocument style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[21]
+            }
+            return value
+        }
+        else if (path === '/ckfi/ok/for-docusign') {
+            name = 'OK FOR DOCUSIGN'
+            let value = {
+                icon: <MdEditDocument style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[22]
+            }
+            return value
+        }
+        else if (path === '/ckfi/tagged-for-release') {
+            name = 'TAGGED FOR RELEASE'
+            let value = {
+                icon: <FaBoxOpen style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[23]
+            }
+            return value
+        }
+        else if (path === '/ckfi/on-waiver') {
+            name = 'ON WAIVER'
+            let value = {
+                icon: <FaFileSignature style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[24]
+            }
+            return value
+        }
+        else if (path === '/ckfi/confirmation') {
+            name = 'CONFIRMATION'
+            let value = {
+                icon: <GiConfirmed style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[25]
+            }
+            return value
+        }
+        else if (path === '/ckfi/confirmed') {
+            name = 'CONFIRMED'
+            let value = {
+                icon: <GiConfirmed style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[26]
+            }
+            return value
+        }
+        else if (path === '/ckfi/undecided') {
+            name = 'UNDECIDED'
+            let value = {
+                icon: <BsPersonFillExclamation style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[27]
+            }
+            return value
+        }
+        else if (path === '/ckfi/for-disbursement') {
+            name = 'FOR DISBURSEMENT'
+            let value = {
+                icon: <FaRegMoneyBillAlt style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[28]
+            }
+            return value
+        }
+        else if (path === '/ckfi/released') {
+            name = 'RELEASED'
+            let value = {
+                icon: <LuFileBox style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[29]
+            }
+            return value
+        }
+        else if (path === '/ckfi/return/loan-processor') {
+            name = 'RETURN TO LOANS PROCESSOR'
+            let value = {
+                icon: <PiKeyReturnBold style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[30]
+            }
+            return value
+        }
+        else if (path === '/ckfi/cancelled') {
+            name = 'CANCELLED'
+            let value = {
+                icon: <MdCancel style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[31]
+            }
+            return value
+        }
+        else if (path === '/ckfi/declined') {
+            name = 'DECLINED'
+            let value = {
+                icon: <FaThumbsDown style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[31]
+            }
+            return value
+        }
+        else {
+            name = 'FOR RE-APPLICATION'
+            let value = {
+                icon: <BiRedo style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[33]
+            }
+            return value
+        }
+    }
+
+    const randomNumberInRange = (min, max) => {
+        return Math.floor(Math.random()
+            * (max - min + 1)) + min;
+    };
+
+    return (
+        <motion.div
+            whileHover={{ scale: [null, 1, .9] }}
+            transition={{ duration: 0.3 }}>
+            <Card className='w-[350px] h-[160px] cursor-pointer shadow-xl'
+                style={{ backgroundColor: Data().color }} onClick={() => {
+                    navigate(path)
+                    localStorage.setItem('SP', path)
+                }}>
+                <div className='float-left h-[100px] w-[100px]'>
+                    <div className='flex flex-col justify-center items-center mt-[15px]'>
+                        {Data().icon}
+                    </div>
+                </div>
+                <div className='flex flex-col absolute right-5 text-right bottom-5 right-5'>
+                    <p className='text-4xl text-white font-bold'>{value}</p>
+                    <p className='mt-[5px] text-md text-white font-bold'>{name}</p>
+                </div>
+            </Card>
+        </motion.div>
+    )
+}
+
+export default AnimatedCard

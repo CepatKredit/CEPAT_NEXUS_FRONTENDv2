@@ -1,0 +1,286 @@
+import React, { useRef, useState } from 'react';
+import ViewBeneficiaryDetails from './beneficiaryDetails/ViewBeneficiaryDetails';
+import EditBeneficiaryDetails from './beneficiaryDetails/EditBeneficiaryDetails';
+import { ApplicationStatus } from '@hooks/ApplicationStatusController';
+import { FloatButton, ConfigProvider, Button, notification,Spin } from 'antd';
+import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import StatusRemarks from './StatusRemarks';
+import { UpdateLoanDetails } from '@utils/LoanDetails';
+import { mmddyy } from '@utils/Converter';
+import { useQueryClient } from '@tanstack/react-query';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+
+function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading }) {
+
+    const [api, contextHolder] = notification.useNotification()
+    const [isEdit, setEdit] = useState(false);
+    const { GetStatus } = ApplicationStatus();
+    const [showCoBorrower, setShowCoBorrower] = useState(true);
+    const didMountRef = useRef(false);
+    const token = localStorage.getItem('UTK')
+    const queryClient = useQueryClient();
+
+    const valid_addcoborrow = !data.coborrowfname || data.coborrowfname.trim() === "" ||
+        !data.coborrowlname || data.coborrowlname.trim() === "" ||
+        !data.coborrowbdate || !data.coborrowsuffix || !data.coborrowgender ||
+        !data.coborrowmstatus || !data.coborrowdependents || !data.coborrowfblink ||
+        !data.coborrowemail || !data.coborrowmobile ||
+        ((data.coborrowmstatus === 2 || data.coborrowmstatus === 5 || data.coborrowmstatus === 6) && (!data.coborrowspousename || !data.coborrowerspousebdate))
+
+    const benReq = [
+        'benfname',
+        'benlname',
+        'bensuffix',
+        'benbdate',
+        'bengender',
+        'bendependents',
+        'benfblink',
+        'benemail',
+        'benmobile',
+        'benmstatus',
+        'benresidences',
+        'benstayyears',
+        'benstaymonths',
+        'benpresprov',
+        'benpresmunicipality',
+        'benpresbarangay',
+        'benpresstreet'
+    ];
+
+    const additionalReq = (data.benmstatus === 2 || data.benmstatus === 5 || data.benmstatus === 6) ?
+        ['benspouse', 'benspousebdate'] : [];
+
+    const Required = () => {
+        return [...benReq, ...additionalReq].some(field => {
+            //console.log(`field: ${field}, data:`, data[field]);
+            const condition = data[field] === undefined || data[field] === '' || data[field] === false;
+            //console.log(`result field ${field}:`, condition);
+            return condition;
+        });
+    };
+
+    const disabledStatuses = [
+        'DECLINED', 'CANCELLED', 'SCREENING AND INTERVIEW', 'REASSESSED TO CREDIT ASSOCIATE',
+        'FOR CALLBACK', 'FOR VERIFICATION', 'PRE-CHECK', 'FOR APPROVAL',
+        'RETURN TO CREDIT ASSOCIATE', 'RETURN TO CREDIT OFFICER', 'REASSESSED TO CREDIT OFFICER',
+        'APPROVED (TRANS-OUT)', 'RETURN TO LOANS PROCESSOR', 'FOR DOCUSIGN', 'OK FOR DOCUSIGN',
+        'TAGGED FOR RELEASE', 'FOR DISBURSEMENT', 'ON WAIVER', 'CONFIRMATION', 'CONFIRMED',
+        'UNDECIDED', 'RELEASED', 'FOR CREDIT ASSESSEMENT', 'FOR RE-APPLICATION', 'PRE-APPROVAL'
+    ];
+
+    React.useEffect(() => {
+        if (didMountRef.current) {
+            setEdit(false)
+        } else {
+            didMountRef.current = true;
+        }
+    }, [getTab]);
+
+    //For CREDIT: If Failed on other Roles, Add logic for specific role here tnx
+    if (User === 'Credit') {
+        React.useEffect(() => {
+            setAddCoborrow(showCoBorrower);
+            // console.log('Check Acb', showCoBorrower);
+        }, [showCoBorrower]);
+    }
+    const toggleEditMode = async () => {
+        if (isEdit) {
+            console.log(!showCoBorrower, !Required())
+            if ((!showCoBorrower && !valid_addcoborrow && !Required()) || (showCoBorrower && !Required())) {
+                await updateData();
+            } else {
+                api['warning']({
+                    message: 'Please complete all required fields.',
+                    description: 'Please complete all required details.',
+                });
+            }
+        } else {
+            setEdit(true);
+        }
+    };
+
+    async function updateData() {
+        const value = {
+            LoanAppId: data.loanIdCode,
+            Tab: 3,
+            //...(!!data.benfname && !!data.benlname && !!data.bensuffix? )
+            BorrowersCode: data.ofwBorrowersCode,
+            BenFirstName: data.benfname,
+            BenMiddleName: data.benmname,
+            BenLastName: data.benlname,
+            BenSuffix: data.bensuffix,
+            BenBirthday: mmddyy(data.benbdate),
+            BenGender: data.bengender,
+            BenDependent: parseInt(data.bendependents) || 0,
+            BenFbProfile: data.benfblink,
+            BenEmail: data.benemail,
+            BenMobileNo: data.benmobile,
+            BenMobileNo2: data.benothermobile,
+            BenCivilStatus: data.benmstatus,
+            BenSpouseName: data.benspouse,
+            BenSpouseBirthday: mmddyy(data.benspousebdate),
+
+            BenOwnership: data.benresidences,
+            BenStayYears: data.benstayyears,
+            BenStayMonths: data.benstaymonths,
+            BenProvinceId: data.benpresprov,
+            BenMunicipalityId: data.benpresmunicipality,
+            BenBarangayId: data.benpresbarangay,
+            BenAddress1: data.benpresstreet,
+            BenRentAmount: parseFloat(data.BenRentAmount.toString().replaceAll(',', '')),
+            ModUser: jwtDecode(token).USRID,
+
+            ...(!!sepcoborrowfname ? {
+                AcbFirstName: data.coborrowfname,
+                AcbMiddleName: data.coborrowmname,
+                AcbLastName: data.coborrowlname,
+                AcbSuffix: data.coborrowsuffix || 0,
+                AcbBirthday: mmddyy(data.coborrowbdate),
+                AcbGender: data.coborrowgender,
+                AcbCivilStatus: data.coborrowmstatus,
+                AcbDependent: data.coborrowdependents || 0,
+                AcbEmail: data.coborrowemail,
+                AcbMobileNo: data.coborrowmobile,
+                AcbMobileNo2: data.coborrowothermobile || '',
+                AcbFbProfile: data.coborrowfblink,
+                AcbSpouseName: data.coborrowspousename || '',
+                AcbSpouseBirthday: mmddyy(data.coborrowerspousebdate),
+                AcbOwnership: data.coborrowresidences,
+                AcbAddress1: data.coborrowStreet || '',
+                AcbBarangay: data.coborrowBarangay || '',
+                AcbMunicipality: data.coborrowMunicipality || '',
+                AcbProvince: data.coborrowProv || '',
+                AcbStayMonths: data.AcbStayMonths,
+                AcbStayYears: data.AcbStayYears,
+                AcbRentAmount: parseFloat(data.AcbRentAmount.toString().replaceAll(',', '')),
+
+            } : {})
+
+        };
+
+        const dataHolder = {
+            BorrowersCode: BorrowerId,
+            Tab: 3,
+            AcbFirstName: data.coborrowfname,
+            AcbMiddleName: data.coborrowmname,
+            AcbLastName: data.coborrowlname,
+            AcbSuffix: data.coborrowsuffix || 0,
+            AcbBirthday: mmddyy(data.coborrowbdate),
+            AcbGender: data.coborrowgender,
+            AcbCivilStatus: data.coborrowmstatus,
+            AcbDependent: data.coborrowdependents || 0,
+            AcbEmail: data.coborrowemail,
+            AcbMobileNo: data.coborrowmobile,
+            AcbMobileNo2: data.coborrowothermobile || '',
+            AcbFbProfile: data.coborrowfblink,
+            AcbSpouseName: data.coborrowspousename || '',
+            AcbSpouseBirthday: data.coborrowerspousebdate ? mmddyy(data.coborrowerspousebdate) : '',
+            AcbOwnership: data.coborrowresidences,
+            AcbAddress1: data.coborrowStreet,
+            AcbBarangayId: data.coborrowBarangay,
+            AcbMunicipalityId: data.coborrowMunicipality,
+            AcbProvinceId: data.coborrowProv,
+            AcbStayMonths: data.AcbStayMonths,
+            AcbStayYears: data.AcbStayYears,
+            RecUser: jwtDecode(token).USRID
+        };
+        console.log('bentest', value)
+
+        if (!sepcoborrowfname && !showCoBorrower) { //if no add coborrow and showaddcoborrow is true
+            //start ben- update, add- insert
+            console.log('Update and Insert')
+            try {
+                const result = await UpdateLoanDetails(value);
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description,
+                });
+                const result2 = await axios.post('/addAdditionalCoborrower', dataHolder);
+                api[result2.data.status]({
+                    message: result2.data.message,
+                    description: result2.data.description
+                });
+                queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
+                setEdit(!isEdit);
+            } catch (error) {
+                console.log('Front End: ', error)
+                api['warning']({
+                    message: 'Error: Failed API',
+                    description: "Failed to Connect into API",
+                });
+            }
+
+        } else if ((!!sepcoborrowfname && !showCoBorrower) || (!sepcoborrowfname && showCoBorrower)) { // if add coborrow exists
+            //start ben- update, add- update
+            console.log('Update All')
+            try {
+                const result = await UpdateLoanDetails(value);
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description,
+                });
+                queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
+                setEdit(!isEdit);
+            } catch (error) {
+                console.log('Front End: ', error)
+                api['warning']({
+                    message: 'Error: Failed API',
+                    description: "Failed to Connect into API",
+                });
+            }
+        }
+
+    }
+    return (<>
+        <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
+            <Spin spinning={loading} tip="Loading..." className="flex justify-center items-center">
+                {contextHolder}
+                <div className={classname}>
+                    {User !== 'Credit' && User !== 'Lp' && (<div className="sticky top-0 z-[1000] bg-white">
+                        <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+                    </div>)}
+                    {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+                        <ViewBeneficiaryDetails data={data} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} />
+                    ) : (
+                        <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
+                            showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
+                    )}
+                    {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
+                        <FloatButton.Group
+                            shape="circle"
+                            style={{ right: 24, bottom: 24 }}
+                        >
+                            {isEdit ? (
+                                <>
+                                    <FloatButton
+                                        className="bg-green-500"
+                                        icon={<SaveOutlined className="text-[#3b0764]" />}
+                                        tooltip="Save"
+                                        onClick={() => { toggleEditMode(); }}
+                                    />
+
+                                    <FloatButton
+                                        className="bg-red-500"
+                                        icon={<CloseOutlined />}
+                                        tooltip="Cancel"
+                                        onClick={() => setEdit(false)}
+                                    />
+                                </>
+                            ) : (
+                                <FloatButton
+                                    className="bg-[#3b0764] text-white"
+                                    icon={<EditOutlined className="text-[#1ad819]" />}
+                                    tooltip="Edit"
+                                    onClick={toggleEditMode}
+                                />
+                            )}
+                        </FloatButton.Group>
+                    )}
+                </div>
+                </Spin>
+                </ConfigProvider>
+            </>);
+}
+
+            export default BeneficiaryDetails;
