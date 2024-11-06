@@ -1,6 +1,6 @@
 import React from 'react';
 import { MaritalStatus } from '@utils/FixedData'
-import { Radio, Checkbox } from 'antd';
+import { Radio, Checkbox, Input, ConfigProvider} from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import LabeledSelect from '@components/loanApplication/LabeledSelect';
@@ -15,7 +15,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 dayjs.extend(customParseFormat);
 
 function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, presaddress }) {
-    const { handleAddressCases } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, handleAddressCases, updateAppDetails } = React.useContext(LoanApplicationContext)
     const classname_main = 'flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]';
     const className_label = 'mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[200px]';
     const className_dsub = 'w-full sm:w-[400px]';
@@ -32,7 +32,7 @@ function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, pr
                     className_dmain={classname_main}
                     className_label={className_label}
                     className_dsub={className_dsub}
-                    label={'First Name'}
+                    label={<>First Name <span className="text-red-500">*</span></>}
                     // value={data.benfname}
                     fieldName="benfname"
                     error_status={'First name is required.'}
@@ -45,63 +45,63 @@ function BeneficiaryDetails({benrendered, setbenrendered, api, data, receive, pr
                     // }}
                     category={'direct'}
                     rendered = {benrendered}
-
                 />
-
-                  <div className={`${classname_main} flex items-center`}>
-                    <label className={className_label}>
-                        Middle Name <br />
-                        <span style={{ fontSize: '0.6rem' }}>(Check if with no Middle Name)</span>
+                <div className={`${classname_main} flex items-center space-x-2`}>
+                    <label className="mb-5 sm:mb-5 sm:mr-4 w-full sm:w-[200px]">
+                        Middle Name
                     </label>
-                        <Checkbox
-                            className_dmain="flex flex-col mt-2 ml-1 space-y-2 sm:space-y-0 sm:space-x-1"
-                            className_label={className_label}
-                            className_dsub="w-full sm:w-[300px]"
-                            checked={data.withBenMName}
-                            onClick={() => {
-                                receive({
-                                    name: 'withBenMName',
-                                    value: !data.withBenMName
-                                });
-                               handleAddressCases({
-                                    name: 'resetBenMiddleName',
-                                    value: null
-                                }, "beneficiary")
-                            }}
-                            className="text-xs mr-2"
-                        />
-                       <LabeledInput_Fullname
-                    className_dmain={classname_main}
-                    className_label={className_label}
-                    className_dsub={className_dsub}
-                    label={'Middle Name'}
-                    // value={data.benmname}
-                    fieldName="benmname"
-                    placeHolder={data.withBenMName ? 'No Middle Name' : 'Middle Name'}
-                    // receive={(e) => {
-                    //     receive({
-                    //         name: 'benmname',
-                    //         value: e
-                    //     })
-                    // }}
-                    required={false}
-                    category={'direct'}
-                    disabled={data.withBenMName}
-                    rendered = {benrendered}
-
-
-                />
-
-                    </div>
+                    <ConfigProvider
+                        theme={{
+                            components: {
+                                Input: {
+                                    controlHeight: 42,
+                                },
+                            }, }}>
+                        <div className="relative flex items-center w-full sm:w-[420px] mb-5">
+                            <Input
+                                className="w-full"
+                                fieldName="benmname"
+                                placeholder={getAppDetails.withBenMName ? 'No Middle Name' : 'Middle Name'}
+                                onChange={(e) => {
+                                    updateAppDetails({
+                                        name: 'benmname',
+                                        value: toUpperText(e.target.value), 
+                                    });
+                                }}
+                                value={getAppDetails['benmname']}
+                                disabled={getAppDetails.withBenMName || !getAppDetails.dataPrivacy}
+                                addonAfter={
+                                    <Checkbox
+                                        checked={getAppDetails.withOfwMName}
+                                        onClick={() => {
+                                            updateAppDetails({
+                                                name: 'withBenMName',
+                                                fieldName: 'withBenMName',
+                                                value: !getAppDetails.withBenMName,
+                                            });
+                                            handleAddressCases({
+                                                name: 'resetBenMiddleName',
+                                                fieldName: 'resetBenMiddleName', 
+                                                value: '',
+                                            });
+                                        }}
+                                        className="text-xs"
+                                        disabled={!getAppDetails.dataPrivacy}
+                                    >
+                                        No Middle Name
+                                    </Checkbox>
+                                }
+                            />
+                        </div>
+                    </ConfigProvider>
+                </div>
                 <LabeledInput_Fullname
                     className_dmain={classname_main}
                     className_label={className_label}
                     className_dsub={className_dsub}
-
                     label={<>Last Name <span className="text-red-500">*</span></>}
                     // value={data.benlname}
                     fieldName="benlname"
-
                     error_status={'Last name is required.'}
                     placeHolder={'Last Name'}
                     // receive={(e) => {

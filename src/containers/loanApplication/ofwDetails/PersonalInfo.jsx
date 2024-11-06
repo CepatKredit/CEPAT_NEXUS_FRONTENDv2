@@ -14,6 +14,7 @@ import LabeledSelect_Suffix from '@components/loanApplication/LabeledSelect_Suff
 import LabeledCurrencyInput from '@components/loanApplication/LabeledCurrencyInput';
 import React from 'react';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { toUpperText } from '@utils/Converter';
 
 dayjs.extend(customParseFormat);
 
@@ -49,42 +50,54 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
                 disabled={!direct && !getAppDetails.dataPrivacy}
               rendered={ofwrendered} />
                 <div className={`${classname_main} flex items-center space-x-2`}>
-                    <label className={className_label}>
-                        Middle Name<br />
-                        <span style={{ fontSize: '0.6rem' }}>(Check if with no Middle Name)</span>
+                    <label className="mb-5 sm:mb-5 sm:mr-4 w-full sm:w-[200px]">
+                        Middle Name
                     </label>
                     <ConfigProvider
                         theme={{
                             components: {
                                 Input: {
-                                    controlHeight: 42, 
+                                    controlHeight: 42,
                                 },
-                            },
-                         }}>
+                            }, }}>
                         <div className="relative flex items-center w-full sm:w-[420px] mb-5">
-                            <LabeledInput_Fullname
-                className_dmain={classname_main}
-                className_label={className_label}
-                className_dsub={className_dsub}
-                label={'Middle Name'}
-                // value={getAppDetails.ofwmname}
-                fieldName="ofwmname"
-                placeHolder={getAppDetails.withOfwMName ? 'No Middle Name' : 'Middle Name'} 
-                // receive={(e) => {
-                //     receive({   
-                //         name: 'ofwmname',
-                //         value: e
-                //     })
-                // }}
-                required={false}
-                category={'direct'}
-                disabled={getAppDetails.withOfwMName || !getAppDetails.dataPrivacy}
-
-            />
+                            <Input
+                                className="w-full"
+                                fieldName="ofwmname"
+                                placeholder={getAppDetails.withOfwMName ? 'No Middle Name' : 'Middle Name'}
+                                onChange={(e) => {
+                                    updateAppDetails({
+                                        name: 'ofwmname',
+                                        value: toUpperText(e.target.value), 
+                                    });
+                                }}
+                                value={getAppDetails['ofwmname']}
+                                disabled={getAppDetails.withOfwMName || !getAppDetails.dataPrivacy}
+                                addonAfter={
+                                    <Checkbox
+                                        checked={getAppDetails.withOfwMName}
+                                        onClick={() => {
+                                            updateAppDetails({
+                                                name: 'withOfwMName',
+                                                fieldName: 'withOfwMName',
+                                                value: !getAppDetails.withOfwMName,
+                                            });
+                                            handleAddressCases({
+                                                name: 'resetmname',
+                                                fieldName: 'resetmname', 
+                                                value: '',
+                                            });
+                                        }}
+                                        className="text-xs"
+                                        disabled={!getAppDetails.dataPrivacy}
+                                    >
+                                        No Middle Name
+                                    </Checkbox>
+                                }
+                            />
                         </div>
                     </ConfigProvider>
-</div>
-
+                </div>
             <LabeledInput_Fullname
                 className_dmain={classname_main}
                 className_label={className_label}
@@ -298,7 +311,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
                         className_dmain={classname_main}
                         className_label={className_label}
                         className_dsub={className_dsub}
-                        label={<>{getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'} <span className="text-red-500">*</span></>}                        
+                        label={<>{getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500">*</span></>}                        
                         fieldName="rentAmount"
                         // value={getAppDetails.rentAmount}
                         // receive={(e) => {

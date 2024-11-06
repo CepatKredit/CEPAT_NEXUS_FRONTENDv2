@@ -327,7 +327,7 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Area / Province"}
+          label={<>Area / Province <span className="text-red-500">*</span></>}
           placeHolder={"Select Area/Province"}
           rendered={rendered}
           data={data}
@@ -401,7 +401,7 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"City / Municipality"}
+          label={<>City / Municipality <span className="text-red-500">*</span></>}
           placeHolder={"Select City/Municipality"}
           rendered={rendered}
           data={data}
@@ -478,7 +478,7 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Barangay"}
+          label={<>Barangay <span className="text-red-500">*</span></>}
           placeHolder={"Select Barangay"}
           rendered={rendered}
           data={data}
@@ -587,7 +587,7 @@ function AddressContainer({
               });
             }}
             placeHolder={"Block / Unit / Street"}
-            label={"Block / Unit / Street"}
+            label={<>Block / Unit / Street <span className="text-red-500">*</span></>}
             disabled={disabled}
             className_dmain={className_dmain}
             className_label={className_label}
