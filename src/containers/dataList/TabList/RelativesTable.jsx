@@ -326,7 +326,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         },
 
         {
-            title: 'fullName',
+            title: 'Full Name',
             dataIndex: 'fullName',
             key: 'fullName',
             width: '20%',
