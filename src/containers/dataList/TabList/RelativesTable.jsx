@@ -39,7 +39,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
     const [getStat, setStat] = React.useState(true);
     React.useEffect(() => {
         getRelatives.refetch()
-        getRelativeSuffix.refetch()
+       // getRelativeSuffix.refetch()
     }, [BorrowerId]);
 
     const getRelatives = useQuery({
@@ -129,59 +129,42 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         return ReshipHolder ? ReshipHolder.code : null;
     }
 
-    const [getSuffixList, setSuffixList] = React.useState()
-    const getRelativeSuffix = useQuery({
-        queryKey: ['getRelativeSuffix'],
-        queryFn: async () => {
-            const result = await axios.get('/getRelativesSuffix');
-            setSuffixList(result.data.list)
-
-            return result.data.list;
-        },
-        refetchInterval: (data) => {
-            data?.length === 0
-                ? 500 : false
-        },
-        enabled: true,
-        retryDelay: 1000,
-    });
-
-    /*   function GetSuffixId() {
-           if (!getSuffixList) {
-               return null; // or handle appropriately
-           }
-           const suffixvalue = form.getFieldValue('relationship');
-           const SuffixHolder = getSuffixList.find(
-               (x) => x.description === suffixvalue || x.code === suffixvalue
-           );
-   
-           return SuffixHolder ? SuffixHolder.code : null; // Safely return the code or null
-       }*/
-
-    function GetSuffixId() {
-        if (!getSuffixList) {
-            return null; // or handle appropriately
-        }
-        const suffixValue = form.getFieldValue('suffix');
-        const SuffixHolder = getSuffixList.find(
-            (x) => x.description === suffixValue || x.code === suffixValue
-        );
-        return SuffixHolder ? SuffixHolder.code : null; // Return the correct code
-    }
+    /* const [getSuffixList, setSuffixList] = React.useState()
+     const getRelativeSuffix = useQuery({
+         queryKey: ['getRelativeSuffix'],
+         queryFn: async () => {
+             const result = await axios.get('/getRelativesSuffix');
+             setSuffixList(result.data.list)
+ 
+             return result.data.list;
+         },
+         refetchInterval: (data) => {
+             data?.length === 0
+                 ? 500 : false
+         },
+         enabled: true,
+         retryDelay: 1000,
+     });
+ 
+     
+ 
+     function GetSuffixId() {
+         if (!getSuffixList) {
+             return null; // or handle appropriately
+         }
+         const suffixValue = form.getFieldValue('suffix');
+         const SuffixHolder = getSuffixList.find(
+             (x) => x.description === suffixValue || x.code === suffixValue
+         );
+         return SuffixHolder ? SuffixHolder.code : null; // Return the correct code
+     }*/
 
 
 
-
-    /*function GetWorkEducStatusId() {
-        const workEducStatusHolder = WorkEducStatusOption().find(
-            (x) => x.label === getInfo.WorkEducStatus || x.value === getInfo.WorkEducStatus
-        );
-        return workEducStatusHolder ? workEducStatusHolder.value : null;
-    }*/
 
     function GetWorkEducStatusId() {
-        const workValue = form.getFieldValue('WorkEducStatus');
-        const workEducStatusHolder = DropdownOwnedAssets().find(
+        const workValue = form.getFieldValue('workEducStatus');
+        const workEducStatusHolder = WorkEducStatusOption().find(
             (x) => x.label === workValue || x.value === workValue
         );
         return workEducStatusHolder ? workEducStatusHolder.value : null;
@@ -194,14 +177,14 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
 
         const row = await form.validateFields();
         setStat(false);
-        const formattedBirthdate = row.birthdate ? moment(row.birthdate).format('MM-DD-YYYY') : '';
+
 
         const data = {
             BorrowersId: BorrowerId,
             Fullname: row.fullName,
-            Suffix: GetSuffixId(),
+            Suffix: row.suffix,
             Contactno: row.contactNo,
-            Birthdate: formattedBirthdate,
+            Birthdate: row.birthdate,
             workEducStatus: row.workEducStatus,
             Relationship: GetReshipId(),
             RecUser: jwtDecode(token).USRID
@@ -245,21 +228,21 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
 
         const row = await form.validateFields();
         getRelationshipList.refetch();
-        getRelativeSuffix.refetch();
-        const formattedBirthdate = row.birthdate ? moment(row.birthdate).format('MM-DD-YYYY') : '';
+        // getRelativeSuffix.refetch();
+
         try {
             const data = {
-                Code: row.key,
+                Code: editingKey,
                 Fullname: row.fullName,
-                Suffix: GetSuffixId(),
+                Suffix: row.suffix,
                 Contactno: row.contactNo,
-                Birthdate: formattedBirthdate,
+                Birthdate: row.birthdate,
                 workEducStatus: GetWorkEducStatusId(),  // Use the mapped value
                 Relationship: GetReshipId(),
                 ModUser: jwtDecode(token).USRID
             };
             //console.log('suffix', data)
-
+            console.log(data)
             const result = await axios.post('/editRelatives', data);
             api[result.data.status]({
                 message: result.data.message,
@@ -304,26 +287,12 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             });
         }
     }
-    const calculateAge = (birthdate) => {
-        if (!birthdate) return 'No Birthdate';
-        const birthMoment = dayjs(birthdate, "MM-DD-YYYY");
-        const today = dayjs();
-    
-        if (!birthMoment.isValid()) return 'Invalid Birthdate';
-        const age = today.diff(birthMoment, 'years');
-    
-        return `Age: ${age} years old`;
-    };
-    
     const disabledStatuses = [
         'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
         'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
         'RETURN TO CREDIT OFFICER', 'RELEASED'
     ];
-
-    
-
     const [form] = Form.useForm();
     const columns = [
         {
@@ -352,7 +321,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             </ConfigProvider>),
             dataIndex: 'no',
             key: 'no',
-            width: '40px',
+            width: '4%',
             align: 'center'
         },
 
@@ -360,54 +329,49 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             title: 'fullName',
             dataIndex: 'fullName',
             key: 'fullName',
-            width: '120px',
+            width: '20%',
             editable: true,
         },
         {
             title: 'suffix',
             dataIndex: 'suffix',
             key: 'suffix',
-            width: '120px',
+            width: '6%',
             editable: true,
         },
         {
             title: 'Contact Number',
             dataIndex: 'contactNo',
             key: 'contactNo',
-            width: '120px',
+            width: '8%',
             editable: true,
         },
         {
-            title: 'Birthdate',
+            title: 'Age',
             dataIndex: 'birthdate',
             key: 'birthdate',
-            width: '100px',
+            width: '6%',
             editable: true,
-            render: (birthdate) => (
-                <Tooltip title={calculateAge(birthdate)}>
-                    {birthdate ? moment(birthdate).format("DD-MM-YYYY") : 'N/A'}
-                </Tooltip>
-            ),
         },
         {
             title: 'School / Employment',
             dataIndex: 'workEducStatus',
             key: 'workEducStatus',
-            width: '120px',
+            width: '17%',
             editable: true,
         },
         {
             title: 'Relationship',
             dataIndex: 'relationship',
             key: 'relationship',
-            width: '100px',
+            width: '17%',
             editable: true,
         },
         {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '60px',
+            width: '6%',
             fixed: 'right',
             align: 'center',
             render: (_, record) => {
@@ -536,6 +500,10 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
     async function onChangeToUpper(e, pointer) {
         if (pointer === 'fullName') {
             form.setFieldsValue({ 'fullName': toUpperText(e) });
+        } else if (pointer === 'suffix') {
+            form.setFieldsValue({ 'suffix': e });
+        } else {
+            form.setFieldValue({ 'birthdate': e });
         }
     }
 
@@ -553,13 +521,8 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
     }
 
     async function onChangedropdown(e, pointer) {
-        if (pointer === 'suffix') {
-            console.log("Selected suffix:", e); // Log the selected suffix
-            form.setFieldsValue({ 'suffix': e });
-        } else if (pointer === 'workEducStatus') {
+        if (pointer === 'workEducStatus') {
             form.setFieldsValue({ 'workEducStatus': e });
-        } else if (pointer === 'birthdate') {
-            form.setFieldsValue({ 'birthdate': e });
         } else {
             form.setFieldsValue({ 'Relationship': e });
         }
@@ -590,12 +553,11 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             : dataIndex === 'suffix'
                 ? (
                     <>
-                        <Select
+
+                        <Input
                             className='w-[10rem]'
-                            onChange={(value) => { onChangedropdown(value); }}
-                            placeholder='Suffix'
-                            options={getRelativeSuffix.data?.map(x => ({ value: x.code, label: x.description }))}
-                        />
+                            onChange={(e) => { onChangeToUpper(e.target.value, 'suffix'); }}
+                            placeholder='Suffix' />
                     </>
                 )
                 : dataIndex === 'contactNo'
@@ -612,7 +574,11 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                     : dataIndex === 'birthdate'
                         ? (<>
 
-                            <DatePicker onChange={(e) => { onChangedropdown(e, 'birthdate') }} />
+
+                            <Input
+                                className='w-[10rem]'
+                                onChange={(e) => { onChangeToUpper(e.target.value, 'birthdate'); }}
+                                placeholder='Age' />
 
                         </>
                         ) : dataIndex === 'workEducStatus'
