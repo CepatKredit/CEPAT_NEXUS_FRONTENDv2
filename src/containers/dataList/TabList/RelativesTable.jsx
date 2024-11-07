@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, Spin } from 'antd';
+import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, Spin, Form } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import { useQueryClient, useQuery } from '@tanstack/react-query';
@@ -12,6 +12,7 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import dayjs from 'dayjs';
 import { GetData } from '@utils/UserData';
 import { getDependentsCount } from '@hooks/DependentsController';
+import { toUpperText } from '@utils/Converter';
 
 
 function Relatives({ BorrowerId, onUpdateCount, User }) {
@@ -59,17 +60,13 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             }];
 
             result.data.list?.map((x, i) => {
-                const suffix = x.suffix && x.suffix !== 'N/A' ? x.suffix : '';
 
-                const fullNames = `${x.fullName || ''} ${suffix}`.trim();
-                //console.log("Key:", x.code); 
-                //   console.log("Full Name:", fullName);
+
                 dataList.push({
                     key: x.code,
                     no: i + 1,
                     FullName: x.fullName,
                     Suffix: x.suffix,
-                    FullNameSuffix: fullNames,
                     ContactNo: x.contactNo,
                     Birthdate: x.birthdate,
                     WorkEducStatus: x.workEducStatus,
@@ -111,7 +108,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         retryDelay: 1000,
     });
 
-    function GetReshipId() {
+    /*function GetReshipId() {
         if (!getRelationshipList.data) {
             return null; // or handle appropriately
         }
@@ -119,6 +116,17 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             (x) => x.description === getInfo.Relationship || x.code === getInfo.Relationship
         );
         return ReshipHolder ? ReshipHolder.code : null; // Safely return the code or null
+    }*/
+
+    function GetReshipId() {
+        if (!getRelationshipList.data) {
+            return null; // or handle appropriately
+        }
+        const relationshipvalue = form.getFieldValue('relationship');
+        const ReshipHolder = getRelationshipList.data.find(
+            (x) => x.description === relationshipvalue || x.code === relationshipvalue
+        );
+        return ReshipHolder ? ReshipHolder.code : null;
     }
 
     const [getSuffixList, setSuffixList] = React.useState()
@@ -138,108 +146,69 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         retryDelay: 1000,
     });
 
+    /*   function GetSuffixId() {
+           if (!getSuffixList) {
+               return null; // or handle appropriately
+           }
+           const suffixvalue = form.getFieldValue('relationship');
+           const SuffixHolder = getSuffixList.find(
+               (x) => x.description === suffixvalue || x.code === suffixvalue
+           );
+   
+           return SuffixHolder ? SuffixHolder.code : null; // Safely return the code or null
+       }*/
+
     function GetSuffixId() {
         if (!getSuffixList) {
             return null; // or handle appropriately
         }
+        const suffixValue = form.getFieldValue('suffix');
         const SuffixHolder = getSuffixList.find(
-            (x) => x.description === getInfo.Suffix || x.code === getInfo.Suffix
+            (x) => x.description === suffixValue || x.code === suffixValue
         );
-
-        return SuffixHolder ? SuffixHolder.code : null; // Safely return the code or null
+        return SuffixHolder ? SuffixHolder.code : null; // Return the correct code
     }
 
 
-    function GetWorkEducStatusId() {
+
+
+    /*function GetWorkEducStatusId() {
         const workEducStatusHolder = WorkEducStatusOption().find(
             (x) => x.label === getInfo.WorkEducStatus || x.value === getInfo.WorkEducStatus
         );
         return workEducStatusHolder ? workEducStatusHolder.value : null;
-    }
+    }*/
 
-    const [fieldErrors, setFieldErrors] = React.useState({
-        FullName: '',
-        ContactNo: '',
-        relationship: '',
-        suffix: '',
-        Birthdate: '',
-        WorkEducStatus: '',
-
-    });
-
-    function validateContactNumber(ContactNo) {
-
-        return ContactNo.trim() === '' || /^09\d{9}$/.test(ContactNo);
-    }
-
-    function validateFullName(FullName) {
-        return FullName.trim() !== '';
-    }
-    function validateSuffix(suffix) {
-        return suffix !== '';
-    }
-
-    function validateFullRelationship(relationship) {
-        return relationship.trim() !== '';
-    }
-    function validateFullbdate(Birthdate) {
-        return Birthdate.trim() !== '';
-    }
-    function validateWEstatus(WorkEducStatus) {
-        return WorkEducStatus !== '';
+    function GetWorkEducStatusId() {
+        const workValue = form.getFieldValue('WorkEducStatus');
+        const workEducStatusHolder = DropdownOwnedAssets().find(
+            (x) => x.label === workValue || x.value === workValue
+        );
+        return workEducStatusHolder ? workEducStatusHolder.value : null;
     }
 
 
     const [getAddStat, setAddStat] = React.useState(false)
 
     async function onClickSave() {
-        let errors = {};
-        if (!validateFullName(getInfo.FullName)) {
-            errors.FullName = 'Name is required.';
-        }
-        if (getInfo.ContactNo.trim() !== '' && !validateContactNumber(getInfo.ContactNo)) {
-            errors.ContactNo = 'Contact number should have exactly 11 digits and start with 09.';
-        }
-        if (!validateFullRelationship(getInfo.Relationship)) {
-            errors.relationship = 'Relationship is required.';
-        }
-        if (!validateFullbdate(getInfo.Birthdate)) {
-            errors.Birthdate = 'Birthdate is required.';
-        }
-        if (!validateWEstatus(getInfo.WorkEducStatus)) {
-            errors.WorkEducStatus = 'Work/Educ Status is required.';
-        }
-        if (!validateSuffix(getInfo.Suffix)) {
-            errors.suffix = 'Suffix is required.';
-        }
 
-
-
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-
-
-
-
-        setFieldErrors({ ContactNo: '', FullName: '', relationship: '', Birthdate: '', WorkEducStatus: '', Suffix: '' });
-
+        const row = await form.validateFields();
         setStat(false);
-        const formattedBirthdate = getInfo.Birthdate ? moment(getInfo.Birthdate).format('MM-DD-YYYY') : '';
+        const formattedBirthdate = row.birthdate ? moment(row.birthdate).format('MM-DD-YYYY') : '';
 
         const data = {
             BorrowersId: BorrowerId,
-            Fullname: getInfo.FullName,
+            Fullname: row.fullName,
             Suffix: GetSuffixId(),
-            Contactno: getInfo.ContactNo,
+            Contactno: row.contactNo,
             Birthdate: formattedBirthdate,
-            workEducStatus: getInfo.WorkEducStatus,
+            workEducStatus: row.workEducStatus,
             Relationship: GetReshipId(),
             RecUser: jwtDecode(token).USRID
         }
 
         try {
+            console.log(data)
             const result = await axios.post('/addRelatives', data);
             api[result.data.status]({
                 message: result.data.message,
@@ -260,7 +229,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                     WorkEducStatus: '',
                     Relationship: '',
                 });
-                handleFocus('fullName');
             }
         } catch (error) {
             api['error']({
@@ -270,57 +238,21 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         }
 
     }
-    function handleCancel() {
-        setFocus({
-            fullName: true,
-            suffix: false,
-            contactNo: false,
-            relationship: false,
-            birthdate: false,
-            workEducStatus: false,
-        });
-        setStat(true);
-        setAddStat(false);
-        setEditingKey('');
-    }
-
-
 
 
     async function onClickEdit() {
-        let errors = {};
-        if (!validateFullName(getInfo.FullName)) {
-            errors.FullName = 'Name is required.';
-        }
-
-        if (getInfo.ContactNo.trim() !== '' && !validateContactNumber(getInfo.ContactNo)) {
-            errors.ContactNo = 'Contact number should have exactly 11 digits and start with 09.';
-        }
-
-        if (!validateFullbdate(getInfo.Birthdate)) {
-            errors.Birthdate = 'Birthdate is required.';
-        }
-
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
 
 
-
-        // Clear errors if validation passes
-        setFieldErrors({ ContactNo: '', FullName: '', Birthdate: '' });
-
-
+        const row = await form.validateFields();
         getRelationshipList.refetch();
         getRelativeSuffix.refetch();
-        const formattedBirthdate = getInfo.Birthdate ? moment(getInfo.Birthdate).format('MM-DD-YYYY') : '';
+        const formattedBirthdate = row.birthdate ? moment(row.birthdate).format('MM-DD-YYYY') : '';
         try {
             const data = {
-                Code: getInfo.key,
-                Fullname: getInfo.FullName,
+                Code: row.key,
+                Fullname: row.fullName,
                 Suffix: GetSuffixId(),
-                Contactno: getInfo.ContactNo,
+                Contactno: row.contactNo,
                 Birthdate: formattedBirthdate,
                 workEducStatus: GetWorkEducStatusId(),  // Use the mapped value
                 Relationship: GetReshipId(),
@@ -374,12 +306,12 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
     }
     const calculateAge = (birthdate) => {
         if (!birthdate) return 'No Birthdate';
-        const birthMoment = moment(birthdate, "MM-DD-YYYY");
-        const today = moment();
-
+        const birthMoment = dayjs(birthdate, "MM-DD-YYYY");
+        const today = dayjs();
+    
         if (!birthMoment.isValid()) return 'Invalid Birthdate';
         const age = today.diff(birthMoment, 'years');
-
+    
         return `Age: ${age} years old`;
     };
     const disabledStatuses = [
@@ -388,7 +320,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
         'RETURN TO CREDIT OFFICER', 'RELEASED'
     ];
-
+    const [form] = Form.useForm();
     const columns = [
         {
             title: (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
@@ -396,13 +328,14 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                     <Button className='bg-[#3b0764]' type='primary' disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
                         icon={<PlusOutlined style={{ fontSize: '15px' }} />}
                         onClick={() => {
+                            const record = { key: 0, fullName: '', suffix: '', contactNo: '', birthdate: '', workEducStatus: '', relationship: '' }
+                            edit(record)
                             setStat(false)
                             setEditingKey(0);
                             setAddStat(!getAddStat)
                             setInfo({
                                 ...getInfo,
                                 FullName: '',
-                                FullNameSuffix: '',
                                 Suffix: '',
                                 ContactNo: '',
                                 Birthdate: '',
@@ -420,17 +353,17 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         },
 
         {
-            title: getAddStat || editingKey !== ''
-                ? (
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                        <span style={{ width: '12rem', borderRight: '1px solid #ddd', paddingRight: '8px' }}>Full Name</span>
-                        <span style={{ width: '12rem', paddingRight: '8px' }}>Suffix</span>
-                    </div>
-                )
-                : 'Full Name',
-            dataIndex: 'FullNameSuffix',
+            title: 'fullName',
+            dataIndex: 'fullName',
             key: 'fullName',
-            width: getAddStat || editingKey !== '' ? '11rem' : '8rem',
+            width: '120px',
+            editable: true,
+        },
+        {
+            title: 'suffix',
+            dataIndex: 'suffix',
+            key: 'suffix',
+            width: '120px',
             editable: true,
         },
         {
@@ -478,13 +411,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                 if (record.key === 0) {
                     return (
                         <Space>
-                            <Button
-                                ref={saveButtonRef}
-                                icon={<SaveOutlined />}
-                                type='primary'
-                                onClick={onClickSave}
-                            />
-                            {/*
                             <Tooltip title="Save">
                                 <Popconfirm
                                     title="Are you sure you want to save this record?"
@@ -492,29 +418,14 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button ref={saveButtonRef} icon={<SaveOutlined />} type='primary' />
+                                    <Button icon={<SaveOutlined />} type='primary' />
                                 </Popconfirm>
-                            </Tooltip>*/}
-
-                            <Button
-                                icon={<CloseOutlined />}
-                                type="primary"
-                                danger
-                                onClick={handleCancel}
-                            />
-                            {/*
+                            </Tooltip>
                             <Tooltip title="Cancel">
                                 <Popconfirm
                                     title="Are you sure you want to cancel this record?"
                                     onConfirm={() => {
-                                        setFocus({
-                                            fullName: false,
-                                            suffix: false,
-                                            contactNo: false,
-                                            remarks: false,
-                                            relationship: false,
-                                            workEducStatus: false,
-                                        })
+
                                         setStat(true)
                                         setAddStat(!getAddStat)
                                         setEditingKey('')
@@ -524,7 +435,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                                 >
                                     <Button icon={<CloseOutlined />} type='primary' danger />
                                 </Popconfirm>
-                            </Tooltip>*/}
+                            </Tooltip>
                         </Space>
                     )
                 }
@@ -534,23 +445,18 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                             <Tooltip title="Save">
                                 <Popconfirm
                                     title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickSave(); }}
+                                    onConfirm={() => { onClickEdit(); }}
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button ref={saveButtonRef} icon={<SaveOutlined />} type='primary' />
+                                    <Button icon={<SaveOutlined />} type='primary' />
                                 </Popconfirm>
                             </Tooltip>
-
                             <Tooltip title="Cancel">
                                 <Popconfirm
                                     title="Are you sure you want to cancel the edit?"
                                     onConfirm={() => {
-                                        setFocus({
-                                            firstName: false,
-                                            contactNo: false,
-                                            remarks: false,
-                                        })
+                                      
                                         setStat(true)
                                         setAddStat(!getAddStat)
                                         setEditingKey('')
@@ -567,14 +473,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                        setFocus({
-                                            firstName: false,
-                                            suffix: false,
-                                            contactNo: false,
-                                            remarks: false,
-                                            relationship: false,
-                                            workEducStatus: false,
-                                        })
+                                       
                                         edit(record)
                                         setAddStat(!getAddStat)
                                     }}
@@ -599,26 +498,17 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         },
     ];
 
-    const [getFocus, setFocus] = React.useState({
-        fullName: true,
-        suffix: false,
-        contactNo: false,
-        remarks: false,
-        relationship: false,
-        workEducStatus: false,
-    })
 
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
-        setInfo({
-            ...getInfo,
+        form.setFieldsValue({
             key: record.key,
-            FullName: record.fullName,
-            Suffix: record.suffix,
-            ContactNo: record.contactNo,
-            Birthdate: record.birthdate,
-            WorkEducStatus: record.workEducStatus,
-            Relationship: record.relationship,
+            fullName: record.fullName,
+            suffix: record.suffix,
+            contactNo: record.contactNo,
+            birthdate: record.birthdate,
+            workEducStatus: record.workEducStatus,
+            relationship: record.relationship,
         })
         setEditingKey(record.key);
     };
@@ -638,6 +528,41 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         };
     });
 
+
+    async function onChangeToUpper(e, pointer) {
+        if (pointer === 'fullName') {
+            form.setFieldsValue({ 'fullName': toUpperText(e) });
+        }
+    }
+
+
+    async function onChangeContactNo(e, pointer) {
+        if (pointer === 'contactNo') {
+            let value = e;
+
+            // Limit to 11 characters and ensure only numbers are input
+            if (!/^\d*$/.test(value)) return; // Allow only digits
+            value = value.slice(0, 11); // Limit to 11 digits
+
+            form.setFieldsValue({ 'contactNo': value });
+        }
+    }
+
+    async function onChangedropdown(e, pointer) {
+        if (pointer === 'suffix') {
+            console.log("Selected suffix:", e); // Log the selected suffix
+            form.setFieldsValue({ 'suffix': e });
+        } else if (pointer === 'workEducStatus') {
+            form.setFieldsValue({ 'workEducStatus': e });
+        } else if (pointer === 'birthdate') {
+            form.setFieldsValue({ 'birthdate': e });
+        } else {
+            form.setFieldsValue({ 'Relationship': e });
+        }
+    }
+    
+
+
     const EditableCell = ({
         editing,
         dataIndex,
@@ -648,142 +573,83 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         children,
         ...restProps
     }) => {
-        const inputNode = dataIndex === 'FullNameSuffix'
+        const inputNode = dataIndex === 'fullName'
             ? (
                 <>
-                    <Space>
-                        <Input
-                            id='fullName'
-                            className='w-[10rem]'
-                            value={(getInfo.FullName || '').toUpperCase()}
-                            onChange={(e) => {
-                                setInfo(prev => ({ ...prev, FullName: e.target.value.toUpperCase() }));
-                            }}
-                            placeholder='First Name'
-                            autoFocus={getFocus.fullName}
-                            onKeyDown={handleTabPress}
 
-                        />
-
-                        <Select
-                            id='suffix'
-                            ref={suffixRef} // Attach the ref to the Select component
-                            className='w-[10rem] ml-[1rem]'
-                            value={getInfo.Suffix || undefined}
-                            placeholder='Suffix'
-                            options={getRelativeSuffix.data?.map(x => ({ value: x.code, label: x.description }))}
-                            onChange={e => {
-                                setInfo(prev => ({ ...prev, Suffix: e }));
-
-                                // Set focus back to the Suffix Select component after selection
-                                setTimeout(() => {
-                                    suffixRef.current?.focus();
-                                }, 0);
-                            }}
-                            autoFocus={getFocus.suffix}
-                            onKeyDown={handleTabPress}
-                        />
-                    </Space>
-                    {fieldErrors.FullName && (
-                        <div className="text-red-500 mt-1 ml-[-12rem] text-[7px] font-bold text-center">{fieldErrors.FullName}</div>
-                    )}
-                    {fieldErrors.suffix && (
-                        <div className="text-red-500 mt-[-10px] ml-[7rem] text-[7px] font-bold text-center">{fieldErrors.suffix}</div>
-                    )}
+                    <Input
+                        className='w-[10rem]'
+                        onChange={(e) => { onChangeToUpper(e.target.value, 'fullName'); }}
+                        placeholder='First Name' />
                 </>
             )
-            : dataIndex === 'contactNo'
+            : dataIndex === 'suffix'
                 ? (
                     <>
-                        <Input
-                            id='contactNo'
-                            value={getInfo.ContactNo || ''}
-                            onChange={e => {
-                                let value = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
-                                if (!value.startsWith('09')) {
-                                    value = '09' + value; // Ensure it starts with "09"
-                                }
-                                if (value.length > 11) {
-                                    value = value.slice(0, 11); // Limit to 11 digits
-                                }
-                                setInfo(prev => ({ ...prev, ContactNo: value }));
-                            }}
-                            placeholder='Contact Number'
-                            autoFocus={getFocus.contactNo}
-                            onKeyDown={handleTabPress}
+                        <Select
+                            className='w-[10rem]'
+                            onChange={(value) => { onChangedropdown(value); }}
+                            placeholder='Suffix'
+                            options={getRelativeSuffix.data?.map(x => ({ value: x.code, label: x.description }))}
                         />
-
-                        {fieldErrors.ContactNo && (
-                            <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.ContactNo}</div>
-                        )}
                     </>
                 )
-                : dataIndex === 'birthdate'
-                    ? (<>
-                        <DatePicker
-                            id='birthdate'
-                            format="MM-DD-YYYY"
-                            value={getInfo.Birthdate ? dayjs(getInfo.Birthdate, 'MM-DD-YYYY') : null}  // Ensure value is correctly parsed
-                            onChange={(date, dateString) => {
-                                setInfo({ ...getInfo, Birthdate: date ? dayjs(date).format('MM-DD-YYYY') : '' });  // Use `date` for actual selection
-                            }}
-                            placeholder='Select Birthdate'
-                            autoFocus={getFocus.birthdate}
-                            onKeyDown={handleTabPress}
-                        />
-                        {fieldErrors.Birthdate && (
-                            <div className="text-red-500 mt-1 ml-[-1rem] text-[7px] font-bold text-center">{fieldErrors.Birthdate}</div>
-                        )}
-                    </>
-                    ) : dataIndex === 'workEducStatus'
+                : dataIndex === 'contactNo'
+                    ? (
+                        <>
+                            <Input
+                                className='w-[10rem]'
+                                onChange={(e) => onChangeContactNo(e.target.value, 'contactNo')}
+                                placeholder='Contact Number'
+                                maxLength={11}
+                            />
+                        </>
+                    )
+                    : dataIndex === 'birthdate'
                         ? (<>
-                            <Select
-                                id='workEducStatus'
-                                className="w-[100%]"
-                                value={getInfo.WorkEducStatus || undefined}
-                                placeholder="School / Employment"
-                                options={WorkEducStatusOption().map(x => ({
-                                    value: x.value,
-                                    label: x.label
-                                }))}
-                                onChange={e => {
-                                    setInfo(prev => ({ ...prev, WorkEducStatus: e }));
-                                }}
-                                autoFocus={getFocus.workEducStatus}
-                                onKeyDown={handleTabPress}
-                            />
-                            {fieldErrors.WorkEducStatus && (
-                                <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.WorkEducStatus}</div>
-                            )}
-                        </>
-                        )
-                        : (<>
 
+                            <DatePicker onChange={(e) => { onChangedropdown(e, 'birthdate') }} />
 
-                            <Select
-                                id='relationship'
-                                className='w-[100%]'
-                                value={getInfo.Relationship || undefined}
-                                placeholder='Relationship'
-                                options={getRelationshipList.data?.map(x => ({ value: x.description, label: x.description }))}
-                                onChange={e => {
-                                    setInfo(prev => ({ ...prev, Relationship: e }));
-                                }}
-                                autoFocus={getFocus.relationship}
-                                onKeyDown={handleTabPress}
-                            />
-                            {fieldErrors.relationship && (
-                                <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.relationship}</div>
-                            )}
                         </>
-                        );
+                        ) : dataIndex === 'workEducStatus'
+                            ? (<>
+                                <Select
+                                    className='w-[10rem]'
+                                    onChange={(value) => { onChangedropdown(value); }}
+                                    placeholder="School / Employment"
+                                    options={WorkEducStatusOption().map(x => ({
+                                        value: x.value,
+                                        label: x.label
+                                    }))}
+                                />
+
+                            </>
+                            )
+                            : (<>
+
+                                <Select
+                                    className='w-[10rem]'
+                                    onChange={(value) => { onChangedropdown(value); }}
+                                    placeholder='Relationship'
+                                    options={getRelationshipList.data?.map(x => ({ value: x.description, label: x.description }))}
+                                />
+
+                            </>
+                            );
 
         return (
             <td {...restProps}>
-                {editing ? (
-                    <>
-                        {inputNode}
-                    </>
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={
+                    dataIndex === 'contactNo'
+                        ? [
+                            { required: true, message: `Please input ${title}` },
+                            { pattern: /^09\d{9}$/, message: 'Must start with "09" and be 11 digits' }
+                        ]
+                        : [{ required: true, message: `Please input ${title}` }]
+                }
+                >
+                    {inputNode}
+                </Form.Item>
                 ) : (
                     children
                 )}
@@ -797,36 +663,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         ? getRelatives.data.filter(x => x.key !== 0)
         : [];
 
-    function handleTabPress(event) {
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            const formElements = Array.from(document.querySelectorAll('input, select'));
-            const currentIndex = formElements.indexOf(event.target);
-
-            // Check if current element is the last field (workEducStatus) before focusing Save button
-            if (formElements[currentIndex]?.id === 'relationship') {
-                saveButtonRef.current?.focus(); // Focus on Save button
-            } else {
-                // Move to the next field in the form
-                const nextIndex = (currentIndex + 1) % formElements.length;
-                formElements[nextIndex]?.focus();
-                handleFocus(formElements[nextIndex]?.id); // Update the focused state
-            }
-        }
-    }
-
-    function handleFocus(field) {
-        setFocus({
-            fullName: field === 'fullName',
-            suffix: field === 'suffix',
-            contactNo: field === 'contactNo',
-            relationship: field === 'relationship',
-            birthdate: field === 'birthdate',
-            workEducStatus: field === 'workEducStatus',
-        });
-    }
-
-
     return (
         <div className='h-[300px] flex flex-col items-center'>
             {contextHolder}
@@ -835,46 +671,46 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                     <SectionHeader title="OFW Dependents" />
                 </center>
                 <div className='mt-0'>
-                    <Table
-                        columns={mergedColumns}
-                        dataSource={
-                            loading
-                                ? []
-                                : (
-                                    getStat === false
-                                        ? getRelatives.data?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            fullName: x.FullName,
-                                            suffix: x.Suffix,
-                                            contactNo: x.ContactNo,
-                                            birthdate: x.Birthdate,
-                                            workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
-                                            relationship: x.Relationship,
-                                            FullNameSuffix: x.FullNameSuffix,
-                                        }))
-                                        : dataOnly?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            fullName: x.FullName,
-                                            suffix: x.Suffix,
-                                            contactNo: x.ContactNo,
-                                            birthdate: x.Birthdate,
-                                            workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
-                                            relationship: x.Relationship,
-                                            FullNameSuffix: x.FullNameSuffix,
-                                        }))
-                                )
-                        }
-                        components={{ body: { cell: EditableCell } }}
-                        scroll={{ y: 200, x: '100vw' }}
-                        rowClassName='editable-row'
-                        pagination={false}
-                        loading={{
-                            spinning: loading,
-                            indicator: <Spin tip="Loading..." />,
-                        }}
-                    />
+                    <Form form={form} component={false} >
+                        <Table
+                            columns={mergedColumns}
+                            dataSource={
+                                loading
+                                    ? []
+                                    : (
+                                        getStat === false
+                                            ? getRelatives.data?.map((x) => ({
+                                                key: x.key,
+                                                no: x.no,
+                                                fullName: x.FullName,
+                                                suffix: x.Suffix,
+                                                contactNo: x.ContactNo,
+                                                birthdate: x.Birthdate,
+                                                workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
+                                                relationship: x.Relationship,
+                                            }))
+                                            : dataOnly?.map((x) => ({
+                                                key: x.key,
+                                                no: x.no,
+                                                fullName: x.FullName,
+                                                suffix: x.Suffix,
+                                                contactNo: x.ContactNo,
+                                                birthdate: x.Birthdate,
+                                                workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
+                                                relationship: x.Relationship,
+                                            }))
+                                    )
+                            }
+                            components={{ body: { cell: EditableCell } }}
+                            scroll={{ y: 200, x: '100vw' }}
+                            rowClassName='editable-row'
+                            pagination={false}
+                            loading={{
+                                spinning: loading,
+                                indicator: <Spin tip="Loading..." />,
+                            }}
+                        />
+                    </Form>
 
                 </div>
             </div>
