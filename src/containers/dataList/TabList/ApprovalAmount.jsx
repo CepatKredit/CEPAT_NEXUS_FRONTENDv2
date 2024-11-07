@@ -84,7 +84,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             ) : (
                 <EditApprovalAmount data={data} receive={receive} User={User} />
             )}
-             <div className="w-[73rem]  mt-[0.4rem] mx-auto">
+             <div className="w-[73rem] mb-[10rem] mt-[1rem] mx-auto">
             <AmountTable data={data} receive={receive} User="Credit" creditisEdit={false} loading={false} />
             </div>
 
