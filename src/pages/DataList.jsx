@@ -66,6 +66,7 @@ function DataList() {
             NO: i + 1,
             LAN: <Button key={i} onClick={() => {
               localStorage.setItem('SIDC', toEncrypt(x.loanAppId));
+              localStorage.setItem('activeTab','deduplication')
               navigate(`${localStorage.getItem('SP')}/${x.loanAppCode}/deduplication`)
               queryClient.invalidateQueries({ queryKey: ['getRemarks', x.loanAppCode] }, { exact: true })
             }} type='link'>{x.loanAppCode}</Button>,

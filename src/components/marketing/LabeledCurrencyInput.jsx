@@ -74,7 +74,7 @@ function LabeledCurrencyInput({
                 setIcon(true);
                 //debreceive(formattedValue);
             }
-        } else if ((required || required === undefined) && (placeHolder === 'Rent Amount' || placeHolder === 'Monthly Amortization' || placeHolder === 'Calculated Total Exposure' || placeHolder === 'Calculated Monthly Amortization' || placeHolder === 'Enter Other Exposure')) {
+        } else if ((required || required === undefined) && (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure')) {
             if (!plainNum || parsedNum < 30000) {
                 setStatus('error');
                 setIcon(true);
@@ -101,7 +101,7 @@ function LabeledCurrencyInput({
             } else {
                 setStatus('');
             }
-        } else if (placeHolder === 'Rent Amount' || placeHolder === 'Monthly Amortization' || placeHolder === 'Calculated Total Exposure' || placeHolder === 'Calculated Monthly Amortization' || placeHolder === 'Enter Other Exposure') {
+        } else if (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure') {
             if (!plainNum || parsedNum < 30000) { 
                 setStatus('error');
             } else {
@@ -123,7 +123,7 @@ function LabeledCurrencyInput({
         }
     }, []);
 
-    React.useEffect(()=>{ // Update Value once For Calculation in some Contents
+    React.useEffect(()=>{ 
         if(rendered && calculated_val != undefined){
             setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(calculated_val?calculated_val.toString() : '0.00')))
             if(calculated_val  && placeHolder === 'Calculated Monthly Amortization'){
