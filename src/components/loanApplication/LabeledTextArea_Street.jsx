@@ -56,17 +56,17 @@ function LabeledTextArea_Street({
     }
   }, []);
 
-  React.useEffect(() => {
-    if (rendered) {
-      onBlur();
-    }
-  }, [
-    data.ofwPresProv,
-    data.ofwPermProv,
-    data.benpresprov,
-    data.ofwSameAdd,
-    data.bensameadd,
-  ]); // Add dependencies here
+  // React.useEffect(() => {
+  //   if (rendered) {
+  //     onBlur();
+  //   }
+  // }, [
+  //   data.ofwPresProv,
+  //   data.ofwPermProv,
+  //   data.benpresprov,
+  //   data.ofwSameAdd,
+  //   data.bensameadd,
+  // ]); // Add dependencies here
 
   return (
     <div className={className_dmain}>

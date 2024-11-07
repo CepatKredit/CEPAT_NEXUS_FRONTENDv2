@@ -204,6 +204,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         direct={direct}
         fieldName={'ofwgender'}
         rendered={ofwrendered}
+         disabled={!direct && !getAppDetails.dataPrivacy}
       />
 
       <LabeledSelect
