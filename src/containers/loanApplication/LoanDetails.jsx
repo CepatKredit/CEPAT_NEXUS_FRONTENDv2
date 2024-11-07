@@ -31,15 +31,15 @@ function LoanDetails({
   );
   const [readMore, setReadMore] = React.useState(false);
 
-  const [loanStates, setLoanStates] = React.useState({
-    validDDate: loanrendered,
-    consulant: loanrendered,
-    consulNo: loanrendered,
-    branch: loanrendered,
-    referred: loanrendered,
-  });
+  // const [loanStates, setLoanStates] = React.useState({
+  //   validDDate: loanrendered,
+  //   consulant: loanrendered,
+  //   consulNo: loanrendered,
+  //   branch: loanrendered,
+  //   referred: loanrendered,
+  // });
 
-  const { validDDate, consulant, consulNo, branch, referred } = loanStates;
+  // const { validDDate, consulant, consulNo, branch, referred } = loanStates;
 
   const classname_main =
     "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
@@ -118,13 +118,6 @@ function LoanDetails({
           className_label={className_label}
           className_dsub={className_dsub}
           label={<>Select Loan Product <span className="text-red-500">*</span></>}
-          // value={getAppDetails.loanProd}
-        //   receive={(e) => {
-        //     receive({
-        //       name: "loanProd",
-        //       value: e,
-        //     });
-        //   }}
           category={"direct"}
           placeHolder="Loan Product"
           disabled={!getAppDetails.dataPrivacy}
@@ -139,13 +132,6 @@ function LoanDetails({
             className_label={className_label}
             className_dsub={className_dsub}
             label={<>OFW Departure Date <span className="text-red-500">*</span></>}
-            // value={getAppDetails.loanDateDep}
-            // receive={(e) => {
-            //   receive({
-            //     name: "loanDateDep",
-            //     value: dayjs(e, "MM-DD-YYYY"),
-            //   });
-            // }}
             disabled={false || !getAppDetails.dataPrivacy}
             category={"direct"}
             placeHolder={"MM-DD-YYYY"}
@@ -160,13 +146,6 @@ function LoanDetails({
           className_label={className_label}
           className_dsub={className_dsub}
           label={<>Select Loan Purpose <span className="text-red-500">*</span></>}
-          // value={getAppDetails.loanPurpose}
-        //   receive={(e) => {
-        //     receive({
-        //       name: "loanPurpose",
-        //       value: e,
-        //     });
-        //   }}
           category={"direct"}
           placeHolder={"Loan Purpose"}
           disabled={!getAppDetails.dataPrivacy}
@@ -179,13 +158,6 @@ function LoanDetails({
           className_dsub={className_dsub}
           label={<>Loan Amount <span className="text-red-500">*</span></>}
           fieldName="loanAmount"
-          // value={getAppDetails.loanAmount}
-          // receive={(e) => {
-          //     receive({
-          //         name: 'loanAmount',
-          //         value: e
-          //     });
-          // }}
           category={"direct"}
           placeHolder={"Loan Amount"}
           disabled={!getAppDetails.dataPrivacy}
@@ -197,14 +169,7 @@ function LoanDetails({
           className_dsub={className_dsub}
           label={<>Loan Terms (in Months) <span className="text-red-500">*</span></>}
           fieldName="loanTerms"
-          // value={getAppDetails.loanTerms}
           data={LoanTerms(12)}
-          // receive={(e) => {
-          //   receive({
-          //     name: "loanTerms",
-          //     value: e,
-          //   }); 
-          // }}
           placeHolder={"Loan Terms"}
           category={"direct"}
           disabled={!getAppDetails.dataPrivacy}
@@ -219,16 +184,7 @@ function LoanDetails({
             className_dsub={className_dsub}
             label={<>How did you know about Cepat Kredit Financing? <span className="text-red-500">*</span></>}
             fieldName="hckfi"
-            // value={getAppDetails.hckfi}
             data={Hckfi()}
-            // receive={(e) => {
-            //   const { name, value } = getHCKFILoanCases(
-            //     e,
-            //     receive,
-            //     loanDatailCases
-            //   );
-            //   receive({ name, value });
-            // }}
             category={"direct"}
             placeHolder={"Please select..."}
             disabled={!getAppDetails.dataPrivacy}
@@ -248,20 +204,13 @@ function LoanDetails({
                 }
                 className_dsub={"w-full sm:w-[400px]"}
                 label={"Loan Consultant Name"}
-                // value={getAppDetails.consultName}
                 fieldName="consultName"
                 placeHolder="Consultant Fullname"
                 required={false}
-                // receive={(e) => {
-                //   receive({
-                //     name: "consultName",
-                //     value: e,
-                //   });
-                // }}
                 category={"direct"}
                 readOnly={GetData("ROLE").toString() === "20" ? true : false}
                 disabled={!getAppDetails.dataPrivacy}
-                rendered={loanrendered && consulant}
+                rendered={loanrendered}
               />
             ) : (
               <LabeledInput_UpperCase
@@ -270,19 +219,12 @@ function LoanDetails({
                 className_dsub={className_dsub}
                 label={<>Loan Consultant Name<span className="text-red-500">*</span></>}
                 fieldName="consultName"
-                // value={getAppDetails.consultName}
                 placeHolder="Consultant Fullname"
-                required={false}
-                // receive={(e) => {
-                //   receive({
-                //     name: "consultName",
-                //     value: e,
-                //   });
-                // }}
+                // required={false}
                 category={"direct"}
                 readOnly={GetData("ROLE").toString() === "20" ? true : false}
                 disabled={!getAppDetails.dataPrivacy}
-                rendered={loanrendered && consulant}
+                rendered={loanrendered}
               />
             )
           ) : (
@@ -290,17 +232,10 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={<>Loan Consultant Name<span className="text-red-500">*</span></>}
+              label={<>Loan Consultant Name <span className="text-red-500">*</span></>}
               fieldName="consultName"
-              // value={getAppDetails.consultName}
               placeHolder="Consultant Fullname"
-              required={false}
-              // receive={(e) => {
-              //   receive({
-              //     name: "consultName",
-              //     value: e,
-              //   });
-              // }}
+              // required={false}
               category={"direct"}
               readOnly={
                 GetData("ROLE") !== null
@@ -310,7 +245,7 @@ function LoanDetails({
                   : false
               }
               disabled={!getAppDetails.dataPrivacy}
-              rendered={loanrendered && consulant}
+              rendered={loanrendered}
             />
           )}
           {GetData("ROLE") !== null ? (
@@ -322,18 +257,12 @@ function LoanDetails({
                 className_label={className_label}
                 className_dsub={className_dsub}
                 label={"Loan Consultant Number"}
-                // value={getAppDetails.consultNumber}
-                // receive={(e) => {
-                //   receive({
-                //     name: "consultNumber",
-                //     value: e,
-                //   });
-                // }}
+                fieldName="consultNumber"
                 placeHolder={"Consultant No."}
                 category={"direct"}
-                required={false}
+                // required={false}
                 disabled={!getAppDetails.dataPrivacy}
-                rendered={loanrendered && consulNo}
+                rendered={loanrendered}
               />
             )
           ) : (
@@ -341,20 +270,13 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={"Loan Consultant Number"}
-              // value={getAppDetails.consultNumber}
-              // receive={(e) => {
-              //   receive({
-              //     name: "consultNumber",
-              //     value: e,
-              //   });
-              // }}
+              label={<>Loan Consultant Number <span className="text-red-500">*</span></>}
               fieldName="consultNumber"
               placeHolder={"Consultant No."}
               category={"direct"}
-              required={false}
+              // required={false}
               disabled={!getAppDetails.dataPrivacy}
-              rendered={loanrendered && consulNo}
+              rendered={loanrendered}
             />
           )}
         </div>
@@ -369,15 +291,8 @@ function LoanDetails({
               className_label={className_label}
               className_dsub={className_dsub}
               label={"Loan Consultant FB Name/Profile"}
-              // value={getAppDetails.consultProfile}
               fieldName="consultProfile"
               placeHolder="Consultant FB Name/Profile"
-              // receive={(e) => {
-              //   receive({
-              //     name: "consultProfile",
-              //     value: e,
-              //   });
-              // }}
               category={"direct"}
               required={false}
               disabled={!getAppDetails.dataPrivacy}
@@ -404,7 +319,7 @@ function LoanDetails({
                   category={"direct"}
                   showSearch={true}
                   disabled={!getAppDetails.dataPrivacy}
-                  rendered={loanrendered && branch}
+                  rendered={loanrendered}
                 />
               </div>
             ) : (
@@ -440,7 +355,7 @@ function LoanDetails({
                   : false
               } //include fb in the list to auto select
               disabled={!getAppDetails.dataPrivacy}
-              rendered={loanrendered && branch}
+              rendered={loanrendered}
             />
           ) : (
             <></>
@@ -455,18 +370,10 @@ function LoanDetails({
               data={ReferredBy()}
               showSearch={true}
               fieldName="loanReferredBy"
-              // value={getAppDetails.loanReferredBy}
-              // getAppDetails={ReferredBy()}
-              // receive={(e) => {
-              //   receive({
-              //     name: "loanReferredBy",
-              //     value: e,
-              //   });
-              // }}
               category={"direct"}
               placeHolder={"Please Select..."}
               disabled={!getAppDetails.dataPrivacy}
-              rendered={loanrendered && referred}
+              rendered={loanrendered}
             />
           ) : (
             <></>

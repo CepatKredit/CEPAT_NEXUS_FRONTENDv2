@@ -55,7 +55,8 @@ export const LoanApplicationProvider = ({ children, direct }) => {
 
   const resetAppDetails = () => {
 
-    setAppDetails(""); // Set all fields to empty
+    setAppDetails(createInitialAppDetails(direct));
+    localStorage.removeItem('CLID');
   };
 
   return (
