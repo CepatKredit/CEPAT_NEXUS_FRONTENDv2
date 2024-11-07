@@ -25,6 +25,7 @@ import { useMutation } from '@tanstack/react-query';
 import UnlockAccount from '@containers/portalLogin/UnlockAccount';
 import { decode } from '@utils/Secure';
 import { toEncrypt } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function PortalLogin() {
 
@@ -33,6 +34,7 @@ function PortalLogin() {
     const [passwordVisible, setPasswordVisible] = React.useState(false);
     const navigate = useNavigate()
     const { state } = useLocation()
+    const { resetAppDetails } = React.useContext(LoanApplicationContext)
 
     React.useEffect(() => {
         if (state && state.status) {
@@ -259,7 +261,7 @@ function PortalLogin() {
                     <div>
                         <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', borderRadius: 100, borderRadiusLG: 100, borderRadiusSM: 100 } }}>
                             <Button className='mt-8 text-3xl font-semibold w-[400px] h-[50px] bg-[#3b0764]' size='large' type='primary'
-                                onClick={() => { navigate('/loan-application') }}
+                                onClick={() => { resetAppDetails(); navigate('/loan-application') }}
                                 onKeyUp={(e) => { e.key === 'enter' ? navigate('/loan-application') : '' }}>APPLY FOR A LOAN</Button>
                         </ConfigProvider>
                     </div>
