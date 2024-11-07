@@ -314,12 +314,16 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
     
         return `Age: ${age} years old`;
     };
+    
     const disabledStatuses = [
         'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
         'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
         'RETURN TO CREDIT OFFICER', 'RELEASED'
     ];
+
+    
+
     const [form] = Form.useForm();
     const columns = [
         {
@@ -456,7 +460,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                                 <Popconfirm
                                     title="Are you sure you want to cancel the edit?"
                                     onConfirm={() => {
-                                      
+
                                         setStat(true)
                                         setAddStat(!getAddStat)
                                         setEditingKey('')
@@ -473,7 +477,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                       
+
                                         edit(record)
                                         setAddStat(!getAddStat)
                                     }}
@@ -560,7 +564,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             form.setFieldsValue({ 'Relationship': e });
         }
     }
-    
+
 
 
     const EditableCell = ({

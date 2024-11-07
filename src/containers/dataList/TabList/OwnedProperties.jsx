@@ -68,6 +68,10 @@ function OwnedProperties({ data, User }) {
             setLoading(false);
             return dataList;
         },
+        onError: (error) => {
+            setLoading(false);
+            console.log(error);
+        },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
         },
@@ -75,17 +79,7 @@ function OwnedProperties({ data, User }) {
         retryDelay: 1000,
     });
 
-    /*useEffect(() =>
-    {
-        console.log('loan product ' + data.loanProd);
-    }, [data])*/
-
-    /*const [fieldErrors, setFieldErrors] = React.useState({
-        Properties: '',
-        Location: '',
-        Remarks: '',
-    });*/
-
+ 
     function GetPropertiesOption() {
         const Properties = form.getFieldValue('properties');
         const PropertiesOptionHolder = DropdownOwnedProperties().find(
@@ -271,21 +265,21 @@ function OwnedProperties({ data, User }) {
             title: 'Properties',
             dataIndex: 'properties',
             key: 'properties',
-            width: '40px',
+            width: '30%',
             editable: true,
         },
         {
             title: 'Location',
             dataIndex: 'location',
             key: 'location',
-            width: '40px',
+            width: '30%',
             editable: true,
         },
         {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '100px',
+            width: '40%',
             editable: true,
         },
         {

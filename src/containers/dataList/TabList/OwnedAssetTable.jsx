@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef  } from 'react';
 import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin, Form } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
@@ -24,6 +24,7 @@ function OwnedAsset({ data, User }) {
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
     const [editingKey, setEditingKey] = React.useState('');
+    const saveButtonRef = useRef(null);
     const [getInfo, setInfo] = React.useState({
         LoanAppId: '',
         key: '',
@@ -66,6 +67,10 @@ function OwnedAsset({ data, User }) {
             });
             setLoading(false);
             return dataList;
+        },
+        onError: (error) => {
+            setLoading(false);
+            console.log(error);
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
@@ -170,7 +175,7 @@ function OwnedAsset({ data, User }) {
                     description: error.message,
                 });
             })
-
+            saveButtonRef.current?.focus();
     }
 
     async function onClickEdit() {
@@ -288,28 +293,28 @@ function OwnedAsset({ data, User }) {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            width: '40px',
+            width: '22%',
             editable: true,
         },
         {
             title: 'Make',
             dataIndex: 'make',
             key: 'make',
-            width: '40px',
+            width: '27%',
             editable: true,
         },
         {
             title: 'Year Model',
             dataIndex: 'yearModel',
             key: 'yearModel',
-            width: '40px',
+            width: '27%',
             editable: true,
         },
         {
             title: 'Plate Number',
             dataIndex: 'plateNo',
             key: 'plateNo',
-            width: '100px',
+            width: '27%',
             editable: true,
         },
         {
