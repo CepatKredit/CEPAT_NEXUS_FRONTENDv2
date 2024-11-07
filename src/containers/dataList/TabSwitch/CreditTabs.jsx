@@ -572,7 +572,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         {
             label: <div className='flex flex-rows'><MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>,
             key: 'NDI',
-            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={GetData('ROLE').toString() === '60'} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />,
+            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={true} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />,
         },
         {
             label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
