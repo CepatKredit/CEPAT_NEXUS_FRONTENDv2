@@ -545,7 +545,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                 <>
 
                     <Input
-                        className='w-[10rem]'
+                        className='w-[17rem]'
                         onChange={(e) => { onChangeToUpper(e.target.value, 'fullName'); }}
                         placeholder='First Name' />
                 </>
@@ -555,7 +555,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                     <>
 
                         <Input
-                            className='w-[10rem]'
+                            className='w-[5rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'suffix'); }}
                             placeholder='Suffix' />
                     </>
@@ -564,7 +564,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                     ? (
                         <>
                             <Input
-                                className='w-[10rem]'
+                                className='w-[8rem]'
                                 onChange={(e) => onChangeContactNo(e.target.value, 'contactNo')}
                                 placeholder='Contact Number'
                                 maxLength={11}
@@ -576,7 +576,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
 
 
                             <Input
-                                className='w-[10rem]'
+                                className='w-[5rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'birthdate'); }}
                                 placeholder='Age' />
 
