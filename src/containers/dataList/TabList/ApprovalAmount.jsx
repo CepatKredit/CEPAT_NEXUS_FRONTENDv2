@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import ViewApprovalAmount from './approvalAmount/ViewApprovalAmount';
 import EditApprovalAmount from './approvalAmount/EditApprovalAmount';
-import { FloatButton, notification, ConfigProvider } from 'antd';
+import { Button, notification, ConfigProvider } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
@@ -77,50 +77,54 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
 
     return (
         <div className={classname}>
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-            {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                <ViewApprovalAmount loading={loading} data={data} User={User} />
-            ) : (
-                <EditApprovalAmount data={data} receive={receive} User={User} />
-            )}
+    <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+    {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+        <ViewApprovalAmount loading={loading} data={data} User={User} />
+    ) : (
+        <EditApprovalAmount data={data} receive={receive} User={User} />
+    )}
 
-            {contextHolder}
-            {/*(*/GetData('ROLE').toString() === '60' &&
+    {contextHolder}
+     {/*(*/GetData('ROLE').toString() === '60' &&
                 /*['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) &&*/ (
-                    <FloatButton.Group
-                        shape="circle"
-                        style={{ right: 24, bottom: 24 }}
+                    <div className="flex justify-center items-center mt-8">
+                    {isEdit ? (
+                    <>
+                        <Button
+                            type="primary"
+                            icon={<SaveOutlined />}
+                            onClick={toggleEditMode}
+                            className="bg-green-500 border-none mr-4"
+                            style={{ color: '#3b0764' }}
+                        >
+                            Save
+                        </Button>
+                        <Button
+                            type="default"
+                            icon={<CloseOutlined />}
+                            onClick={() => {
+                                setEdit(false);
+                                queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+                            }}
+                            className="bg-red-500 text-white border-none"
+                        >
+                            Cancel
+                        </Button>
+                    </>
+                ) : (
+                    <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        onClick={toggleEditMode}
+                        className="bg-[#3b0764] text-white border-none"
+                        style={{ color: '#1ad819' }}
                     >
-                        {isEdit ? (
-                            <>
-                                <FloatButton
-                                    className="bg-green-500"
-                                    icon={<SaveOutlined className="text-[#3b0764]" />}
-                                    tooltip="Save"
-                                    onClick={() => { toggleEditMode(); }}
-                                />
-                                <FloatButton
-                                    className="bg-red-500"
-                                    icon={<CloseOutlined />}
-                                    tooltip="Cancel"
-                                    onClick={() => {
-                                        setEdit(false);
-                                        queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
-
-                                    }}
-                                />
-                            </>
-                        ) : (
-                            <FloatButton
-                                className="bg-[#3b0764] text-white"
-                                icon={<EditOutlined className="text-[#1ad819]" />}
-                                tooltip="Edit"
-                                onClick={toggleEditMode}
-                            />
-                        )}
-                    </FloatButton.Group>
+                        Edit
+                    </Button>
                 )}
-        </div>
+            </div>
+        )}
+</div>
     );
 }
 
