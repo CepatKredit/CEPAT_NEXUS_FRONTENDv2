@@ -89,55 +89,55 @@ function AmountTable({ data, receive, User, creditisEdit, loading }) {
             title: 'Approved Amount', 
             dataIndex: 'ApprvAmount', 
             key: 'ApprvAmount', 
-            render: (text) => <span className="text-xs">{text || 'N/A'}</span> 
+            render: (text) => <span className="text-xs">{text || ''}</span> 
         },
         { 
             title: 'Interest Rate (%)', 
             dataIndex: 'ApprvInterestRate', 
             key: 'ApprvInterestRate', 
-            render: (text) => <span className="text-xs">{text || 'N/A'}</span> 
+            render: (text) => <span className="text-xs">{text || ''}</span> 
         },
         { 
             title: 'Approved Terms', 
             dataIndex: 'ApprvTerms', 
             key: 'ApprvTerms', 
-            render: (text) => <span className="text-xs">{text ? `${text} months` : 'N/A'}</span> 
+            render: (text) => <span className="text-xs">{text ? `${text} months` : ''}</span> 
         },
         { 
             title: 'Monthly Amortization', 
             dataIndex: 'MonthlyAmort', 
             key: 'MonthlyAmort', 
-            render: (text) => <span className="text-xs">{text || 'N/A'}</span> 
+            render: (text) => <span className="text-xs">{text || ''}</span> 
         },
         { 
             title: 'Other Exposure', 
             dataIndex: 'OtherExposure', 
             key: 'OtherExposure', 
-            render: (text) => <span className="text-xs">{text || 'N/A'}</span> 
+            render: (text) => <span className="text-xs">{text || ''}</span> 
         },
         { 
             title: 'Total Exposure', 
             dataIndex: 'TotalExposure', 
             key: 'TotalExposure', 
-            render: (text) => <span className="text-xs">{text || 'N/A'}</span> 
+            render: (text) => <span className="text-xs">{text || ''}</span> 
         },
         { 
             title: 'Encoded By', 
             dataIndex: 'ModUser', 
             key: 'ModUser', 
-            render: (text, record) => <span className="text-xs">{text || record.modUser || 'N/A'}</span> 
+            render: (text, record) => <span className="text-xs">{text || record.modUser || ''}</span> 
         },
         { 
             title: 'Approved By', 
             dataIndex: 'ModUser', 
             key: 'ModUser', 
-            render: (text, record) => <span className="text-xs">{text || record.modUser || 'N/A'}</span> 
+            render: (text, record) => <span className="text-xs">{text || record.modUser || ''}</span> 
         },
         { 
             title: 'Remarks', 
             dataIndex: 'CRORemarks', 
             key: 'CRORemarks', 
-            render: (text) => <span className="text-xs">{text || 'N/A'}</span> 
+            render: (text) => <span className="text-xs">{text || ''}</span> 
         },
         { 
             title: <span className="text-xs font-bold">Action</span>, 
