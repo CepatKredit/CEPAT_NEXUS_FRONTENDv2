@@ -23,8 +23,8 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
 
     const valid_addcoborrow = !data.coborrowfname || data.coborrowfname.trim() === "" ||
         !data.coborrowlname || data.coborrowlname.trim() === "" ||
-        !data.coborrowbdate || !data.coborrowsuffix || !data.coborrowgender ||
-        !data.coborrowmstatus /*|| !data.coborrowdependents || !data.coborrowfblink ||
+        !data.coborrowbdate || !data.coborrowsuffix || !data.coborrowgender /*||
+        !data.coborrowmstatus || !data.coborrowdependents || !data.coborrowfblink ||
         !data.coborrowemail || !data.coborrowmobile ||
         ((data.coborrowmstatus === 2 || data.coborrowmstatus === 5 || data.coborrowmstatus === 6) && (!data.coborrowspousename || !data.coborrowerspousebdate))*/
 
@@ -155,7 +155,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbFbProfile: data.coborrowfblink || '',
                 AcbSpouseName: data.coborrowspousename || '',
                 AcbSpouseBirthday:data.coborrowerspousebdate? mmddyy(data.coborrowerspousebdate) : '',
-                AcbOwnership: data.coborrowresidences,
+                AcbOwnership: data.coborrowresidences || 0,
                 AcbAddress1: data.coborrowStreet || '',
                 AcbBarangay: data.coborrowBarangay || '',
                 AcbMunicipality: data.coborrowMunicipality || '',
@@ -177,21 +177,21 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             AcbSuffix: data.coborrowsuffix || 0,
             AcbBirthday:data.coborrowbdate? mmddyy(data.coborrowbdate) : '',
             AcbGender: data.coborrowgender ,
-            AcbCivilStatus: data.coborrowmstatus,
+            AcbCivilStatus: data.coborrowmstatus || 0,
             AcbDependent: data.coborrowdependents || 0,
-            AcbEmail: data.coborrowemail,
-            AcbMobileNo: data.coborrowmobile,
+            AcbEmail: data.coborrowemail || '',
+            AcbMobileNo: data.coborrowmobile || '',
             AcbMobileNo2: data.coborrowothermobile || '',
-            AcbFbProfile: data.coborrowfblink,
+            AcbFbProfile: data.coborrowfblink || '',
             AcbSpouseName: data.coborrowspousename || '',
             AcbSpouseBirthday: data.coborrowerspousebdate ? mmddyy(data.coborrowerspousebdate) : '',
-            AcbOwnership: data.coborrowresidences,
-            AcbAddress1: data.coborrowStreet,
-            AcbBarangayId: data.coborrowBarangay,
-            AcbMunicipalityId: data.coborrowMunicipality,
-            AcbProvinceId: data.coborrowProv,
-            AcbStayMonths: data.AcbStayMonths,
-            AcbStayYears: data.AcbStayYears,
+            AcbOwnership: data.coborrowresidences || 0,
+            AcbAddress1: data.coborrowStreet || '',
+            AcbBarangayId: data.coborrowBarangay || '',
+            AcbMunicipalityId: data.coborrowMunicipality || '',
+            AcbProvinceId: data.coborrowProv || '',
+            AcbStayMonths: data.AcbStayMonths || 0,
+            AcbStayYears: data.AcbStayYears || 0,
             RecUser: jwtDecode(token).USRID
         };
         console.log('bentest', value)

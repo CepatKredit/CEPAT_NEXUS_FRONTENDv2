@@ -33,7 +33,7 @@ function LabeledInput_LengthStay({ rendered, label, value_year, value_month, rec
         const inputValue = e.target.value;
         if (!(/^\d{3}$/.test(inputValue)) && /^[0-9]*$/.test(inputValue)) {
             setValueM(inputValue)
-            if ((parseInt(inputValue) >= 1 && parseInt(inputValue) <= 11) || (parseInt(inputValue) === 0 && parseInt(getValueY) >= 1)) {
+            if ((parseInt(inputValue) >= 1 && parseInt(inputValue) <= 11) || ((inputValue === '' || parseInt(inputValue) === 0) && parseInt(getValueY) >= 1)) {
                 if(getStatus[0]===0 && getStatus[1] ===0){
                     setStatus(prevStatus => [prevStatus[0], 1]);
                 }
@@ -112,7 +112,7 @@ function LabeledInput_LengthStay({ rendered, label, value_year, value_month, rec
             </Space.Compact>
             {(getStatus[0] === 0 || getStatus[1] === 0) && (
                 <div className='text-xs text-red-500 pt-1 pl-2'>
-                    {`${placeHolder} Required`}
+                    {`Length of Stay Required`}
                 </div>
             )}
         </div>

@@ -515,7 +515,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         receiveY={(e) => receive({ name: 'ofwlosYear', value: e })}
                         receiveM={(e) => receive({ name: 'ofwlosMonth', value: e })}
                         rendered={rendered}
-                        placeHolder={'Length of Stay'}
                     />)}
                 {User === 'LC'
                     ? (<></>)

@@ -1,8 +1,11 @@
 import * as React from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from "@api/base-api/BaseApi";
+import { LoanProductList } from '@components/ComponentDataHooks';
 const DataContext = React.createContext()
 function PreLoad({ children }) {
+    //From components
+    const GET_LOAN_PRODUCT_LIST = LoanProductList();
 
     const [getPurpose, setPurpose] = React.useState([])
     const getPurposeList = useQuery({
@@ -78,6 +81,9 @@ function PreLoad({ children }) {
 
     return (
         <DataContext.Provider value={{
+            //Components
+            GET_LOAN_PRODUCT_LIST,
+            //Accounting
             getBank,
             getPurpose,
             GET_LOAN_APPLICATION_NUMBER,
