@@ -195,8 +195,9 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                 MiscExpense: 0.00,
                 MiscExpenseDoc: 0.00,
             });
+        }else{
+            setTrigger(1)
         }
-        setTrigger(1)
 
     }, [MiscExp])
 

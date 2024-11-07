@@ -183,8 +183,9 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                 MiscExpense: 0.00,
                 MiscExpenseDoc: 0.00,
             });
+        }else{
+            setTrigger(1)
         }
-        setTrigger(1)
 
     }, [MiscExp])
     const [getOtherIncome, setOtherIncome] = React.useState([])
