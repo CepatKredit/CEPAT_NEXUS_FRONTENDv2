@@ -7,7 +7,7 @@ function GenderRadioGroup({
   classname_main,
   className_label,
   className_dsub,
-  direct,
+  disabled,
   fieldName,
   rendered,
 }) {
@@ -37,7 +37,7 @@ function GenderRadioGroup({
       setStatus("error");
       setIcon(true);
       updateAppDetails({
-        name: getAppDetails[fieldName],
+        name: fieldName,
         value: null,
       });
     } else {
@@ -46,7 +46,7 @@ function GenderRadioGroup({
       setItem(selectedValue)
       console.log("GENDER SELECTED", selectedValue)
       updateAppDetails({
-        name: getAppDetails[fieldName],
+        name: fieldName,
         value: selectedValue,
       });
     }
@@ -61,7 +61,7 @@ function GenderRadioGroup({
         <Radio.Group
           onChange={handleGenderChange}
           value={getItem}
-          disabled={!direct && !getAppDetails.dataPrivacy}
+          disabled={disabled}
           className={getStatus === "error" ? "border border-red-500" : ""}
         >
           <Radio value={1}>Male</Radio>
