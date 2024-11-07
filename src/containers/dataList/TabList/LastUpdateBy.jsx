@@ -14,11 +14,14 @@ import axios from 'axios';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { RequestTypeDropdown } from '@utils/FixedData';
-import { useDataContainer } from '@containers/PreLoad';
+import { STATUS_LIST } from '@api/lastUpdateBy/ChangeStatus';
+import { SET_PATH_LOCATION } from '@utils/Conditions';
+import { useDataContainer } from '@context/PreLoad';
 
 function LastUpdateBy({ isEdit, User, data }) {
     const queryClient = useQueryClient()
     const { GetStatus } = ApplicationStatus()
+    const { SET_REFRESH_TILE_COUNTER } = useDataContainer()
     const [api, contextHolder] = notification.useNotification();
     const [isDisabled, setIsDisabled] = React.useState(false);
     const [isDisableUpdateBtn, setDisableUpdateBtn] = React.useState(false);
@@ -34,7 +37,6 @@ function LastUpdateBy({ isEdit, User, data }) {
 
     const { id } = useParams();
     const navigate = useNavigate();
-    const { SET_PATH_LOCATION } = useDataContainer()
 
     const approvedMessage = `CONGRATULATIONS! YOUR LOAN APPLICATION HAS BEEN APPROVED. PLEASE WAIT FOR A CALL FROM OUR TEAM TO FINALIZE THE PROCESS AND DISCUSS HOW YOU WILL RECEIVE THE LOAN PROCEEDS.`;
     const declinedMessage = "AFTER CAREFUL EVALUATION, WE REGRET TO INFORM YOU THAT THE LOAN APPLICATION SUBMITTED TO US HAS NOT BEEN APPROVED AT THIS TIME. PLEASE RE-APPLY AGAIN IN A FEW MONTHS.";
@@ -123,7 +125,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const StatusList = useQuery({
         queryKey: ['StatusList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getStatusList/${jwtDecode(token).USRID}/${toDecrypt(localStorage.getItem('SIDC'))}`)
+            const result = await STATUS_LIST(jwtDecode(token).USRID, toDecrypt(localStorage.getItem('SIDC')));
             return result.list
         },
         refetchInterval: (data) => {
@@ -258,7 +260,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         : dataContainer[0]
             );
             SET_PATH_LOCATION(getUpdate.Status)
-
+            SET_REFRESH_TILE_COUNTER(1)
             StatusList.refetch();
             api[result.data.status]({
                 message: result.data.message,
