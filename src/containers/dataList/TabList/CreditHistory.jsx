@@ -74,12 +74,13 @@ function OtherLoanHistory({ data, User }) {
     {
         console.log('loan product ' + data.loanProd);
     }, [data])*/
+    /*
     const [fieldErrors, setFieldErrors] = React.useState({
         Loan: '',
         Amount: '',
         Amortization: '',
         Remarks: '',
-    });
+    });*/
 
     function validateLoan(Loan) {
 
@@ -532,12 +533,10 @@ function OtherLoanHistory({ data, User }) {
 
         return (
             <td {...restProps}>
-                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={[
-                    {
-                        required: true,
-                        message: `Please Input ${title}`,
-                    },
-                ]}>
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} 
+                rules={
+                        dataIndex !== 'remarks' ? [{ required: true, message: `Please Input ${title}` }] : []
+                    }>
                     {inputNode}
                 </Form.Item>
                 ) : (

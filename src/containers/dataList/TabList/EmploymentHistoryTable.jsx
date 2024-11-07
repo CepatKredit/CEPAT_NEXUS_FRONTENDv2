@@ -215,19 +215,19 @@ function EmploymentHistory({ data, User }) {
  
          // Clear errors if validation passes
          setFieldErrors({ StartDate: '', Agency: '', EndDate: '', Position: '' });*/
-      
+
         try {
             const row = await form.validateFields();
             const data = {
-            Id: editingKey, // Ensuring the record key is used correctly
-            Agency: row.agency,
-            Position: row.position,
-            StartDate: row.startdate.format('YYYY-MM'), // Format as needed for the API
-            EndDate: row.enddate.format('YYYY-MM'),
-            ModUser: jwtDecode(token).USRID
-        };
+                Id: editingKey, // Ensuring the record key is used correctly
+                Agency: row.agency,
+                Position: row.position,
+                StartDate: row.startdate.format('YYYY-MM'), // Format as needed for the API
+                EndDate: row.enddate.format('YYYY-MM'),
+                ModUser: jwtDecode(token).USRID
+            };
 
-              // console.log('Data to be sent to the server:', data);
+            // console.log('Data to be sent to the server:', data);
 
             const result = await axios.post('/editEmploymentHistory', data);
             api[result.data.status]({
@@ -344,7 +344,7 @@ function EmploymentHistory({ data, User }) {
             key: 'enddate',
             width: '25%',
             editable: true,
-           render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
+            render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
 
         },
         {
@@ -475,7 +475,7 @@ function EmploymentHistory({ data, User }) {
             position: record.position,
             startdate: dayjs(record.startDate),
             enddate: dayjs(record.enddate),
-       });
+        });
         setEditingKey(record.key);
     };
 
@@ -505,15 +505,16 @@ function EmploymentHistory({ data, User }) {
             console.log("Selected End Date:", e ? e.format('YYYY-MM') : "No date selected");
         }
     }
-    
+
     const disabledStartDate = (current) => {
-        return current && current >= dayjs().endOf('day'); // Disable today and future dates
+        return current && current >= dayjs().endOf('day');
     };
-    
+
     const disabledEndDate = (current) => {
         return current && (startDate && current < startDate.startOf('month')) ||
-        current >= dayjs().endOf('day');
+            current >= dayjs().endOf('day');
     };
+
     const EditableCell = ({
         editing,
         dataIndex,
@@ -555,7 +556,7 @@ function EmploymentHistory({ data, User }) {
                 : dataIndex === 'startdate' ? (
                     <>
                         <DatePicker disabledDate={disabledStartDate} onChange={(e) => { onDateChange(e, 'startdate') }} picker='month' />
-                            
+
                     </>
 
                 ) : dataIndex === 'enddate' ? (<>
@@ -570,13 +571,27 @@ function EmploymentHistory({ data, User }) {
                         required: true,
                         message: `Please Input ${title}`,
                     },
-                ]} >
+                    dataIndex === 'startdate' && {
+                        validator: (_, value) =>
+                            !value || dayjs(value).isBefore(dayjs(), 'day')
+                                ? Promise.resolve()
+                                : Promise.reject("Start Date cannot be in the future.")
+                    },
+                    dataIndex === 'enddate' && {
+                        validator: (_, value) =>
+                            !value || (startDate && dayjs(value).isAfter(startDate, 'day'))
+                                ? Promise.resolve()
+                                : Promise.reject("End Date must be after Start Date.")
+                    }
+                ].filter(Boolean)}
+                >
                     {inputNode}
                 </Form.Item>
                 ) : (
                     children
-                )}
-            </td>
+                )
+                }
+            </td >
         );
     };
 
