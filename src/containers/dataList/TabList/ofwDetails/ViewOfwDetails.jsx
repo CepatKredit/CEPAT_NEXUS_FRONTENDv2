@@ -110,7 +110,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         { key: '10', label: <span className={`font-semibold ${data.ofwemail ? 'text-black' : 'text-orange-500'}`}>Email Address</span>, children: data.ofwemail || '' },
         { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-orange-500'}`}>Facebook Name / Profile</span>, children: ReturnText(data.ofwfblink) || '' },
         User !== 'LC' && { key: '12', label: <span className={`font-semibold ${data.ofwgroupchat ? 'text-black' : 'text-orange-500'}`}>Group Chat</span>, children: data.ofwgroupchat || '' },
-        (User === 'Credit') && { key: '13', label: <span className={`font-semibold ${data.RelationshipBen ? 'text-black' : 'text-orange-500'}`}>Relationship to Beneficiary</span>, children: relationshipOptions?.find(relationship => relationship.code === data.RelationshipBen)?.description || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '13', label: <span className={`font-semibold ${data.RelationshipBen ? 'text-black' : 'text-orange-500'}`}>Relationship to Beneficiary</span>, children: relationshipOptions?.find(relationship => relationship.code === data.RelationshipBen)?.description || '' },
         (User === 'Credit' || User === 'Lp') &&  data.sepcoborrowfname && { key: '14', label: <span className={`font-semibold ${data.RelationshipAdd ? 'text-black' : 'text-orange-500'}`}>Relationship to Additional Co Borrower</span>, children: relationshipOptions?.find(relationship => relationship.code === data.RelationshipAdd)?.description || '' },
         (User === 'Credit' || User === 'Lp') && { key: '15', label: <span className={`font-semibold ${data.Religion ? 'text-black' : 'text-orange-500'}`}>Religion</span>, children: Religion().find(ofwReligion => ofwReligion.value === data.Religion)?.label || '' },
         (User === 'Credit' || User === 'Lp') && { key: '16', label: <span className={`font-semibold ${data.PEP ? 'text-black' : 'text-orange-500'}`}>PEP</span>, children: Overseas().find(ofwPEP => ofwPEP.value === data.PEP)?.label || '' },
@@ -212,7 +212,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
     const filteredVesselItems = vesselItems.filter(field => field.children && field.children !== '');
 
     return (
-        <div className="container mt-1 mx-auto p-10 bg-white rounded-lg shadow-md w-[75vw]">
+        <div className="w-full mx-auto mt-1 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg">
             <Descriptions title={<div className="text-center">
                 <h2 className="text-2xl font-bold">OFW Information</h2>
                     <div className="mt-2 flex justify-center">

@@ -251,7 +251,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                         )}
 
                         {!isEditCRAM && !isEdit && User !== 'LC' ? (
-                            <div className="w-[69rem] mb-[10rem] mx-auto ">
+                            <div className="w-full mb-[10rem] mx-auto ">
                                 <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} />
                             </div>
                         ) : (

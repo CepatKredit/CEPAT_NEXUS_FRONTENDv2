@@ -672,7 +672,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                                     )
                             }
                             components={{ body: { cell: EditableCell } }}
-                            scroll={{ y: 200, x: '100vw' }}
                             rowClassName='editable-row'
                             pagination={false}
                             loading={{

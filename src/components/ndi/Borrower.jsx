@@ -455,7 +455,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
         <>
             <SectionHeader title='NDI Beneficiary' tag={principal} />
             <div className='flex justify-center items-center'>
-                <div className='flex flex-col justify-center items-center w-[60vw]'>
+                <div className='flex flex-col justify-center items-center w-full'>
                     {/*------------------------------------------------------------*/}
                     <div className='font-semibold text-xl pb-4'>Income</div>
                     <Space className='mb-[1rem] flex justify-center items-center'>

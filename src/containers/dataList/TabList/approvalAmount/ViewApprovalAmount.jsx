@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Descriptions, ConfigProvider, Spin } from 'antd';
 import { jwtDecode } from 'jwt-decode';
 
-
 function ViewApprovalAmount({ data, loading, receive }) { 
     const [getMAmort, setMAmort] = React.useState(0);
     useEffect(() => {
@@ -28,7 +27,6 @@ function ViewApprovalAmount({ data, loading, receive }) {
         }
     }, [data.ApprvAmount, data.OtherExposure]);
 
-
     function formatNumberWithCommas(num) {
         if (!num) return '';
         const parts = num.split('.');
@@ -40,7 +38,7 @@ function ViewApprovalAmount({ data, loading, receive }) {
         if (!num) return '';
         return parseFloat(num).toFixed(2);
     }
-    const token = localStorage.getItem('UTK');
+    {/*const token = localStorage.getItem('UTK');
     const decodedToken = token ? jwtDecode(token) : {};
     const modUser = decodedToken.USRID || ''; 
 
@@ -48,7 +46,7 @@ function ViewApprovalAmount({ data, loading, receive }) {
         if (receive) {
             receive({ name: 'ModUser', value: modUser });
         }
-    }, [modUser]);
+    }, [modUser]);*/}
 
     const items = [
         { key: '1', label: <span className={`font-semibold ${data.ApprvAmount ? 'text-black' : 'text-orange-500'}`}>Approved Amount</span>, children: data.ApprvAmount ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(data.ApprvAmount).replaceAll(',', ''))) : '' },
@@ -57,8 +55,9 @@ function ViewApprovalAmount({ data, loading, receive }) {
         { key: '4', label: <span className={`font-semibold ${getMAmort ? 'text-black' : 'text-orange-500'}`}>Monthly Amort</span>, children: getMAmort ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getMAmort))) : ''},
         { key: '5', label: <span className="font-semibold text-black">Other Exposure</span>, children: data.OtherExposure ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(data.OtherExposure).replaceAll(',', ''))) : '' },
         { key: '6', label: <span className={`font-semibold ${getTExposure ? 'text-black' : 'text-orange-500'}`}>Total Exposure</span>, children: getTExposure ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getTExposure).replaceAll(',', ''))) : '' },
-        { key: '8', label: <span className={`font-semibold ${data.ModUser || modUser ? 'text-black' : 'text-orange-500'}`}>Approved By</span>, children: data.ModUser || modUser || '' },
         { key: '7', label: <span className="font-semibold text-black">Remarks</span>, children: data.CRORemarks || '' },
+        { /*key: '8', label: <span className={`font-semibold ${data.ModUser || modUser ? 'text-black' : 'text-orange-500'}`}>Approved By</span>, children: data.ModUser || modUser || '' */},
+
     ];
 
     return (

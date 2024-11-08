@@ -438,7 +438,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />
 
                 */}
-                <div className="w-[68rem] mt-[2rem] mx-auto">
+                <div className="w-full mt-[2rem] mx-auto">
                     <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} />
                 </div>
 

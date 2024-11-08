@@ -411,7 +411,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
         <>
             <SectionHeader title="NDI OFW" tag={principal} />
             <div className='flex justify-center items-center'>
-                <div className='flex flex-col justify-center items-center w-[60vw]'>
+                <div className='flex flex-col justify-center items-center w-full'>
                     {/*------------------------------------------------------------*/}
                     <div className='font-semibold text-xl pb-4'>OFW Income</div>
                     <Space className='mb-[1rem] flex justify-center items-center'>

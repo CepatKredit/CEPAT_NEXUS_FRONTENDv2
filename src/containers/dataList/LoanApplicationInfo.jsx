@@ -532,7 +532,7 @@ function LoanApplicationInfo() {
     React.useEffect(() => { setLoading(GET_LOADING_INTERNAL) }, [GET_LOADING_INTERNAL])
 
     return (
-        <div className="mx-7 mt-[2%] h-[500px]">
+        <div className="px-7 mt-[2%] h-[500px] w-full">
             <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                 <Spin spinning={getLoading} tip="Please wait..." className="flex justify-center items-center" size='large'>
                     {contextHolder}

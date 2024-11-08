@@ -97,7 +97,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
 
     return (
         <div className={isEdit ? 'h-[5rem]' : ''}>
-            <div className="w-[75vw] mx-auto">
+            <div className="w-full mx-auto">
                 <Space className="w-full flex justify-center">
                     {isEdit && User !== 'LC' && (
                         <div className="top-5 left-10 lg:left-4 mb-3">
@@ -106,24 +106,27 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                             </div>
                         </div>
                     )}
-                        {isEdit && User !== 'LC' && (
-                            <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
-                                <div className="w-full">
-                                    <label className="font-bold">Internal Remarks</label>
-                                        <TextArea
-                                            className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
-                                            value={getRemarks.data?.remarksIn}
-                                            style={{
-                                                height: 50,
-                                                resize: 'none',
-                                            }}
-                                            readOnly
-                                        />
-                                </div>
+                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
+                    {isEdit && User !== 'LC' && (
+                        <div className="flex justify-center w-full md:w-[40rem] mx-auto mb-5 space-x-4">
+                            <div className="w-full">
+                                <label className="font-bold">Internal Remarks</label>
+                                <Spin spinning={getRemarks.isLoading} size="medium">
+                                <TextArea
+                                    className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
+                                    value={getRemarks.data?.remarksIn}
+                                    style={{
+                                        height: 50,
+                                        resize: 'none',
+                                    }}
+                                    readOnly
+                                />
+                                </Spin>
                             </div>
-                        )}
+                        </div>
+                    )}
+                    </ConfigProvider>
                         {isEdit && User === 'LC' && (
-
                             <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
                                 <div className="w-full">
                                     <label className="font-bold">External Remarks</label>
