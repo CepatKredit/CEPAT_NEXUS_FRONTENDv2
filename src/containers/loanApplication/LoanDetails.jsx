@@ -136,7 +136,7 @@ function LoanDetails({
             category={"direct"}
             placeHolder={"MM-DD-YYYY"}
             disabledate={disableDate_deployment}
-            rendered={loanrendered && validDDate}
+            rendered={loanrendered}
           />
         ) : (
           <></>
