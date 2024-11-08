@@ -32,19 +32,25 @@ function LabeledInput_Contact({
   function onChangeValue(e) {
     let newValue = e.target.value;
 
-    if (/^[0-9]*$/.test(newValue)) {
-      if (newValue.length <= 10) {
-        if (!newValue.startsWith("09")) {
-          newValue = "09" + newValue.slice(2);
-        }
-        setItem(newValue);
-        updateAppDetails({ name: fieldName, value: null });
+    if (/^[0-9]*$/.test(newValue)) { // Check if input is numeric
+      // Update the value to ensure it starts with "09" if less than 11 digits
+      if (newValue.length < 11 && !newValue.startsWith("09")) {
+        newValue = "09" + newValue.slice(2); // Adjust to start with "09"
+      }
+      
+      // Set the item state
+      setItem(newValue);
+
+      // If the new value has 11 digits, it's valid
+      if (newValue.length === 11) {
+        setStatus(""); // Clear error status
+        setIcon(true); // Set icon state to show success
+        updateAppDetails({ name: fieldName, value: newValue }); // Update app details with valid value
+      } else {
+        // If less than 11 digits, show error
         setStatus("error");
         setIcon(true);
-      } else if (newValue.length === 11) {
-        setStatus("success");
-        setIcon(true);
-        updateAppDetails({ name: fieldName, value: newValue });
+        updateAppDetails({ name: fieldName, value: null })
       }
     }
   }
