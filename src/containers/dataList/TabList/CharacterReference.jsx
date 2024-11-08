@@ -1,6 +1,6 @@
 
 import React, {  useState  } from 'react';
-import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form, Form } from 'antd';
+import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form } from 'antd';
 import { SaveOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import { useQueryClient, useQuery } from '@tanstack/react-query';
@@ -132,7 +132,6 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     
         try {
             // Log the data for debugging
-            console.log("Data being sent to /addCharacterRef:", data);
     
             // Make the API call to save data
             const result = await axios.post('/addCharacterRef', data);
@@ -325,6 +324,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                                 <Popconfirm
                                     title="Are you sure you want to cancel this record?"
                                     onConfirm={() => {
+                                        setStat(true)
+
                                         setAddStat(!getAddStat)
                                         setEditingKey('')
                                     }}
