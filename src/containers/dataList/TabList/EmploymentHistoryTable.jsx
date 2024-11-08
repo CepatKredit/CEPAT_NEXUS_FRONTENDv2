@@ -14,9 +14,10 @@ import axios from 'axios';
 import { toDecrypt, toUpperText } from '@utils/Converter';
 import SectionHeader from '@components/validation/SectionHeader';
 import { GetData } from '@utils/UserData';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function EmploymentHistory({ data, User }) {
-    const [loading, setLoading] = React.useState(true);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -64,7 +65,7 @@ function EmploymentHistory({ data, User }) {
                     EndDate: x.endDate,
                 });
             });
-            setLoading(false);
+         SET_LOADING_INTERNAL('EmploymentHistory', false);
             return dataList;
         },
         refetchInterval: (data) => {
@@ -75,26 +76,12 @@ function EmploymentHistory({ data, User }) {
     });
 
 
-    function validateStartDate(StartDate) {
-        const year = StartDate.split('-')[1];
-
-        return StartDate.trim() !== '' && year && /^\d{4}$/.test(year);
-    }
-
-    function validateCompanyAgency(Agency) {
-        return Agency.trim() !== '';
-    }
-    function validatePosition(Position) {
-        return Position !== '';
-    }
-
-
-    function validateFullbdate(EndDate) {
-        const year = EndDate.split('-')[1];
-
-        return EndDate.trim() !== '' && year && /^\d{4}$/.test(year);
-    }
-
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('EmploymentHistory', true)
+            getEmploymentHistory.refetch();
+        }
+    }, [data]);
 
     const [getAddStat, setAddStat] = React.useState(false)
 
@@ -539,8 +526,6 @@ function EmploymentHistory({ data, User }) {
                     </center>
                 </div>
                 <div className='mt-0'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                             <Form form={form} component={false} >
                                 <Table
                                     columns={mergedColumns}
@@ -569,8 +554,6 @@ function EmploymentHistory({ data, User }) {
                                     
                                 />
                             </Form>
-                        </Spin>
-                    </ConfigProvider>
                 </div>
             </div>
         </div>

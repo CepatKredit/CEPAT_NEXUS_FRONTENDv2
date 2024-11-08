@@ -70,7 +70,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     const ofwPermAddress = result?.data?.list?.OfwPermAddress || {};
     const beneficiaryDetails = result?.data?.list?.BeneficiaryDetails || {};
     const beneficiaryPresAddress = result?.data?.list?.BeneficiaryPresAddress || {};
-  
+
     setAppDetails((prevDetails) => ({
       ...prevDetails,
       // Loan Details
@@ -91,7 +91,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
       consultNumber: loanDetails.consultantNo,
       consultProfile: loanDetails.consultantProfile,
       referredby: loanDetails.ReferredBy || "",
-  
+
       // OFW Details
       borrowersCode: ofwDetails.borrowersCode,
       ofwfname: ofwDetails.firstName,
@@ -111,7 +111,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
       ofwjobtitle: ofwDetails.jobTitle,
       ofwcompany: ofwDetails.employer,
       ofwsalary: ofwDetails.salary?.toString(),
-  
+
       // OFW Present Address
       ofwresidences: ofwPresAddress.ownershipId || "",
       ofwPresProv: ofwPresAddress.provinceId || "",
@@ -122,14 +122,14 @@ export const LoanApplicationProvider = ({ children, direct }) => {
       ofwPresBarangayname: ofwPresAddress.barangay || "",
       ofwPresStreet: ofwPresAddress.address1 || "",
       ofwrent: ofwPresAddress.rentAmount?.toString() || 0,
-  
+
       ofwSameAdd:
         !ofwPresAddress.ofwPresProv &&
-        ofwPermAddress.address1 === ofwPresAddress.address1 &&
-        ofwPermAddress.barangayId === ofwPresAddress.barangayId
+          ofwPermAddress.address1 === ofwPresAddress.address1 &&
+          ofwPermAddress.barangayId === ofwPresAddress.barangayId
           ? 1
           : 0,
-  
+
       // OFW Permanent Address
       ofwPermProv: ofwPermAddress.provinceId || "",
       ofwPermProvname: ofwPermAddress.province || "",
@@ -138,7 +138,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
       ofwPermBarangay: ofwPermAddress.barangayId || "",
       ofwPermBarangayname: ofwPermAddress.barangay || "",
       ofwPermStreet: ofwPermAddress.address1 || "",
-  
+
       // Beneficiary Details
       benfname: beneficiaryDetails.firstName || "",
       benmname: beneficiaryDetails.middleName || "",
@@ -151,7 +151,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
       benmobile: beneficiaryDetails.mobileNo || "",
       benFb: beneficiaryDetails.fbProfile || "",
       benrelationship: beneficiaryDetails.relationshipID || 0,
-  
+
       // Beneficiary Present Address
       benpresprov: beneficiaryPresAddress.provinceId || "",
       benpresprovname: beneficiaryPresAddress.province || "",
@@ -160,12 +160,12 @@ export const LoanApplicationProvider = ({ children, direct }) => {
       benpresbarangay: beneficiaryPresAddress.barangayId || "",
       benpresbarangayname: beneficiaryPresAddress.barangay || "",
       benpresstreet: beneficiaryPresAddress.address1 || "",
-  
+
       // Beneficiary Same Address Flag
       bensameadd:
         !ofwPresAddress.ofwPresProv &&
-        beneficiaryPresAddress.address1 === ofwPresAddress.address1 &&
-        beneficiaryPresAddress.barangayId === ofwPresAddress.barangayId
+          beneficiaryPresAddress.address1 === ofwPresAddress.address1 &&
+          beneficiaryPresAddress.barangayId === ofwPresAddress.barangayId
           ? 1
           : 0,
     }));
@@ -176,6 +176,19 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     setAppDetails(createInitialAppDetails(direct));
     localStorage.removeItem('CLID');
   };
+
+  const [getLoading, setLoading] = React.useState({
+    Deduplication: false,
+    EmploymentHistory: false,
+    LoanInfo: false
+
+  })
+
+  const SET_LOADING_INTERNAL = (POINTER, STATUS) => { setLoading({ ...getLoading, [POINTER]: STATUS }) }
+  const GET_LOADING_INTERNAL = () => {
+    const LOAD_DATA = Object.values(getLoading).some(value => value === true)
+    return LOAD_DATA
+  }
 
   return (
     <LoanApplicationContext.Provider
@@ -190,7 +203,9 @@ export const LoanApplicationProvider = ({ children, direct }) => {
         resetAppDetails,
         getOldData,
         setOldClientNameAndBDay,
-        populateClientDetails
+        populateClientDetails,
+        GET_LOADING_INTERNAL,
+        SET_LOADING_INTERNAL
       }}
     >
       {contextHolder}

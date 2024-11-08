@@ -7,7 +7,6 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
     const { TextArea } = Input;
     const { SetStatus } = ApplicationStatus()
-    const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
         getRemarks.refetch()
@@ -21,7 +20,6 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
             console.log(localStorage.getItem('activeTab'));
             if (localStorage.getItem('activeTab') === 'last-update-by')
                 setUrgentApp(result.data.list[0].urgentApp)
-            setLoading(false);
             return result.data.list[0];
         },
         enabled: true,
@@ -108,47 +106,39 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                             </div>
                         </div>
                     )}
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                    {isEdit && User !== 'LC' && (
-                        <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
-                            <div className="w-full">
-                                <label className="font-bold">Internal Remarks</label>
-                                <Spin spinning={getRemarks.isLoading} size="medium">
-                                <TextArea
-                                    className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
-                                    value={getRemarks.data?.remarksIn}
-                                    style={{
-                                        height: 50,
-                                        resize: 'none',
-                                    }}
-                                    readOnly
-                                />
-                                </Spin>
-                            </div>
-                        </div>
-                    )}
-                    </ConfigProvider>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        {isEdit && User === 'LC' && (
-
+                        {isEdit && User !== 'LC' && (
                             <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
                                 <div className="w-full">
-                                    <label className="font-bold">External Remarks</label>
-                                    <Spin spinning={getRemarks.isLoading} size="medium">
+                                    <label className="font-bold">Internal Remarks</label>
                                         <TextArea
                                             className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
-                                            value={getRemarks.data?.remarksEx}
+                                            value={getRemarks.data?.remarksIn}
                                             style={{
                                                 height: 50,
                                                 resize: 'none',
                                             }}
                                             readOnly
                                         />
-                                    </Spin>
                                 </div>
                             </div>
                         )}
-                    </ConfigProvider>
+                        {isEdit && User === 'LC' && (
+
+                            <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
+                                <div className="w-full">
+                                    <label className="font-bold">External Remarks</label>
+                                    <TextArea
+                                        className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
+                                        value={getRemarks.data?.remarksEx}
+                                        style={{
+                                            height: 50,
+                                            resize: 'none',
+                                        }}
+                                        readOnly
+                                    />
+                                </div>
+                            </div>
+                        )}
                 </Space>
             </div>
         </div>
