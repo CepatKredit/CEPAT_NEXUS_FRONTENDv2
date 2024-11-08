@@ -58,7 +58,6 @@ function LabeledSelect_AddressFields({
 
     if (!getItem) {
       setStatus("error");
-      // setIcon(true);
     } else {
       setStatus("");
     }

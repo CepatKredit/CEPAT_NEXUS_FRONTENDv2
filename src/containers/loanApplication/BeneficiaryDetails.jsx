@@ -282,12 +282,7 @@ function BeneficiaryDetails({
           }
           value={data.benrelationship}
           error_status={"Relationship is required."}
-          receive={(e) => {
-            receive({
-              name: "benrelationship",
-              value: e,
-            });
-          }}
+          fieldName="benrelationship"
           category={"direct"}
           placeHolder={"Relationship"}
           rendered={benrendered}

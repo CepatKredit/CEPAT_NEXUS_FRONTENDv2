@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Image, Space, Button, ConfigProvider, notification, Popconfirm, Tooltip, Form, Table, Input, Select, Spin } from 'antd'
-import { SaveOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SaveOutlined, CloseOutlined, DeleteOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import ResponsiveModal from '@components/validation/ResponsiveModal';
 import { viewModal, viewPDFView } from '@hooks/ModalController';
@@ -20,6 +20,18 @@ function UploadRecord({ data, ClientId, Uploader }) {
     const setModalStatus = viewModal((state) => state.setStatus)
     const clearFileList = FileUpload((state) => state.clearList)
     const [loading, setLoading] = React.useState(true);
+
+
+    const DocListICQuery = useQuery({
+        queryKey: ['DocListICQuery'],
+        queryFn: async () => {
+            const result = await GET_LIST(`/getFileType/${'IC'}`)
+            return result.list
+        },
+        enabled: true,
+        retryDelay: 1000,
+        staleTime: 5 * 1000
+    })
 
     const colFinalCheck = [
         {
@@ -47,6 +59,27 @@ function UploadRecord({ data, ClientId, Uploader }) {
             key: 'fc',
             width: '200px',
             editable: true,
+            //default sorting of antd Nico 11/08/20204
+            // defaultSortOrder: 'ascend',
+            sortDirections: ['ascend', 'descend'],
+            sorter: (a, b) => a.fc.localeCompare(b.fc),
+            // sortIcon: ({ sortOrder }) => (
+            //     <div className="flex flex-col items-center">
+            //     <CaretUpOutlined 
+            //         className={`${sortOrder === 'ascend' ? 'text-white' : 'text-gray-600'} text-xs`}
+            //     />
+            //     <CaretDownOutlined 
+            //         className={`${sortOrder === 'descend' ? 'text-white' : 'text-gray-600'} text-xs`}
+            //     />
+            // </div>
+            // ),
+
+            //for filter in case Nico 11/08/2024
+            // filters: DocListICQuery.data?.map((x) => ({
+            //     text: x.docsType, 
+            //     value: x.docsType,
+            // })),
+            // onFilter: (value, record) => record.fc === value,
         },
         {
             title: 'File Uploaded',
@@ -96,7 +129,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                             <Button disabled={editingKey !== ''} onClick={() => edit(record)} className='bg-[#3b0764]' type='primary' icon={<MdEditSquare />} />
                         </Tooltip>
                     </ConfigProvider>
-                    <Tooltip title="Delete">
+                    {/* <Tooltip title="Delete">
                         <Popconfirm
                             title="Are you sure you want to delete this record?"
                             onConfirm={() => { file_delete(record) }}
@@ -104,7 +137,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                             cancelText="Cancel"  >
                             <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                         </Popconfirm>
-                    </Tooltip>
+                    </Tooltip> */}
                 </Space>);
             },
         },
@@ -146,16 +179,16 @@ function UploadRecord({ data, ClientId, Uploader }) {
         file: ''
     })
 
-    const DocListICQuery = useQuery({
-        queryKey: ['DocListICQuery'],
-        queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${'IC'}`)
-            return result.list
-        },
-        enabled: true,
-        retryDelay: 1000,
-        staleTime: 5 * 1000
-    })
+    // const DocListICQuery = useQuery({
+    //     queryKey: ['DocListICQuery'],
+    //     queryFn: async () => {
+    //         const result = await GET_LIST(`/getFileType/${'IC'}`)
+    //         return result.list
+    //     },
+    //     enabled: true,
+    //     retryDelay: 1000,
+    //     staleTime: 5 * 1000
+    // })
 
     function GetDocsCode(data) {
         const DocsCode = DocListICQuery.data?.find((x) => x.docsType === data ||

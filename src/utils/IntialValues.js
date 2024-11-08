@@ -69,6 +69,28 @@ const createInitialAppDetails = (direct) => {
     benpresmunicipality: "",
     benpresbarangay: "",
     benpresstreet: "",
+
+    //for tracking
+    loanAppCode: "", 
+    loanIdCode: "", 
+    ApprvAmount: "", 
+    ApprvTerms: "", 
+    loanBranchId: "",
+    loanStatus: "",
+    consultant: "", 
+    referredby: "",
+    borrowersCode: "", 
+    ofwPresProvname: "", 
+    ofwPresMunicipalityname: "",
+    ofwPresBarangayname: "",
+    ofwrent: "", 
+    ofwPermProvname: "", 
+    ofwPermMunicipalityname: "",
+    ofwPermBarangayname: "", 
+    benFb: "", 
+    benpresprovname: "", 
+    benpresmunicipalityname: "", 
+    benpresbarangayname: "",
   };
 };
 

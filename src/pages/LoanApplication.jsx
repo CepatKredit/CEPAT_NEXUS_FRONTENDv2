@@ -32,17 +32,12 @@ function LoanApplication() {
       return () => window.removeEventListener("beforeunload", unloadCallBack);
     }, []);
 
-  // Control if it is direct / lc / marketing
-  // let direct = true;
   document.title = "Loan Application Form";
-
-
 
   const [loanrendered, setloanrendered] = React.useState(false);
   const [ofwrendered, setofwrendered] = React.useState(false);
   const [benrendered, setbenrendered] = React.useState(false);
 
-  // const [api, contextHolder] = notification.useNotification();
   const [getLoanDetail, setLoanDetail] = React.useState();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [getStep, setStep] = React.useState(0);
@@ -84,6 +79,10 @@ function LoanApplication() {
 
   const onClickNext = () => {
     setStep(getStep + 1);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const onClickBack = () => {

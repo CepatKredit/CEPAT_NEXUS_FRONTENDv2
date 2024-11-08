@@ -36,10 +36,14 @@ function LoanApplicationTracker({ data }) {
   const navigate = useNavigate();
   const skipRender = useRef(false);
   // const [getAppDetails, setAppDetails] = React.useState(createInitialAppDetails(false));
-  const [loading, setLoading] = React.useState(false);
-  const { getAppDetails, setAppDetails, resetAppDetails } = React.useContext(
-    LoanApplicationContext
-  );
+  const {
+    getAppDetails,
+    setAppDetails,
+    resetAppDetails,
+    setOldClientNameAndBDay,
+    populateClientDetails,
+    getOldData,
+  } = React.useContext(LoanApplicationContext);
 
   React.useEffect(() => {
     function unloadCallBack(e) {
@@ -52,14 +56,15 @@ function LoanApplicationTracker({ data }) {
 
   React.useEffect(() => {
     ClientData.refetch();
+    console.log("TEST", ClientData);
   }, [localStorage.getItem("CLID")]);
 
-  const [getOldData, setOldData] = React.useState({
-    FirstName: "",
-    LastName: "",
-    Suffix: 1,
-    Birthday: "",
-  });
+  // const [getOldData, setOldData] = React.useState({
+  //   FirstName: "",
+  //   LastName: "",
+  //   Suffix: 1,
+  //   Birthday: "",
+  // });
 
   const ClientData = useQuery({
     queryKey: ["ClientDataQuery"],
@@ -67,121 +72,9 @@ function LoanApplicationTracker({ data }) {
       const result = await axios.get(
         `/getClientDataList/${toDecrypt(localStorage.getItem("CLID"))}`
       );
-      setOldData({
-        ...getOldData,
-        FirstName: result.data.list.OfwDetails?.firstName,
-        LastName: result.data.list.OfwDetails?.lastName,
-        Suffix: parseInt(result.data.list.OfwDetails?.suffix),
-        Birthday: result.data.list.OfwDetails?.birthdate,
-      });
-      setAppDetails({
-        ...getAppDetails,
-        loanAppCode: result.data.list.LoanDetails?.loanAppCode,
-        loanIdCode: result.data.list.LoanDetails?.loanAppId,
-        loanProd: result.data.list.LoanDetails?.productId,
-        loanDateDep: result.data.list.LoanDetails?.departureDate,
-        loanPurpose: result.data.list.LoanDetails?.purposeId,
-        loanAmount: result.data.list.LoanDetails?.amount.toString(),
-        ApprvAmount: result.data.list.LoanDetails?.approvedAmount,
-        loanTerms: result.data.list.LoanDetails?.terms,
-        ApprvTerms: result.data.list.LoanDetails?.approvedTerms,
-        loanBranchId: result.data.list.LoanDetails?.branchId,
-        loanBranch: result.data.list.LoanDetails?.branch,
-        loanStatus: result.data.list.LoanDetails?.status,
-        hckfi: result.data.list.LoanDetails?.channelId,
-        consultant: result.data.list.LoanDetails?.consultant,
-        consultNumber: result.data.list.LoanDetails?.consultantNo,
-        consultProfile: result.data.list.LoanDetails?.consultantProfile,
-        referredby: result.data.list.LoanDetails?.ReferredBy || "",
-
-        borrowersCode: result.data.list.OfwDetails?.borrowersCode,
-        ofwfname: result.data.list.OfwDetails?.firstName,
-        ofwmname: result.data.list.OfwDetails?.middleName,
-        ofwlname: result.data.list.OfwDetails?.lastName,
-        ofwsuffix: result.data.list.OfwDetails?.suffix,
-        ofwbdate: result.data.list.OfwDetails?.birthdate,
-        ofwgender: result.data.list.OfwDetails?.genderId,
-        ofwmstatus: result.data.list.OfwDetails?.civilStatusId,
-        ofwdependents: result.data.list.OfwDetails?.withDependent,
-        ofwemail: result.data.list.OfwDetails?.email,
-        ofwmobile: result.data.list.OfwDetails?.mobileNo,
-        ofwfblink: result.data.list.OfwDetails?.fbProfile,
-        ofwvalidid: result.data.list.OfwDetails?.validId,
-        ofwidnumber: result.data.list.OfwDetails?.validIdNo,
-
-        ofwcountry: result.data.list.OfwDetails?.country,
-        ofwjobtitle: result.data.list.OfwDetails?.jobTitle,
-        ofwcompany: result.data.list.OfwDetails?.employer,
-        ofwsalary: result.data.list.OfwDetails?.salary.toString(),
-
-        ofwresidences: result.data.list.OfwPresAddress?.ownershipId || "",
-        ofwPresProv: result.data.list.OfwPresAddress?.provinceId || "",
-        ofwPresProvname: result.data.list.OfwPresAddress?.province || "",
-        ofwPresMunicipality:
-          result.data.list.OfwPresAddress?.municipalityId || "",
-        ofwPresMunicipalityname:
-          result.data.list.OfwPresAddress?.municipality || "",
-        ofwPresBarangay: result.data.list.OfwPresAddress?.barangayId || "",
-        ofwPresBarangayname: result.data.list.OfwPresAddress?.barangay || "",
-        ofwPresStreet: result.data.list.OfwPresAddress?.address1 || "",
-
-        ofwrent: result.data.list.OfwPresAddress?.rentAmount.toString() || 0,
-
-        ofwSameAdd:
-          !result.data.list.OfwPresAddress?.ofwPresProv &&
-          result.data.list.OfwPermAddress?.address1 ==
-            result.data.list.OfwPresAddress?.address1 &&
-          result.data.list.OfwPermAddress?.barangayId ==
-            result.data.list.OfwPresAddress?.barangayId
-            ? 1
-            : 0,
-        bensameadd:
-          !result.data.list.OfwPresAddress?.ofwPresProv &&
-          result.data.list.BeneficiaryPresAddress?.address1 ==
-            result.data.list.OfwPresAddress?.address1 &&
-          result.data.list.BeneficiaryPresAddress?.barangayId ==
-            result.data.list.OfwPresAddress?.barangayId
-            ? 1
-            : 0,
-
-        ofwPermProv: result.data.list.OfwPermAddress?.provinceId || "",
-        ofwPermProvname: result.data.list.OfwPermAddress?.province || "",
-        ofwPermMunicipality:
-          result.data.list.OfwPermAddress?.municipalityId || "",
-        ofwPermMunicipalityname:
-          result.data.list.OfwPermAddress?.municipality || "",
-        ofwPermBarangay: result.data.list.OfwPermAddress?.barangayId || "",
-        ofwPermBarangayname: result.data.list.OfwPermAddress?.barangay || "",
-        ofwPermStreet: result.data.list.OfwPermAddress?.address1 || "",
-
-        benfname: result.data.list.BeneficiaryDetails?.firstName || "",
-        benmname: result.data.list.BeneficiaryDetails?.middleName || "",
-        benlname: result.data.list.BeneficiaryDetails?.lastName || "",
-        bensuffix: result.data.list.BeneficiaryDetails?.suffix || "",
-        benbdate: result.data.list.BeneficiaryDetails?.birthdate || "",
-        bengender: result.data.list.BeneficiaryDetails?.genderId || 0,
-        benmstatus: result.data.list.BeneficiaryDetails?.civilStatusId || 0,
-        benemail: result.data.list.BeneficiaryDetails?.email || "",
-        benmobile: result.data.list.BeneficiaryDetails?.mobileNo || "",
-        benFb: result.data.list.BeneficiaryDetails?.fbProfile || "",
-        benrelationship:
-          result.data.list.BeneficiaryDetails?.relationshipID || 0,
-
-        benpresprov: result.data.list.BeneficiaryPresAddress?.provinceId || "",
-        benpresprovname:
-          result.data.list.BeneficiaryPresAddress?.province || "",
-        benpresmunicipality:
-          result.data.list.BeneficiaryPresAddress?.municipalityId || "",
-        benpresmunicipalityname:
-          result.data.list.BeneficiaryPresAddress?.municipality || "",
-        benpresbarangay:
-          result.data.list.BeneficiaryPresAddress?.barangayId || "",
-        benpresbarangayname:
-          result.data.list.BeneficiaryPresAddress?.barangay || "",
-        benpresstreet: result.data.list.BeneficiaryPresAddress?.address1 || "",
-      });
+      setOldClientNameAndBDay(result);
+      populateClientDetails(result);
       console.log("LOANTRACKKK", result.data.list);
-      setLoading(false);
       return result.data.list;
     },
     enabled: true,
@@ -358,25 +251,25 @@ function LoanApplicationTracker({ data }) {
                   [e.name]: e.value,
                 });
               }}
-              loancases={(e) => {
-                setAppDetails((details) => {
-                  let updatedFields = {};
-                  switch (e.name) {
-                    case "resetDepartureDate":
-                      updatedFields = {
-                        loanDateDep: "",
-                      };
-                      break;
-                    default:
-                      break;
-                  }
-                  return {
-                    ...details,
-                    [e.name]: e.value,
-                    ...updatedFields,
-                  };
-                });
-              }}
+              // loancases={(e) => {
+              //   setAppDetails((details) => {
+              //     let updatedFields = {};
+              //     switch (e.name) {
+              //       case "resetDepartureDate":
+              //         updatedFields = {
+              //           loanDateDep: "",
+              //         };
+              //         break;
+              //       default:
+              //         break;
+              //     }
+              //     return {
+              //       ...details,
+              //       [e.name]: e.value,
+              //       ...updatedFields,
+              //     };
+              //   });
+              // }}
             />
           </Card>
           {getAppDetails.loanProd === "0303-DHW" ||
@@ -758,13 +651,13 @@ function LoanApplicationTracker({ data }) {
       theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}
     >
       {ClientData.isPending && (
-  <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-white bg-opacity-50 z-50">
-  <Spin
-    spinning={ClientData.isPending}
-    tip="Please wait..."
-    className="text-green-500"
-  />
-</div>
+        <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-white bg-opacity-50 z-50">
+          <Spin
+            spinning={ClientData.isPending}
+            tip="Please wait..."
+            className="text-green-500"
+          />
+        </div>
       )}
       <Layout className="h-[120vh] bg-[#e8eee5] p-6">
         <Content className="w-full lg:w-[80vw] h-auto mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">

@@ -564,7 +564,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         </div>
                     </Space>))}
                     <Space className='pt-2'>
-                        <div className='w-[15rem] font-bold'>Total Net Income</div>
+                        <div className='w-[15rem] font-bold'>Total Salary</div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='TotalNetIncomeDoc'
                                 placeholder='0.00' readOnly
@@ -681,7 +681,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         <div className='w-[15rem]'>
                             <Space>
                                 <Button type='primary' icon={<PlusOutlined style={{ fontSize: '15px' }} />} onClick={() => { addOtherIncome('EXPENSE') }} disabled={isReadOnly || disabledStatuses.includes(GetStatus)} />
-                                <span>Other Payables</span>
+                                <span>Other Expenses</span>
                             </Space>
                         </div>
                         <div className='w-[15rem]' />

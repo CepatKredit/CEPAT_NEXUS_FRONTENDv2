@@ -38,7 +38,6 @@ function LoanDetails({
   //   branch: loanrendered,
   //   referred: loanrendered,
   // });
-
   // const { validDDate, consulant, consulNo, branch, referred } = loanStates;
 
   const classname_main =
