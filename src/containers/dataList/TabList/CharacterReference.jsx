@@ -132,7 +132,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     
         try {
             // Log the data for debugging
-            console.log("Data being sent to /addCharacterRef:", data);
+           // console.log("Data being sent to /addCharacterRef:", data);
     
             // Make the API call to save data
             const result = await axios.post('/addCharacterRef', data);
@@ -325,6 +325,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                                 <Popconfirm
                                     title="Are you sure you want to cancel this record?"
                                     onConfirm={() => {
+                                        setStat(true)
                                         setAddStat(!getAddStat)
                                         setEditingKey('')
                                     }}
@@ -341,14 +342,20 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button onClick={() => {
-                                    onClickEdit()
-                                }} icon={<SaveOutlined />} type='primary' />
+                            <Popconfirm
+                                    title="Are you sure you want to save this record?"
+                                    onConfirm={() => { onClickEdit(); }}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button icon={<SaveOutlined />} type='primary' />
+                                </Popconfirm>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Popconfirm
                                     title="Are you sure you want to cancel the edit?"
                                     onConfirm={() => {
+                                        setStat(true)
                                         setAddStat(!getAddStat)
                                         setEditingKey('')
                                     }}
