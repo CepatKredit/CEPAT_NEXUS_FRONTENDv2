@@ -15,8 +15,6 @@ import StatusRemarks from './StatusRemarks';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
 
-
-
 function OfwDetails({ getTab, classname, data, receive, presaddress, User, BorrowerId, creditisEdit, loading, isEditCRAM }) {
     const [isEdit, setEdit] = useState(false);
     const [api, contextHolder] = notification.useNotification();
@@ -83,7 +81,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 else { updateData(); }
             }
             else {
-                if (Marketing_valid) { // inlcude marketing valid?
+                if (false) { // inlcude marketing valid?
                     api['warning']({
                         message: 'Incomplete Details',
                         description: 'Please complete all required details.',
@@ -152,61 +150,60 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 LoanAppId: data.loanIdCode,
                 Tab: 2,
                 BorrowersCode: data.ofwBorrowersCode,
-                FirstName: data.ofwfname,
-                MiddleName: data.ofwmname,
-                LastName: data.ofwlname,
-                Suffix: data.ofwsuffix,
-                BirthDay: mmddyy(data.ofwbdate),
-                Gender: data.ofwgender,
-                MobileNo: data.ofwmobile,
-                MobileNo2: data.ofwothermobile,
-                Email: data.ofwemail,
-                FbProfile: data.ofwfblink,
-                GroupChat: data.ofwgroupchat,
+                FirstName: data.ofwfname || '',
+                MiddleName: data.ofwmname || '',
+                LastName: data.ofwlname || '',
+                Suffix: data.ofwsuffix || null,
+                BirthDay: data.ofwbdate? mmddyy(data.ofwbdate) : '',
+                Gender: data.ofwgender || null,
+                MobileNo: data.ofwmobile || '',
+                MobileNo2: data.ofwothermobile || '',
+                Email: data.ofwemail || '',
+                FbProfile: data.ofwfblink || '',
+                GroupChat: data.ofwgroupchat || '',
                 
 
-                CivilStatus: data.ofwmstatus,
-                SpouseName: data.ofwspouse,
-                SpouseBirthday: mmddyy(data.ofwspousebdate),
-                Dependent: data.ofwdependents,
-                ProvinceId: data.ofwPresProv,
-                MunicipalityId: data.ofwPresMunicipality,
-                BarangayId: data.ofwPresBarangay,
-                Address1: data.ofwPresStreet,
-                Ownership: data.ofwresidences,
+                CivilStatus: data.ofwmstatus || null,
+                SpouseName: data.ofwspouse || '',
+                SpouseBirthday:data.ofwspousebdate? mmddyy(data.ofwspousebdate) : '',
+                Dependent: data.ofwdependents || null,
+                ProvinceId: data.ofwPresProv || '',
+                MunicipalityId: data.ofwPresMunicipality || '',
+                BarangayId: data.ofwPresBarangay || '',
+                Address1: data.ofwPresStreet || '',
+                Ownership: data.ofwresidences || null,
                 RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,
-                Landmark: data.landmark,
-                StayYears: data.ofwlosMonth,
-                StayMonths: data.ofwlosYear,
-                CollectionArea: data.collectionarea,
+                Landmark: data.landmark || '',
+                StayYears: data.ofwlosMonth || 0,
+                StayMonths: data.ofwlosYear || 0,
+                CollectionArea: data.collectionarea || '',
 
                 //set
                 IsCurrPerm: data.ofwSameAdd ? 1 : 0,
                 IsPermProv: data.ofwProvSameAdd ? 1 : 0,
 
-                PerProvinceId: data.ofwPermProv,
-                PerMunicipalityId: data.ofwPermMunicipality,
-                PerBarangayId: data.ofwPermBarangay,
-                PerAddress1: data.ofwPermStreet,
+                PerProvinceId: data.ofwPermProv || '',
+                PerMunicipalityId: data.ofwPermMunicipality || '',
+                PerBarangayId: data.ofwPermBarangay || '',
+                PerAddress1: data.ofwPermStreet || '',
 
-                ProAddress1: data.ofwprovStreet,
-                ProBarangayId: data.ofwprovBarangay,
-                ProMunicipalityId: data.ofwprovMunicipality,
-                ProProvinceId: data.ofwprovProv,
+                ProAddress1: data.ofwprovStreet || '',
+                ProBarangayId: data.ofwprovBarangay || '',
+                ProMunicipalityId: data.ofwprovMunicipality || '',
+                ProProvinceId: data.ofwprovProv || '',
 
                 ValidId: data.ofwvalidid ? parseInt(data.ofwvalidid) : null,
-                ValidIdNo: data.ofwidnumber,
+                ValidIdNo: data.ofwidnumber || '',
 
-                Country: data.ofwcountry,
-                JobTitle: data.ofwjobtitle,
-                Employer: data.ofwcompany,
-                Salary: parseFloat(data.ofwsalary.toString().replaceAll(',', '')),
+                Country: data.ofwcountry || '',
+                JobTitle: data.ofwjobtitle || '',
+                Employer: data.ofwcompany || null,
+                Salary:data.ofwsalary? parseFloat(data.ofwsalary.toString().replaceAll(',', '')) : 0.00,
 
-                EducationLevel: data.ofwHighestEdu,
-                School: data.ofwschool,
-                Course: data.ofwcourse,
+                EducationLevel: data.ofwHighestEdu || null,
+                School: data.ofwschool || '',
+                Course: data.ofwcourse || '',
                 ModUser: jwtDecode(token).USRID
-
 
             };
 

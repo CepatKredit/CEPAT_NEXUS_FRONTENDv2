@@ -201,7 +201,7 @@ function EditLoanDetails({ data, receive,User }) {
                                 className_label="font-bold"
                                 value={data.consultNumber}
                                 receive={(e) => receive({ name: 'consultNumber', value: e })}
-                                label={<>Loan Consultant No. <span className="text-red-500">*</span></>}
+                                label={'Loan Consultant No.'}
                                 type='contact'
                                 required={false}
                                 rendered = {rendered}

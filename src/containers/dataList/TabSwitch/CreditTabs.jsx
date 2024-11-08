@@ -36,18 +36,22 @@ import { UpdateLoanDetails } from '@utils/LoanDetails';
 import StatusRemarks from '../TabList/StatusRemarks';
 
 function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading }) {
-    React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
+    //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
     const { GetStatus } = ApplicationStatus();
-    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || '');
+    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') ||  'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
     function onChangeTab(e) {
+        //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
+        //if(validate)
+        //console.log(e)
         setActiveKey(e);
         localStorage.setItem('activeTab', e);
         navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
     }
+
     const [addCoborrower, setAddCoborrower] = React.useState(false);
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
@@ -325,8 +329,8 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 AcbFbProfile: value.coborrowfblink,
                 AcbGrpChat: value.AcbGrpChat || '',
                 AcbRelationship: value.AcbRelationship || null,
-                AcbSrcIncome: value.AcbSrcIncome || '',
-                AcbReligion: value.AcbReligion || '',
+                AcbSrcIncome: value.AcbSrcIncome || 0,
+                AcbReligion: value.AcbReligion || 0,
                 AcbFormerOFW: value.AcbFormerOFW ? 1 : 0,
                 AcbLastReturn: value.AcbLastReturn || '',
                 AcbPlanAbroad: value.AcbPlanAbroad ? (value.AcbPlanAbroad == 1 ? 1 : 0) : null,
@@ -338,8 +342,8 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 AcbBarangay: value.coborrowBarangay || '',
                 AcbMunicipality: value.coborrowMunicipality || '',
                 AcbProvince: value.coborrowProv || '',
-                AcbStayMonths: value.AcbStayMonths,
-                AcbStayYears: value.AcbStayYears,
+                AcbStayMonths: value.AcbStayMonths || 0,
+                AcbStayYears: value.AcbStayYears || 0,
                 AcbLandMark: value.AcbLandMark || '',
                 AcbPoBRemarks: value.AcbPoBRemarks || '',
                 AcbRentAmount: value.AcbRentAmount ? parseFloat(value.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
@@ -354,16 +358,16 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             AcbLastName: value.coborrowlname || '',
             AcbSuffix: value.coborrowsuffix || 0,
             AcbBirthday: value.coborrowbdate? mmddyy(value.coborrowbdate) : '',
-            AcbGender: value.coborrowgender || null,
-            AcbCivilStatus: value.coborrowmstatus || null,
+            AcbGender: value.coborrowgender || 0,
+            AcbCivilStatus: value.coborrowmstatus || 0,
             AcbDependent: value.coborrowdependents || 0,
             AcbEmail: value.coborrowemail || '',
-            AcbMobileNo: value.coborrowmobile || null,
-            AcbMobileNo2: value.coborrowothermobile || null,
+            AcbMobileNo: value.coborrowmobile || '',
+            AcbMobileNo2: value.coborrowothermobile || '',
             AcbFbProfile: value.coborrowfblink || '',
             AcbSpouseName: value.coborrowspousename || '',
             AcbSpouseBirthday: value.coborrowerspousebdate ? mmddyy(value.coborrowerspousebdate) : '',
-            AcbOwnership: value.coborrowresidences || null,
+            AcbOwnership: value.coborrowresidences || 0,
             AcbAddress1: value.coborrowStreet || '',
             AcbBarangayId: value.coborrowBarangay || '',
             AcbMunicipalityId: value.coborrowMunicipality || '',
@@ -568,7 +572,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         {
             label: <div className='flex flex-rows'><MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>,
             key: 'NDI',
-            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={GetData('ROLE').toString() === '60'} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />,
+            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={true} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />,
         },
         {
             label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
@@ -585,7 +589,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-rows"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount classname={'h-[65vh] w-[86vw] mx-auto overflow-y-auto'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
         },
         {
             label: <div className='flex flex-rows'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
@@ -602,7 +606,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
     return (
         <>
             {contextHolder}
-            <Tabs defaultActiveKey={tabs} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
+            <Tabs defaultActiveKey={tabs} activeKey={activeKey} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
             {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && (
                 <FloatButton.Group shape="circle" style={{ right: 24, bottom: 24 }}>
                     {isEdit ? (

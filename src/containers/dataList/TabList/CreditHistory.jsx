@@ -74,12 +74,13 @@ function OtherLoanHistory({ data, User }) {
     {
         console.log('loan product ' + data.loanProd);
     }, [data])*/
+    /*
     const [fieldErrors, setFieldErrors] = React.useState({
         Loan: '',
         Amount: '',
         Amortization: '',
         Remarks: '',
-    });
+    });*/
 
     function validateLoan(Loan) {
 
@@ -274,35 +275,35 @@ function OtherLoanHistory({ data, User }) {
             </ConfigProvider>),
             dataIndex: 'no',
             key: 'no',
-            width: '1rem',
+            width: '10px',
             align: 'center'
         },
         {
             title: 'Other Loans',
             dataIndex: 'loan',
             key: 'loan',
-            width: '40px',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Loan Approval',
             dataIndex: 'amount',
             key: 'amount',
-            width: '40px',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Amortization',
             dataIndex: 'amortization',
             key: 'amortization',
-            width: '40px',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '100px',
+            width: '40%',
             editable: true,
         },
         {
@@ -532,12 +533,10 @@ function OtherLoanHistory({ data, User }) {
 
         return (
             <td {...restProps}>
-                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={[
-                    {
-                        required: true,
-                        message: `Please Input ${title}`,
-                    },
-                ]}>
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} 
+                rules={
+                        dataIndex !== 'remarks' ? [{ required: true, message: `Please Input ${title}` }] : []
+                    }>
                     {inputNode}
                 </Form.Item>
                 ) : (

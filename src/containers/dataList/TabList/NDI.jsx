@@ -48,14 +48,14 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
         }));
     };
     const handleValueChange = (key, getValue) => {
-        if (isReadOnly) return;
+       // if (isReadOnly) return;
         setChildValues((prevValues) => ({
             ...prevValues,
             [key]: getValue, // Update the specific child's value
         }));
     };
     const handleIncomeChange = (key, getValue) => {
-        if (isReadOnly) return;
+      //  if (isReadOnly) return;
         setIncome((prevValues) => ({
             ...prevValues,
             [key]: getValue, // Update the specific child's value

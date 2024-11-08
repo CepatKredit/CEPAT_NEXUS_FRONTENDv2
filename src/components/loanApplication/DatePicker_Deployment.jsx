@@ -104,7 +104,7 @@ function DatePicker_Deployment({
         />
         {getStatus === "error" ? (
           <div className="text-xs text-red-500 pt-1 pl-2">
-            {`${label} Required (MM-DD-YYYY)`}
+            {`OFW Departure Date Required (MM-DD-YYYY)`}
           </div>
         ) : (
           <></>
