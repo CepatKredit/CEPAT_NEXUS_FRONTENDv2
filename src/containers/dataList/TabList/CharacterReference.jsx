@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form } from 'antd';
+import React, {  useState  } from 'react';
+import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form, Form } from 'antd';
 import { SaveOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import { useQueryClient, useQuery } from '@tanstack/react-query';
@@ -341,14 +341,20 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button onClick={() => {
-                                    onClickEdit()
-                                }} icon={<SaveOutlined />} type='primary' />
+                            <Popconfirm
+                                    title="Are you sure you want to save this record?"
+                                    onConfirm={() => { onClickEdit(); }}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button icon={<SaveOutlined />} type='primary' />
+                                </Popconfirm>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Popconfirm
                                     title="Are you sure you want to cancel the edit?"
                                     onConfirm={() => {
+                                        setStat(true)
                                         setAddStat(!getAddStat)
                                         setEditingKey('')
                                     }}
