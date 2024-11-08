@@ -53,13 +53,6 @@ export const getLoanApplicationSteps = (props) => {
           ofwrendered={ofwrendered}
           setofwrendered={setofwrendered}
           direct={direct}
-          // api={api}
-          // direct={direct}
-          // data={getAppDetails}
-          // receive={(e) => updateAppDetails(e, setAppDetails, getAppDetails)}
-          // presaddress={(e) =>
-          //   handlePresAddressCases(e, setAppDetails, getAppDetails)
-          // }
         />
       ),
     },
@@ -76,7 +69,7 @@ export const getLoanApplicationSteps = (props) => {
           api={api}
           data={getAppDetails}
           direct={direct}
-          receive={(e) => updateAppDetails(e, setAppDetails, getAppDetails)}
+          // receive={(e) => updateAppDetails(e, setAppDetails, getAppDetails)}
         />
       ),
     });
@@ -84,11 +77,3 @@ export const getLoanApplicationSteps = (props) => {
 
   return steps;
 };
-
-const updateAppDetails = (e, setAppDetails, getAppDetails) => {
-  setAppDetails({
-    ...getAppDetails,
-    [e.name]: e.value,
-  });
-};
-

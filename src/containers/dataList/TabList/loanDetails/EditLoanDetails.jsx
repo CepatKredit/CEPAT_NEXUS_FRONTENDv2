@@ -4,16 +4,15 @@ import LabeledInput from '@components/marketing/LabeledInput';
 import LabeledInput_Contact from '@components/marketing/LabeledInput_Contact';
 import DatePicker_Deployment from '@components/marketing/DatePicker_Deployment';
 import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
-import LabeledInput_Numeric from '@components/marketing/LabeledInput_Numeric';
 import LabeledSelectLoanProduct from '@components/marketing/LabeledSelectLoanProduct';
 import LabeledSelectLoanPurpose from '@components/marketing/LabeledSelectLoanPurpose';
 import LabeledSelect from '@components/marketing/LabeledSelect';
 import LabeledSelect_Consultant from '@components/marketing/LabeledSelect_Consultant';
-import LabeledSelect_Branch from '@components/marketing/LabeledSelect_Branch';
 import { LoanType, Hckfi, LoanTerms } from '@utils/FixedData';
 import dayjs from 'dayjs';
 import LabeledInput_NotRequired from '@components/marketing/LabeledInput_NotRequired';
 import { GetData } from '@utils/UserData';
+import { useDataContainer } from '@context/PreLoad';
 function EditLoanDetails({ data, receive,User }) {
     const [isEdit, setEdit] = React.useState(false);
     const isFirstRender = React.useRef(true);
@@ -30,6 +29,11 @@ function EditLoanDetails({ data, receive,User }) {
         return current && current < dayjs().startOf('day');
     }, []);
  
+//Preload Selects
+const {GET_LOAN_PRODUCT_LIST} = useDataContainer();
+const get_loan_product_list = GET_LOAN_PRODUCT_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+
+
     return (
         <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
                     {User === 'LC'
@@ -41,6 +45,7 @@ function EditLoanDetails({ data, receive,User }) {
                             value={data.loanAppCode}
                             readOnly={true}
                             receive={(e) => receive({ name: 'loanIdCode', value: e })}
+
                         />)}
                     { User === 'LC'
                         ? (<></>)
@@ -71,6 +76,7 @@ function EditLoanDetails({ data, receive,User }) {
                         rendered={rendered}
                         showSearch
                         receive={(e) => receive({ name: 'loanProd', value: e })}
+                        options={get_loan_product_list}
                     />
                         {User !== 'Credit' && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') ? (
                     <DatePicker_Deployment
@@ -201,7 +207,7 @@ function EditLoanDetails({ data, receive,User }) {
                                 className_label="font-bold"
                                 value={data.consultNumber}
                                 receive={(e) => receive({ name: 'consultNumber', value: e })}
-                                label={<>Loan Consultant No. <span className="text-red-500">*</span></>}
+                                label={'Loan Consultant No.'}
                                 type='contact'
                                 required={false}
                                 rendered = {rendered}

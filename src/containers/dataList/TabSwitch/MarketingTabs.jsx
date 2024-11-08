@@ -27,10 +27,12 @@ function MarketingTabs({ value, receive, ClientId, FileType, Uploader, BorrowerI
     const { id, tabs } = useParams();
     const navigate = useNavigate();
     const [isEdit, setEdit] = React.useState(true);
-    const [getTab, setTab] = React.useState(localStorage.getItem('activeTab') || '');
+    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
 
     function onChangeTab(e) {
-        setTab(e)
+        //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
+        //if(validate)
+        setActiveKey(e)
         localStorage.setItem('activeTab',e)
         navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
     }
@@ -50,7 +52,7 @@ function MarketingTabs({ value, receive, ClientId, FileType, Uploader, BorrowerI
                 <span>Loan Details</span>
             </div>,
             key: 'loan-details',
-            children: <LoanDetails loading={loading} getTab={getTab} classname={'h-[66vh] overflow-y-auto'} data={value} receive={(e) => { receive(e); }} isEdit={isEdit} />,
+            children: <LoanDetails loading={loading} activeKey={activeKey} classname={'h-[66vh] overflow-y-auto'} data={value} receive={(e) => { receive(e); }} isEdit={isEdit} />,
         },
         {
             label: <div className='flex flex-rows'>
@@ -58,7 +60,7 @@ function MarketingTabs({ value, receive, ClientId, FileType, Uploader, BorrowerI
                 <span>OFW Details</span>
             </div>,
             key: 'ofw-details',
-            children: <OfwDetails loading={loading} getTab={getTab} classname={'h-[65vh] overflow-y-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'MARKETING'} />,
+            children: <OfwDetails loading={loading} activeKey={activeKey} classname={'h-[65vh] overflow-y-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'MARKETING'} />,
         },
         {
             label: <div className='flex flex-rows'>
@@ -67,7 +69,7 @@ function MarketingTabs({ value, receive, ClientId, FileType, Uploader, BorrowerI
             </div>,
             key: 'beneficiary-details',
 
-            children: <BeneficiaryDetails loading={loading} getTab={getTab} presaddress={presaddress} classname={'h-[65vh] overflow-y-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} isEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />,
+            children: <BeneficiaryDetails loading={loading} activeKey={activeKey} presaddress={presaddress} classname={'h-[65vh] overflow-y-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} isEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />,
 
         },
         {
@@ -118,6 +120,7 @@ function MarketingTabs({ value, receive, ClientId, FileType, Uploader, BorrowerI
     return (
         <>
             <Tabs
+               // activeKey={activeKey}
                 onChange={onChangeTab}
                 tabPosition="top"
                 defaultActiveKey={tabs}

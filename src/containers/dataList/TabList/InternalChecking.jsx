@@ -216,7 +216,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
+                                <div className='mt-2 px-2 w-full'>
                                     <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                                         <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                                             <ResponsiveTable
@@ -263,7 +263,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
+                                <div className='mt-2 w-full px-2'>
                                     <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                                         <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                                             <ResponsiveTable
@@ -307,7 +307,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
+                                <div className='mt-2 w-full px-2'>
                                     <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                                         <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                                             <ResponsiveTable
@@ -349,7 +349,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
+                                <div className='mt-2 w-full px-2'>
                                     <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                                         <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                                             <ResponsiveTable
@@ -394,7 +394,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                         </div>
                     </center>
                     <div className='h-[400px]'>
-                        <div className='mt-2 w-[81rem]'>
+                        <div className='mt-2 w-full px-2'>
                             <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                                 <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                                     <ResponsiveTable

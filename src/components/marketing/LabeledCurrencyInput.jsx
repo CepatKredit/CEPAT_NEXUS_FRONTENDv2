@@ -15,7 +15,8 @@ function LabeledCurrencyInput({
     className_label,
     className_dsub,
     rendered,
-    required
+    required,
+    calculated_val,
 }) {
     const [getStatus, setStatus] = React.useState('');
     const [getIcon, setIcon] = React.useState(false);
@@ -38,7 +39,11 @@ function LabeledCurrencyInput({
 
     function formatToTwoDecimalPlaces(num) {
         if (!num) return '';
-        return parseFloat(num).toFixed(2);
+        let formatted = parseFloat(num).toFixed(2);
+        if (formatted.indexOf('.') === formatted.length - 2) {
+            formatted += '0';
+        }
+        return formatted;
     }
 
     function onChange(e) {
@@ -59,16 +64,17 @@ function LabeledCurrencyInput({
 
         setItem(formattedValue);
         if (placeHolder === 'Enter Interest Rate') {
-            if (parsedNum < 1.99 || parsedNum > 2.5) {
+            debreceive(formattedValue);
+            if ((required || required === undefined) && (num === '')) {
                 setStatus('error');
                 setIcon(true);
-                debreceive();
+                //debreceive();
             } else {
                 setStatus('');
                 setIcon(true);
-                debreceive(formattedValue);
+                //debreceive(formattedValue);
             }
-        } else if (placeHolder !== 'Rent Amount' && placeHolder !== 'Monthly Amortization' && placeHolder !== 'Calculated Total Exposure' && placeHolder !== 'Calculated Monthly Amortization') {
+        } else if ((required || required === undefined) && (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure')) {
             if (!plainNum || parsedNum < 30000) {
                 setStatus('error');
                 setIcon(true);
@@ -89,28 +95,26 @@ function LabeledCurrencyInput({
         setIcon(true);
         const plainNum = removeCommas(getItem);
         const parsedNum = parseFloat(plainNum);
-
         if (placeHolder === 'Enter Interest Rate') {
-            if (parsedNum < 1.99 || parsedNum > 2.5) {
+            if (!plainNum || !getItem ) {
                 setStatus('error');
             } else {
-                setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
                 setStatus('');
             }
-        } else if (placeHolder !== 'Rent Amount' && placeHolder !== 'Monthly Amortization' && placeHolder !== 'Calculated Total Exposure' && placeHolder !== 'Calculated Monthly Amortization') {
+        } else if (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure') {
             if (!plainNum || parsedNum < 30000) { 
                 setStatus('error');
             } else {
-                setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
                 setStatus('');
             }
         } else { if (!plainNum){ 
             setStatus('error');
         }else{
-            setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
             setStatus('');
             }
         }
+        setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
+
     }
 
     React.useEffect(() => {
@@ -118,12 +122,19 @@ function LabeledCurrencyInput({
             onBlur();
         }
     }, []);
-    React.useEffect(() => {
-       setItem(value?value.toString(): '')
-       if (rendered) {
-        onBlur();
-    }
-    }, [value]);
+
+    React.useEffect(()=>{ 
+        if(rendered && calculated_val != undefined){
+            setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(calculated_val?calculated_val.toString() : '0.00')))
+            if(calculated_val  && placeHolder === 'Calculated Monthly Amortization'){
+                setStatus('');
+            }else if(calculated_val  && placeHolder === 'Calculated Total Exposure'){
+                setStatus('');
+            }else{
+                setStatus('error');
+            }
+        }
+    },[calculated_val])
 
     return (
         <div className={className_dmain}>

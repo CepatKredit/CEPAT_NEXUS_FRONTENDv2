@@ -14,9 +14,10 @@ import axios from 'axios';
 import { toDecrypt, toUpperText } from '@utils/Converter';
 import SectionHeader from '@components/validation/SectionHeader';
 import { GetData } from '@utils/UserData';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function EmploymentHistory({ data, User }) {
-    const [loading, setLoading] = React.useState(true);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -64,7 +65,7 @@ function EmploymentHistory({ data, User }) {
                     EndDate: x.endDate,
                 });
             });
-            setLoading(false);
+         SET_LOADING_INTERNAL('EmploymentHistory', false);
             return dataList;
         },
         refetchInterval: (data) => {
@@ -74,73 +75,23 @@ function EmploymentHistory({ data, User }) {
         retryDelay: 1000,
     });
 
-    const [fieldErrors, setFieldErrors] = React.useState({
-        Agency: '',
-        Position: '',
-        StartDate: '',
-        EndDate: '',
 
-
-    });
-
-    function validateStartDate(StartDate) {
-        const year = StartDate.split('-')[1];
-
-        return StartDate.trim() !== '' && year && /^\d{4}$/.test(year);
-    }
-
-    function validateCompanyAgency(Agency) {
-        return Agency.trim() !== '';
-    }
-    function validatePosition(Position) {
-        return Position !== '';
-    }
-
-
-    function validateFullbdate(EndDate) {
-        const year = EndDate.split('-')[1];
-
-        return EndDate.trim() !== '' && year && /^\d{4}$/.test(year);
-    }
-
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('EmploymentHistory', true)
+            getEmploymentHistory.refetch();
+        }
+    }, [data]);
 
     const [getAddStat, setAddStat] = React.useState(false)
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
     async function onClickSave() {
-        /* let errors = {};
-         if (!validateCompanyAgency(getInfo.Agency)) {
-             errors.Agency = 'Company Agency is required.';
-         }
- 
-         if (!validateStartDate(getInfo.StartDate)) {
-             errors.StartDate = 'Start Date is required and should have a 4-digit year.';
-         }
- 
-         if (!validateFullbdate(getInfo.EndDate)) {
-             errors.EndDate = 'End Date is required and should have a 4-digit year.';
-         }
- 
-         if (!validatePosition(getInfo.Position)) {
-             errors.Position = 'Position is required.';
-         }
- 
- 
- 
-         if (Object.keys(errors).length > 0) {
-             setFieldErrors(errors);
-             return;
-         }
- 
- 
- 
- 
-         setFieldErrors({ StartDate: '', Agency: '', EndDate: '', Position: '' });*/
+
 
         setStat(false);
-        // const formattedBirthdate = getInfo.Birthdate ? moment(getInfo.Birthdate).format('MM-DD-YYYY') : '';
 
         const row = await form.validateFields();
         const data = {
@@ -152,7 +103,7 @@ function EmploymentHistory({ data, User }) {
             RecUser: jwtDecode(token).USRID
         }
 
-        //   console.log(data)
+
         await axios.post('/addEmploymentHistory', data)
             .then((result) => {
                 api[result.data.status]({
@@ -177,11 +128,7 @@ function EmploymentHistory({ data, User }) {
                     message: 'Something went wrong',
                     description: error.message,
                 });
-                /*    setFocus({
-                        name: false,
-                        conNum: true,
-                        remarks: false,
-                    });*/
+
             })
 
     }
@@ -190,44 +137,20 @@ function EmploymentHistory({ data, User }) {
 
 
     async function onClickEdit() {
-        /* let errors = {};
-        // Correct the field name to Agency instead of CompanyAgency
-         if (!validateCompanyAgency(getInfo.Agency)) {
-             errors.Agency = 'Company/Agency is required.';
-         }
- 
-         if (getInfo.StartDate.trim() === '') {
-             errors.StartDate = 'Start Date is required and should have a 4-digit year.';
-         }
- 
-         if (!validateFullbdate(getInfo.EndDate)) {
-             errors.EndDate = 'End Date is required.';
-         }
- 
-         if (!validatePosition(getInfo.Position)) {
-             errors.Position = 'Position is required.';
-         }
- 
-         if (Object.keys(errors).length > 0) {
-             setFieldErrors(errors);
-             return;
-         }
- 
-         // Clear errors if validation passes
-         setFieldErrors({ StartDate: '', Agency: '', EndDate: '', Position: '' });*/
-      
+
+
         try {
             const row = await form.validateFields();
             const data = {
-            Id: editingKey, // Ensuring the record key is used correctly
-            Agency: row.agency,
-            Position: row.position,
-            StartDate: row.startdate.format('YYYY-MM'), // Format as needed for the API
-            EndDate: row.enddate.format('YYYY-MM'),
-            ModUser: jwtDecode(token).USRID
-        };
+                Id: editingKey,
+                Agency: row.agency,
+                Position: row.position,
+                StartDate: row.startdate.format('YYYY-MM'),
+                EndDate: row.enddate.format('YYYY-MM'),
+                ModUser: jwtDecode(token).USRID
+            };
 
-              // console.log('Data to be sent to the server:', data);
+
 
             const result = await axios.post('/editEmploymentHistory', data);
             api[result.data.status]({
@@ -320,21 +243,21 @@ function EmploymentHistory({ data, User }) {
                     : 'Company / Agency',
             dataIndex: 'agency',
             key: 'agency',
-            width: '25%',
+            width: '35%',
             editable: true,
         },
         {
             title: 'Position',
             dataIndex: 'position',
             key: 'position',
-            width: '25%',
+            width: '35%',
             editable: true,
         },
         {
             title: 'Start Date',
             dataIndex: 'startdate',
             key: 'startdate',
-            width: '25%',
+            width: '15%',
             editable: true,
             render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
         },
@@ -342,9 +265,9 @@ function EmploymentHistory({ data, User }) {
             title: 'End Date',
             dataIndex: 'enddate',
             key: 'enddate',
-            width: '25%',
+            width: '15%',
             editable: true,
-           render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
+            render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
 
         },
         {
@@ -431,11 +354,7 @@ function EmploymentHistory({ data, User }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                        /*   setFocus({
-                                               name: false,
-                                               conNum: false,
-                                               remarks: false,
-                                           });*/
+
                                         edit(record);
                                         setAddStat(!getAddStat);
                                     }}
@@ -461,11 +380,6 @@ function EmploymentHistory({ data, User }) {
         },
     ];
 
-    /*const [getFocus, setFocus] = React.useState({
-        name: false,
-        conNum: true,
-        remarks: false,
-    })*/
 
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
@@ -475,7 +389,7 @@ function EmploymentHistory({ data, User }) {
             position: record.position,
             startdate: dayjs(record.startDate),
             enddate: dayjs(record.enddate),
-       });
+        });
         setEditingKey(record.key);
     };
 
@@ -493,27 +407,28 @@ function EmploymentHistory({ data, User }) {
             }),
         };
     });
-    const [startDate, setStartDate] = React.useState(null); // Track the start date value
 
-    async function onDateChange(e, pointer) {
-        if (pointer === 'startdate') {
-            form.setFieldsValue({ 'startdate': e });
-            setStartDate(e); // Update the start date in state
-            console.log("Selected Start Date:", e ? e.format('YYYY-MM') : "No date selected");
-        } else {
-            form.setFieldsValue({ 'enddate': e });
-            console.log("Selected End Date:", e ? e.format('YYYY-MM') : "No date selected");
-        }
+    // Separate function for handling start date change
+    async function onStartDateChange(e) {
+        form.setFieldsValue({ 'startdate': e });
+        console.log("Selected Start Date:", e ? e.format('YYYY-MM') : "No date selected");
     }
-    
-    const disabledStartDate = (current) => {
-        return current && current >= dayjs().endOf('day'); // Disable today and future dates
-    };
-    
-    const disabledEndDate = (current) => {
-        return current && (startDate && current < startDate.startOf('month')) ||
-        current >= dayjs().endOf('day');
-    };
+
+    // Separate function for handling end date change
+    async function onEndDateChange(e) {
+        form.setFieldsValue({ 'enddate': e });
+        console.log("Selected End Date:", e ? e.format('YYYY-MM') : "No date selected");
+    }
+
+    /*  const disabledStartDate = (current) => {
+          return current && current >= dayjs().endOf('day');
+      };
+  
+      const disabledEndDate = (current) => {
+          return current && (startDate && current < startDate.startOf('month')) ||
+              current >= dayjs().endOf('day');
+      };*/
+
     const EditableCell = ({
         editing,
         dataIndex,
@@ -553,16 +468,16 @@ function EmploymentHistory({ data, User }) {
                     </>
                 )
                 : dataIndex === 'startdate' ? (
-                    <>
-                        <DatePicker disabledDate={disabledStartDate} onChange={(e) => { onDateChange(e, 'startdate') }} picker='month' />
-                            
-                    </>
-
-                ) : dataIndex === 'enddate' ? (<>
-                    <DatePicker disabledDate={disabledEndDate} onChange={(e) => { onDateChange(e, 'enddate') }} picker='month' />
-                </>
+                    <DatePicker
+                        onChange={(e) => onStartDateChange(e, 'startdate')}
+                        picker='month'
+                    />
+                ) : dataIndex === 'enddate' ? (
+                    <DatePicker
+                        onChange={(e) => onEndDateChange(e, 'enddate')}
+                        picker='month'
+                    />
                 ) : null;
-
         return (
             <td {...restProps}>
                 {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={[
@@ -570,13 +485,27 @@ function EmploymentHistory({ data, User }) {
                         required: true,
                         message: `Please Input ${title}`,
                     },
-                ]} >
+                    dataIndex === 'startdate' && {
+                        validator: (_, value) =>
+                            !value || dayjs(value).isBefore(dayjs(), 'day')
+                                ? Promise.resolve()
+                                : Promise.reject("Start Date cannot be in the future."),
+                    },
+                    dataIndex === 'enddate' && {
+                        validator: (_, value) =>
+                            !value || (form.getFieldValue('startdate') && dayjs(value).isAfter(form.getFieldValue('startdate'), 'day'))
+                                ? Promise.resolve()
+                                : Promise.reject("End Date must be after Start Date."),
+                    },
+                ].filter(Boolean)}
+                >
                     {inputNode}
                 </Form.Item>
                 ) : (
                     children
-                )}
-            </td>
+                )
+                }
+            </td >
         );
     };
 
@@ -597,8 +526,6 @@ function EmploymentHistory({ data, User }) {
                     </center>
                 </div>
                 <div className='mt-0'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                             <Form form={form} component={false} >
                                 <Table
                                     columns={mergedColumns}
@@ -624,10 +551,9 @@ function EmploymentHistory({ data, User }) {
                                     components={{ body: { cell: EditableCell } }}
                                     rowClassName='editable-row'
                                     pagination={false}
+                                    
                                 />
                             </Form>
-                        </Spin>
-                    </ConfigProvider>
                 </div>
             </div>
         </div>

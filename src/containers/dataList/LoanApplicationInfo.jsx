@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { notification } from 'antd';
+import React, { useContext, useState } from 'react';
+import { notification, Spin, ConfigProvider } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { toDecrypt, mmddyy } from '@utils/Converter';
@@ -11,12 +11,14 @@ import AccountingTabs from './TabSwitch/AccountingTabs';
 import { jwtDecode } from 'jwt-decode';
 import { GetData } from '@utils/UserData';
 import TriggerFields from '@utils/TriggerFields';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function LoanApplicationInfo() {
+    const { GET_LOADING_INTERNAL } = useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const [api, contextHolder] = notification.useNotification();
     const [sepcoborrowfname, setCoborrowfname] = React.useState('');
     const [sepBenfname, setBenfname] = React.useState('');
-    const [loading, setLoading] = useState(true);
 
     const [getAppDetails, setAppDetails] = React.useState({
         dataPrivacy: false,
@@ -186,7 +188,7 @@ function LoanApplicationInfo() {
         JobCategory: '',
         EmpStatus: '',
         FCurrency: '',
-        FCurValue:'',
+        FCurValue: '',
         FSalary: '',
         PSalary: '',
         YrsOfwSeafarer: '',
@@ -237,6 +239,7 @@ function LoanApplicationInfo() {
 
     React.useEffect(() => {
         ClientDataListQuery.refetch();
+        SET_LOADING_INTERNAL('ClientDataInfo', true);
     }, [localStorage.getItem('SIDC')]);
 
     const [getDetails, setDetails] = React.useState({
@@ -299,7 +302,7 @@ function LoanApplicationInfo() {
                     ofwgender: data?.OfwDetails?.genderId || '',
                     ofwmstatus: data?.OfwDetails?.civilStatusId || '',
                     ofwspouse: data?.OfwDetails?.spouseName || '',
-                    ofwspousebdate: data?.OfwDetails?.spouseBirthday? mmddyy(data?.OfwDetails?.spouseBirthday) : '',
+                    ofwspousebdate: data?.OfwDetails?.spouseBirthday ? mmddyy(data?.OfwDetails?.spouseBirthday) : '',
                     ofwemail: data?.OfwDetails?.email || '',
                     ofwmobile: data?.OfwDetails?.mobileNo || '',
                     ofwothermobile: data?.OfwDetails?.mobileNo2 || '',
@@ -398,7 +401,7 @@ function LoanApplicationInfo() {
                     coborrowdependents: data?.CoborrowDetails?.withDependent || '',
                     coborrowfblink: data?.CoborrowDetails?.fbProfile || '',
                     coborrowspousename: data?.CoborrowDetails?.spouseName || '',
-                    coborrowerspousebdate: data?.CoborrowDetails?.spouseBirthday ? mmddyy( data?.CoborrowDetails?.spouseBirthday) : '',
+                    coborrowerspousebdate: data?.CoborrowDetails?.spouseBirthday ? mmddyy(data?.CoborrowDetails?.spouseBirthday) : '',
 
 
                     // Co-Borrower Addresses
@@ -477,12 +480,12 @@ function LoanApplicationInfo() {
                     AcbSpIncome: data.CoborrowDetails?.spouseIncome || '',//
                     AcbGrpChat: data?.CoborrowDetails?.groupchat || '',
                     AcbSrcIncome: data?.CoborrowDetails?.cbAcbIncomeSource || '',//
-                    AcbReligion: data?.CoborrowDetails?.religion ||'',
+                    AcbReligion: data?.CoborrowDetails?.religion || '',
                     AcbFormerOFW: data?.CoborrowDetails?.isFormerOfw || '',
                     AcbLastReturn: data?.CoborrowDetails?.lastReturnHome || '',//
-                    AcbPlanAbroad: data?.CoborrowDetails?.plantoAbroad ||'' ,//
-                    AcbPEP: data?.CoborrowDetails?.isPeP ||'',//
-                    AcbRemarks: data?.CoborrowDetails?.remarks ||'',//
+                    AcbPlanAbroad: data?.CoborrowDetails?.plantoAbroad || '',//
+                    AcbPEP: data?.CoborrowDetails?.isPeP || '',//
+                    AcbRemarks: data?.CoborrowDetails?.remarks || '',//
                     AcbRelationship: data?.CoborrowDetails?.relationshipID || '',
                     AcbRelationshipName: data?.CoborrowDetails?.relationship || '',
 
@@ -496,10 +499,11 @@ function LoanApplicationInfo() {
                     //Acb show Status
                     addCoborrower: data?.CoborrowDetails?.firstName || '',
                 }));
-                setLoading(false);
+                SET_LOADING_INTERNAL('ClientDataInfo', false);
                 return data;
             } catch (error) {
-                console.log('Error fetching data.', error)
+                console.error('Error fetching data:', error);
+                return null;
             }
         },
         enabled: true,
@@ -522,226 +526,21 @@ function LoanApplicationInfo() {
     const token = localStorage.getItem('UTK');
 
     //Manipulate Fields on trigger
-    TriggerFields({getAppDetails,setAppDetails});
+    TriggerFields({ getAppDetails, setAppDetails });
+
+    const [getLoading, setLoading] = React.useState(false)
+    React.useEffect(() => { setLoading(GET_LOADING_INTERNAL) }, [GET_LOADING_INTERNAL])
 
     return (
-        <div className="mx-7 mt-[2%] h-[500px]">
-            {contextHolder}
-            <div className="h-[100%] mt-[1%]">
-                {
-                    GetData('ROLE').toString() === '20'
-                        ? (<LcTabs
-                            value={getAppDetails} loading={loading} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
-                            sepcoborrowfname={sepcoborrowfname}
-                            sepBenfname={sepBenfname}
-                            presaddress={(e) => {
-                                setAppDetails((prevDetails) => {
-                                    let updatedFields = {};
-                                    switch (e.name) {
-                                        case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                        case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                        case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
-                                        case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                        case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                        case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
-                                        case 'ofwPerm': updatedFields = {
-                                            ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
-                                            ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
-                                        }; break;
-                                        case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                        case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                        case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                        case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
-                                        case 'provpres': updatedFields = {
-                                            ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
-                                            ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
-                                        }; break;
-                                        case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                        case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
-                                        case 'benpres':
-                                            updatedFields = {
-                                                benpresprov: getAppDetails.ofwPresProv,
-                                                benpresmunicipality: getAppDetails.ofwPresMunicipality,
-                                                benpresbarangay: getAppDetails.ofwPresBarangay,
-                                                benpresstreet: getAppDetails.ofwPresStreet,
-                                            };
-                                            break;
-                                        case 'bensameadd':
-                                            updatedFields = {
-                                                benpresprov: '',
-                                                benpresmunicipality: '',
-                                                benpresbarangay: '',
-                                                benpresstreet: ''
-                                            };
-                                            break;
-                                        case 'benpresprov':
-                                            updatedFields = {
-                                                benpresmunicipality: '',
-                                                benpresbarangay: '',
-                                                benpresstreet: ''
-                                            };
-                                            break;
-                                        case 'benpresmunicipality':
-                                            updatedFields = {
-                                                benpresbarangay: '',
-                                                benpresstreet: ''
-                                            };
-                                            break;
-                                        case 'benpresbarangay':
-                                            updatedFields = {
-                                                benpresstreet: ''
-                                            };
-                                            break;
-                                        case 'resetBenMiddleName':
-                                            updatedFields = {
-                                                benmname: ''
-                                            };
-                                            break;
-                                        case 'coborrowProv':
-                                            updatedFields = {
-                                                coborrowBarangay: '',
-                                                coborrowMunicipality: '',
-                                                coborrowStreet: '',
-                                            }
-                                            break;
-                                        case 'coborrowMunicipality':
-                                            updatedFields = {
-                                                coborrowBarangay: '',
-                                                coborrowStreet: '',
-                                            }
-                                            break;
-                                        case 'coborrowBarangay':
-                                            updatedFields = {
-                                                coborrowStreet: ''
-                                            }
-                                            break;
-                                        case 'coborrowSameAdd':
-                                            updatedFields = {
-                                                coborrowProv: '', coborrowMunicipality: '',
-                                                coborrowBarangay: '', coborrowStreet: '',
-                                            }
-                                            break;
-                                        case 'coborrowpres':
-                                            updatedFields = {
-                                                coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
-                                                coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
-                                            }
-                                            break;
-                                        default: break;
-                                    }
-                                    return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
-                                });
-                            }}
-                            ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
-                        : GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40'
-                            ? (<MarketingTabs
-                                value={getAppDetails} loading={loading} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
-                                valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
-                                sepcoborrowfname={sepcoborrowfname}
-                                sepBenfname={sepBenfname}
-                                presaddress={(e) => {
-                                    setAppDetails((prevDetails) => {
-                                        let updatedFields = {};
-                                        switch (e.name) {
-                                            case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                            case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                            case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
-                                            case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                            case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                            case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
-                                            case 'ofwPerm': updatedFields = {
-                                                ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
-                                                ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
-                                            }; break;
-                                            case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                            case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                            case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                            case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
-                                            case 'provpres': updatedFields = {
-                                                ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
-                                                ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
-                                            }; break;
-                                            case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                            case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
-                                            case 'benpres':
-                                                updatedFields = {
-                                                    benpresprov: getAppDetails.ofwPresProv,
-                                                    benpresmunicipality: getAppDetails.ofwPresMunicipality,
-                                                    benpresbarangay: getAppDetails.ofwPresBarangay,
-                                                    benpresstreet: getAppDetails.ofwPresStreet,
-                                                };
-                                                break;
-                                            case 'bensameadd':
-                                                updatedFields = {
-                                                    benpresprov: '',
-                                                    benpresmunicipality: '',
-                                                    benpresbarangay: '',
-                                                    benpresstreet: ''
-                                                };
-                                                break;
-                                            case 'benpresprov':
-                                                updatedFields = {
-                                                    benpresmunicipality: '',
-                                                    benpresbarangay: '',
-                                                    benpresstreet: ''
-                                                };
-                                                break;
-                                            case 'benpresmunicipality':
-                                                updatedFields = {
-                                                    benpresbarangay: '',
-                                                    benpresstreet: ''
-                                                };
-                                                break;
-                                            case 'benpresbarangay':
-                                                updatedFields = {
-                                                    benpresstreet: ''
-                                                };
-                                                break;
-                                            case 'resetBenMiddleName':
-                                                updatedFields = {
-                                                    benmname: ''
-                                                };
-                                                break;
-                                            case 'coborrowProv':
-                                                updatedFields = {
-                                                    coborrowBarangay: '',
-                                                    coborrowMunicipality: '',
-                                                    coborrowStreet: '',
-                                                }
-                                                break;
-                                            case 'coborrowMunicipality':
-                                                updatedFields = {
-                                                    coborrowBarangay: '',
-                                                    coborrowStreet: '',
-                                                }
-                                                break;
-                                            case 'coborrowBarangay':
-                                                updatedFields = {
-                                                    coborrowStreet: ''
-                                                }
-                                                break;
-                                            case 'coborrowSameAdd':
-                                                updatedFields = {
-                                                    coborrowProv: '', coborrowMunicipality: '',
-                                                    coborrowBarangay: '', coborrowStreet: '',
-                                                }
-                                                break;
-                                            case 'coborrowpres':
-                                                updatedFields = {
-                                                    coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
-                                                    coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
-                                                }
-                                                break;
-                                            default: break;
-                                        }
-                                        return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
-                                    });
-                                }}
-                                ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
-                            : GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '60'
-                                ? (<CreditTabs
-                                    value={getAppDetails} loading={loading} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
-                                    valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
+        <div className="px-7 mt-[2%] h-[500px] w-full">
+            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
+                <Spin spinning={getLoading} tip="Please wait..." className="flex justify-center items-center" size='large'>
+                    {contextHolder}
+                    <div className="h-[100%] mt-[1%]">
+                        {
+                            GetData('ROLE').toString() === '20'
+                                ? (<LcTabs
+                                    value={getAppDetails} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
                                     sepcoborrowfname={sepcoborrowfname}
                                     sepBenfname={sepBenfname}
                                     presaddress={(e) => {
@@ -843,217 +642,429 @@ function LoanApplicationInfo() {
                                         });
                                     }}
                                     ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
-                                    : GetData('ROLE').toString() === '90'
-                                    ? (<AccountingTabs
-                                      value={getAppDetails} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
-                                      valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
-                                      sepcoborrowfname={sepcoborrowfname}
-                                      sepBenfname={sepBenfname}
-                                      presaddress={(e) => {
-                                        setAppDetails((prevDetails) => {
-                                          let updatedFields = {};
-                                          switch (e.name) {
-                                            case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                            case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                            case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
-                                            case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                            case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                            case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
-                                            case 'ofwPerm': updatedFields = {
-                                              ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
-                                              ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
-                                            }; break;
-                                            case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                            case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                            case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                            case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
-                                            case 'provpres': updatedFields = {
-                                              ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
-                                              ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
-                                            }; break;
-                                            case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                            case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
-                                            case 'benpres':
-                                              updatedFields = {
-                                                benpresprov: getAppDetails.ofwPresProv,
-                                                benpresmunicipality: getAppDetails.ofwPresMunicipality,
-                                                benpresbarangay: getAppDetails.ofwPresBarangay,
-                                                benpresstreet: getAppDetails.ofwPresStreet,
-                                              };
-                                              break;
-                                            case 'bensameadd':
-                                              updatedFields = {
-                                                benpresprov: '',
-                                                benpresmunicipality: '',
-                                                benpresbarangay: '',
-                                                benpresstreet: ''
-                                              };
-                                              break;
-                                            case 'benpresprov':
-                                              updatedFields = {
-                                                benpresmunicipality: '',
-                                                benpresbarangay: '',
-                                                benpresstreet: ''
-                                              };
-                                              break;
-                                            case 'benpresmunicipality':
-                                              updatedFields = {
-                                                benpresbarangay: '',
-                                                benpresstreet: ''
-                                              };
-                                              break;
-                                            case 'benpresbarangay':
-                                              updatedFields = {
-                                                benpresstreet: ''
-                                              };
-                                              break;
-                                            case 'resetBenMiddleName':
-                                              updatedFields = {
-                                                benmname: ''
-                                              };
-                                              break;
-                                            case 'coborrowProv':
-                                              updatedFields = {
-                                                coborrowBarangay: '',
-                                                coborrowMunicipality: '',
-                                                coborrowStreet: '',
-                                              }
-                                              break;
-                                            case 'coborrowMunicipality':
-                                              updatedFields = {
-                                                coborrowBarangay: '',
-                                                coborrowStreet: '',
-                                              }
-                                              break;
-                                            case 'coborrowBarangay':
-                                              updatedFields = {
-                                                coborrowStreet: ''
-                                              }
-                                              break;
-                                            case 'coborrowSameAdd':
-                                              updatedFields = {
-                                                coborrowProv: '', coborrowMunicipality: '',
-                                                coborrowBarangay: '', coborrowStreet: '',
-                                              }
-                                              break;
-                                            case 'coborrowpres':
-                                              updatedFields = {
-                                                coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
-                                                coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
-                                              }
-                                              break;
-                                            default: break;
-                                          }
-                                          return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
-                                        });
-                                      }}
-                                      ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
-                                : (<LoanTabs
-                                    value={getAppDetails} loading={loading} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
-                                    valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
-                                    sepcoborrowfname={sepcoborrowfname}
-                                    sepBenfname={sepBenfname}
-                                    presaddress={(e) => {
-                                        setAppDetails((prevDetails) => {
-                                            let updatedFields = {};
-                                            switch (e.name) {
-                                                case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                                case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
-                                                case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
-                                                case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                                case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                                case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
-                                                case 'ofwPerm': updatedFields = {
-                                                    ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
-                                                    ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
-                                                }; break;
-                                                case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
-                                                case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                                case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                                case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
-                                                case 'provpres': updatedFields = {
-                                                    ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
-                                                    ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
-                                                }; break;
-                                                case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
-                                                case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
-                                                case 'benpres':
-                                                    updatedFields = {
-                                                        benpresprov: getAppDetails.ofwPresProv,
-                                                        benpresmunicipality: getAppDetails.ofwPresMunicipality,
-                                                        benpresbarangay: getAppDetails.ofwPresBarangay,
-                                                        benpresstreet: getAppDetails.ofwPresStreet,
-                                                    };
-                                                    break;
-                                                case 'bensameadd':
-                                                    updatedFields = {
-                                                        benpresprov: '',
-                                                        benpresmunicipality: '',
-                                                        benpresbarangay: '',
-                                                        benpresstreet: ''
-                                                    };
-                                                    break;
-                                                case 'benpresprov':
-                                                    updatedFields = {
-                                                        benpresmunicipality: '',
-                                                        benpresbarangay: '',
-                                                        benpresstreet: ''
-                                                    };
-                                                    break;
-                                                case 'benpresmunicipality':
-                                                    updatedFields = {
-                                                        benpresbarangay: '',
-                                                        benpresstreet: ''
-                                                    };
-                                                    break;
-                                                case 'benpresbarangay':
-                                                    updatedFields = {
-                                                        benpresstreet: ''
-                                                    };
-                                                    break;
-                                                case 'resetBenMiddleName':
-                                                    updatedFields = {
-                                                        benmname: ''
-                                                    };
-                                                    break;
-                                                case 'coborrowProv':
-                                                    updatedFields = {
-                                                        coborrowBarangay: '',
-                                                        coborrowMunicipality: '',
-                                                        coborrowStreet: '',
+                                : GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40'
+                                    ? (<MarketingTabs
+                                        value={getAppDetails} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
+                                        valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
+                                        sepcoborrowfname={sepcoborrowfname}
+                                        sepBenfname={sepBenfname}
+                                        presaddress={(e) => {
+                                            setAppDetails((prevDetails) => {
+                                                let updatedFields = {};
+                                                switch (e.name) {
+                                                    case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                    case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                    case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
+                                                    case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                    case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                    case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
+                                                    case 'ofwPerm': updatedFields = {
+                                                        ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
+                                                        ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
+                                                    }; break;
+                                                    case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                    case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                    case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                    case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
+                                                    case 'provpres': updatedFields = {
+                                                        ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
+                                                        ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
+                                                    }; break;
+                                                    case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                    case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
+                                                    case 'benpres':
+                                                        updatedFields = {
+                                                            benpresprov: getAppDetails.ofwPresProv,
+                                                            benpresmunicipality: getAppDetails.ofwPresMunicipality,
+                                                            benpresbarangay: getAppDetails.ofwPresBarangay,
+                                                            benpresstreet: getAppDetails.ofwPresStreet,
+                                                        };
+                                                        break;
+                                                    case 'bensameadd':
+                                                        updatedFields = {
+                                                            benpresprov: '',
+                                                            benpresmunicipality: '',
+                                                            benpresbarangay: '',
+                                                            benpresstreet: ''
+                                                        };
+                                                        break;
+                                                    case 'benpresprov':
+                                                        updatedFields = {
+                                                            benpresmunicipality: '',
+                                                            benpresbarangay: '',
+                                                            benpresstreet: ''
+                                                        };
+                                                        break;
+                                                    case 'benpresmunicipality':
+                                                        updatedFields = {
+                                                            benpresbarangay: '',
+                                                            benpresstreet: ''
+                                                        };
+                                                        break;
+                                                    case 'benpresbarangay':
+                                                        updatedFields = {
+                                                            benpresstreet: ''
+                                                        };
+                                                        break;
+                                                    case 'resetBenMiddleName':
+                                                        updatedFields = {
+                                                            benmname: ''
+                                                        };
+                                                        break;
+                                                    case 'coborrowProv':
+                                                        updatedFields = {
+                                                            coborrowBarangay: '',
+                                                            coborrowMunicipality: '',
+                                                            coborrowStreet: '',
+                                                        }
+                                                        break;
+                                                    case 'coborrowMunicipality':
+                                                        updatedFields = {
+                                                            coborrowBarangay: '',
+                                                            coborrowStreet: '',
+                                                        }
+                                                        break;
+                                                    case 'coborrowBarangay':
+                                                        updatedFields = {
+                                                            coborrowStreet: ''
+                                                        }
+                                                        break;
+                                                    case 'coborrowSameAdd':
+                                                        updatedFields = {
+                                                            coborrowProv: '', coborrowMunicipality: '',
+                                                            coborrowBarangay: '', coborrowStreet: '',
+                                                        }
+                                                        break;
+                                                    case 'coborrowpres':
+                                                        updatedFields = {
+                                                            coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
+                                                            coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
+                                                        }
+                                                        break;
+                                                    default: break;
+                                                }
+                                                return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
+                                            });
+                                        }}
+                                        ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
+                                    : GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '60'
+                                        ? (<CreditTabs
+                                            value={getAppDetails} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
+                                            valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
+                                            sepcoborrowfname={sepcoborrowfname}
+                                            sepBenfname={sepBenfname}
+                                            presaddress={(e) => {
+                                                setAppDetails((prevDetails) => {
+                                                    let updatedFields = {};
+                                                    switch (e.name) {
+                                                        case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                        case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                        case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
+                                                        case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                        case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                        case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
+                                                        case 'ofwPerm': updatedFields = {
+                                                            ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
+                                                            ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
+                                                        }; break;
+                                                        case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                        case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                        case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                        case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
+                                                        case 'provpres': updatedFields = {
+                                                            ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
+                                                            ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
+                                                        }; break;
+                                                        case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                        case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
+                                                        case 'benpres':
+                                                            updatedFields = {
+                                                                benpresprov: getAppDetails.ofwPresProv,
+                                                                benpresmunicipality: getAppDetails.ofwPresMunicipality,
+                                                                benpresbarangay: getAppDetails.ofwPresBarangay,
+                                                                benpresstreet: getAppDetails.ofwPresStreet,
+                                                            };
+                                                            break;
+                                                        case 'bensameadd':
+                                                            updatedFields = {
+                                                                benpresprov: '',
+                                                                benpresmunicipality: '',
+                                                                benpresbarangay: '',
+                                                                benpresstreet: ''
+                                                            };
+                                                            break;
+                                                        case 'benpresprov':
+                                                            updatedFields = {
+                                                                benpresmunicipality: '',
+                                                                benpresbarangay: '',
+                                                                benpresstreet: ''
+                                                            };
+                                                            break;
+                                                        case 'benpresmunicipality':
+                                                            updatedFields = {
+                                                                benpresbarangay: '',
+                                                                benpresstreet: ''
+                                                            };
+                                                            break;
+                                                        case 'benpresbarangay':
+                                                            updatedFields = {
+                                                                benpresstreet: ''
+                                                            };
+                                                            break;
+                                                        case 'resetBenMiddleName':
+                                                            updatedFields = {
+                                                                benmname: ''
+                                                            };
+                                                            break;
+                                                        case 'coborrowProv':
+                                                            updatedFields = {
+                                                                coborrowBarangay: '',
+                                                                coborrowMunicipality: '',
+                                                                coborrowStreet: '',
+                                                            }
+                                                            break;
+                                                        case 'coborrowMunicipality':
+                                                            updatedFields = {
+                                                                coborrowBarangay: '',
+                                                                coborrowStreet: '',
+                                                            }
+                                                            break;
+                                                        case 'coborrowBarangay':
+                                                            updatedFields = {
+                                                                coborrowStreet: ''
+                                                            }
+                                                            break;
+                                                        case 'coborrowSameAdd':
+                                                            updatedFields = {
+                                                                coborrowProv: '', coborrowMunicipality: '',
+                                                                coborrowBarangay: '', coborrowStreet: '',
+                                                            }
+                                                            break;
+                                                        case 'coborrowpres':
+                                                            updatedFields = {
+                                                                coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
+                                                                coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
+                                                            }
+                                                            break;
+                                                        default: break;
                                                     }
-                                                    break;
-                                                case 'coborrowMunicipality':
-                                                    updatedFields = {
-                                                        coborrowBarangay: '',
-                                                        coborrowStreet: '',
-                                                    }
-                                                    break;
-                                                case 'coborrowBarangay':
-                                                    updatedFields = {
-                                                        coborrowStreet: ''
-                                                    }
-                                                    break;
-                                                case 'coborrowSameAdd':
-                                                    updatedFields = {
-                                                        coborrowProv: '', coborrowMunicipality: '',
-                                                        coborrowBarangay: '', coborrowStreet: '',
-                                                    }
-                                                    break;
-                                                case 'coborrowpres':
-                                                    updatedFields = {
-                                                        coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
-                                                        coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
-                                                    }
-                                                    break;
-                                                default: break;
-                                            }
-                                            return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
-                                        });
-                                    }}
-                                    ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
-                }
-            </div>
+                                                    return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
+                                                });
+                                            }}
+                                            ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
+                                        : GetData('ROLE').toString() === '90'
+                                            ? (<AccountingTabs
+                                                value={getAppDetails} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
+                                                valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
+                                                sepcoborrowfname={sepcoborrowfname}
+                                                sepBenfname={sepBenfname}
+                                                presaddress={(e) => {
+                                                    setAppDetails((prevDetails) => {
+                                                        let updatedFields = {};
+                                                        switch (e.name) {
+                                                            case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                            case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                            case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
+                                                            case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                            case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                            case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
+                                                            case 'ofwPerm': updatedFields = {
+                                                                ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
+                                                                ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
+                                                            }; break;
+                                                            case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                            case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                            case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                            case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
+                                                            case 'provpres': updatedFields = {
+                                                                ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
+                                                                ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
+                                                            }; break;
+                                                            case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                            case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
+                                                            case 'benpres':
+                                                                updatedFields = {
+                                                                    benpresprov: getAppDetails.ofwPresProv,
+                                                                    benpresmunicipality: getAppDetails.ofwPresMunicipality,
+                                                                    benpresbarangay: getAppDetails.ofwPresBarangay,
+                                                                    benpresstreet: getAppDetails.ofwPresStreet,
+                                                                };
+                                                                break;
+                                                            case 'bensameadd':
+                                                                updatedFields = {
+                                                                    benpresprov: '',
+                                                                    benpresmunicipality: '',
+                                                                    benpresbarangay: '',
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'benpresprov':
+                                                                updatedFields = {
+                                                                    benpresmunicipality: '',
+                                                                    benpresbarangay: '',
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'benpresmunicipality':
+                                                                updatedFields = {
+                                                                    benpresbarangay: '',
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'benpresbarangay':
+                                                                updatedFields = {
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'resetBenMiddleName':
+                                                                updatedFields = {
+                                                                    benmname: ''
+                                                                };
+                                                                break;
+                                                            case 'coborrowProv':
+                                                                updatedFields = {
+                                                                    coborrowBarangay: '',
+                                                                    coborrowMunicipality: '',
+                                                                    coborrowStreet: '',
+                                                                }
+                                                                break;
+                                                            case 'coborrowMunicipality':
+                                                                updatedFields = {
+                                                                    coborrowBarangay: '',
+                                                                    coborrowStreet: '',
+                                                                }
+                                                                break;
+                                                            case 'coborrowBarangay':
+                                                                updatedFields = {
+                                                                    coborrowStreet: ''
+                                                                }
+                                                                break;
+                                                            case 'coborrowSameAdd':
+                                                                updatedFields = {
+                                                                    coborrowProv: '', coborrowMunicipality: '',
+                                                                    coborrowBarangay: '', coborrowStreet: '',
+                                                                }
+                                                                break;
+                                                            case 'coborrowpres':
+                                                                updatedFields = {
+                                                                    coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
+                                                                    coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
+                                                                }
+                                                                break;
+                                                            default: break;
+                                                        }
+                                                        return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
+                                                    });
+                                                }}
+                                                ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
+                                            : (<LoanTabs
+                                                value={getAppDetails} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
+                                                valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
+                                                sepcoborrowfname={sepcoborrowfname}
+                                                sepBenfname={sepBenfname}
+                                                presaddress={(e) => {
+                                                    setAppDetails((prevDetails) => {
+                                                        let updatedFields = {};
+                                                        switch (e.name) {
+                                                            case 'ofwPresProv': updatedFields = { ofwPresMunicipality: '', ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                            case 'ofwPresMunicipality': updatedFields = { ofwPresBarangay: '', ofwPresStreet: '' }; break;
+                                                            case 'ofwPresBarangay': updatedFields = { ofwPresStreet: '' }; break;
+                                                            case 'ofwPermProv': updatedFields = { ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                            case 'ofwPermMunicipality': updatedFields = { ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                            case 'ofwPermBarangay': updatedFields = { ofwPermStreet: '' }; break;
+                                                            case 'ofwPerm': updatedFields = {
+                                                                ofwPermProv: getAppDetails.ofwPresProv, ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
+                                                                ofwPermBarangay: getAppDetails.ofwPresBarangay, ofwPermStreet: getAppDetails.ofwPresStreet,
+                                                            }; break;
+                                                            case 'ofwSameAdd': updatedFields = { ofwPermProv: '', ofwPermMunicipality: '', ofwPermBarangay: '', ofwPermStreet: '' }; break;
+                                                            case 'ofwprovProv': updatedFields = { ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                            case 'ofwprovMunicipality': updatedFields = { ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                            case 'ofwprovBarangay': updatedFields = { ofwprovStreet: '' }; break;
+                                                            case 'provpres': updatedFields = {
+                                                                ofwprovProv: getAppDetails.ofwPermProv, ofwprovMunicipality: getAppDetails.ofwPermMunicipality,
+                                                                ofwprovBarangay: getAppDetails.ofwPermBarangay, ofwprovStreet: getAppDetails.ofwPermStreet
+                                                            }; break;
+                                                            case 'ofwProvSameAdd': updatedFields = { ofwprovProv: '', ofwprovMunicipality: '', ofwprovBarangay: '', ofwprovStreet: '' }; break;
+                                                            case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
+                                                            case 'benpres':
+                                                                updatedFields = {
+                                                                    benpresprov: getAppDetails.ofwPresProv,
+                                                                    benpresmunicipality: getAppDetails.ofwPresMunicipality,
+                                                                    benpresbarangay: getAppDetails.ofwPresBarangay,
+                                                                    benpresstreet: getAppDetails.ofwPresStreet,
+                                                                };
+                                                                break;
+                                                            case 'bensameadd':
+                                                                updatedFields = {
+                                                                    benpresprov: '',
+                                                                    benpresmunicipality: '',
+                                                                    benpresbarangay: '',
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'benpresprov':
+                                                                updatedFields = {
+                                                                    benpresmunicipality: '',
+                                                                    benpresbarangay: '',
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'benpresmunicipality':
+                                                                updatedFields = {
+                                                                    benpresbarangay: '',
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'benpresbarangay':
+                                                                updatedFields = {
+                                                                    benpresstreet: ''
+                                                                };
+                                                                break;
+                                                            case 'resetBenMiddleName':
+                                                                updatedFields = {
+                                                                    benmname: ''
+                                                                };
+                                                                break;
+                                                            case 'coborrowProv':
+                                                                updatedFields = {
+                                                                    coborrowBarangay: '',
+                                                                    coborrowMunicipality: '',
+                                                                    coborrowStreet: '',
+                                                                }
+                                                                break;
+                                                            case 'coborrowMunicipality':
+                                                                updatedFields = {
+                                                                    coborrowBarangay: '',
+                                                                    coborrowStreet: '',
+                                                                }
+                                                                break;
+                                                            case 'coborrowBarangay':
+                                                                updatedFields = {
+                                                                    coborrowStreet: ''
+                                                                }
+                                                                break;
+                                                            case 'coborrowSameAdd':
+                                                                updatedFields = {
+                                                                    coborrowProv: '', coborrowMunicipality: '',
+                                                                    coborrowBarangay: '', coborrowStreet: '',
+                                                                }
+                                                                break;
+                                                            case 'coborrowpres':
+                                                                updatedFields = {
+                                                                    coborrowProv: getAppDetails.ofwPresProv, coborrowMunicipality: getAppDetails.ofwPresMunicipality,
+                                                                    coborrowBarangay: getAppDetails.ofwPresBarangay, coborrowStreet: getAppDetails.ofwPresStreet,
+                                                                }
+                                                                break;
+                                                            default: break;
+                                                        }
+                                                        return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
+                                                    });
+                                                }}
+                                                ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
+                        }
+                    </div>
+                </Spin>
+            </ConfigProvider>
         </div>
     );
 }

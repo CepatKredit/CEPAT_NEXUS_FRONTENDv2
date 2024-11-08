@@ -24,11 +24,26 @@ function LabeledSelect_AddressFields({
   const [getStatus, setStatus] = React.useState("");
 
   const [getIcon, setIcon] = React.useState(false);
+  const [getItem, setItem] = React.useState(value || "");
+  const [hasMounted, setHasMounted] = React.useState(false);
 
-  let getItem = value || "";
+  // let getItem = value || "";
+
+  // React.useEffect(() => {
+  //   if (getItem) {
+  //     setStatus(""); // Success
+  //     setIcon(true);
+  //   } else {
+  //     setStatus("error"); // Error
+  //     setIcon(true);
+  //   }
+  // }, [getItem]);
+
+
   function onChangeSelect(e) {
+    setItem(e);
     receive(e);
-    getItem = e;
+    // getItem = e;
     if (!e) {
       setStatus("error");
       setIcon(true);
@@ -53,6 +68,25 @@ function LabeledSelect_AddressFields({
       onBlur();
     }
   }, []);
+
+  React.useEffect(() => {
+    setItem(value); // Update local state with new value
+
+    if (hasMounted) {
+    if (!value) {
+      setStatus("error");
+      setIcon(true);
+    } else {
+      setStatus(""); // Clear status if there's a value
+      setIcon(true);
+    }
+  }
+  }, [value]);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
 
   const getProvince = () => {
     switch (type) {
@@ -105,52 +139,54 @@ function LabeledSelect_AddressFields({
     }
   };
 
-  React.useEffect(() => {
-    if (!rendered) return;
-    const isValid = (label) => {
-      switch (label) {
-        case "Area / Province":
-          return !!getProvince();
-        case "City / Municipality":
-          return !!getMunicipality();
-        case "Barangay":
-          return !!getBarangay();
-        default:
-          return true;
-      }
-    };
+  // React.useEffect(() => {
+  //   if (!rendered) return;
+  //   const isValid = (label) => {
+  //     switch (label) {
+  //       case "Area / Province":
+  //         return !!getProvince();
+  //       case "City / Municipality":
+  //         return !!getMunicipality();
+  //       case "Barangay":
+  //         return !!getBarangay();
+  //       default:
+  //         return true;
+  //     }
+  //   };
 
-    setIcon(true);
+  //   setIcon(true);
 
-    if (!isValid(label)) {
-      setStatus("error");
-    } else {
-      setStatus("");
-    }
-  }, [
-    data.ofwSameAdd,
-    data.bensameadd,
-    data.ofwProvSameAdd,
-    data.ofwPresProv,
-    data.ofwPermProv,
-    data.benpresprov,
-    data.ofwPresBarangay,
-    data.ofwPermBarangay,
-    data.benpresbarangay,
-    data.ofwPresMunicipality,
-    data.ofwPermMunicipality,
-    data.benpresmunicipality,
-    data.ofwPresStreet,
-    data.ofwPermStreet,
-    data.benpresStreet,
-    data.ofwprovProv,
-    data.ofwprovMunicipality,
-    data.ofwprovBarangay,
-    data.coborrowProv,
-    data.coborrowMunicipality,
-    data.coborrowBarangay,
-    data.coborrowStreet,
-  ]);
+  //   if (!isValid(label)) {
+  //     setStatus("error");
+  //   } else {
+  //     setStatus("");
+  //   }
+  // }, [
+  //   data.ofwSameAdd,
+  //   data.bensameadd,
+  //   data.ofwProvSameAdd,
+  //   data.ofwPresProv,
+  //   data.ofwPermProv,
+  //   data.benpresprov,
+  //   data.ofwPresBarangay,
+  //   data.ofwPermBarangay,
+  //   data.benpresbarangay,
+  //   data.ofwPresMunicipality,
+  //   data.ofwPermMunicipality,
+  //   data.benpresmunicipality,
+  //   data.ofwPresStreet,
+  //   data.ofwPermStreet,
+  //   data.benpresStreet,
+  //   data.ofwprovProv,
+  //   data.ofwprovMunicipality,
+  //   data.ofwprovBarangay,
+  //   data.coborrowProv,
+  //   data.coborrowMunicipality,
+  //   data.coborrowBarangay,
+  //   data.coborrowStreet,
+  // ]);
+
+
 
   return (
     <div className={className_dmain}>

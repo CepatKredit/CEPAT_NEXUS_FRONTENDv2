@@ -7,7 +7,7 @@ import axios from 'axios';
 import { AvailableModal } from "@hooks/ModalController";
 import { AvailableDisbursementList } from '@hooks/DisbursementData';
 import { jwtDecode } from 'jwt-decode';
-import { useDataContainer } from '@containers/PreLoad';
+import { useDataContainer } from '@context/PreLoad';
 import ResponsiveModal from '@components/global/ResponsiveModal';
 import AvailableList from '@containers/bankGeneration/AvailableList';
 import { render } from 'react-dom';

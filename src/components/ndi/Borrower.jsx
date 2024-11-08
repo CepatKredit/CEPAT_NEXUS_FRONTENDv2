@@ -13,12 +13,12 @@ import { GetData } from '@utils/UserData';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
-function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data }) {
+function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, setMiscellanious }) {
     const { setBENE, setBENEDOC } = GrandTotal()
     const { setCounter } = Validation()
-    const roles = [ '70', '80'];
+    const roles = ['70', '80'];
     const isReadOnly = roles.includes(GetData('ROLE').toString());
-    const [MiscExp, setMiscExp] = React.useState(false);
+    const [MiscExp, setMiscExp] = React.useState(true);
     const { GetStatus } = ApplicationStatus();
     const [isComputing, setIsComputing] = React.useState(false);
     const disabledStatuses = [
@@ -129,7 +129,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                                 }));
                                 break;
                             case 44:
-                                setMiscExp(item.formattedDocumented !== '0.00' || item.formattedDeclared !== '0.00'? true:false)
+                                setMiscExp(!(item.formattedDocumented === '0.00' && item.formattedDeclared === '0.00' ? false : true))
                                 setValue(prev => ({
                                     ...prev,
                                     MiscExpenseDoc: formatNumberWithCommas(item.formattedDocumented.toString()),
@@ -151,6 +151,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                                 break;
                         }
                     });
+                    setMiscellanious(2, MiscExp);
                     setOtherIncome(incomeData);
                     setOtherExpense(expenseData);
                     InitialOtherIncome(2, incomeData)
@@ -176,17 +177,24 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
             });
         }
     }, [getTrigger, isComputing]);
-    React.useEffect(() => {
+
+    function checkMisc() {
+        if (MiscExp) {
+            setMiscExp(false);
+        } else {
+            setMiscExp(true);
+        }
         if (MiscExp) {
             setValue({
                 ...getValue,
-                MiscExpense: 0.00,
-                MiscExpenseDoc: 0.00,
+                MiscExpense: '0.00',
+                MiscExpenseDoc: '0.00',
             });
         }
-        setTrigger(1)
+        setTrigger(1);
+        setMiscellanious(2, MiscExp);
+    }
 
-    }, [MiscExp])
     const [getOtherIncome, setOtherIncome] = React.useState([])
     const [getOtherExpense, setOtherExpense] = React.useState([])
 
@@ -248,7 +256,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
         let TNIDOC = (parseFloat(removeCommas(getValue.AveRemittanceDoc === '' ? 0 : getValue.AveRemittanceDoc)) +
             parseFloat(removeCommas(getValue.IncomeEmployedHouseholdDoc === '' ? 0 : getValue.IncomeEmployedHouseholdDoc)) +
             parseFloat(removeCommas(getValue.SalaryDoc === '' ? 0 : getValue.SalaryDoc)) + parseFloat(totalOtherIncome('DOC'))).toFixed(2);
-        let MISCDOC =  MiscExp ? parseFloat(removeCommas(getValue.MiscExpenseDoc === '' ? 0.00 : getValue.MiscExpenseDoc)) : (removeCommas(TNIDOC) * 0.08).toFixed(2);
+        let MISCDOC = !MiscExp ? parseFloat(removeCommas(getValue.MiscExpenseDoc === '' ? 0.00 : getValue.MiscExpenseDoc)) : (removeCommas(TNIDOC) * 0.08).toFixed(2);
         let TOTALDOC = (parseFloat(removeCommas(getValue.MonthlyFoodDoc === '' ? 0 : getValue.MonthlyFoodDoc)) + parseFloat(removeCommas(getValue.MARDoc)) +
             parseFloat(removeCommas(getValue.UtilitiesDoc === '' ? 0 : getValue.UtilitiesDoc)) + parseFloat(removeCommas(getValue.TuitionDoc === '' ? 0 : getValue.TuitionDoc)) +
             parseFloat(removeCommas(MISCDOC)) + parseFloat(totalOtherExpense('DOC'))).toFixed(2)
@@ -257,7 +265,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
         let TNI = (parseFloat(removeCommas(getValue.AveRemittance === '' ? 0 : getValue.AveRemittance)) +
             parseFloat(removeCommas(getValue.IncomeEmployedHousehold === '' ? 0 : getValue.IncomeEmployedHousehold)) +
             parseFloat(removeCommas(getValue.Salary === '' ? 0 : getValue.Salary)) + parseFloat(totalOtherIncome('DEC'))).toFixed(2);
-        let MISC = ( MiscExp) ? parseFloat(removeCommas(getValue.MiscExpense === '' ? 0.00 : getValue.MiscExpense)) : (removeCommas(TNI) * 0.08).toFixed(2);
+        let MISC = (!MiscExp) ? parseFloat(removeCommas(getValue.MiscExpense === '' ? 0.00 : getValue.MiscExpense)) : (removeCommas(TNI) * 0.08).toFixed(2);
         let TOTAL = (parseFloat(removeCommas(getValue.MonthlyFood === '' ? 0 : getValue.MonthlyFood)) + parseFloat(removeCommas(getValue.MAR)) +
             parseFloat(removeCommas(getValue.Utilities === '' ? 0 : getValue.Utilities)) + parseFloat(removeCommas(getValue.Tuition === '' ? 0 : getValue.Tuition)) +
             parseFloat(removeCommas(MISC)) + parseFloat(totalOtherExpense('DEC'))).toFixed(2)
@@ -267,12 +275,12 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
             ...getValue,
             /* DOCUMENTED */
             TotalNetIncomeDoc: formatNumberWithCommas(TNIDOC),
-            ...(( !MiscExp) && { MiscExpenseDoc: formatNumberWithCommas(MISCDOC) }), //CRA Only
+            ...((MiscExp) && { MiscExpenseDoc: formatNumberWithCommas(MISCDOC) }),
             TotalExpenseDoc: formatNumberWithCommas(TOTALDOC),
             NetDisposableDoc: formatNumberWithCommas(NETDOC),
             /* DECLARED */
             TotalNetIncome: formatNumberWithCommas(TNI),
-            ...(( !MiscExp) && { MiscExpense: formatNumberWithCommas(MISC) }), //CRA Only
+            ...((MiscExp) && { MiscExpense: formatNumberWithCommas(MISC) }),
             TotalExpense: formatNumberWithCommas(TOTAL),
             NetDisposable: formatNumberWithCommas(NET)
         })
@@ -454,7 +462,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
         <>
             <SectionHeader title='NDI Beneficiary' tag={principal} />
             <div className='flex justify-center items-center'>
-                <div className='flex flex-col justify-center items-center w-[60vw]'>
+                <div className='flex flex-col justify-center items-center w-full'>
                     {/*------------------------------------------------------------*/}
                     <div className='font-semibold text-xl pb-4'>Income</div>
                     <Space className='mb-[1rem] flex justify-center items-center'>
@@ -561,7 +569,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                         </div>
                     </Space>))}
                     <Space className='pt-2'>
-                        <div className='w-[15rem] font-bold'>Total Net Income</div>
+                        <div className='w-[15rem] font-bold'>Total Salary</div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='TotalNetIncomeDoc'
                                 placeholder='0.00' readOnly
@@ -653,10 +661,10 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                         </div>
                     </Space>
                     <Space className='pt-2'>
-                        <div className='w-[15rem]'>Miscellaneous Expense{(GetData('ROLE').toString() === '60' && (<Checkbox className='ml-[.8rem]' checked={MiscExp} onClick={() => { setMiscExp(!MiscExp) }} />))} </div>
+                        <div className='w-[15rem]'>Miscellaneous Expense{(GetData('ROLE').toString() === '60' && (<Checkbox className='ml-[.8rem]' checked={!MiscExp} onClick={() => { checkMisc() }} />))} </div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='MiscExpenseDoc'
-                                placeholder='0.00' readOnly={!MiscExp}
+                                placeholder='0.00' readOnly={MiscExp}
                                 maxLength={13}
                                 value={getValue.MiscExpenseDoc}
                                 onChange={(e) => { onChange(e, 0, null) }}
@@ -665,7 +673,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                         </div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='MiscExpense'
-                                placeholder='0.00' readOnly={!MiscExp}
+                                placeholder='0.00' readOnly={MiscExp}
                                 maxLength={13}
                                 value={getValue.MiscExpense}
                                 onChange={(e) => { onChange(e, 0, null) }}
@@ -677,7 +685,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                         <div className='w-[15rem]'>
                             <Space>
                                 <Button type='primary' icon={<PlusOutlined style={{ fontSize: '15px' }} />} onClick={() => { addOtherIncome('EXPENSE') }} disabled={isReadOnly || disabledStatuses.includes(GetStatus)} />
-                                <span>Other Payables</span>
+                                <span>Other Expenses</span>
                             </Space>
                         </div>
                         <div className='w-[15rem]' />

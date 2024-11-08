@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin } from 'antd';
+import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin, Form } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import { useQueryClient, useQuery } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ import { DropdownOwnedProperties } from '@utils/FixedData';
 import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
+import { toUpperText } from '@utils/Converter';
 
 function OwnedProperties({ data, User }) {
     const [loading, setLoading] = React.useState(true);
@@ -67,6 +68,10 @@ function OwnedProperties({ data, User }) {
             setLoading(false);
             return dataList;
         },
+        onError: (error) => {
+            setLoading(false);
+            console.log(error);
+        },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
         },
@@ -74,64 +79,30 @@ function OwnedProperties({ data, User }) {
         retryDelay: 1000,
     });
 
-    /*useEffect(() =>
-    {
-        console.log('loan product ' + data.loanProd);
-    }, [data])*/
-
-    const [fieldErrors, setFieldErrors] = React.useState({
-        Properties: '',
-        Location: '',
-        Remarks: '',
-    });
-
+ 
     function GetPropertiesOption() {
+        const Properties = form.getFieldValue('properties');
         const PropertiesOptionHolder = DropdownOwnedProperties().find(
-            (x) => x.value === getInfo.Properties || x.label === getInfo.Properties
+            (x) => x.label === Properties || x.value === Properties
         );
         return PropertiesOptionHolder ? PropertiesOptionHolder.value : null;
     }
 
-    function validateLoan(Properties) {
-        return Properties !== '';
-    }
-
-    function validateAmount(Location) {
-        return Location.trim() !== '';
-    }
-    function validateRemarks(Remarks) {
-        return Remarks.trim() !== '';
-    }
-
     const [getAddStat, setAddStat] = React.useState(false)
+
+
     async function onClickSave() {
-        let errors = {};
 
-        if (!validateLoan(getInfo.Properties)) {
-            errors.Properties = 'Properties is required.';
-        }
-
-        if (!validateAmount(getInfo.Location)) {
-            errors.Location = 'Location is required.';
-        }
-        if (!validateRemarks(getInfo.Remarks)) {
-            errors.Remarks = 'Remarks is required.';
-        }
-
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-        setFieldErrors({ Properties: '', Location: '', Remarks: '' });
         setStat(false);
+        const row = await form.validateFields();
         const data = {
             LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-            Properties: getInfo.Properties,
-            Location: getInfo.Location,
-            Remarks: getInfo.Remarks,
+            Properties: row.properties,
+            Location: row.location,
+            Remarks: row.remarks || '',
             RecUser: jwtDecode(token).USRID
         }
-        //console.log(data)
+        console.log(data)
         await axios.post('/addOwnedProperties', data)
             .then((result) => {
                 api[result.data.status]({
@@ -143,6 +114,7 @@ function OwnedProperties({ data, User }) {
                     setStat(true);
                     setAddStat(false);
                     setEditingKey('');
+                    form.resetFields();
                     setInfo({
                         Properties: '',
                         Location: '',
@@ -155,47 +127,22 @@ function OwnedProperties({ data, User }) {
                     message: 'Something went wrong',
                     description: error.message,
                 });
-                setFocus({
-                    name: false,
-                    conNum: true,
-                    remarks: false,
-                });
             })
     }
 
     async function onClickEdit() {
-        let errors = {};
-        if (!validateLoan(getInfo.Properties)) {
-            errors.Properties = 'Properties is required.';
-        }
-
-        if (!validateAmount(getInfo.Location)) {
-            errors.Location = 'Location is required.';
-        }
-
-        if (!validateRemarks(getInfo.Remarks)) {
-            errors.Remarks = ' Remarks is required.';
-        }
-
-
-
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-        // Clear errors if validation passes
-        setFieldErrors({ Properties: '', Location: '', Remarks: '' });
 
         try {
+            const row = await form.validateFields();
             const data = {
-                Id: getInfo.key,
+                Id: editingKey,
                 Properties: GetPropertiesOption(),
-                Location: getInfo.Location,
-                Remarks: getInfo.Remarks,
+                Location: row.location,
+                Remarks: row.remarks  || '',
                 ModUser: jwtDecode(token).USRID
             };
 
-            // console.log('Data to be sent to the server:', data);
+             console.log('Data to be sent to the server:', data);
             const result = await axios.post('/editOwnedProperties', data);
             api[result.data.status]({
                 message: result.data.message,
@@ -237,7 +184,7 @@ function OwnedProperties({ data, User }) {
             });
         }
     }
-
+    const [form] = Form.useForm();
     const columns = [
         {
             title: (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
@@ -245,6 +192,8 @@ function OwnedProperties({ data, User }) {
                     <Button className='bg-[#3b0764]' type='primary' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
                         icon={<PlusOutlined style={{ fontSize: '15px' }} />}
                         onClick={() => {
+                            const record = { key: 0, properties: '', location: '', remarks: '' }
+                            edit(record)
                             setStat(false)
                             setEditingKey(0);
                             setAddStat(!getAddStat)
@@ -267,21 +216,21 @@ function OwnedProperties({ data, User }) {
             title: 'Properties',
             dataIndex: 'properties',
             key: 'properties',
-            width: '40px',
+            width: '30%',
             editable: true,
         },
         {
             title: 'Location',
             dataIndex: 'location',
             key: 'location',
-            width: '40px',
+            width: '30%',
             editable: true,
         },
         {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '100px',
+            width: '40%',
             editable: true,
         },
         {
@@ -313,11 +262,7 @@ function OwnedProperties({ data, User }) {
                                 <Popconfirm
                                     title="Are you sure you want to cancel this record?"
                                     onConfirm={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });
+
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
@@ -347,11 +292,7 @@ function OwnedProperties({ data, User }) {
                                 <Popconfirm
                                     title="Are you sure you want to cancel the edit?"
                                     onConfirm={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });
+
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
@@ -368,11 +309,7 @@ function OwnedProperties({ data, User }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });
+
                                         edit(record);
                                         setAddStat(!getAddStat);
                                     }}
@@ -396,16 +333,10 @@ function OwnedProperties({ data, User }) {
         },
     ];
 
-    const [getFocus, setFocus] = React.useState({
-        Properties: false,
-        Location: false,
-        Remarks: false,
-    })
 
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
-        setInfo({
-            ...getInfo,
+        form.setFieldsValue({
             key: record.key,
             Properties: record.properties,
             Location: record.location,
@@ -429,6 +360,16 @@ function OwnedProperties({ data, User }) {
         };
     });
 
+    async function onChangeProperties(e, pointer) {
+        if (pointer === 'properties') { form.setFieldsValue({ 'properties': e }); }
+    }
+
+    async function onChangeToUpper(e, pointer) {
+        if (pointer === 'location') { form.setFieldsValue({ 'location': toUpperText(e) }) }
+        else { form.setFieldsValue({ 'remarks': toUpperText(e) }) }
+    }
+
+
     const EditableCell = ({
         editing,
         dataIndex,
@@ -443,79 +384,45 @@ function OwnedProperties({ data, User }) {
             ? (
                 <>
                     <Select
-                        className="w-[100%]"
-                        value={getInfo.Properties || undefined}
-                        placeholder="Properties"
+                        className='w-[13rem]'
+                        onChange={(value) => { onChangeProperties(value); }}
+                        placeholder='Properties'
                         options={DropdownOwnedProperties().map(x => ({
                             value: x.value,
                             label: x.label
                         }))}
-                        onChange={e => {
-                            setInfo(prev => ({ ...prev, Properties: e }));
-                        }}
                     />
-
-                    {fieldErrors.Properties && (
-                        <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.Properties}</div>
-                    )}
                 </>
             )
             : dataIndex === 'location'
                 ? (
                     <>
                         <Input
-                            className='w-[16rem]'
-                            value={(getInfo.Location || '').toUpperCase()}
-                            onChange={(e) => {
-                                setInfo(prev => ({ ...prev, Location: e.target.value.toUpperCase() }));
-                            }}
-                            placeholder={'Location'}
-                            autoFocus={getFocus.Location}
-                            onClick={() => {
-                                setFocus({
-                                    ...getFocus,
-                                    Properties: false,
-                                    Remarks: false,
-                                    Location: true,
-                                });
-                            }}
-                        />
-                        {fieldErrors.Location && (
-                            <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.Location}</div>
-                        )}
+                            className='w-[13rem]'
+                            onChange={(e) => { onChangeToUpper(e.target.value, 'location'); }}
+                            placeholder='Location' />
                     </>
                 )
                 : dataIndex === 'remarks'
                     ? (
                         <>
                             <Input
-                                className='w-[22rem]'
-                                value={(getInfo.Remarks || '').toUpperCase()}
-                                onChange={(e) => {
-                                    setInfo(prev => ({ ...prev, Remarks: e.target.value.toUpperCase() }));
-                                }}
-                                placeholder='Remarks'
-                                autoFocus={getFocus.Remarks}
-                                onClick={() => {
-                                    setFocus({
-                                        ...getFocus,
-                                        Amount: false,
-                                        Remarks: true,
-                                        Loan: false,
-                                    });
-                                }}
-                            />
-                            {fieldErrors.Remarks && (
-                                <div className="text-red-500 mt-1 text-[7px] font-bold ml-[9rem] text-left">{fieldErrors.Remarks}</div>
-                            )}
+                                className='w-[13rem]'
+                                onChange={(e) => { onChangeToUpper(e.target.value, 'remarks'); }}
+                                placeholder='Remarks' />
                         </>
                     ) : null
         return (
             <td {...restProps}>
-                {editing ? (
-                    <>
-                        {inputNode}
-                    </>
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }}  rules={dataIndex === 'remarks' ? [] : [
+                    {
+                        required: true,
+                        message: `Please Input ${title}`,
+                    },
+                ]}
+            >
+                    {inputNode}
+                </Form.Item>
                 ) : (
                     children
                 )}
@@ -539,6 +446,7 @@ function OwnedProperties({ data, User }) {
                 <div className='mt-[0rem]'>
                     <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                         <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
+                        <Form form={form} component={false} >
                             <Table
                                 columns={mergedColumns.map((col) => ({
                                     ...col,
@@ -565,6 +473,7 @@ function OwnedProperties({ data, User }) {
                                 rowClassName='editable-row'
                                 pagination={false}
                             />
+                            </Form>
                         </Spin>
                     </ConfigProvider>
                 </div>

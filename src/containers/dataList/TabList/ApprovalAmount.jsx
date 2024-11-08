@@ -3,13 +3,11 @@ import ViewApprovalAmount from './approvalAmount/ViewApprovalAmount';
 import EditApprovalAmount from './approvalAmount/EditApprovalAmount';
 import { FloatButton, notification, ConfigProvider } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import AmountTable from './approvalAmount/AmountTable';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
-import { mmddyy } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
-import { GetBranchCode, GetPurposeId } from '@api/base-api/BaseApi';
 import StatusRemarks from './StatusRemarks';
-import { Hckfi } from '@utils/FixedData';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
 
@@ -45,11 +43,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             setEdit(true);
         }
     };
-
-    function GetChannelId(command) {
-        var getId = Hckfi().find(x => x.value === command || x.label === command).value;
-        return getId;
-    }
 
     async function updateData() {
         const value = {
@@ -90,6 +83,11 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 <ViewApprovalAmount loading={loading} data={data} User={User} />
             ) : (
                 <EditApprovalAmount data={data} receive={receive} User={User} />
+            )}
+             {!isEdit && (
+                <div className="w-[73rem] mb-[2rem] mt-[1rem] mx-auto">
+                    <AmountTable data={data} receive={receive} User="Credit" creditisEdit={false} loading={false} />
+                </div>
             )}
 
             {contextHolder}
