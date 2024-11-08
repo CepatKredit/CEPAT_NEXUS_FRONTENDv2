@@ -11,6 +11,11 @@ const isValidAge = (dateStr) => {
   return age >= 20 && age <= 65;
 };
 
+export const CheckDateValid = (dateValue) => {
+  const date = dayjs(dateValue, 'MM-DD-YYYY', true); // `true` ensures strict parsing
+  return date.isValid();
+};
+
 export const isValidLoanDetails = (getAppDetails) => {
     const {
       loanProd,

@@ -20,6 +20,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
     }
     const [isEdit, setEdit] = React.useState(false);
     const [childValues, setChildValues] = React.useState({});
+    const [getMisc, setMisc] = React.useState({});
     const [expenses, setExpenses] = React.useState({});
     const [income, setIncome] = React.useState({});
     const [incomeInitial, setIncomeInitial] = React.useState({});
@@ -54,6 +55,12 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
             [key]: getValue, // Update the specific child's value
         }));
     };
+    const handleMisc = (k, get) => {
+        setMisc((prev) => ({
+            ...prev,
+            [k]: get,
+        }))
+    }
     const handleIncomeChange = (key, getValue) => {
         //  if (isReadOnly) return;
         setIncome((prevValues) => ({
@@ -84,18 +91,35 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
         let dat = [];
         let del_dat = [];
         let lower = false;
+        console.clear();
         const items = sepcoborrowfname ? 3 : 2;
         for (let i = 1; i <= items; i++) { //Ofw,ben,add
             NdiItemList(i).forEach((Listno, index) => {
-                dat.push({
-                    "BorrowersCode": data.ofwBorrowersCode,
-                    "Type": i,
-                    "ListNo": Listno.listno,
-                    "Documented": parseFloat(Listno.values.documented.toString().replaceAll(',', '')).toFixed(2),
-                    "Declared": parseFloat(Listno.values.declared.toString().replaceAll(',', '')).toFixed(2),
-                    "LoggedUser": jwtDecode(token).USRID,
-                    "LoggedDate": mmddyy(dayjs())
-                });
+                if([23,44,64].includes(Listno.listno)){
+                   console.log('Checking...',i,getMisc[i])
+                }
+                if((([23,44,64].includes(Listno.listno)) && !getMisc[i] )){
+                    console.log('EXEC...',i,getMisc[i],Listno.values.documented)
+                    dat.push({
+                        "BorrowersCode": data.ofwBorrowersCode,
+                        "Type": i,
+                        "ListNo": Listno.listno,
+                        "Documented": parseFloat('0.00').toFixed(2),
+                        "Declared": parseFloat('0.00').toFixed(2),
+                        "LoggedUser": jwtDecode(token).USRID,
+                        "LoggedDate": mmddyy(dayjs())
+                    });
+                }else if(!([23,44,64].includes(Listno.listno)) || (([23,44,64].includes(Listno.listno)) && getMisc[i])){ //Skip Miscellaneous if not check
+                    dat.push({
+                        "BorrowersCode": data.ofwBorrowersCode,
+                        "Type": i,
+                        "ListNo": Listno.listno,
+                        "Documented": parseFloat(Listno.values.documented.toString().replaceAll(',', '')).toFixed(2),
+                        "Declared": parseFloat(Listno.values.declared.toString().replaceAll(',', '')).toFixed(2),
+                        "LoggedUser": jwtDecode(token).USRID,
+                        "LoggedDate": mmddyy(dayjs())
+                    });
+                }
             });
             const processEntries = (entries, type) => {
                 entries.forEach(x => {
@@ -341,16 +365,16 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                                 <div className='w-full'>
                                     {data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ?
                                         (<>
-                                            <OFW principal={'Principal Borrower'} onLoadingChange={onLoadingChange} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                            <Borrower principal={'Co-Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                                            <OFW setMiscellanious={handleMisc} principal={'Principal Borrower'} onLoadingChange={onLoadingChange} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                                            <Borrower setMiscellanious={handleMisc} principal={'Co-Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
                                         </>)
                                         : (<>
-                                            <Borrower principal={'Principal Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                            <OFW principal={'Co-Borrower'} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                                            <Borrower setMiscellanious={handleMisc} principal={'Principal Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                                            <OFW setMiscellanious={handleMisc} principal={'Co-Borrower'} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
                                         </>)
                                     }
                                     {!!sepcoborrowfname && (
-                                        <ACB activeKey={activeKey} key={3} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                                        <ACB setMiscellanious={handleMisc} activeKey={activeKey} key={3} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
                                     )}
                                     <div className='flex justify-center items-center pt-[1rem]'>
                                         <div className='flex flex-col justify-center items-center w-full'>

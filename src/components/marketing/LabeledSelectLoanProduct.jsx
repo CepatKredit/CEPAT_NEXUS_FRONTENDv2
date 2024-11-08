@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Select, ConfigProvider } from 'antd';
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
-import SelectComponentTabHooks from '@hooks/SelectComponentTabHooks';
-import PreLoad, { useDataContainer } from '@context/PreLoad';
+import ComponentHooks from '@hooks/ComponentHooks';
+import { debounce } from '@utils/Debounce';
 
 function LabeledSelectLoanProduct({
     label,
@@ -14,24 +14,27 @@ function LabeledSelectLoanProduct({
     className_dsub,
     placeHolder,
     readOnly,
-    rendered,
     required,
-    showSearch
+    showSearch,
+    options,
+    notValid
 }) {
     const [search, setSearchInput] = useState('');
-        //Put this in the upper child lvl
-    const {GET_LOAN_PRODUCT_LIST} = useDataContainer();
-    const dataQuery = GET_LOAN_PRODUCT_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
-
     const {
         status,
         filteredOptions,
         handleSelectChange,
         handleKeyDown
-    } = SelectComponentTabHooks({ search, receive, dataQuery,setSearchInput });
+    } = ComponentHooks({ search, receive, options, setSearchInput });
 
-    const handleSearch = (value) => setSearchInput(value);
+    const debouncedSearch = useCallback(
+        debounce((value) => setSearchInput(value), 300),
+        []
+    );
 
+    const handleSearch = (value) => {
+        debouncedSearch(value);
+    };
     return (
         <div className={className_dmain}>
             <label className={className_label}>{label}</label>
@@ -56,19 +59,19 @@ function LabeledSelectLoanProduct({
                         onSearch={handleSearch}
                         onKeyDown={handleKeyDown}
                         readOnly={readOnly}
-                        status={!readOnly && (required || required === undefined) ? status : false}
+                        status={!disabled && (required || required === undefined) ? status : false}
                         style={{ width: '100%' }}
                         suffixIcon={
-                            !readOnly && (required || required === undefined) && status === 'error' ? (
+                            !disabled && (required || required === undefined) && status === 'error' ? (
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
                             ) : (
                                 <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
                             )
                         }
                     />
-                    {!readOnly && (required || required === undefined) && status === 'error' && (
+                    {!disabled && (required || required === undefined) && status === 'error' && (
                         <div className='text-xs text-red-500 pt-1 pl-2'>
-                            {placeHolder + " Required"}
+                            {notValid}
                         </div>
                     )}
                 </ConfigProvider>

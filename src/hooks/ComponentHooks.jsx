@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
-function SelectComponentTabHooks({ search, receive, dataQuery,setSearchInput }) {
+function ComponentHooks({ search, receive, options,setSearchInput }) {
     const [status, setStatus] = useState('');
     const [highlightedIndex, setHighlightedIndex] = useState(0);
 
     const filteredOptions = useMemo(() => {
-        return dataQuery.filter(option =>
+        return options.filter(option =>
             option.label.toLowerCase().includes(search ? search.toLowerCase() : '')
         );
-    }, [search, dataQuery]);
+    }, [search, options]);
 
     useEffect(() => {
         setHighlightedIndex(0);
@@ -42,4 +42,4 @@ function SelectComponentTabHooks({ search, receive, dataQuery,setSearchInput }) 
     };
 }
 
-export default SelectComponentTabHooks;
+export default ComponentHooks; //Default Select w/out Computations/ Hard Process
