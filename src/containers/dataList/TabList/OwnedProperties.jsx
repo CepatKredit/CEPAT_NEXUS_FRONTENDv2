@@ -88,39 +88,10 @@ function OwnedProperties({ data, User }) {
         return PropertiesOptionHolder ? PropertiesOptionHolder.value : null;
     }
 
-    function validateLoan(Properties) {
-        return Properties !== '';
-    }
-
-    function validateAmount(Location) {
-        return Location.trim() !== '';
-    }
-    function validateRemarks(Remarks) {
-        return Remarks.trim() !== '';
-    }
-
     const [getAddStat, setAddStat] = React.useState(false)
 
 
     async function onClickSave() {
-        /* let errors = {};
- 
-         if (!validateLoan(getInfo.Properties)) {
-             errors.Properties = 'Properties is required.';
-         }
- 
-         if (!validateAmount(getInfo.Location)) {
-             errors.Location = 'Location is required.';
-         }
-         if (!validateRemarks(getInfo.Remarks)) {
-             errors.Remarks = 'Remarks is required.';
-         }
- 
-         if (Object.keys(errors).length > 0) {
-             setFieldErrors(errors);
-             return;
-         }
-         setFieldErrors({ Properties: '', Location: '', Remarks: '' });*/
 
         setStat(false);
         const row = await form.validateFields();
@@ -128,10 +99,10 @@ function OwnedProperties({ data, User }) {
             LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
             Properties: row.properties,
             Location: row.location,
-            Remarks: row.remarks,
+            Remarks: row.remarks || '',
             RecUser: jwtDecode(token).USRID
         }
-        //console.log(data)
+        console.log(data)
         await axios.post('/addOwnedProperties', data)
             .then((result) => {
                 api[result.data.status]({
@@ -143,6 +114,7 @@ function OwnedProperties({ data, User }) {
                     setStat(true);
                     setAddStat(false);
                     setEditingKey('');
+                    form.resetFields();
                     setInfo({
                         Properties: '',
                         Location: '',
@@ -159,27 +131,6 @@ function OwnedProperties({ data, User }) {
     }
 
     async function onClickEdit() {
-        /*  let errors = {};
-          if (!validateLoan(getInfo.Properties)) {
-              errors.Properties = 'Properties is required.';
-          }
-  
-          if (!validateAmount(getInfo.Location)) {
-              errors.Location = 'Location is required.';
-          }
-  
-          if (!validateRemarks(getInfo.Remarks)) {
-              errors.Remarks = ' Remarks is required.';
-          }
-  
-  
-  
-          if (Object.keys(errors).length > 0) {
-              setFieldErrors(errors);
-              return;
-          }
-          // Clear errors if validation passes
-          setFieldErrors({ Properties: '', Location: '', Remarks: '' });*/
 
         try {
             const row = await form.validateFields();
@@ -187,7 +138,7 @@ function OwnedProperties({ data, User }) {
                 Id: editingKey,
                 Properties: GetPropertiesOption(),
                 Location: row.location,
-                Remarks: row.remarks,
+                Remarks: row.remarks  || '',
                 ModUser: jwtDecode(token).USRID
             };
 
@@ -463,12 +414,13 @@ function OwnedProperties({ data, User }) {
                     ) : null
         return (
             <td {...restProps}>
-                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={[
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }}  rules={dataIndex === 'remarks' ? [] : [
                     {
                         required: true,
                         message: `Please Input ${title}`,
                     },
-                ]}>
+                ]}
+            >
                     {inputNode}
                 </Form.Item>
                 ) : (
