@@ -65,7 +65,7 @@ function EmploymentHistory({ data, User }) {
                     EndDate: x.endDate,
                 });
             });
-         SET_LOADING_INTERNAL('EmploymentHistoryTABLE', false);
+            SET_LOADING_INTERNAL('EmploymentHistoryTABLE', false);
             return dataList;
         },
         refetchInterval: (data) => {
@@ -77,11 +77,11 @@ function EmploymentHistory({ data, User }) {
 
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
+        if (!data.loanIdCode !== "") {
             SET_LOADING_INTERNAL('EmploymentHistoryTABLE', true)
             getEmploymentHistory.refetch();
         }
-    }, [data]);
+    }, [data.loanIdCode]);
 
     const [getAddStat, setAddStat] = React.useState(false)
 
@@ -210,7 +210,7 @@ function EmploymentHistory({ data, User }) {
                     <Button className='bg-[#3b0764]' type='primary' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
                         icon={<PlusOutlined style={{ fontSize: '15px' }} />}
                         onClick={() => {
-                            const record = { key: 0, agency: '', position: '', startdate: undefined, enddate: undefined }
+                            const record = { key: 0, agency: '', position: '', startdate: undefined, enddate: undefined}
                             edit(record)
                             setStat(false);
                             setEditingKey(0);
@@ -228,7 +228,7 @@ function EmploymentHistory({ data, User }) {
             </ConfigProvider>),
             dataIndex: 'no',
             key: 'no',
-            width: '1rem',
+            width: '6%',
             align: 'center'
         },
 
@@ -243,7 +243,7 @@ function EmploymentHistory({ data, User }) {
                     : 'Company / Agency',
             dataIndex: 'agency',
             key: 'agency',
-            width: '35%',
+            width: '40%',
             editable: true,
         },
         {
@@ -257,7 +257,7 @@ function EmploymentHistory({ data, User }) {
             title: 'Start Date',
             dataIndex: 'startdate',
             key: 'startdate',
-            width: '15%',
+            width: '10%',
             editable: true,
             render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
         },
@@ -265,7 +265,7 @@ function EmploymentHistory({ data, User }) {
             title: 'End Date',
             dataIndex: 'enddate',
             key: 'enddate',
-            width: '15%',
+            width: '10%',
             editable: true,
             render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
 
@@ -274,8 +274,7 @@ function EmploymentHistory({ data, User }) {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '2rem',
-            fixed: 'right',
+            width: '10%',
             align: 'center',
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -283,33 +282,19 @@ function EmploymentHistory({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickSave(); }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel this record?"
-                                    onConfirm={() => {
-                                        /* setFocus({
-                                             name: false,
-                                             conNum: false,
-                                             remarks: false,
-                                         })*/
-                                        setStat(true)
-                                        setAddStat(!getAddStat)
-                                        setEditingKey('')
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
+                                        setStat(true);
+                                        setAddStat(!getAddStat);
+                                        setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="Cancel"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     )
@@ -318,35 +303,19 @@ function EmploymentHistory({ data, User }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save the changes?"
-                                    onConfirm={() => {
-                                        onClickEdit(); // Execute save if confirmed
-                                    }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel the edit?"
-                                    onConfirm={() => {
-                                        /*setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });*/
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     ) : (
@@ -387,7 +356,7 @@ function EmploymentHistory({ data, User }) {
             key: record.key,
             agency: record.agency,
             position: record.position,
-            startdate: dayjs(record.startDate),
+            startdate: dayjs(record.startdate),
             enddate: dayjs(record.enddate),
         });
         setEditingKey(record.key);
@@ -526,34 +495,34 @@ function EmploymentHistory({ data, User }) {
                     </center>
                 </div>
                 <div className='mt-0'>
-                            <Form form={form} component={false} >
-                                <Table
-                                    columns={mergedColumns}
-                                    dataSource={
-                                        getStat === false
-                                            ? getEmploymentHistory.data?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                agency: x.Agency,
-                                                position: x.Position,
-                                                startdate: x.StartDate,
-                                                enddate: x.EndDate,
-                                            }))
-                                            : dataOnly?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                agency: x.Agency,
-                                                position: x.Position,
-                                                startdate: x.StartDate,
-                                                enddate: x.EndDate,
-                                            }))
-                                    }
-                                    components={{ body: { cell: EditableCell } }}
-                                    rowClassName='editable-row'
-                                    pagination={false}
-                                    
-                                />
-                            </Form>
+                    <Form form={form} component={false} >
+                        <Table
+                            columns={mergedColumns}
+                            dataSource={
+                                getStat === false
+                                    ? getEmploymentHistory.data?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        agency: x.Agency,
+                                        position: x.Position,
+                                        startdate: x.StartDate,
+                                        enddate: x.EndDate,
+                                    }))
+                                    : dataOnly?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        agency: x.Agency,
+                                        position: x.Position,
+                                        startdate: x.StartDate,
+                                        enddate: x.EndDate,
+                                    }))
+                            }
+                            components={{ body: { cell: EditableCell } }}
+                            rowClassName='editable-row'
+                            pagination={false}
+                            scroll={{ y: 300 }}
+                        />
+                    </Form>
                 </div>
             </div>
         </div>

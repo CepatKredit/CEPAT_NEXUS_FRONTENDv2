@@ -85,12 +85,12 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         retryDelay: 1000,
     });
 
-    /*React.useEffect(() => {
+    React.useEffect(() => {
         if (!data.loanIdCode) {
             SET_LOADING_INTERNAL('DependentsTABLE', true)
             getRelatives.refetch();
         }
-    }, [data]);*/
+    }, [data]);
 
 
     const [getReshipList, setReshipList] = React.useState()
@@ -131,6 +131,8 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
 
     const [getAddStat, setAddStat] = React.useState(false)
 
+    const isViewMode = editingKey === '' && !getAddStat;
+
     async function onClickSave() {
 
         const row = await form.validateFields();
@@ -140,7 +142,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         const data = {
             BorrowersId: BorrowerId,
             Fullname: row.fullName,
-            Suffix: row.suffix,
+            Suffix: row.suffix || "",
             Contactno: row.contactNo,
             Birthdate: row.birthdate,
             workEducStatus: row.workEducStatus,
@@ -191,7 +193,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
             const data = {
                 Code: editingKey,
                 Fullname: row.fullName,
-                Suffix: row.suffix,
+                Suffix: row.suffix || "",
                 Contactno: row.contactNo,
                 Birthdate: row.birthdate,
                 workEducStatus: GetWorkEducStatusId(),
@@ -257,11 +259,11 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     <Button className='bg-[#3b0764]' type='primary' disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
                         icon={<PlusOutlined style={{ fontSize: '15px' }} />}
                         onClick={() => {
-                            const record = { key: 0, fullName: '', suffix: '', contactNo: '', birthdate: '', workEducStatus: '', relationship: '' }
-                            edit(record)
-                            setStat(false)
+                            const record = { key: 0, fullName: '', suffix: '', contactNo: '', birthdate: '', workEducStatus: '', relationship: '' };
+                            edit(record);
+                            setStat(false);
                             setEditingKey(0);
-                            setAddStat(!getAddStat)
+                            setAddStat(!getAddStat);
                             setInfo({
                                 ...getInfo,
                                 FullName: '',
@@ -270,36 +272,38 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                                 Birthdate: '',
                                 WorkEducStatus: '',
                                 Relationship: '',
-                            })
+                            });
                         }} />
-
                 </Tooltip>
             </ConfigProvider>),
             dataIndex: 'no',
             key: 'no',
-            width: '4%',
+            width: '5%',
             align: 'center'
         },
-
         {
             title: 'Full Name',
             dataIndex: 'fullName',
             key: 'fullName',
             width: '20%',
             editable: true,
+            render: (text, record) => (
+                isViewMode && record.suffix ? `${text} ${record.suffix}` : text
+            ),
         },
-        {
-            title: 'suffix',
+        // Conditionally display the Suffix column
+        ...(isViewMode ? [] : [{
+            title: 'Suffix',
             dataIndex: 'suffix',
             key: 'suffix',
-            width: '6%',
+            width: '9%',
             editable: true,
-        },
+        }]),
         {
             title: 'Contact Number',
             dataIndex: 'contactNo',
             key: 'contactNo',
-            width: '8%',
+            width: '14%',
             editable: true,
         },
         {
@@ -320,15 +324,14 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
             title: 'Relationship',
             dataIndex: 'relationship',
             key: 'relationship',
-            width: '17%',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '6%',
-            fixed: 'right',
+            width: '9%',
             align: 'center',
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -336,60 +339,39 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickSave(); }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel this record?"
-                                    onConfirm={() => {
-
-                                        setStat(true)
-                                        setAddStat(!getAddStat)
-                                        setEditingKey('')
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
+                                        setStat(true);
+                                        setAddStat(!getAddStat);
+                                        setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="Cancel"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
-                    )
-                }
-                else {
+                    );
+                } else {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickEdit(); }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel the edit?"
-                                    onConfirm={() => {
-
-                                        setStat(true)
-                                        setAddStat(!getAddStat)
-                                        setEditingKey('')
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
+                                        setStat(true);
+                                        setAddStat(!getAddStat);
+                                        setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="Cancel"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     ) : (
@@ -397,9 +379,8 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-
-                                        edit(record)
-                                        setAddStat(!getAddStat)
+                                        edit(record);
+                                        setAddStat(!getAddStat);
                                     }}
                                         type='primary' icon={<MdEditSquare />} />
                                 </Tooltip>
@@ -407,20 +388,20 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                             <Tooltip title="Delete">
                                 <Popconfirm
                                     title="Are you sure you want to delete this record?"
-                                    onConfirm={() => {
-                                        onClickDelete(record.key)
-                                    }}
+                                    onConfirm={() => { onClickDelete(record.key); }}
                                     okText="Yes"
-                                    cancelText="Cancel"  >
+                                    cancelText="Cancel"
+                                >
                                     <Button disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>
-                    )
+                    );
                 }
             }
-        },
+        }
     ];
+
 
 
     const isEditing = (record) => record.key === editingKey;
@@ -468,7 +449,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         if (pointer === 'contactNo') {
             let value = e;
 
-            if (!/^\d*$/.test(value)) return; 
+            if (!/^\d*$/.test(value)) return;
             value = value.slice(0, 11);
 
             form.setFieldsValue({ 'contactNo': value });
@@ -500,7 +481,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                 <>
 
                     <Input
-                        className='w-[17rem]'
+                        className='w-[13rem] ml-[-1rem]'
                         onChange={(e) => { onChangeToUpper(e.target.value, 'fullName'); }}
                         placeholder='First Name' />
                 </>
@@ -510,7 +491,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     <>
 
                         <Input
-                            className='w-[5rem]'
+                            className='w-[5rem] ml-[-.5rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'suffix'); }}
                             placeholder='Suffix' />
                     </>
@@ -531,7 +512,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
 
 
                             <Input
-                                className='w-[5rem]'
+                                className='w-[3rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'birthdate'); }}
                                 placeholder='Age' />
 
@@ -570,7 +551,9 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                             { required: true, message: `Please input ${title}` },
                             { pattern: /^09\d{9}$/, message: 'Must start with "09" and be 11 digits' }
                         ]
-                        : [{ required: true, message: `Please input ${title}` }]
+                        : dataIndex === 'suffix'
+                            ? [] // No validation for 'suffix'
+                            : [{ required: true, message: `Please input ${title}` }]
                 }
                 >
                     {inputNode}
@@ -625,6 +608,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
+                            scroll={{ y: 300 }}
                         />
                     </Form>
 
