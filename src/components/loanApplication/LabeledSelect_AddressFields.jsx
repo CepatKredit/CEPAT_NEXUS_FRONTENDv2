@@ -27,19 +27,6 @@ function LabeledSelect_AddressFields({
   const [getItem, setItem] = React.useState(value || "");
   const [hasMounted, setHasMounted] = React.useState(false);
 
-  // let getItem = value || "";
-
-  // React.useEffect(() => {
-  //   if (getItem) {
-  //     setStatus(""); // Success
-  //     setIcon(true);
-  //   } else {
-  //     setStatus("error"); // Error
-  //     setIcon(true);
-  //   }
-  // }, [getItem]);
-
-
   function onChangeSelect(e) {
     setItem(e);
     receive(e);
@@ -86,107 +73,6 @@ function LabeledSelect_AddressFields({
   React.useEffect(() => {
     setHasMounted(true);
   }, []);
-
-
-  const getProvince = () => {
-    switch (type) {
-      case "present":
-        return data.ofwPresProv;
-      case "permanent":
-        return data.ofwPermProv;
-      case "beneficiary":
-        return data.benpresprov;
-      case "provincial":
-        return data.ofwprovProv;
-      case "coborrow":
-        return data.coborrowProv;
-      default:
-        return null;
-    }
-  };
-
-  const getMunicipality = () => {
-    switch (type) {
-      case "present":
-        return data.ofwPresMunicipality;
-      case "permanent":
-        return data.ofwPermMunicipality;
-      case "beneficiary":
-        return data.benpresmunicipality;
-      case "provincial":
-        return data.ofwprovMunicipality;
-      case "coborrow":
-        return data.coborrowMunicipality;
-      default:
-        return null;
-    }
-  };
-
-  const getBarangay = () => {
-    switch (type) {
-      case "present":
-        return data.ofwPresBarangay;
-      case "permanent":
-        return data.ofwPermBarangay;
-      case "beneficiary":
-        return data.benpresbarangay;
-      case "provincial":
-        return data.ofwprovBarangay;
-      case "coborrow":
-        return data.coborrowBarangay;
-      default:
-        return null;
-    }
-  };
-
-  // React.useEffect(() => {
-  //   if (!rendered) return;
-  //   const isValid = (label) => {
-  //     switch (label) {
-  //       case "Area / Province":
-  //         return !!getProvince();
-  //       case "City / Municipality":
-  //         return !!getMunicipality();
-  //       case "Barangay":
-  //         return !!getBarangay();
-  //       default:
-  //         return true;
-  //     }
-  //   };
-
-  //   setIcon(true);
-
-  //   if (!isValid(label)) {
-  //     setStatus("error");
-  //   } else {
-  //     setStatus("");
-  //   }
-  // }, [
-  //   data.ofwSameAdd,
-  //   data.bensameadd,
-  //   data.ofwProvSameAdd,
-  //   data.ofwPresProv,
-  //   data.ofwPermProv,
-  //   data.benpresprov,
-  //   data.ofwPresBarangay,
-  //   data.ofwPermBarangay,
-  //   data.benpresbarangay,
-  //   data.ofwPresMunicipality,
-  //   data.ofwPermMunicipality,
-  //   data.benpresmunicipality,
-  //   data.ofwPresStreet,
-  //   data.ofwPermStreet,
-  //   data.benpresStreet,
-  //   data.ofwprovProv,
-  //   data.ofwprovMunicipality,
-  //   data.ofwprovBarangay,
-  //   data.coborrowProv,
-  //   data.coborrowMunicipality,
-  //   data.coborrowBarangay,
-  //   data.coborrowStreet,
-  // ]);
-
-
 
   return (
     <div className={className_dmain}>

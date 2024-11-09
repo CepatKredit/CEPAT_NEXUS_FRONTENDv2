@@ -3,6 +3,7 @@ import { Select } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function LabeledSelectLoanProduct({
     label,
@@ -17,11 +18,10 @@ function LabeledSelectLoanProduct({
     readOnly,
     options
 }) {
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const [getStatus, setStatus] = React.useState('')
     const [getIcon, setIcon] = React.useState(false)
     let getItem = value;
-
-
 
     function onChange(e) {
         getItem = e
@@ -29,15 +29,16 @@ function LabeledSelectLoanProduct({
         if (!e) {
             setStatus('error')
             setIcon(true)
-            receive()
+            updateAppDetails({ name: "loanProd", value: null })
 
         }
         else {
             setStatus('')
             setIcon(true)
-            receive(e)
+            updateAppDetails({ name: "loanProd", value: e })
         }
     }
+
 
     const ProductList = useQuery({
         queryKey: ['getProductSelect'],

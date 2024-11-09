@@ -331,7 +331,7 @@ function AddressContainer({
           placeHolder={"Select Area/Province"}
           rendered={rendered}
           data={data}
-          type={type}
+          // type={type}
           receive={(e) => {
             // Existing logic to handle the change of province, municipality or barangay
             updateAppDetails({

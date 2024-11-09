@@ -106,6 +106,7 @@ function PortalLogin() {
                         else {
                             if (decode(result.data.userData.password) === getAccount.Password) {
                                 PasswordMatch.mutate()
+                                resetAppDetails(); 
                             }
                             else {
                                 PasswordNotMatch.mutate()

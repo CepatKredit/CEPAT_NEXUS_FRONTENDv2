@@ -47,7 +47,7 @@ function LabeledSelect_Relationship({
     } else {
       setStatus("");
       setIcon(true);
-      updateAppDetails({ name: fieldName, value: getItem })
+      updateAppDetails({ name: fieldName, value: e })
     }
   }
 

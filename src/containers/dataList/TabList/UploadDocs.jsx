@@ -13,9 +13,11 @@ import { jwtDecode } from 'jwt-decode';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { useDataContainer } from '@context/PreLoad';
 
 function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
     const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const { GetStatus } = ApplicationStatus()
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
@@ -45,11 +47,11 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     })
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
+        if (!getAppDetails.loanIdCode) {
             SET_LOADING_INTERNAL('UploadDocs', true)
             FileListQuery.refetch();
         }
-    }, [data]);
+    }, [getAppDetails]);
 
     function GetFile(id, command) {
         let count = 0;
@@ -163,7 +165,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
 
     return (
         <div>
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+            <StatusRemarks isEdit={!isEdit} User={User} data={getAppDetails} />
 
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)

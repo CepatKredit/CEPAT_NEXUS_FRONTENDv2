@@ -14,7 +14,8 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data }) {
-    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -65,11 +66,11 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     })
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
+        if (!getAppDetails.loanIdCode) {
             SET_LOADING_INTERNAL('CharRefTABLE', true)
             getCharacterRef.refetch();
         }
-    }, [data]);
+    }, [getAppDetails]);
 
     const getRelationshipList = useQuery({
         queryKey: ['getRelationshipList'],
