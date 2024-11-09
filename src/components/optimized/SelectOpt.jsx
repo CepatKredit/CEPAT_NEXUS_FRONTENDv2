@@ -4,7 +4,7 @@ import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { debounce } from '@utils/Debounce';
 import { SelectComponentHooks } from '@hooks/ComponentHooks';
 
-function LabeledSelectLoanProduct({
+function SelectOpt({
     label,
     value,
     receive,
@@ -18,7 +18,7 @@ function LabeledSelectLoanProduct({
     showSearch,
     options,
     notValid,
-    classification
+    keyName,
 }) {
     const [search, setSearchInput] = useState('');
     const {
@@ -26,7 +26,7 @@ function LabeledSelectLoanProduct({
         filteredOptions,
         handleSelectChange,
         handleKeyDown
-    } = SelectComponentHooks( search, receive, options, setSearchInput );
+    } = SelectComponentHooks( search, receive, options, setSearchInput,keyName );
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),
@@ -81,4 +81,4 @@ function LabeledSelectLoanProduct({
     );
 }
 
-export default LabeledSelectLoanProduct;
+export default SelectOpt;

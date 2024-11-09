@@ -32,7 +32,7 @@ function EditApprovalAmount({ data, receive }) {
         const approvedAmount = data.ApprvAmount ? parseFloat(data.ApprvAmount.toString().replaceAll(',', '')) : 0;
         const otherExposure = data.OtherExposure ? parseFloat(data.OtherExposure.toString().replaceAll(',', '')) : 0;
         const calculatedTotal = approvedAmount + otherExposure;
-        if(approvedAmount === 0 || otherExposure === 0){
+        if(approvedAmount === 0 ){
             setTExposure(0)
         }else{
             setTExposure(calculatedTotal || 0)

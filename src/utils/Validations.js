@@ -11,10 +11,23 @@ const isValidAge = (dateStr) => {
   return age >= 20 && age <= 65;
 };
 
+const isValidDeployDate = (dateStr) => {
+  return !(!dayjs().isBefore(dateStr,'day') && !dayjs().isSame(dayjs(dateStr),'day'));
+}
+
 export const CheckDateValid = (dateValue) => {
   const date = dayjs(dateValue, 'MM-DD-YYYY', true); // `true` ensures strict parsing
   return date.isValid();
 };
+
+export const checkAgeisValid = (dateValue) => {
+  return isValidAge(dateValue);
+}
+
+export const checkDeployisValid = (dateValue) =>{
+  return isValidDeployDate(dateValue);
+}
+
 
 export const isValidLoanDetails = (getAppDetails) => {
     const {

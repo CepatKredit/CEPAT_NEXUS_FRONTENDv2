@@ -47,7 +47,6 @@ function LoanApplicationInfo() {
                 })
                 setCoborrowfname(data?.CoborrowDetails?.firstName || '');
                 setBenfname(data?.BeneficiaryDetails?.firstName || '')
-
                 setAppDetails(prevDetails => ({
                     ...prevDetails,
                     loanAppCode: data?.LoanDetails?.loanAppCode || '',

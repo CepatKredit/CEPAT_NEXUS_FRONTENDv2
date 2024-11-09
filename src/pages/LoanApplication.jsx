@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import Logo from "@assets/images/logo.png";
 
 import Modal_Result from "@components/loanApplication/Modal_Result";
-import createInitialAppDetails from "@utils/IntialValues";
 import {
   isValidLoanDetails,
   isValidOFWDetails,

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from "@api/base-api/BaseApi";
-import { LoanProductList } from '@components/ComponentDataHooks';
+import { LoanProductList } from '@components/api-service';
 const DataContext = React.createContext()
 function PreLoad({ children }) {
     //From components

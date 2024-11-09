@@ -136,6 +136,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         receive({ name: 'age', value: age });
                     }}
                     value={data.ofwbdate}
+                    classification={'Age Restriction'}
                     category={'marketing'}
                     disabled={isEdit}
                     isEdit={isEdit}

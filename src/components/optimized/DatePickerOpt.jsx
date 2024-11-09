@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { DateComponentHook } from '@hooks/ComponentHooks';
 
-function DatePicker_BDay({
+function DatePickerOpt({
   rendered,
   required,
   placeHolder,
@@ -17,7 +17,7 @@ function DatePicker_BDay({
   className_label,
   className_dsub,
   KeyName,
-  notValid,
+  notValidMsg,
   disabledate,
 }) {  
 
@@ -86,9 +86,7 @@ function DatePicker_BDay({
         )}
         { ((required || required === undefined) && status === 'error') && (
           <div className="text-xs text-red-500 pt-1 pl-2">
-            {label !== 'Contract Date'
-              ? 'Required (Min. 20 Years Old and Max. 65 Years Old)'
-              : `${notValid}`}
+            {`${notValidMsg}`}
           </div>
         )}
       </div>
@@ -96,4 +94,4 @@ function DatePicker_BDay({
   );
 }
 
-export default DatePicker_BDay;
+export default DatePickerOpt;
