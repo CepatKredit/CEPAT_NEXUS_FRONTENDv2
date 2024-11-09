@@ -237,107 +237,103 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
 
     return (
         <>
-            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                    {contextHolder}
-                    <div className={classname}>
-                        {User !== 'Credit' && User !== 'Lp' && (
-                            <div className="sticky top-0 z-[1000] bg-white">
-                                <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-                            </div>
-                        )}
-                        {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                            <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} loading={loading} />
-                        ) : (
-                            <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
-                        )}
-
-                        {!isEditCRAM && !isEdit && User !== 'LC' ? (
-                            <div className="w-full mb-[10rem] mx-auto">
-                                <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} />
-                            </div>
-                        ) : null}
-
-                        {User !== 'Credit' && User !== 'Lp' && (
-                            <ConfigProvider
-                                theme={{
-                                    token: {
-                                        fontSize: 14,
-                                        borderRadius: 8,
-                                        fontWeightStrong: 600,
-                                        colorText: '#ffffff',
-                                    },
-                                }}
-                            >
-                                <div className="sticky bottom-0 z-50 bg-white p-4 flex justify-center items-center  mb-2 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 3xl:mb-16 4xl:mb-20 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
-                                    {isEdit ? (
-                                        <>
-                                            <ConfigProvider
-                                                theme={{
-                                                    token: {
-                                                        colorPrimary: '#2b972d',
-                                                        colorPrimaryHover: '#34b330',
-                                                    },
-                                                }}
-                                            >
-                                                <Button
-                                                    type="primary"
-                                                    icon={<SaveOutlined />}
-                                                    onClick={toggleEditMode}
-                                                    size="large"
-                                                    className="-mt-5"
-                                                >
-                                                    SAVE
-                                                </Button>
-                                            </ConfigProvider>
-                                            
-                                            <ConfigProvider
-                                                theme={{
-                                                    token: {
-                                                        colorPrimary: '#dc3545',
-                                                        colorPrimaryHover: '#f0aab1',
-                                                    },
-                                                }}
-                                            >
-                                                <Button
-                                                    type="primary"
-                                                    icon={<CloseOutlined />}
-                                                    onClick={() => setEdit(false)}
-                                                    size="large"
-                                                    className="-mt-5"
-                                                >
-                                                    CANCEL
-                                                </Button>
-                                            </ConfigProvider>
-                                        </>
-                                    ) : (
-                                        <ConfigProvider
-                                            theme={{
-                                                token: {
-                                                    colorPrimary: '#3b0764',
-                                                    colorPrimaryHover: '#6b21a8',
-                                                },
-                                            }}
-                                        >
-                                            <Button
-                                                type="primary"
-                                                icon={<EditOutlined />}
-                                                onClick={toggleEditMode}
-                                                size="large"
-                                                className="-mt-5"
-                                            >
-                                                EDIT
-                                            </Button>
-                                        </ConfigProvider>
-                                    )}
-                                </div>
-                            </ConfigProvider>
-                        )}
+            {contextHolder}
+            <div className={classname}>
+                {User !== 'Credit' && User !== 'Lp' && (
+                    <div className="sticky top-0 z-[1000] bg-white">
+                        <StatusRemarks isEdit={!isEdit} User={User} data={data} />
                     </div>
-                    </Spin>
+                )}
+                {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+                    <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
+                ) : (
+                    <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
+                )}
+
+                {!isEditCRAM && !isEdit && User !== 'LC' ? (
+                    <div className="w-full mb-[10rem] mx-auto">
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} />
+                    </div>
+                ) : null}
+
+                {User !== 'Credit' && User !== 'Lp' && (
+                    <ConfigProvider
+                        theme={{
+                            token: {
+                                fontSize: 14,
+                                borderRadius: 8,
+                                fontWeightStrong: 600,
+                                colorText: '#ffffff',
+                            },
+                        }}
+                    >
+                        <div className="sticky bottom-0 z-50 bg-white p-4 flex justify-center items-center  mb-2 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 3xl:mb-16 4xl:mb-20 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
+                            {isEdit ? (
+                                <>
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#2b972d',
+                                                colorPrimaryHover: '#34b330',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<SaveOutlined />}
+                                            onClick={toggleEditMode}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            SAVE
+                                        </Button>
+                                    </ConfigProvider>
+
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#dc3545',
+                                                colorPrimaryHover: '#f0aab1',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<CloseOutlined />}
+                                            onClick={() => setEdit(false)}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            CANCEL
+                                        </Button>
+                                    </ConfigProvider>
+                                </>
+                            ) : (
+                                <ConfigProvider
+                                    theme={{
+                                        token: {
+                                            colorPrimary: '#3b0764',
+                                            colorPrimaryHover: '#6b21a8',
+                                        },
+                                    }}
+                                >
+                                    <Button
+                                        type="primary"
+                                        icon={<EditOutlined />}
+                                        onClick={toggleEditMode}
+                                        size="large"
+                                        className="-mt-5"
+                                    >
+                                        EDIT
+                                    </Button>
+                                </ConfigProvider>
+                            )}
+                        </div>
                     </ConfigProvider>
-                </>
-                );
+                )}
+            </div>
+        </>
+    );
 }
 
 export default OfwDetails;
