@@ -499,7 +499,7 @@ function LoanApplicationInfo() {
                     //Acb show Status
                     addCoborrower: data?.CoborrowDetails?.firstName || '',
                 }));
-                SET_LOADING_INTERNAL('ClientDataInfo', true);
+                SET_LOADING_INTERNAL('ClientDataInfo', false);
                 return data;
             } catch (error) {
                 console.error('Error fetching data:', error);
