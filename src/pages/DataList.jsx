@@ -42,10 +42,18 @@ function DataList() {
       </div>
       <Divider />
       <Button type='primary' onClick={() => { navigate(`${localStorage.getItem('SP')}/12/tab=1`) }} hidden>TEST</Button>
-      <div className='pb-2 min-w-[25%] float-end'>
-        <Input addonAfter={<SearchOutlined />} placeholder='Search' size='large'
-          onChange={(e) => { setSearch(e.target.value.toUpperCase()) }}
-          value={getSearch} />
+      <div className="flex justify-between items-center mb-4">
+        <div></div>
+        <div className="w-[300px]">
+          <Input
+            addonAfter={<SearchOutlined />}
+            placeholder="Search"
+            size="middle"
+            className="w-full"
+            onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
+            value={getSearch}
+          />
+        </div>
       </div>
       <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                     <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">

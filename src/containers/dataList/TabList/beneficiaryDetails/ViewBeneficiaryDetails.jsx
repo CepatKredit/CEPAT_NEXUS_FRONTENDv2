@@ -161,7 +161,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
     const filteredCoBorrowerAddressItems = coBorrowerAddressItems.filter(field => field.children && field.children !== '');
 
     return (
-        <div className="w-full mx-auto mt-10 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg">
+        <div className="w-full mx-auto mt-1 mb-20 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg">
             <Descriptions title={<div className="text-center"><h2 className="text-2xl font-bold">Beneficiary Information</h2>
                 <div className="mt-2 flex justify-center">
                 <a href={`https://www.google.com/search?q=${encodeURIComponent(`${data.benfname} ${data.benmname} ${data.benlname}`)}`} target="_blank" rel="noopener noreferrer"><FcGoogle className="text-3xl" /></a></div></div>}

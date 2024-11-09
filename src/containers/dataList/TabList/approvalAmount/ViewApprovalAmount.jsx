@@ -62,8 +62,6 @@ function ViewApprovalAmount({ data, loading, receive }) {
 
     return (
         <div className="container mt-1 mx-auto p-10 bg-white rounded-xl shadow-lg w-[75vw]">
-            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                     <Descriptions title={<h2 className="text-2xl font-bold text-center mt-5">Approval Information</h2>}
                         column={{ xs: 1, sm: 2, lg: 3 }}
                         layout="horizontal"
@@ -74,8 +72,6 @@ function ViewApprovalAmount({ data, loading, receive }) {
                             </Descriptions.Item>
                         ))}
                     </Descriptions>
-                </Spin>
-            </ConfigProvider>
         </div>
     );
 }

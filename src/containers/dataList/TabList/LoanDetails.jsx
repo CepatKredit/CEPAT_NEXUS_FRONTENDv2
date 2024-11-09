@@ -153,22 +153,24 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
         }
     }
 
-    return (
-
+    return (<>
+        {contextHolder}
         <div className={classname}>
     {User !== 'Credit' && User !== 'Lp' && (
-        <div className="sticky top-0 z-[1000] bg-white">
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-        </div>
     )}
+        <div className={`${
+            User === 'MARKETING' 
+                ? 'w-full h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[40vh] 2xl:h-[45vh] 3xl:h-[55vh] overflow-y-auto' 
+                : ''
+        }`}
+    >
     {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
         <ViewLoanDetails data={data} User={User} />
     ) : (
         <EditLoanDetails data={data} receive={receive} User={User} />
     )}
-
-    {contextHolder}
-
+</div>
     {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
         <ConfigProvider
             theme={{
@@ -180,7 +182,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
                 },
             }}
         >
-        <div className="sticky bottom-0 z-50 bg-white p-4 flex justify-center items-center space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8 mt-10 xs:mt-10 sm:mt-12 md:mt-14 lg:mt-16 xl:mt-18 2xl:mt-20">
+         <div className=" w-full flex  justify-center items-center pt-10 mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
         {isEdit ? (
                     <>
                         <ConfigProvider
@@ -245,7 +247,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
         </ConfigProvider>
     )}
 </div>
-    );
+</>);
 }
 
 export default LoanDetails;

@@ -457,7 +457,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     type={"present"}
                     disabled={isEdit}
                     category={"marketing"}
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 w-[16.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     vertical_algin={true}
                     rendered={rendered}
@@ -560,7 +560,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"permanent"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 w-[16.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}
@@ -581,7 +581,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"provincial"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 w-[16.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}

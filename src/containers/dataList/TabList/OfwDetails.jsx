@@ -240,22 +240,26 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
             {contextHolder}
             <div className={classname}>
                 {User !== 'Credit' && User !== 'Lp' && (
-                    <div className="sticky top-0 z-[1000] bg-white">
                         <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-                    </div>
                 )}
-                {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                    <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
-                ) : (
-                    <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
-                )}
+        <div className={`${
+        User === 'MARKETING' 
+            ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[55vh] overflow-y-auto' 
+            : ''
+    }`}
+>
+    {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+        <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
+    ) : (
+        <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
+    )}
 
-                {!isEditCRAM && !isEdit && User !== 'LC' ? (
-                    <div className="w-full mb-[10rem] mx-auto">
-                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} />
-                    </div>
-                ) : null}
-
+    {!isEditCRAM && !isEdit && User !== 'LC' ? (
+        <div className="w-full mb-[10rem] mx-auto">
+            <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} />
+        </div>
+    ) : null}
+</div>
                 {User !== 'Credit' && User !== 'Lp' && (
                     <ConfigProvider
                         theme={{
@@ -267,7 +271,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                             },
                         }}
                     >
-                        <div className="sticky bottom-0 z-50 bg-white p-4 flex justify-center items-center  mb-2 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 3xl:mb-16 4xl:mb-20 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
+                        <div className=" w-full  pt-14 flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
                             {isEdit ? (
                                 <>
                                     <ConfigProvider

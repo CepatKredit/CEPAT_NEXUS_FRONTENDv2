@@ -384,7 +384,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     return (
         <div>
             {contextHolder}
-            <div className='h-[65vh]'>
+            <div className='h-[55vh]'>
                 <div className="sticky top-0 z-10 bg-white">
                     <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={handleUrgentApp} />
                 </div>
@@ -392,7 +392,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                     <div className='pt-[1.5rem] font-bold text-2xl'>
                         Update Status
                     </div>
-                    <div className='h-[60vh] overflow-y-auto w-[70vw]'>
+                    <div className='h-[45vh]  w-[65vw]'>
                         <LabeledSelects
                             className={'mt-5 w-[46.5rem]'}
                             data={StatusList.data?.map((x) => ({

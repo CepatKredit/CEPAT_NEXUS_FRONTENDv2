@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
-function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow }) {
+function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading }) {
 
     const [api, contextHolder] = notification.useNotification()
     const [isEdit, setEdit] = useState(false);
@@ -95,14 +95,14 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                      description: 'Please complete all required details.',
                  });
              }*/
-            if ((!showCoBorrower && !valid_addcoborrow) || (showCoBorrower)) {
+            if ((!showCoBorrower && !valid_addcoborrow ) || (showCoBorrower )) {
                 await updateData();
             } else {
                 api['warning']({
                     message: 'Incomplete Additional Co-Borrower Info',
                     description: 'Please Input the Basic Info of Additional Co-Borrower',
                 });
-
+                
             }
         } else {
             setEdit(true);
@@ -119,16 +119,16 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             BenMiddleName: data.benmname || '',
             BenLastName: data.benlname || '',
             BenSuffix: data.bensuffix || null,
-            BenBirthday: data.benbdate ? mmddyy(data.benbdate) : '',
+            BenBirthday:data.benbdate? mmddyy(data.benbdate) : '',
             BenGender: data.bengender || null,
-            BenDependent: data.bendependents ? parseInt(data.bendependents) : 0,
+            BenDependent:data.bendependents? parseInt(data.bendependents) : 0,
             BenFbProfile: data.benfblink || '',
             BenEmail: data.benemail || '',
             BenMobileNo: data.benmobile || '',
             BenMobileNo2: data.benothermobile || '',
             BenCivilStatus: data.benmstatus || null,
             BenSpouseName: data.benspouse || '',
-            BenSpouseBirthday: data.benspousebdate ? mmddyy(data.benspousebdate) : '',
+            BenSpouseBirthday:data.benspousebdate? mmddyy(data.benspousebdate) : '',
 
             BenOwnership: data.benresidences || null,
             BenStayYears: data.benstayyears || 0,
@@ -137,7 +137,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             BenMunicipalityId: data.benpresmunicipality || '',
             BenBarangayId: data.benpresbarangay || '',
             BenAddress1: data.benpresstreet || '',
-            BenRentAmount: data.BenRentAmount ? parseFloat(data.BenRentAmount.toString().replaceAll(',', '')) : 0.00,
+            BenRentAmount:data.BenRentAmount? parseFloat(data.BenRentAmount.toString().replaceAll(',', '')) : 0.00,
             ModUser: jwtDecode(token).USRID,
 
             ...(!!sepcoborrowfname ? {
@@ -145,7 +145,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbMiddleName: data.coborrowmname || '',
                 AcbLastName: data.coborrowlname || '',
                 AcbSuffix: data.coborrowsuffix || null,
-                AcbBirthday: data.coborrowbdate ? mmddyy(data.coborrowbdate) : '',
+                AcbBirthday:data.coborrowbdate? mmddyy(data.coborrowbdate):'' ,
                 AcbGender: data.coborrowgender || null,
                 AcbCivilStatus: data.coborrowmstatus || null,
                 AcbDependent: data.coborrowdependents || 0,
@@ -154,7 +154,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbMobileNo2: data.coborrowothermobile || '',
                 AcbFbProfile: data.coborrowfblink || '',
                 AcbSpouseName: data.coborrowspousename || '',
-                AcbSpouseBirthday: data.coborrowerspousebdate ? mmddyy(data.coborrowerspousebdate) : '',
+                AcbSpouseBirthday:data.coborrowerspousebdate? mmddyy(data.coborrowerspousebdate) : '',
                 AcbOwnership: data.coborrowresidences || 0,
                 AcbAddress1: data.coborrowStreet || '',
                 AcbBarangay: data.coborrowBarangay || '',
@@ -162,7 +162,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbProvince: data.coborrowProv || '',
                 AcbStayMonths: data.AcbStayMonths || 0,
                 AcbStayYears: data.AcbStayYears || 0,
-                AcbRentAmount: data.AcbRentAmount ? parseFloat(data.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
+                AcbRentAmount:data.AcbRentAmount? parseFloat(data.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
 
             } : {})
 
@@ -175,8 +175,8 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             AcbMiddleName: data.coborrowmname || '',
             AcbLastName: data.coborrowlname || '',
             AcbSuffix: data.coborrowsuffix || 0,
-            AcbBirthday: data.coborrowbdate ? mmddyy(data.coborrowbdate) : '',
-            AcbGender: data.coborrowgender,
+            AcbBirthday:data.coborrowbdate? mmddyy(data.coborrowbdate) : '',
+            AcbGender: data.coborrowgender ,
             AcbCivilStatus: data.coborrowmstatus || 0,
             AcbDependent: data.coborrowdependents || 0,
             AcbEmail: data.coborrowemail || '',
@@ -242,97 +242,102 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
 
     }
     return (<>
-        {contextHolder}
-        <div className={classname}>
-            {User !== 'Credit' && User !== 'Lp' && (
-                <div className="sticky top-0 z-[1000] bg-white">
-                    <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-                </div>
-            )}
-            {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                <ViewBeneficiaryDetails data={data} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} />
-            ) : (
-                <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
-                    showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User}
-                />
-            )}
-
-            {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
-                <ConfigProvider
-                    theme={{
-                        token: {
-                            fontSize: 14,
-                            borderRadius: 8,
-                            fontWeightStrong: 600,
-                            colorText: '#ffffff',
-                        },
-                    }}
-                >
-                    <div className="sticky bottom-0 z-50 bg-white p-4 flex justify-center items-center space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
-                        {isEdit ? (
-                            <>
-                                <ConfigProvider
-                                    theme={{
-                                        token: {
-                                            colorPrimary: '#2b972d',
-                                            colorPrimaryHover: '#34b330',
-                                        },
-                                    }}
-                                >
-                                    <Button
-                                        type="primary"
-                                        icon={<SaveOutlined />}
-                                        onClick={toggleEditMode}
-                                        size="large"
-                                        className="-mt-5"
-                                    >
-                                        SAVE
-                                    </Button>
-                                </ConfigProvider>
-
-                                <ConfigProvider
-                                    theme={{
-                                        token: {
-                                            colorPrimary: '#dc3545',
-                                            colorPrimaryHover: '#f0aab1',
-                                        },
-                                    }}
-                                >
-                                    <Button
-                                        type="primary"
-                                        icon={<CloseOutlined />}
-                                        onClick={() => setEdit(false)}
-                                        size="large"
-                                        className="-mt-5"
-                                    >
-                                        CANCEL
-                                    </Button>
-                                </ConfigProvider>
-                            </>
-                        ) : (
+                {contextHolder}
+                <div className={classname}>
+                {User !== 'Credit' && User !== 'Lp' && (
+                        <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+                    )}
+                    <div className={`${
+                            User === 'MARKETING' 
+                                ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[47vh] 3xl:h-[55vh] overflow-y-auto' 
+                                : ''
+                        }`}
+                    >                    
+                    {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+                        <ViewBeneficiaryDetails data={data} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} />
+                    ) : (
+                        <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
+                            showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
+                    )}
+                    </div>
+                    {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
                             <ConfigProvider
                                 theme={{
                                     token: {
-                                        colorPrimary: '#3b0764',
-                                        colorPrimaryHover: '#6b21a8',
+                                        fontSize: 14,
+                                        borderRadius: 8,
+                                        fontWeightStrong: 600,
+                                        colorText: '#ffffff',
                                     },
                                 }}
                             >
-                                <Button
-                                    type="primary"
-                                    icon={<EditOutlined />}
-                                    onClick={toggleEditMode}
-                                    size="large"
-                                    className="-mt-5"
-                                >
-                                    EDIT
-                                </Button>
+                                    <div className=" w-full bg-white pt-10 flex 
+                                    justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 
+                                     space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3 ">
+                                    {isEdit ? (
+                                        <>
+                                            <ConfigProvider
+                                                theme={{
+                                                    token: {
+                                                        colorPrimary: '#2b972d',
+                                                        colorPrimaryHover: '#34b330',
+                                                    },
+                                                }}
+                                            >
+                                                <Button
+                                                    type="primary"
+                                                    icon={<SaveOutlined />}
+                                                    onClick={toggleEditMode}
+                                                    size="large"
+                                                    className="-mt-5"
+                                                >
+                                                    SAVE
+                                                </Button>
+                                            </ConfigProvider>
+        
+                                            <ConfigProvider
+                                                theme={{
+                                                    token: {
+                                                        colorPrimary: '#dc3545',
+                                                        colorPrimaryHover: '#f0aab1',
+                                                    },
+                                                }}
+                                            >
+                                                <Button
+                                                    type="primary"
+                                                    icon={<CloseOutlined />}
+                                                    onClick={() => setEdit(false)}
+                                                    size="large"
+                                                    className="-mt-5"
+                                                >
+                                                    CANCEL
+                                                </Button>
+                                            </ConfigProvider>
+                                        </>
+                                    ) : (
+                                        <ConfigProvider
+                                            theme={{
+                                                token: {
+                                                    colorPrimary: '#3b0764',
+                                                    colorPrimaryHover: '#6b21a8',
+                                                },
+                                            }}
+                                        >
+                                            <Button
+                                                type="primary"
+                                                icon={<EditOutlined />}
+                                                onClick={toggleEditMode}
+                                                size="large"
+                                                className="-mt-5"
+                                            >
+                                                EDIT
+                                            </Button>
+                                        </ConfigProvider>
+                                    )}
+                                </div>
                             </ConfigProvider>
                         )}
-                    </div>
-                </ConfigProvider>
-            )}
-        </div>
+                </div>
     </>);
 }
 
