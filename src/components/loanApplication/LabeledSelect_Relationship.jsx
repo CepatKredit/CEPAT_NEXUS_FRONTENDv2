@@ -87,7 +87,7 @@ function LabeledSelect_Relationship({
                 }))
               : []
           }
-          value={getItem || undefined}
+          value={getAppDetails[fieldName] || undefined}
           disabled={disabled}
           size="large"
           placeholder={placeHolder}

@@ -276,11 +276,10 @@ function BeneficiaryDetails({
           className_dsub={className_dsub}
           label={
             <>
-              Relationship to the OFW (Kaano-ano mo si OFW){" "}
+              Relationship to the OFW (Kaano-ano mo si OFW)
               <span className="text-red-500">*</span>
             </>
           }
-          value={data.benrelationship}
           error_status={"Relationship is required."}
           fieldName="benrelationship"
           category={"direct"}
