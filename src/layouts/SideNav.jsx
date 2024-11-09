@@ -132,41 +132,41 @@ function SideNav() {
 
             {GetData('ROLE').toString() !== '20' && (
                 <>
-            <div
-                ref={chatbotButtonRef}
-                onClick={isModalOpen ? closeModal : openModal}
-                className="fixed bottom-[-.6rem] left-[12%] flex items-center justify-center cursor-pointer"
-                style={{ zIndex: 1050 }} // Set a high z-index
-                title="Open Chatbot"
-            >
-                <img
-                    src={isModalOpen ? CepatChatbotOpen : CepatChatbot}
-                    alt="Chatbot Icon"
-                    className={`${isModalOpen ? "w-22 h-24" : "w-18 h-20"} transition-transform duration-200 hover:scale-105 hover:-translate-y-3`}                
-                    />
-            </div>
+                    <div
+                        ref={chatbotButtonRef}
+                        onClick={isModalOpen ? closeModal : openModal}
+                        className="fixed bottom-[-.6rem] right-[12%] flex items-center justify-center cursor-pointer"
+                        style={{ zIndex: 1050 }} // Set a high z-index
+                        title="Open Chatbot"
+                    >
+                        <img
+                            src={isModalOpen ? CepatChatbotOpen : CepatChatbot}
+                            alt="Chatbot Icon"
+                            className={`${isModalOpen ? "w-22 h-24" : "w-18 h-20"} transition-transform duration-200 hover:scale-105 hover:-translate-y-3`}
+                        />
+                    </div>
 
-            <Modal
-                // title="Chatbot"
-                open={isModalOpen}
-                onCancel={closeModal}
-                footer={null}
-                width={800}
-                style={{
-                    position: 'absolute',
-                    left: buttonPosition.left - -110,
-                    top: buttonPosition.top - 520,
-                    zIndex: 999,
-                }}
-                className='adjusted-modal-position'
-            >
-                <iframe
-                    src="https://www.chatbase.co/chatbot-iframe/1_4jLvllPreXa-Tx-aPRr"
-                    className="w-full h-[500px]"
-                    allowFullScreen
-                />
-            </Modal>
-            </>
+                    <Modal
+                        // title="Chatbot"
+                        open={isModalOpen}
+                        onCancel={closeModal}
+                        footer={null}
+                        width={800}
+                        style={{
+                            position: 'absolute',
+                            right: buttonPosition.right || 110,  // Adjusted for right alignment
+                            top: buttonPosition.top - 520,       // Adjust vertical position as needed
+                            zIndex: 999,
+                        }}
+                        className='adjusted-modal-position'
+                    >
+                        <iframe
+                            src="https://www.chatbase.co/chatbot-iframe/1_4jLvllPreXa-Tx-aPRr"
+                            className="w-full h-[500px]"
+                            allowFullScreen
+                        />
+                    </Modal>
+                </>
             )}
         </SessionTimeout>
     )
