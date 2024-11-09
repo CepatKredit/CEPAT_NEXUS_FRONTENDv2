@@ -85,12 +85,12 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         retryDelay: 1000,
     });
 
-    React.useEffect(() => {
+    /*React.useEffect(() => {
         if (!data.loanIdCode) {
             SET_LOADING_INTERNAL('DependentsTABLE', true)
             getRelatives.refetch();
         }
-    }, [data]);
+    }, [data]);*/
 
 
     const [getReshipList, setReshipList] = React.useState()
