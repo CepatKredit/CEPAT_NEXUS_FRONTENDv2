@@ -12,8 +12,10 @@ import { useQuery } from '@tanstack/react-query';
 import { GetData } from '@utils/UserData';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, setMiscellanious }) {
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
     const { setBENE, setBENEDOC } = GrandTotal()
     const { setCounter } = Validation()
     const roles = ['70', '80'];
@@ -76,6 +78,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                 .then((result) => {
                     let incomeData = [];
                     let expenseData = [];
+                    SET_LOADING_INTERNAL('BorrowerNDI', false);
                     console.log(result.data.list)
                     result.data.list.forEach((item) => {
                         switch (item.listNo) {
@@ -166,6 +169,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
     });
     React.useEffect(() => {
         if (data.loanIdCode !== '' || Object.keys(data).length !== 0) {
+            SET_LOADING_INTERNAL('BorrowerNDI', true);
             NdiDataQuery.refetch();
         }
     }, [data.loanIdCode]);

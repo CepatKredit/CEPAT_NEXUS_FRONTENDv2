@@ -499,7 +499,7 @@ function LoanApplicationInfo() {
                     //Acb show Status
                     addCoborrower: data?.CoborrowDetails?.firstName || '',
                 }));
-                SET_LOADING_INTERNAL('ClientDataInfo', false);
+                SET_LOADING_INTERNAL('ClientDataInfo', true);
                 return data;
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -533,8 +533,8 @@ function LoanApplicationInfo() {
 
     return (
         <div className="px-7 mt-[2%] h-[500px] w-full">
-            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                <Spin spinning={getLoading} tip="Please wait..." className="flex justify-center items-center" size='large'>
+            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(7, 175, 4)'}} }}>
+                <Spin spinning={getLoading}  tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>}  className="flex justify-center items-center mt-[8%]" size='large'>
                     {contextHolder}
                     <div className="h-[100%] mt-[1%]">
                         {

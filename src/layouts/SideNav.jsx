@@ -134,7 +134,7 @@ function SideNav() {
                 <>
             <div
                 ref={chatbotButtonRef}
-                onClick={openModal}
+                onClick={isModalOpen ? closeModal : openModal}
                 className="fixed bottom-[-.6rem] left-[12%] flex items-center justify-center cursor-pointer"
                 style={{ zIndex: 1050 }} // Set a high z-index
                 title="Open Chatbot"
@@ -156,6 +156,7 @@ function SideNav() {
                     position: 'absolute',
                     left: buttonPosition.left - -110,
                     top: buttonPosition.top - 520,
+                    zIndex: 999,
                 }}
                 className='adjusted-modal-position'
             >

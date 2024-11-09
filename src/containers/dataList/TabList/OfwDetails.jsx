@@ -15,7 +15,7 @@ import StatusRemarks from './StatusRemarks';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
 
-function OfwDetails({ getTab, classname, data, receive, presaddress, User, BorrowerId, creditisEdit, loading, isEditCRAM }) {
+function OfwDetails({ getTab, classname, data, receive, presaddress, User, BorrowerId, creditisEdit, isEditCRAM }) {
     const [isEdit, setEdit] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
@@ -154,18 +154,18 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 MiddleName: data.ofwmname || '',
                 LastName: data.ofwlname || '',
                 Suffix: data.ofwsuffix || null,
-                BirthDay: data.ofwbdate? mmddyy(data.ofwbdate) : '',
+                BirthDay: data.ofwbdate ? mmddyy(data.ofwbdate) : '',
                 Gender: data.ofwgender || null,
                 MobileNo: data.ofwmobile || '',
                 MobileNo2: data.ofwothermobile || '',
                 Email: data.ofwemail || '',
                 FbProfile: data.ofwfblink || '',
                 GroupChat: data.ofwgroupchat || '',
-                
+
 
                 CivilStatus: data.ofwmstatus || null,
                 SpouseName: data.ofwspouse || '',
-                SpouseBirthday:data.ofwspousebdate? mmddyy(data.ofwspousebdate) : '',
+                SpouseBirthday: data.ofwspousebdate ? mmddyy(data.ofwspousebdate) : '',
                 Dependent: data.ofwdependents || null,
                 ProvinceId: data.ofwPresProv || '',
                 MunicipalityId: data.ofwPresMunicipality || '',
@@ -198,7 +198,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 Country: data.ofwcountry || '',
                 JobTitle: data.ofwjobtitle || '',
                 Employer: data.ofwcompany || null,
-                Salary:data.ofwsalary? parseFloat(data.ofwsalary.toString().replaceAll(',', '')) : 0.00,
+                Salary: data.ofwsalary ? parseFloat(data.ofwsalary.toString().replaceAll(',', '')) : 0.00,
 
                 EducationLevel: data.ofwHighestEdu || null,
                 School: data.ofwschool || '',
@@ -340,4 +340,4 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 );
 }
 
-                export default OfwDetails;
+export default OfwDetails;

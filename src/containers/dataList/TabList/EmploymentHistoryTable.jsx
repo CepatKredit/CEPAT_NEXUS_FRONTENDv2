@@ -65,7 +65,7 @@ function EmploymentHistory({ data, User }) {
                     EndDate: x.endDate,
                 });
             });
-         SET_LOADING_INTERNAL('EmploymentHistory', false);
+         SET_LOADING_INTERNAL('EmploymentHistoryTABLE', false);
             return dataList;
         },
         refetchInterval: (data) => {
@@ -78,7 +78,7 @@ function EmploymentHistory({ data, User }) {
 
     React.useEffect(() => {
         if (!data.loanIdCode) {
-            SET_LOADING_INTERNAL('EmploymentHistory', true)
+            SET_LOADING_INTERNAL('EmploymentHistoryTABLE', true)
             getEmploymentHistory.refetch();
         }
     }, [data]);

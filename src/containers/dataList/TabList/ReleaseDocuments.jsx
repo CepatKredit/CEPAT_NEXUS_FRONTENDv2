@@ -10,8 +10,10 @@ import { toUpperText } from '@utils/Converter'
 import StatusRemarks from './StatusRemarks';
 import moment from 'moment'
 import { jwtDecode } from 'jwt-decode';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function ReleaseDocuments({  ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
     React.useEffect(() => { console.log(ClientId + 'ReleaseDocuments') }, [ClientId])
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
@@ -45,12 +47,21 @@ function ReleaseDocuments({  ClientId, FileType, Uploader, User, data, isEdit, L
             LPACCDDT.list?.map((x) => { container.push(x) })
             const LPACCREL = await GET_LIST(`/getFileList/${ClientId}/${'LPACCREL'}/${jwtDecode(token).USRID}`)
             LPACCREL.list?.map((x) => { container.push(x) })
+            SET_LOADING_INTERNAL('ReleaseFile', false);
             return container
         },
         enabled: true,
         retryDelay: 1000,
         staleTime: 5 * 1000
     })
+
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('ReleaseFile', true)
+            FileListQuery.refetch();
+        }
+    }, [data]);
+
 
     function GetFile(id, command) {
         let count = 0;

@@ -13,10 +13,11 @@ import axios from 'axios';
 import { toDecrypt, toUpperText } from '@utils/Converter';
 import SectionHeader from '@components/validation/SectionHeader';
 import { GetData } from '@utils/UserData';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function OtherLoanHistory({ data, User }) {
-    const [loading, setLoading] = React.useState(true);
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -61,7 +62,7 @@ function OtherLoanHistory({ data, User }) {
                     Remarks: x.remarks,
                 });
             });
-            setLoading(false);
+            SET_LOADING_INTERNAL('CreditHistoryTABLE', false);
             return dataList;
         },
         refetchInterval: (data) => {
@@ -70,60 +71,21 @@ function OtherLoanHistory({ data, User }) {
         enabled: true,
         retryDelay: 1000,
     });
-    /*useEffect(() =>
-    {
-        console.log('loan product ' + data.loanProd);
-    }, [data])*/
-    /*
-    const [fieldErrors, setFieldErrors] = React.useState({
-        Loan: '',
-        Amount: '',
-        Amortization: '',
-        Remarks: '',
-    });*/
 
-    function validateLoan(Loan) {
 
-        return Loan.trim() !== '';
-    }
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('CreditHistoryTABLE', true)
+            getOtherLoanHistory.refetch();
+        }
+    }, [data]);
 
-    function validateAmount(Amount) {
-        return Amount.trim() !== '';
-    }
-    function validateAmort(Amortization) {
-        return Amortization.trim() !== '';
-    }
-    function validateRemarks(Remarks) {
-        return Remarks.trim() !== '';
-    }
 
     const [getAddStat, setAddStat] = React.useState(false)
 
 
 
     async function onClickSave() {
-        /*  let errors = {};
-          if (!validateLoan(getInfo.Loan)) {
-              errors.Loan = 'Other Loans History is required.';
-          }
-  
-          if (!validateAmount(getInfo.Amount)) {
-              errors.Amount = 'Loan Approval is required.';
-          }
-  
-          if (!validateAmort(getInfo.Amortization)) {
-              errors.Amortization = 'Amortization is required.';
-          }
-          if (!validateRemarks(getInfo.Remarks)) {
-              errors.Remarks = 'Remarks is required.'
-          }
-  
-          if (Object.keys(errors).length > 0) {
-              setFieldErrors(errors);
-              return;
-          }
-  
-          setFieldErrors({ Loan: '', Amount: '', Amortization: '', Remarks: '' });*/
 
         setStat(false);
 
@@ -461,26 +423,26 @@ function OtherLoanHistory({ data, User }) {
 
     async function onChangeToUpper(value, pointer) {
         let formattedValue = value;
-    
+
         if (pointer === 'amount' || pointer === 'amortization') {
             // Remove any non-numeric characters except the decimal point
             formattedValue = value.replace(/[^0-9.]/g, '');
-    
+
             // Limit to two decimal places
             if (formattedValue.includes('.')) {
                 const [integerPart, decimalPart] = formattedValue.split('.');
                 formattedValue = integerPart + '.' + decimalPart.slice(0, 2);
             }
-    
+
             // Add commas for thousands
             formattedValue = formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    
+
             form.setFieldsValue({ [pointer]: formattedValue });
         } else {
             form.setFieldsValue({ [pointer]: toUpperText(value) });
         }
     }
-    
+
 
 
     const EditableCell = ({
@@ -533,8 +495,8 @@ function OtherLoanHistory({ data, User }) {
 
         return (
             <td {...restProps}>
-                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} 
-                rules={
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }}
+                    rules={
                         dataIndex !== 'remarks' ? [{ required: true, message: `Please Input ${title}` }] : []
                     }>
                     {inputNode}
@@ -559,38 +521,33 @@ function OtherLoanHistory({ data, User }) {
                     </center>
                 </div>
                 <div className='mt-0'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                            <Form form={form} component={false} >
-                                <Table
-                                    columns={mergedColumns}
-                                    dataSource={
-                                        getStat === false
-                                            ? getOtherLoanHistory.data?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                loan: x.Loan,
-                                                amount: x.Amount,
-                                                amortization: x.Amortization,
-                                                remarks: x.Remarks,
-                                            }))
-                                            : dataOnly?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                loan: x.Loan,
-                                                amount: x.Amount,
-                                                amortization: x.Amortization,
-                                                remarks: x.Remarks,
-                                            }))
-                                    }
-                                    components={{ body: { cell: EditableCell } }}
-                                    rowClassName='editable-row'
-                                    pagination={false}
-                                />
-                            </Form>
-
-                        </Spin>
-                    </ConfigProvider>
+                    <Form form={form} component={false} >
+                        <Table
+                            columns={mergedColumns}
+                            dataSource={
+                                getStat === false
+                                    ? getOtherLoanHistory.data?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        loan: x.Loan,
+                                        amount: x.Amount,
+                                        amortization: x.Amortization,
+                                        remarks: x.Remarks,
+                                    }))
+                                    : dataOnly?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        loan: x.Loan,
+                                        amount: x.Amount,
+                                        amortization: x.Amortization,
+                                        remarks: x.Remarks,
+                                    }))
+                            }
+                            components={{ body: { cell: EditableCell } }}
+                            rowClassName='editable-row'
+                            pagination={false}
+                        />
+                    </Form>
                 </div>
             </div>
         </div>

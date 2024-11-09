@@ -13,8 +13,10 @@ import { mmddyy } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
 import dayjs from 'dayjs';
 import { jwtDecode } from 'jwt-decode';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, setMiscellanious, onLoadingChange }) {
+function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, setMiscellanious }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const { setOFW, setOFWDOC } = GrandTotal()
     const { setCounter } = Validation()
     const roles = ['70', '80'];
@@ -84,7 +86,6 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                 console.log(result.data.list)
                 let incomeData = [];
                 let expenseData = [];
-                onLoadingChange(false);
                 result.data.list.forEach((item) => {
                     switch (item.listNo) {
                         case 1:
@@ -145,7 +146,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                 setOtherExpense(expenseData);
                 InitialOtherIncome(1, incomeData);
                 InitialOtherExpense(1, expenseData);
-
+                SET_LOADING_INTERNAL('NDIOFW', false);
                 setTrigger(1);
             } catch (error) {
                 if (axios.isCancel(error)) {
@@ -161,6 +162,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
 
     React.useEffect(() => {
         if (data.loanIdCode !== '' || Object.keys(data).length !== 0) {
+            SET_LOADING_INTERNAL('NDIOFW', true)
             NdiDataQuery.refetch();
         }
     }, [data]);

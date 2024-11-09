@@ -13,8 +13,10 @@ import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, setMiscellanious }) {
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
     const { setACB, setACBDOC } = GrandTotal()
     const { setCounter } = Validation()
     const roles = ['70', '80'];
@@ -88,6 +90,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                     console.log(result.data.list)
                     let incomeData = [];
                     let expenseData = [];
+                    SET_LOADING_INTERNAL('ACBNDI', false);
                     result.data.list.forEach((item) => {
                         switch (item.listNo) {
                             case 50:
@@ -178,6 +181,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
     });
     React.useEffect(() => {
         if (data.loanIdCode !== '' || Object.keys(data).length !== 0) {
+            SET_LOADING_INTERNAL('ACBNDI', true);
             NdiDataQuery.refetch();
         }
     }, [data.loanIdCode]);

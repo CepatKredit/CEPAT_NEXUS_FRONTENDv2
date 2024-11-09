@@ -35,7 +35,7 @@ import { jwtDecode } from 'jwt-decode';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import StatusRemarks from '../TabList/StatusRemarks';
 
-function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading }) {
+function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType }) {
     //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
@@ -520,10 +520,10 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                             <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
                         </div>
                         <div id='Loan-Details'>
-                            <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} creditisEdit={isEdit} User={'Credit'} />
+                            <LoanDetails  getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} creditisEdit={isEdit} User={'Credit'} />
                         </div>
                         <div id='OFW-Details'>
-                            <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
+                            <OfwDetails  isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
                         </div>
                         <div id="Employment-History" className="w-full">
                             <EmploymentHistoryTable data={value} isEdit={isEdit} />
@@ -538,10 +538,10 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                             <OwnedProperties data={value} receive={receive} isEdit={isEdit} />
                         </div>
                         <div id='Character-Reference' className="w-full">
-                            <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
+                            <CharacterReference  BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
                         </div>
                         <div id='Beneficiary-Details'>
-                            <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
+                            <BeneficiaryDetails  getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
                         </div>
                     </div>
                     <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[58vh] sm:h-[50vh] md:h-[55vh] lg:h-[58vh] xl:h-[60vh] 2xl:h-[58vh] 3xl:h-[63vh]">
@@ -623,7 +623,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount classname={'h-[65vh] w-[86vw] mx-auto overflow-y-auto'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount classname={'h-[65vh] w-[86vw] mx-auto overflow-y-auto'}  valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
         },
         {
             label: <div className='flex flex-row'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,

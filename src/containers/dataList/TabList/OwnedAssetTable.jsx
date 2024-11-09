@@ -1,4 +1,4 @@
-import React, { useEffect, useRef  } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin, Form } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
@@ -15,10 +15,11 @@ import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
 import { toUpperText } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function OwnedAsset({ data, User }) {
-    const [loading, setLoading] = React.useState(true);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -38,14 +39,11 @@ function OwnedAsset({ data, User }) {
     const [getStat, setStat] = React.useState(true);
     const role = GetData('ROLE').toString();
 
-    //React.useEffect(() => { getOtherLoanHistory.refetch() }, [data.loanIdCode]);
     const getOwnedAssets = useQuery({
         queryKey: ['getOwnedAssets'],
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
-            //  console.log("Decrypted SIDC:", sidcDecrypted);
             const result = await axios.get(`/getOwnedAssets/${toDecrypt(localStorage.getItem('SIDC'))}`);
-            // console.log("get Owned Properties:", result);
             let dataList = [{
                 key: 0,
                 no: '',
@@ -65,12 +63,8 @@ function OwnedAsset({ data, User }) {
                     PlateNo: x.plateNo,
                 });
             });
-            setLoading(false);
+            SET_LOADING_INTERNAL('AssetTABLE', false)
             return dataList;
-        },
-        onError: (error) => {
-            setLoading(false);
-            console.log(error);
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
@@ -79,18 +73,12 @@ function OwnedAsset({ data, User }) {
         retryDelay: 1000,
     });
 
-    /*useEffect(() =>
-    {
-        console.log('loan product ' + data.loanProd);
-    }, [data])*/
-    /*const [fieldErrors, setFieldErrors] = React.useState({
-        Category: '',
-        Make: '',
-        YearModel: '',
-        PlateNo: '',
-
-
-    });*/
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('AssetTABLE', true)
+            getOwnedAssets.refetch();
+        }
+    }, [data]);
 
     function GetAssetsOption() {
         const categoryValue = form.getFieldValue('category');
@@ -99,45 +87,11 @@ function OwnedAsset({ data, User }) {
         );
         return CategoryOptionHolder ? CategoryOptionHolder.value : null;
     }
-    
 
-    function validateCategory(Category) {
-        return Category !== '';
-    }
-
-    function validateMake(Make) {
-        return Make.trim() !== '';
-    }
-
-    function validateYearModel(YearModel) {
-        return YearModel.trim() !== '';
-    }
     const [getAddStat, setAddStat] = React.useState(false)
-    function validatePlateNo(PlateNo) {
-        return PlateNo.trim() !== '';
-    }
+
     async function onClickSave() {
-        /* let errors = {};
- 
-         if (!validateCategory(getInfo.Category)) {
-             errors.Category = 'Category is required.';
-         }
- 
-         if (!validateMake(getInfo.Make)) {
-             errors.Make = 'Make is required.';
-         }
- 
-         if (!validateYearModel(getInfo.YearModel)) {
-             errors.YearModel = 'Year Model is required.';
-         }
- 
- 
-         if (Object.keys(errors).length > 0) {
-             setFieldErrors(errors);
-             return;
-         }
- 
-         setFieldErrors({ Category: '', Make: '', YearModel: '', PlateNo: '' });*/
+
         setStat(false);
 
         const row = await form.validateFields();
@@ -149,7 +103,6 @@ function OwnedAsset({ data, User }) {
             PlateNo: row.plateNo,
             RecUser: jwtDecode(token).USRID
         }
-          // console.log(data)
         await axios.post('/addOwnAsset', data)
             .then((result) => {
                 api[result.data.status]({
@@ -175,31 +128,10 @@ function OwnedAsset({ data, User }) {
                     description: error.message,
                 });
             })
-            saveButtonRef.current?.focus();
+        saveButtonRef.current?.focus();
     }
 
     async function onClickEdit() {
-        /* let errors = {};
-         if (!validateCategory(getInfo.Category)) {
-             errors.Category = 'Category is required.';
-         }
- 
-         if (!validateMake(getInfo.Make)) {
-             errors.Make = 'Make is required.';
-         }
- 
-         if (!validateYearModel(getInfo.YearModel)) {
-             errors.YearModel = 'Year Model is required.';
-         }
-         if (!validatePlateNo(getInfo.PlateNo)) {
-             errors.PlateNo = 'Plate Number is required.';
-         }
-         if (Object.keys(errors).length > 0) {
-             setFieldErrors(errors);
-             return;
-         }
- 
-         setFieldErrors({ Category: '', Make: '', YearModel: '', PlateNo: '' });*/
         try {
             const row = await form.validateFields();
             const data = {
@@ -210,7 +142,7 @@ function OwnedAsset({ data, User }) {
                 PlateNo: row.plateNo,
                 ModUser: jwtDecode(token).USRID
             };
-               console.log('Data to be sent to the server:', data);
+            console.log('Data to be sent to the server:', data);
             const result = await axios.post('/editOwnedAssets', data);
             api[result.data.status]({
                 message: result.data.message,
@@ -345,11 +277,6 @@ function OwnedAsset({ data, User }) {
                                 <Popconfirm
                                     title="Are you sure you want to cancel this record?"
                                     onConfirm={() => {
-                                        /*setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });*/
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
@@ -381,7 +308,7 @@ function OwnedAsset({ data, User }) {
                                 <Popconfirm
                                     title="Are you sure you want to cancel the edit?"
                                     onConfirm={() => {
-                                      
+
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
@@ -399,11 +326,6 @@ function OwnedAsset({ data, User }) {
 
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                        /* setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });*/
                                         edit(record);
                                         setAddStat(!getAddStat);
                                     }}
@@ -428,14 +350,6 @@ function OwnedAsset({ data, User }) {
             },
         },
     ];
-
-    /* const [getFocus, setFocus] = React.useState({
-         Category: false,
-         Make: false,
-         YearModel: false,
-         PlateNo: false,
-     })*/
-
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
@@ -463,20 +377,19 @@ function OwnedAsset({ data, User }) {
         };
     });
     async function onChangeCategory(e, pointer) {
-        if (pointer === 'category')
-            {form.setFieldsValue({ 'category': e });}
+        if (pointer === 'category') { form.setFieldsValue({ 'category': e }); }
     }
 
-  async function onChangeToUpper(e, pointer) {
+    async function onChangeToUpper(e, pointer) {
 
-    if (pointer === 'make') {
-        form.setFieldsValue({ 'make': e });
-    } else if (pointer === 'yearModel') {
-        form.setFieldsValue({ 'yearModel': e });
-    } else {
-        form.setFieldsValue({ 'plateNo': e });
+        if (pointer === 'make') {
+            form.setFieldsValue({ 'make': e });
+        } else if (pointer === 'yearModel') {
+            form.setFieldsValue({ 'yearModel': e });
+        } else {
+            form.setFieldsValue({ 'plateNo': e });
+        }
     }
-}
 
 
     const EditableCell = ({
@@ -537,8 +450,8 @@ function OwnedAsset({ data, User }) {
         return (
             <td {...restProps}>
                 {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={
-                        dataIndex !== 'plateNo' ? [{ required: true, message: `Please Input ${title}` }] : []
-                    }>
+                    dataIndex !== 'plateNo' ? [{ required: true, message: `Please Input ${title}` }] : []
+                }>
                     {inputNode}
                 </Form.Item>
                 ) : (
@@ -562,37 +475,33 @@ function OwnedAsset({ data, User }) {
                     </center>
                 </div>
                 <div className='mt-[0rem]'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                            <Form form={form} component={false} >
-                                <Table
-                                    columns={mergedColumns}
-                                    dataSource={
-                                        getStat === false
-                                            ? getOwnedAssets.data?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
-                                                make: x.Make,
-                                                yearModel: x.YearModel,
-                                                plateNo: x.PlateNo,
-                                            }))
-                                            : dataOnly?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
-                                                make: x.Make,
-                                                yearModel: x.YearModel,
-                                                plateNo: x.PlateNo,
-                                            }))
-                                    }
-                                    components={{ body: { cell: EditableCell } }}
-                                    rowClassName='editable-row'
-                                    pagination={false}
-                                />
-                            </Form>
-                        </Spin>
-                    </ConfigProvider>
+                    <Form form={form} component={false} >
+                        <Table
+                            columns={mergedColumns}
+                            dataSource={
+                                getStat === false
+                                    ? getOwnedAssets.data?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
+                                        make: x.Make,
+                                        yearModel: x.YearModel,
+                                        plateNo: x.PlateNo,
+                                    }))
+                                    : dataOnly?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
+                                        make: x.Make,
+                                        yearModel: x.YearModel,
+                                        plateNo: x.PlateNo,
+                                    }))
+                            }
+                            components={{ body: { cell: EditableCell } }}
+                            rowClassName='editable-row'
+                            pagination={false}
+                        />
+                    </Form>
                 </div>
             </div>
         </div>

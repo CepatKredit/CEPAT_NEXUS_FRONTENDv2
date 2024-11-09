@@ -13,9 +13,11 @@ import dayjs from 'dayjs';
 import { GetData } from '@utils/UserData';
 import { getDependentsCount } from '@hooks/DependentsController';
 import { toUpperText } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
-function Relatives({ BorrowerId, onUpdateCount, User }) {
+function Relatives({ BorrowerId, onUpdateCount, User, data }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const suffixRef = React.useRef();
     const { setCount } = getDependentsCount();
     const saveButtonRef = React.useRef();
@@ -24,7 +26,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
     const [editingKey, setEditingKey] = React.useState('');
-    const [loading, setLoading] = React.useState(true);
     const [getInfo, setInfo] = React.useState({
         RelativeID: '',
         key: '',
@@ -39,15 +40,12 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
     const [getStat, setStat] = React.useState(true);
     React.useEffect(() => {
         getRelatives.refetch()
-       // getRelativeSuffix.refetch()
     }, [BorrowerId]);
 
     const getRelatives = useQuery({
         queryKey: ['getRelatives'],
         queryFn: async () => {
             const result = await axios.get(`/getRelatives/${BorrowerId}`);
-            //  console.log("API Result:", result);
-
             let dataList = [{
                 key: 0,
                 no: '',
@@ -77,7 +75,7 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
             const updatedCount = dataList.length;
             setCount(updatedCount);
             onUpdateCount(updatedCount);
-            setLoading(false);
+            SET_LOADING_INTERNAL('DependentsTABLE', false);
             return dataList;
         },
         refetchInterval: (data) => {
@@ -87,9 +85,12 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         retryDelay: 1000,
     });
 
-    /*if (getRelatives.data) {
-        console.log("Row count:", getRelatives.data.length - 1);
-    }*/
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('DependentsTABLE', true)
+            getRelatives.refetch();
+        }
+    }, [data]);
 
 
     const [getReshipList, setReshipList] = React.useState()
@@ -108,16 +109,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         retryDelay: 1000,
     });
 
-    /*function GetReshipId() {
-        if (!getRelationshipList.data) {
-            return null; // or handle appropriately
-        }
-        const ReshipHolder = getRelationshipList.data.find(
-            (x) => x.description === getInfo.Relationship || x.code === getInfo.Relationship
-        );
-        return ReshipHolder ? ReshipHolder.code : null; // Safely return the code or null
-    }*/
-
     function GetReshipId() {
         if (!getRelationshipList.data) {
             return null; // or handle appropriately
@@ -128,39 +119,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         );
         return ReshipHolder ? ReshipHolder.code : null;
     }
-
-    /* const [getSuffixList, setSuffixList] = React.useState()
-     const getRelativeSuffix = useQuery({
-         queryKey: ['getRelativeSuffix'],
-         queryFn: async () => {
-             const result = await axios.get('/getRelativesSuffix');
-             setSuffixList(result.data.list)
- 
-             return result.data.list;
-         },
-         refetchInterval: (data) => {
-             data?.length === 0
-                 ? 500 : false
-         },
-         enabled: true,
-         retryDelay: 1000,
-     });
- 
-     
- 
-     function GetSuffixId() {
-         if (!getSuffixList) {
-             return null; // or handle appropriately
-         }
-         const suffixValue = form.getFieldValue('suffix');
-         const SuffixHolder = getSuffixList.find(
-             (x) => x.description === suffixValue || x.code === suffixValue
-         );
-         return SuffixHolder ? SuffixHolder.code : null; // Return the correct code
-     }*/
-
-
-
 
     function GetWorkEducStatusId() {
         const workValue = form.getFieldValue('workEducStatus');
@@ -228,7 +186,6 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
 
         const row = await form.validateFields();
         getRelationshipList.refetch();
-        // getRelativeSuffix.refetch();
 
         try {
             const data = {
@@ -237,11 +194,10 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                 Suffix: row.suffix,
                 Contactno: row.contactNo,
                 Birthdate: row.birthdate,
-                workEducStatus: GetWorkEducStatusId(),  // Use the mapped value
+                workEducStatus: GetWorkEducStatusId(),
                 Relationship: GetReshipId(),
                 ModUser: jwtDecode(token).USRID
             };
-            //console.log('suffix', data)
             console.log(data)
             const result = await axios.post('/editRelatives', data);
             api[result.data.status]({
@@ -512,9 +468,8 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
         if (pointer === 'contactNo') {
             let value = e;
 
-            // Limit to 11 characters and ensure only numbers are input
-            if (!/^\d*$/.test(value)) return; // Allow only digits
-            value = value.slice(0, 11); // Limit to 11 digits
+            if (!/^\d*$/.test(value)) return; 
+            value = value.slice(0, 11);
 
             form.setFieldsValue({ 'contactNo': value });
         }
@@ -645,39 +600,31 @@ function Relatives({ BorrowerId, onUpdateCount, User }) {
                         <Table
                             columns={mergedColumns}
                             dataSource={
-                                loading
-                                    ? []
-                                    : (
-                                        getStat === false
-                                            ? getRelatives.data?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                fullName: x.FullName,
-                                                suffix: x.Suffix,
-                                                contactNo: x.ContactNo,
-                                                birthdate: x.Birthdate,
-                                                workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
-                                                relationship: x.Relationship,
-                                            }))
-                                            : dataOnly?.map((x) => ({
-                                                key: x.key,
-                                                no: x.no,
-                                                fullName: x.FullName,
-                                                suffix: x.Suffix,
-                                                contactNo: x.ContactNo,
-                                                birthdate: x.Birthdate,
-                                                workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
-                                                relationship: x.Relationship,
-                                            }))
-                                    )
+                                getStat === false
+                                    ? getRelatives.data?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        fullName: x.FullName,
+                                        suffix: x.Suffix,
+                                        contactNo: x.ContactNo,
+                                        birthdate: x.Birthdate,
+                                        workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
+                                        relationship: x.Relationship,
+                                    }))
+                                    : dataOnly?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        fullName: x.FullName,
+                                        suffix: x.Suffix,
+                                        contactNo: x.ContactNo,
+                                        birthdate: x.Birthdate,
+                                        workEducStatus: WorkEducStatusOption().find((option) => option.value === x.WorkEducStatus)?.label || x.WorkEducStatus,
+                                        relationship: x.Relationship,
+                                    }))
                             }
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
-                            loading={{
-                                spinning: loading,
-                                indicator: <Spin tip="Loading..." />,
-                            }}
                         />
                     </Form>
 

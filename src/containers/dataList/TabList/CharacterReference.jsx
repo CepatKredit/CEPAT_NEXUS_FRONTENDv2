@@ -1,5 +1,5 @@
 
-import React, {  useState  } from 'react';
+import React, { useState } from 'react';
 import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form } from 'antd';
 import { SaveOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
@@ -10,14 +10,15 @@ import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
 import { toUpperText } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data }) {
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
-    const [loading, setLoading] = useState(true);
     const [contactError, setContactError] = React.useState('')
     const [getInfo, setInfo] = React.useState({
         key: '',
@@ -55,13 +56,20 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     remarks: x.remarks
                 })
             })
-            setLoading(false);
+            SET_LOADING_INTERNAL('CharRefTABLE', false);
             return dataList
         },
         refetchInterval: 5000,
         enabled: true,
         retryDelay: 1000,
     })
+
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('CharRefTABLE', true)
+            getCharacterRef.refetch();
+        }
+    }, [data]);
 
     const getRelationshipList = useQuery({
         queryKey: ['getRelationshipList'],
@@ -91,7 +99,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         queryKey: ['getProvinceSelect'],
         queryFn: async () => {
             const result = await axios.get('/getProvince');
-           // console.log(result.data.list)
+            // console.log(result.data.list)
             return result.data.list;
         },
         refetchInterval: (data) => {
@@ -118,7 +126,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         // Validate the form fields
         const row = await form.validateFields();
         setStat(false); // Update state before saving data
-    
+
         // Prepare the data object
         const data = {
             BorrowersId: BorrowerId,
@@ -129,24 +137,18 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             ProvinceId: row.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
             RecUser: Creator // Ensure Creator is properly defined
         };
-    
+
         try {
-            // Log the data for debugging
-    
-            // Make the API call to save data
             const result = await axios.post('/addCharacterRef', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description,
             });
-    
-            // Check the result status
             if (result.data.status === 'success') {
-                // Invalidate the query to refresh the data
                 queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
                 setStat(true);
                 setAddStat(false);
-                setEditingKey(''); // Clear editing key
+                setEditingKey('');
                 setInfo({
                     name: '',
                     conNum: '',
@@ -156,14 +158,13 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                 });
             }
         } catch (error) {
-            // Handle any errors during the API call
             api['error']({
                 message: 'Something went wrong',
                 description: error.message,
             });
         }
     }
-    
+
 
     async function onClickEdit() {
 
@@ -342,7 +343,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                            <Popconfirm
+                                <Popconfirm
                                     title="Are you sure you want to save this record?"
                                     onConfirm={() => { onClickEdit(); }}
                                     okText="Yes"
@@ -433,11 +434,11 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     async function onChangeProvince(value) {
         form.setFieldsValue({ 'prov': value });
     }
-    
+
     async function onChangeRelationship(value) {
         form.setFieldsValue({ 'relShip': value });
     }
-    
+
     async function onChangeContactNo(e, pointer) {
         if (pointer === 'contactNo') {
             let value = e;
@@ -552,45 +553,35 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     </center>
                 </div>
                 <div className='mt-[2rem]'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Form form={form} component={false}>
-                            <Table
-                                columns={mergedColumns}
-                                dataSource={
-                                    loading
-                                        ? []
-                                        : (
-                                            getStat === false
-                                                ? getCharacterRef.data?.map((x) => ({
-                                                    key: x.key,
-                                                    no: x.no,
-                                                    name: x.name,
-                                                    conNum: x.conNum,
-                                                    relShip: x.relShip,
-                                                    prov: x.prov,
-                                                    remarks: x.remarks
-                                                }))
-                                                : dataOnly?.map((x) => ({
-                                                    key: x.key,
-                                                    no: x.no,
-                                                    name: x.name,
-                                                    conNum: x.conNum,
-                                                    relShip: x.relShip,
-                                                    prov: x.prov,
-                                                    remarks: x.remarks
-                                                }))
-                                        )
-                                }
-                                components={{ body: { cell: EditableCell } }}
-                                rowClassName='editable-row'
-                                pagination={false}
-                                loading={{
-                                    spinning: loading,
-                                    indicator: <Spin tip="Loading..." />,
-                                }}
-                            />
-                        </Form>
-                    </ConfigProvider>
+                    <Form form={form} component={false}>
+                        <Table
+                            columns={mergedColumns}
+                            dataSource={
+                                getStat === false
+                                    ? getCharacterRef.data?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        name: x.name,
+                                        conNum: x.conNum,
+                                        relShip: x.relShip,
+                                        prov: x.prov,
+                                        remarks: x.remarks
+                                    }))
+                                    : dataOnly?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        name: x.name,
+                                        conNum: x.conNum,
+                                        relShip: x.relShip,
+                                        prov: x.prov,
+                                        remarks: x.remarks
+                                    }))
+                            }
+                            components={{ body: { cell: EditableCell } }}
+                            rowClassName='editable-row'
+                            pagination={false}
+                        />
+                    </Form>
                 </div>
             </div>
         </div>

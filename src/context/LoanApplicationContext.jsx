@@ -179,8 +179,22 @@ export const LoanApplicationProvider = ({ children, direct }) => {
 
   const [getLoading, setLoading] = React.useState({
     Deduplication: false,
-    EmploymentHistory: false,
-    LoanInfo: false
+    EmploymentHistoryTABLE: false,
+    LoanInfo: false,
+    NDIOFW: false,
+    KaiserOFW: false,
+    FinancialChecker: false,
+    UploadDocs: false,
+    BorrowerNDI: false,
+    ACBNDI: false,
+    StatusRemarks: false,
+    ReleaseFile: false,
+    CharRefTABLE: false,
+    CreditHistoryTABLE: false,
+    AssetTABLE: false,
+    PropertiesTABLE: false,
+    DependentsTABLE: false,
+
 
   })
 

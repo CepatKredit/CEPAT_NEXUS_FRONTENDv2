@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
-function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading }) {
+function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow }) {
 
     const [api, contextHolder] = notification.useNotification()
     const [isEdit, setEdit] = useState(false);
@@ -95,14 +95,14 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                      description: 'Please complete all required details.',
                  });
              }*/
-            if ((!showCoBorrower && !valid_addcoborrow ) || (showCoBorrower )) {
+            if ((!showCoBorrower && !valid_addcoborrow) || (showCoBorrower)) {
                 await updateData();
             } else {
                 api['warning']({
                     message: 'Incomplete Additional Co-Borrower Info',
                     description: 'Please Input the Basic Info of Additional Co-Borrower',
                 });
-                
+
             }
         } else {
             setEdit(true);
@@ -119,16 +119,16 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             BenMiddleName: data.benmname || '',
             BenLastName: data.benlname || '',
             BenSuffix: data.bensuffix || null,
-            BenBirthday:data.benbdate? mmddyy(data.benbdate) : '',
+            BenBirthday: data.benbdate ? mmddyy(data.benbdate) : '',
             BenGender: data.bengender || null,
-            BenDependent:data.bendependents? parseInt(data.bendependents) : 0,
+            BenDependent: data.bendependents ? parseInt(data.bendependents) : 0,
             BenFbProfile: data.benfblink || '',
             BenEmail: data.benemail || '',
             BenMobileNo: data.benmobile || '',
             BenMobileNo2: data.benothermobile || '',
             BenCivilStatus: data.benmstatus || null,
             BenSpouseName: data.benspouse || '',
-            BenSpouseBirthday:data.benspousebdate? mmddyy(data.benspousebdate) : '',
+            BenSpouseBirthday: data.benspousebdate ? mmddyy(data.benspousebdate) : '',
 
             BenOwnership: data.benresidences || null,
             BenStayYears: data.benstayyears || 0,
@@ -137,7 +137,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             BenMunicipalityId: data.benpresmunicipality || '',
             BenBarangayId: data.benpresbarangay || '',
             BenAddress1: data.benpresstreet || '',
-            BenRentAmount:data.BenRentAmount? parseFloat(data.BenRentAmount.toString().replaceAll(',', '')) : 0.00,
+            BenRentAmount: data.BenRentAmount ? parseFloat(data.BenRentAmount.toString().replaceAll(',', '')) : 0.00,
             ModUser: jwtDecode(token).USRID,
 
             ...(!!sepcoborrowfname ? {
@@ -145,7 +145,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbMiddleName: data.coborrowmname || '',
                 AcbLastName: data.coborrowlname || '',
                 AcbSuffix: data.coborrowsuffix || null,
-                AcbBirthday:data.coborrowbdate? mmddyy(data.coborrowbdate):'' ,
+                AcbBirthday: data.coborrowbdate ? mmddyy(data.coborrowbdate) : '',
                 AcbGender: data.coborrowgender || null,
                 AcbCivilStatus: data.coborrowmstatus || null,
                 AcbDependent: data.coborrowdependents || 0,
@@ -154,7 +154,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbMobileNo2: data.coborrowothermobile || '',
                 AcbFbProfile: data.coborrowfblink || '',
                 AcbSpouseName: data.coborrowspousename || '',
-                AcbSpouseBirthday:data.coborrowerspousebdate? mmddyy(data.coborrowerspousebdate) : '',
+                AcbSpouseBirthday: data.coborrowerspousebdate ? mmddyy(data.coborrowerspousebdate) : '',
                 AcbOwnership: data.coborrowresidences || 0,
                 AcbAddress1: data.coborrowStreet || '',
                 AcbBarangay: data.coborrowBarangay || '',
@@ -162,7 +162,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbProvince: data.coborrowProv || '',
                 AcbStayMonths: data.AcbStayMonths || 0,
                 AcbStayYears: data.AcbStayYears || 0,
-                AcbRentAmount:data.AcbRentAmount? parseFloat(data.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
+                AcbRentAmount: data.AcbRentAmount ? parseFloat(data.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
 
             } : {})
 
@@ -175,8 +175,8 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             AcbMiddleName: data.coborrowmname || '',
             AcbLastName: data.coborrowlname || '',
             AcbSuffix: data.coborrowsuffix || 0,
-            AcbBirthday:data.coborrowbdate? mmddyy(data.coborrowbdate) : '',
-            AcbGender: data.coborrowgender ,
+            AcbBirthday: data.coborrowbdate ? mmddyy(data.coborrowbdate) : '',
+            AcbGender: data.coborrowgender,
             AcbCivilStatus: data.coborrowmstatus || 0,
             AcbDependent: data.coborrowdependents || 0,
             AcbEmail: data.coborrowemail || '',

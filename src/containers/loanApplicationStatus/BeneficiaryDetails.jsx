@@ -30,7 +30,7 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
         refetchInterval: 30 * 1000,
         retryDelay: 1000,
     });
-    const { data: relationshipOptions, isLoading } = useQuery({
+    const { data: relationshipOptions } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
             const result = await GET_LIST('/getListRelationship');

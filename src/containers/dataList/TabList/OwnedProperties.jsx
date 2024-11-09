@@ -15,9 +15,10 @@ import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
 import { toUpperText } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function OwnedProperties({ data, User }) {
-    const [loading, setLoading] = React.useState(true);
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -40,14 +41,11 @@ function OwnedProperties({ data, User }) {
     const [getStat, setStat] = React.useState(true);
     const role = GetData('ROLE').toString();
 
-    //React.useEffect(() => { getOtherLoanHistory.refetch() }, [data.loanIdCode]);
     const getOwnedProperties = useQuery({
         queryKey: ['getOwnedProperties'],
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
-            //  console.log("Decrypted SIDC:", sidcDecrypted);
             const result = await axios.get(`/getOwnedProperties/${toDecrypt(localStorage.getItem('SIDC'))}`);
-            //  console.log("get Owned Properties:", result);
             let dataList = [{
                 key: 0,
                 no: '',
@@ -65,12 +63,8 @@ function OwnedProperties({ data, User }) {
                     Remarks: x.remarks,
                 });
             });
-            setLoading(false);
+            SET_LOADING_INTERNAL('PropertiesTABLE', false);
             return dataList;
-        },
-        onError: (error) => {
-            setLoading(false);
-            console.log(error);
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
@@ -79,7 +73,15 @@ function OwnedProperties({ data, User }) {
         retryDelay: 1000,
     });
 
- 
+
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('PropertiesTABLE', true)
+            getOwnedProperties.refetch();
+        }
+    }, [data]);
+
+
     function GetPropertiesOption() {
         const Properties = form.getFieldValue('properties');
         const PropertiesOptionHolder = DropdownOwnedProperties().find(
@@ -138,11 +140,11 @@ function OwnedProperties({ data, User }) {
                 Id: editingKey,
                 Properties: GetPropertiesOption(),
                 Location: row.location,
-                Remarks: row.remarks  || '',
+                Remarks: row.remarks || '',
                 ModUser: jwtDecode(token).USRID
             };
 
-             console.log('Data to be sent to the server:', data);
+            console.log('Data to be sent to the server:', data);
             const result = await axios.post('/editOwnedProperties', data);
             api[result.data.status]({
                 message: result.data.message,
@@ -414,13 +416,13 @@ function OwnedProperties({ data, User }) {
                     ) : null
         return (
             <td {...restProps}>
-                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }}  rules={dataIndex === 'remarks' ? [] : [
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={dataIndex === 'remarks' ? [] : [
                     {
                         required: true,
                         message: `Please Input ${title}`,
                     },
                 ]}
-            >
+                >
                     {inputNode}
                 </Form.Item>
                 ) : (
@@ -444,38 +446,34 @@ function OwnedProperties({ data, User }) {
                     </center>
                 </div>
                 <div className='mt-[0rem]'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                        <Form form={form} component={false} >
-                            <Table
-                                columns={mergedColumns.map((col) => ({
-                                    ...col,
-                                    width: col.width || '25%',
-                                }))}
-                                dataSource={
-                                    getStat === false
-                                        ? getOwnedProperties.data?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            properties: DropdownOwnedProperties().find((option) => option.value === x.Properties)?.label || x.Properties,
-                                            location: x.Location,
-                                            remarks: x.Remarks,
-                                        }))
-                                        : dataOnly?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            properties: DropdownOwnedProperties().find((option) => option.value === x.Properties)?.label || x.Properties,
-                                            location: x.Location,
-                                            remarks: x.Remarks,
-                                        }))
-                                }
-                                components={{ body: { cell: EditableCell } }}
-                                rowClassName='editable-row'
-                                pagination={false}
-                            />
-                            </Form>
-                        </Spin>
-                    </ConfigProvider>
+                    <Form form={form} component={false} >
+                        <Table
+                            columns={mergedColumns.map((col) => ({
+                                ...col,
+                                width: col.width || '25%',
+                            }))}
+                            dataSource={
+                                getStat === false
+                                    ? getOwnedProperties.data?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        properties: DropdownOwnedProperties().find((option) => option.value === x.Properties)?.label || x.Properties,
+                                        location: x.Location,
+                                        remarks: x.Remarks,
+                                    }))
+                                    : dataOnly?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        properties: DropdownOwnedProperties().find((option) => option.value === x.Properties)?.label || x.Properties,
+                                        location: x.Location,
+                                        remarks: x.Remarks,
+                                    }))
+                            }
+                            components={{ body: { cell: EditableCell } }}
+                            rowClassName='editable-row'
+                            pagination={false}
+                        />
+                    </Form>
                 </div>
             </div>
         </div>

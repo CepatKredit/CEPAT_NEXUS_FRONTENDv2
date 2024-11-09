@@ -13,19 +13,21 @@ import { toDecrypt, toEncrypt } from '@utils/Converter';
 import ViewPdf from '../uploadDocs/pdfToolbar/ViewPdf';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function UploadRecord({ data, ClientId, Uploader }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const [api, contextHolder] = notification.useNotification();
     const getModalStatus = viewModal((state) => state.modalStatus)
     const setModalStatus = viewModal((state) => state.setStatus)
     const clearFileList = FileUpload((state) => state.clearList)
-    const [loading, setLoading] = React.useState(true);
 
 
     const DocListICQuery = useQuery({
         queryKey: ['DocListICQuery'],
         queryFn: async () => {
             const result = await GET_LIST(`/getFileType/${'IC'}`)
+            SET_LOADING_INTERNAL('FinancialChecker', false);
             return result.list
         },
         enabled: true,
@@ -145,6 +147,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
 
     React.useEffect(() => {
         FileListQuery.refetch()
+        SET_LOADING_INTERNAL('FinancialChecker', true);
     }, [ClientId])
 
     const token = localStorage.getItem('UTK');
@@ -153,6 +156,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
         queryFn: async () => {
             const result = await GET_LIST(`/getFileList/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
             let dataContainer = []
+            SET_LOADING_INTERNAL('FinancialChecker', false);
             result.list?.map((x) => {
                 var dfn = x.docsFileName.split(' ')
                 var fullname = toDecrypt(dfn[0]).split(' ')
@@ -166,7 +170,6 @@ function UploadRecord({ data, ClientId, Uploader }) {
                     remarks: x.remarks
                 })
             })
-            setLoading(false);
             return dataContainer
         },
         enabled: true
@@ -493,37 +496,31 @@ function UploadRecord({ data, ClientId, Uploader }) {
                         <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                             <Table components={{ body: { cell: EditableCell } }} columns={mergedColumns}
                                 dataSource={
-                                    FileListQuery.isLoading
-                                        ? []
-                                        : FileListQuery.data?.map((x, i) => ({
-                                            key: x.id,
-                                            num: i + 1,
-                                            name: x.fc === 'ML' ? `${x.lname} ${x.fname}` : `${x.fname} ${x.lname}`,
-                                            br: data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL'
-                                                ? data.ofwfname === x.fname && data.ofwlname === x.lname
-                                                    ? 'Principal Borrower'
-                                                    : data.benfname === x.fname && data.benlname === x.lname
-                                                        ? 'Co-Borrower'
-                                                        : 'Additional Co-Borrower'
-                                                : data.ofwfname === x.fname && data.ofwlname === x.lname
+                                    FileListQuery.data?.map((x, i) => ({
+                                        key: x.id,
+                                        num: i + 1,
+                                        name: x.fc === 'ML' ? `${x.lname} ${x.fname}` : `${x.fname} ${x.lname}`,
+                                        br: data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL'
+                                            ? data.ofwfname === x.fname && data.ofwlname === x.lname
+                                                ? 'Principal Borrower'
+                                                : data.benfname === x.fname && data.benlname === x.lname
                                                     ? 'Co-Borrower'
-                                                    : data.benfname === x.fname && data.benlname === x.lname
-                                                        ? 'Principal Borrower'
-                                                        : 'Additional Co-Borrower',
-                                            fc: x.fc,
-                                            file: x.fileExtension === '.pdf'
-                                                ? (<Button type='link' onClick={async () => {
-                                                    setStatus(true); storeData(x.file)
-                                                }}>View PDF</Button>)
-                                                : (<Button type='link' onClick={async () => {
-                                                    setImg({ ...getImg, display: true, file: x.file })
-                                                }}>View Image</Button>),
-                                            remarks: x.remarks
-                                        }))}
-                                loading={{
-                                    spinning: FileListQuery.isLoading,
-                                    indicator: <Spin tip="Loading..." />,
-                                }}
+                                                    : 'Additional Co-Borrower'
+                                            : data.ofwfname === x.fname && data.ofwlname === x.lname
+                                                ? 'Co-Borrower'
+                                                : data.benfname === x.fname && data.benlname === x.lname
+                                                    ? 'Principal Borrower'
+                                                    : 'Additional Co-Borrower',
+                                        fc: x.fc,
+                                        file: x.fileExtension === '.pdf'
+                                            ? (<Button type='link' onClick={async () => {
+                                                setStatus(true); storeData(x.file)
+                                            }}>View PDF</Button>)
+                                            : (<Button type='link' onClick={async () => {
+                                                setImg({ ...getImg, display: true, file: x.file })
+                                            }}>View Image</Button>),
+                                        remarks: x.remarks
+                                    }))}
                             />
                         </ConfigProvider>
                     </Form>
