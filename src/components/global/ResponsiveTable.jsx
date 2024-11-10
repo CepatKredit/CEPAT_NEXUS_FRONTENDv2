@@ -24,7 +24,7 @@ function ResponsiveTable({ rows, columns, width, height, loading, change }) {
                         y: height,
                         x: width,
                     }}
-                    pagination={{ pageSize: 10 }} // Adjust as needed
+                    //pagination={{ pageSize: 10 }} // Adjust as needed
                 />
         </ConfigProvider>
     );

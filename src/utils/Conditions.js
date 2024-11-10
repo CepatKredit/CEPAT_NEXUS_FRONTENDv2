@@ -46,38 +46,38 @@ export const TileNumber = (container) => {
     else if (container === '/ckfi/received') { number = '150' }
     else if (container === '/ckfi/lack-of-documents/complied') { number = '175' }
     else if (container === '/ckfi/walk-in') { number = '200' }
-    else if (container === '/ckfi/for-initial-interview') { number = '225' }
-    else if (container === '/ckfi/reassessed-to-marketing') { number = '250' }
+    else if (container === '/ckfi/initial-interview') { number = '225' }
+    else if (container === '/ckfi/reassessed/marketing') { number = '250' }
     else if (container === '/ckfi/lack-of-documents') { number = '275' }
-    else if (container === '/ckfi/credit-assessment-list') { number = '300' }
-    else if (container === '/ckfi/credit-assessment/special-lane') { number = '325' }
-    else if (container === '/ckfi/credit-assessment') { number = '350' }
-    else if (container === '/ckfi/under-credit') { number = '375' }
-    else if (container === '/ckfi/queue-bucket') { number = '400' }
-    else if (container === '/ckfi/for-verification') { number = '425' }
-    else if (container === '/ckfi/pre-check') { number = '450' }
-    //else if (container === '/ckfi/return/marketing') { number = '465' }
-    else if (container === '/ckfi/return/credit-associate') { number = '475' }
-    else if (container === '/ckfi/return/credit-officer') { number = '500' }
-    else if (container === '/ckfi/reassessed/credit-officer') { number = '525' }
-    else if (container === '/ckfi/pre-approval') { number = '540' }
-    else if (container === '/ckfi/for-approval') { number = '550' }
-    else if (container === '/ckfi/approved') { number = '575' }
-    else if (container === '/ckfi/under-loan-processor') { number = '600' }
-    else if (container === '/ckfi/for-docusign') { number = '625' }
-    else if (container === '/ckfi/ok/for-docusign') { number = '650' }
-    else if (container === '/ckfi/tagged-for-release') { number = '675' }
-    else if (container === '/ckfi/on-waiver') { number = '700' }
-    else if (container === '/ckfi/confirmation') { number = '725' }
-    else if (container === '/ckfi/confirmed') { number = '750' }
-    else if (container === '/ckfi/undecided') { number = '775' }
-    else if (container === '/ckfi/for-disbursement') { number = '800' }
-    else if (container === '/ckfi/bank-generation') { number = '810' }
-    else if (container === '/ckfi/released') { number = '825' }
-    else if (container === '/ckfi/return/loan-processor') { number = '850' }
-    else if (container === '/ckfi/cancelled') { number = '875' }
-    else if (container === '/ckfi/declined') { number = '900' }
-    else { number = '925' }
+    else if (container === '/ckfi/credit-list') { number = '300' }
+    else if (container === '/ckfi/under-credit') { number = '325' }
+    else if (container === '/ckfi/approved') { number = '350' }
+    else if (container === '/ckfi/special-lane') { number = '375' }
+    else if (container === '/ckfi/assessement/credit') { number = '400' }
+    else if (container === '/ckfi/queue-bucket') { number = '425' }
+    else if (container === '/ckfi/for-verification') { number = '450' }
+    else if (container === '/ckfi/pre-check') { number = '475' }
+    else if (container === '/ckfi/returned/marketing') { number = '500' }
+    else if (container === '/ckfi/returned/credit-associate') { number = '525' }
+    else if (container === '/ckfi/reassessed/credit-associate') { number = '550' }
+    else if (container === '/ckfi/returned/credit-officer') { number = '575' }
+    else if (container === '/ckfi/reassessed/credit-officer') { number = '600' }
+    else if (container === '/ckfi/for-approval') { number = '625' }
+    else if (container === '/ckfi/on-waiver') { number = '650' }
+    else if (container === '/ckfi/approved') { number = '350' }
+    else if (container === '/ckfi/under-lp') { number = '675' }
+    else if (container === '/ckfi/confirmation') { number = '700' }
+    else if (container === '/ckfi/confirmed') { number = '725' }
+    else if (container === '/ckfi/for-docusign') { number = '750' }
+    else if (container === '/ckfi/for-disbursement') { number = '775' }
+    else if (container === '/ckfi/released') { number = '800' }
+    else if (container === '/ckfi/returned/credit-officer') { number = '575' }
+    else if (container === '/ckfi/reassessed/credit-officer') { number = '600' }
+    else if (container === '/ckfi/on-waiver') { number = '650' }
+    else if (container === '/ckfi/undecided') { number = '825' }
+    else if (container === '/ckfi/cancelled') { number = '850' }
+    else if (container === '/ckfi/declined') { number = '875' }
+    else { number = '900' }
 
     return number
 }
