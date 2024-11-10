@@ -18,7 +18,7 @@ import { useDirectLoan } from "@hooks/LoanApplicationHooks";
 
     function Endorsement() {
     const direct = false // Control if it is direct / lc / marketing
-    const { getAppDetails } = React.useContext(LoanApplicationContext);
+    const { getAppDetails, resetAppDetails } = React.useContext(LoanApplicationContext);
     document.title = "Loan Application Form";
     const USRNAME = toDecrypt(localStorage.getItem("USRFN"));
     const token = localStorage.getItem("UTK");

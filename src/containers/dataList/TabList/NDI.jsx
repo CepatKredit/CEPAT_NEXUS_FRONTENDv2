@@ -14,12 +14,9 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController'
 
 
 function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
-    const [loading, setLoading] = React.useState(true);
-    const onLoadingChange = (value) => {
-        setLoading(value);
-    }
     const [isEdit, setEdit] = React.useState(false);
     const [childValues, setChildValues] = React.useState({});
+    const [getMisc, setMisc] = React.useState({});
     const [expenses, setExpenses] = React.useState({});
     const [income, setIncome] = React.useState({});
     const [incomeInitial, setIncomeInitial] = React.useState({});
@@ -48,14 +45,20 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
         }));
     };
     const handleValueChange = (key, getValue) => {
-        if (isReadOnly) return;
+        // if (isReadOnly) return;
         setChildValues((prevValues) => ({
             ...prevValues,
             [key]: getValue, // Update the specific child's value
         }));
     };
+    const handleMisc = (k, get) => {
+        setMisc((prev) => ({
+            ...prev,
+            [k]: get,
+        }))
+    }
     const handleIncomeChange = (key, getValue) => {
-        if (isReadOnly) return;
+        //  if (isReadOnly) return;
         setIncome((prevValues) => ({
             ...prevValues,
             [key]: getValue, // Update the specific child's value
@@ -84,18 +87,35 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
         let dat = [];
         let del_dat = [];
         let lower = false;
+        console.clear();
         const items = sepcoborrowfname ? 3 : 2;
         for (let i = 1; i <= items; i++) { //Ofw,ben,add
             NdiItemList(i).forEach((Listno, index) => {
-                dat.push({
-                    "BorrowersCode": data.ofwBorrowersCode,
-                    "Type": i,
-                    "ListNo": Listno.listno,
-                    "Documented": parseFloat(Listno.values.documented.toString().replaceAll(',', '')).toFixed(2),
-                    "Declared": parseFloat(Listno.values.declared.toString().replaceAll(',', '')).toFixed(2),
-                    "LoggedUser": jwtDecode(token).USRID,
-                    "LoggedDate": mmddyy(dayjs())
-                });
+                if ([23, 44, 64].includes(Listno.listno)) {
+                    console.log('Checking...', i, getMisc[i])
+                }
+                if ((([23, 44, 64].includes(Listno.listno)) && !getMisc[i])) {
+                    console.log('EXEC...', i, getMisc[i], Listno.values.documented)
+                    dat.push({
+                        "BorrowersCode": data.ofwBorrowersCode,
+                        "Type": i,
+                        "ListNo": Listno.listno,
+                        "Documented": parseFloat('0.00').toFixed(2),
+                        "Declared": parseFloat('0.00').toFixed(2),
+                        "LoggedUser": jwtDecode(token).USRID,
+                        "LoggedDate": mmddyy(dayjs())
+                    });
+                } else if (!([23, 44, 64].includes(Listno.listno)) || (([23, 44, 64].includes(Listno.listno)) && getMisc[i])) { //Skip Miscellaneous if not check
+                    dat.push({
+                        "BorrowersCode": data.ofwBorrowersCode,
+                        "Type": i,
+                        "ListNo": Listno.listno,
+                        "Documented": parseFloat(Listno.values.documented.toString().replaceAll(',', '')).toFixed(2),
+                        "Declared": parseFloat(Listno.values.declared.toString().replaceAll(',', '')).toFixed(2),
+                        "LoggedUser": jwtDecode(token).USRID,
+                        "LoggedDate": mmddyy(dayjs())
+                    });
+                }
             });
             const processEntries = (entries, type) => {
                 entries.forEach(x => {
@@ -334,72 +354,51 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
     return (
         <>
             {contextHolder}
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-            <Space>
-                <div className='h-[50vh] overflow-y-auto'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                            <div className='w-[76vw]'>
-                                {data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ?
-                                    (<>
-                                        <OFW principal={'Principal Borrower'} onLoadingChange={onLoadingChange} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                        <Borrower principal={'Co-Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                    </>)
-                                    : (<>
-                                        <Borrower principal={'Principal Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                        <OFW principal={'Co-Borrower'} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                    </>)
-                                }
-                                {!!sepcoborrowfname && (
-                                    <ACB activeKey={activeKey} key={3} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                )}
-                                <div className='flex justify-center items-center pt-[1rem]'>
-                                    <div className='flex flex-col justify-center items-center w-[60vw]'>
-                                        <Space>
-                                            <div className='w-[15rem] font-bold'>Grand Total</div>
-                                            <div className='w-[15rem]'>
-                                                <Input className={(parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)) < 0
-                                                    ? 'w-full text-red-500 font-bold'
-                                                    : 'w-full text-emerald-500 font-bold'}
-                                                    placeholder='0.00'
-                                                    value={formatNumberWithCommas((parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)).toFixed(2))}
-                                                    disabled={isReadOnly} />
-                                            </div>
-                                            <div className='w-[15rem]'>
-                                                <Input className={(parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)) < 0
-                                                    ? 'w-full text-red-500 font-bold'
-                                                    : 'w-full text-emerald-500 font-bold'}
-                                                    placeholder='0.00'
-                                                    value={formatNumberWithCommas((parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)).toFixed(2))}
-                                                    disabled={isReadOnly} />
-                                            </div>
-                                        </Space>
+            <div className='w-full flex flex-row'>
+                <div className="h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh] w-full mb-10 overflow-y-auto">
+                    <div className='w-full'>
+                        {data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ?
+                            (<>
+                                <OFW setMiscellanious={handleMisc} principal={'Principal Borrower'} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                                <Borrower setMiscellanious={handleMisc} principal={'Co-Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                            </>)
+                            : (<>
+                                <Borrower setMiscellanious={handleMisc} principal={'Principal Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                                <OFW setMiscellanious={handleMisc} principal={'Co-Borrower'} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                            </>)
+                        }
+                        {!!sepcoborrowfname && (
+                            <ACB setMiscellanious={handleMisc} activeKey={activeKey} key={3} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
+                        )}
+                        <div className='flex justify-center items-center pt-[1rem]'>
+                            <div className='flex flex-col justify-center items-center w-full'>
+                                <Space>
+                                    <div className='w-[15rem] font-bold'>Grand Total</div>
+                                    <div className='w-[15rem]'>
+                                        <Input className={(parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)) < 0
+                                            ? 'w-full text-red-500 font-bold'
+                                            : 'w-full text-emerald-500 font-bold'}
+                                            placeholder='0.00'
+                                            value={formatNumberWithCommas((parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)).toFixed(2))}
+                                            disabled={isReadOnly} />
                                     </div>
-                                </div>
+                                    <div className='w-[15rem]'>
+                                        <Input className={(parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)) < 0
+                                            ? 'w-full text-red-500 font-bold'
+                                            : 'w-full text-emerald-500 font-bold'}
+                                            placeholder='0.00'
+                                            value={formatNumberWithCommas((parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)).toFixed(2))}
+                                            disabled={isReadOnly} />
+                                    </div>
+                                </Space>
                             </div>
-                        </Spin>
-                    </ConfigProvider>
+                        </div>
+                    </div>
                 </div>
-                <div className='h-[50vh] bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none'>
-                    <ConfigProvider
-                        theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
-                        <Anchor
-                            replace
-                            affix={false}
-                            items={[
-                                { key: 'OFW-NDI', href: '#OFW-NDI', title: 'NDI OFW' },
-                                { key: 'BORROWER-NDI', href: '#BORROWER-NDI', title: 'NDI Beneficisry' },
-                                { key: 'ACB-NDI', href: '#ACB-NDI', title: 'NDI ACB' },
-
-
-                            ]}
-                        />
-                    </ConfigProvider>
-                </div>
-            </Space>
-            <center className='pt-[1.5rem]'>
+            </div>
+            <center className="flex justify-center items-center ">
                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                    <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' disabled={Counter >= 1 || disabledStatuses.includes(GetStatus)} onClick={SaveNdi}>
+                    <Button size='large' className='-mt-5  ml-15 bg-[#3b0764]' type='primary' disabled={Counter >= 1 || disabledStatuses.includes(GetStatus)} onClick={SaveNdi}>
                         SAVE NDI
                     </Button>
                 </ConfigProvider>

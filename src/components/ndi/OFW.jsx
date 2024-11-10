@@ -13,13 +13,15 @@ import { mmddyy } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
 import dayjs from 'dayjs';
 import { jwtDecode } from 'jwt-decode';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, User, onLoadingChange }) {
+function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, setMiscellanious }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const { setOFW, setOFWDOC } = GrandTotal()
     const { setCounter } = Validation()
-    const roles = [ '70', '80'];
+    const roles = ['70', '80'];
     const isReadOnly = roles.includes(GetData('ROLE').toString());
-    const [MiscExp, setMiscExp] = React.useState(false);
+    const [MiscExp, setMiscExp] = React.useState(true);
     const { GetStatus } = ApplicationStatus();
     const [isComputing, setIsComputing] = React.useState(false);
     const disabledStatuses = [
@@ -84,7 +86,6 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                 console.log(result.data.list)
                 let incomeData = [];
                 let expenseData = [];
-                onLoadingChange(false);
                 result.data.list.forEach((item) => {
                     switch (item.listNo) {
                         case 1:
@@ -116,7 +117,8 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                             }));
                             break;
                         case 23:
-                            setMiscExp(item.formattedDocumented !== '0.00' || item.formattedDeclared !== '0.00' ? true : false)
+                            setMiscExp(!(item.formattedDocumented === '0.00' && item.formattedDeclared === '0.00' ? false : true))
+                            console.log('VALUES',item.formattedDocumented,item.formattedDeclared)
                             setValue(prev => ({
                                 ...prev,
                                 MiscExpenseDoc: formatNumberWithCommas(item.formattedDocumented.toString()),
@@ -139,12 +141,12 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                     }
 
                 });
-
+                setMiscellanious(1, MiscExp);
                 setOtherIncome(incomeData);
                 setOtherExpense(expenseData);
                 InitialOtherIncome(1, incomeData);
                 InitialOtherExpense(1, expenseData);
-
+                SET_LOADING_INTERNAL('NDIOFW', false);
                 setTrigger(1);
             } catch (error) {
                 if (axios.isCancel(error)) {
@@ -160,6 +162,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
 
     React.useEffect(() => {
         if (data.loanIdCode !== '' || Object.keys(data).length !== 0) {
+            SET_LOADING_INTERNAL('NDIOFW', true)
             NdiDataQuery.refetch();
         }
     }, [data]);
@@ -172,22 +175,30 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
             });
         }
     }, [getTrigger, isComputing]);
-    React.useEffect(() => {
-        if (MiscExp) {
-            setValue({
-                ...getValue,
-                MiscExpense: 0.00,
-                MiscExpenseDoc: 0.00,
-            });
-        }
-        setTrigger(1)
 
-    }, [MiscExp])
 
 
     React.useEffect(() => { validate() }, [getOtherIncome, getOtherExpense])
     React.useEffect(() => { onValueChange(1, getValue); onOtherIncome(1, getOtherIncome); onOtherExpense(1, getOtherExpense); }, [getValue, getOtherIncome, getOtherExpense])
 
+    function checkMisc() {
+        if(MiscExp){
+            setMiscExp(false);
+        }else{
+            setMiscExp(true);
+        }
+        
+        if (MiscExp) { 
+            setValue({
+                ...getValue,
+                MiscExpense: '0.00',
+                MiscExpenseDoc: '0.00',
+            });
+        }
+        console.log('CHKBX',MiscExp)
+        setTrigger(1);
+        setMiscellanious(1, MiscExp);
+    }
     function validate() {
         let counter = 0;
         getOtherIncome.map((x) => { if (x.id === '' || x.documented === '' || x.declared === '') { counter += 1 } })
@@ -225,15 +236,16 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
     }
 
     async function compute() {
+        console.log(MiscExp)
         let TNI = (parseFloat(removeCommas(getValue.TotalSalary === '' ? 0 : getValue.TotalSalary)) + parseFloat(removeCommas(getValue.OtherIncome === '' ? 0 : getValue.OtherIncome))
             + parseFloat(totalOtherIncome('DEC'))).toFixed(2)
-        let MISC =  MiscExp ? parseFloat(removeCommas(getValue.MiscExpense === '' ? 0.00 : getValue.MiscExpense)) : (removeCommas(TNI) * 0.08).toFixed(2);
+        let MISC = !MiscExp ? parseFloat(removeCommas(getValue.MiscExpense === '' ? 0.00 : getValue.MiscExpense)) : (removeCommas(TNI) * 0.08).toFixed(2);
         let TOTAL = (parseFloat(removeCommas(getValue.RemittanceToPH === '' ? 0 : getValue.RemittanceToPH)) + parseFloat(removeCommas(getValue.MonthlyFood === '' ? 0 : getValue.MonthlyFood)) +
             parseFloat(removeCommas(getValue.MonthlyRent === '' ? 0 : getValue.MonthlyRent)) + parseFloat(removeCommas(MISC)) + parseFloat(totalOtherExpense('DEC'))).toFixed(2)
         let NET = (parseFloat(removeCommas(TNI)) - parseFloat(removeCommas(TOTAL))).toFixed(2)
         let TNIDOC = (parseFloat(removeCommas(getValue.TotalSalaryDoc === '' ? 0 : getValue.TotalSalaryDoc)) + parseFloat(removeCommas(getValue.OtherIncomeDoc === '' ? 0 : getValue.OtherIncomeDoc))
             + parseFloat(totalOtherIncome('DOC'))).toFixed(2)
-        let MISCDOC = MiscExp ? parseFloat(removeCommas(getValue.MiscExpenseDoc === '' ? 0.00 : getValue.MiscExpenseDoc)) : (removeCommas(TNIDOC) * 0.08).toFixed(2);
+        let MISCDOC = !MiscExp ? parseFloat(removeCommas(getValue.MiscExpenseDoc === '' ? 0.00 : getValue.MiscExpenseDoc)) : (removeCommas(TNIDOC) * 0.08).toFixed(2);
         let TOTALDOC = (parseFloat(removeCommas(getValue.RemittanceToPHDoc === '' ? 0 : getValue.RemittanceToPHDoc)) + parseFloat(removeCommas(getValue.MonthlyFoodDoc === '' ? 0 : getValue.MonthlyFoodDoc)) +
             parseFloat(removeCommas(getValue.MonthlyRentDoc === '' ? 0 : getValue.MonthlyRentDoc)) + parseFloat(removeCommas(MISCDOC)) + parseFloat(totalOtherExpense('DOC'))).toFixed(2)
         let NETDOC = (parseFloat(removeCommas(TNIDOC)) - parseFloat(removeCommas(TOTALDOC))).toFixed(2)
@@ -241,12 +253,12 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
             ...getValue,
             /* DOCUMENTED */
             TotalNetIncomeDoc: formatNumberWithCommas(TNIDOC),
-            ...( !MiscExp && { MiscExpenseDoc: formatNumberWithCommas(MISCDOC) }), //CRA Only
+            ...(MiscExp && { MiscExpenseDoc: formatNumberWithCommas(MISCDOC) }), //CRA Only
             TotalExpenseDoc: formatNumberWithCommas(TOTALDOC),
             NetDisposableDoc: formatNumberWithCommas(NETDOC),
             /* DECLARED */
             TotalNetIncome: formatNumberWithCommas(TNI),
-            ...( !MiscExp && { MiscExpense: formatNumberWithCommas(MISC) }), //CRA Only
+            ...(MiscExp && { MiscExpense: formatNumberWithCommas(MISC) }), //CRA Only
             TotalExpense: formatNumberWithCommas(TOTAL),
             NetDisposable: formatNumberWithCommas(NET),
         })
@@ -410,7 +422,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
         <>
             <SectionHeader title="NDI OFW" tag={principal} />
             <div className='flex justify-center items-center'>
-                <div className='flex flex-col justify-center items-center w-[60vw]'>
+                <div className='flex flex-col justify-center items-center w-full'>
                     {/*------------------------------------------------------------*/}
                     <div className='font-semibold text-xl pb-4'>OFW Income</div>
                     <Space className='mb-[1rem] flex justify-center items-center'>
@@ -479,7 +491,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         </div>
                     </Space>))}
                     <Space className='pt-2'>
-                        <div className='w-[15rem] font-bold'>Total Net Income</div>
+                        <div className='w-[15rem] font-bold'>Total Salary</div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='TotalNetIncomeDoc'
                                 placeholder='0.00' readOnly
@@ -552,10 +564,10 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         </div>
                     </Space>
                     <Space className='pt-2'>
-                        <div className='w-[15rem]'>Miscellaneous Expense{(GetData('ROLE').toString() === '60' && (<Checkbox className='ml-[.8rem]' checked={MiscExp} onClick={() => { setMiscExp(!MiscExp) }} />))} </div>
+                        <div className='w-[15rem]'>Miscellaneous Expense{(GetData('ROLE').toString() === '60' && (<Checkbox className='ml-[.8rem]' checked={!MiscExp} onClick={() => { checkMisc()}} />))} </div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='MiscExpenseDoc'
-                                placeholder='0.00' readOnly={!MiscExp}
+                                placeholder='0.00' readOnly={MiscExp}
                                 maxLength={13}
                                 value={getValue.MiscExpenseDoc}
                                 onChange={(e) => { onChange(e, 0, null) }}
@@ -564,7 +576,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         </div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='MiscExpense'
-                                placeholder='0.00' readOnly={!MiscExp}
+                                placeholder='0.00' readOnly={MiscExp}
                                 maxLength={13}
                                 value={getValue.MiscExpense}
                                 onChange={(e) => { onChange(e, 0, null) }}
@@ -577,7 +589,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         <div className='w-[15rem]'>
                             <Space>
                                 <Button type='primary' icon={<PlusOutlined style={{ fontSize: '15px' }} />} onClick={() => { addOtherIncome('EXPENSE') }} disabled={isReadOnly || disabledStatuses.includes(GetStatus)} />
-                                <span>Other Payables</span>
+                                <span>Other Expenses</span>
                             </Space>
                         </div>
                         <div className='w-[15rem]' />

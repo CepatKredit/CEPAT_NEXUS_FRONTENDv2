@@ -511,7 +511,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             presaddress={(e) => { presaddress(e) }}
                             type={"beneficiary"}
                             category={"marketing"}
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_dmain='mt-5 w-[16.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
                             vertical_algin={true}
@@ -997,7 +997,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             presaddress={(e) => { presaddress(e) }}
                             type={"coborrow"}
                             category={"marketing"}
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_dmain='mt-5 w-[16.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
                             vertical_algin={true}

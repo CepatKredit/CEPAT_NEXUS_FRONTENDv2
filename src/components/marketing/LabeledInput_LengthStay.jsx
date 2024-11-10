@@ -31,18 +31,21 @@ function LabeledInput_LengthStay({ rendered, label, value_year, value_month, rec
 
     function onChangeValueMos(e) {
         const inputValue = e.target.value;
-        if (!(/^\d{3}$/.test(inputValue)) && /^[0-9]*$/.test(inputValue)) {
+        if(inputValue === '' || getValueY === ''){
             setValueM(inputValue)
-            if ((parseInt(inputValue) >= 1 && parseInt(inputValue) <= 11) || (parseInt(inputValue) === 0 && parseInt(getValueY) >= 1)) {
+            debReceiveM();
+            setStatus(prevStatus => [0, prevStatus[1]]);
+        }else if (!(/^\d{3}$/.test(inputValue)) && /^[0-9]*$/.test(inputValue)) {
+            setValueM(inputValue)
+            setIconType(true);
+            if ((parseInt(inputValue) >= 1 && parseInt(inputValue) <= 11) || ((inputValue === '' || parseInt(inputValue) === 0) && parseInt(getValueY) >= 1)) {
                 if(getStatus[0]===0 && getStatus[1] ===0){
                     setStatus(prevStatus => [prevStatus[0], 1]);
                 }
                 setStatus(prevStatus => [1, prevStatus[1]]);
-                setIconType(true);
                 debReceiveM(parseInt(inputValue));
             } else {
                 setStatus(prevStatus => [0, prevStatus[1]]);
-                setIconType(true);
                 debReceiveM();
             }
         }
@@ -50,18 +53,22 @@ function LabeledInput_LengthStay({ rendered, label, value_year, value_month, rec
 
     function onChangeValueYrs(e) {
         const inputValue = e.target.value;
-        if (!(/^\d{3}$/.test(inputValue)) && /^[0-9]*$/.test(inputValue)) {
+        if(inputValue === '' || getValueM === ''){
             setValueY(inputValue)
-            if (inputValue.length === 0 || (parseInt(inputValue) === 0 && parseInt(getValueM) === 0)) {
+            debReceiveY();
+            setStatus(prevStatus => [prevStatus[0], 0]);
+
+        }else if (!(/^\d{3}$/.test(inputValue)) && /^[0-9]*$/.test(inputValue)) {
+            setValueY(inputValue)
+            setIconType(true);
+            if ((inputValue.length === 0 || (parseInt(inputValue) === 0 && parseInt(getValueM) === 0))) {
                 setStatus(prevStatus => [prevStatus[0], 0]);
-                setIconType(true);
                 debReceiveY();
             } else {
                 if(getStatus[0]===0 && getStatus[1] ===0){
                     setStatus(prevStatus => [1, prevStatus[1]]);
                 }
                 setStatus(prevStatus => [prevStatus[0], 1]);
-                setIconType(true);
                 debReceiveY(parseInt(inputValue));
             }
         }
@@ -112,7 +119,7 @@ function LabeledInput_LengthStay({ rendered, label, value_year, value_month, rec
             </Space.Compact>
             {(getStatus[0] === 0 || getStatus[1] === 0) && (
                 <div className='text-xs text-red-500 pt-1 pl-2'>
-                    {`${placeHolder} Required`}
+                    {`Length of Stay Required`}
                 </div>
             )}
         </div>

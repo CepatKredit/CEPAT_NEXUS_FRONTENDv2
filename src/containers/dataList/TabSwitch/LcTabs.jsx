@@ -10,7 +10,7 @@ import OfwDetails from '../TabList/OfwDetails';
 import UploadDocs from '../TabList/UploadDocs';
 import CharacterReference from '../TabList/CharacterReference';
 
-function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, presaddress, LoanStatus, loading}) {
+function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, presaddress, LoanStatus}) {
     const { id, tabs } = useParams();
     const navigate = useNavigate();
     const [isEdit, setEdit] = React.useState(true);
@@ -49,7 +49,7 @@ function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, pres
                 <span>Loan Details</span>
             </div>,
             key: 'loan-details',
-            children: <LoanDetails classname={'h-[66vh] overflow-y-auto'} data={value} receive={(e) => { receive(e); }} isEdit={isEdit} User={'LC'} loading={loading} />,
+            children: <LoanDetails classname={'h-[66vh] overflow-y-auto'} data={value} receive={(e) => { receive(e); }} isEdit={isEdit} User={'LC'}  />,
         },
         {
             label: <div className='flex flex-rows'>
@@ -57,7 +57,7 @@ function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, pres
                 <span>OFW Details</span>
             </div>,
             key: 'ofw-details',
-            children: <OfwDetails classname={'h-[65vh] overflow-y-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'LC'} loading={loading} />,
+            children: <OfwDetails classname={'h-[65vh] overflow-y-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'LC'}  />,
         },
         {
             label: <div className='flex flex-rows'>
