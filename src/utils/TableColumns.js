@@ -37,15 +37,15 @@ export const ColumnList = (command, apiQuery) => {
       sorter: (a, b) => {
         return a.LP.localeCompare(b.LP);
       },
-      filters: apiQuery.data 
-      ? apiQuery.data.reduce((acc, curr) => {
+      filters: apiQuery.data
+        ? apiQuery.data.reduce((acc, curr) => {
           if (!acc.find(item => item.value === curr.loanProduct)) {
             acc.push({ text: curr.loanProduct, value: curr.loanProduct });
           }
           return acc;
         }, [])
-      : [],
-    onFilter: (value, record) => record.LP === value,
+        : [],
+      onFilter: (value, record) => record.LP === value,
       align: "center",
     },
     {
@@ -196,15 +196,15 @@ export const ColumnList = (command, apiQuery) => {
       sorter: (a, b) => {
         return a.LP.localeCompare(b.LP);
       },
-      filters: apiQuery.data 
-      ? apiQuery.data.reduce((acc, curr) => {
+      filters: apiQuery.data
+        ? apiQuery.data.reduce((acc, curr) => {
           if (!acc.find(item => item.value === curr.loanProduct)) {
             acc.push({ text: curr.loanProduct, value: curr.loanProduct });
           }
           return acc;
         }, [])
-      : [],
-    onFilter: (value, record) => record.LP === value,
+        : [],
+      onFilter: (value, record) => record.LP === value,
       align: "center",
     },
     {

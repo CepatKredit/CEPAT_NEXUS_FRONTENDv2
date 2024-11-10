@@ -72,14 +72,14 @@ function MiniAnimatedCard({ path }) {
             }
             return value
         }
-        else if (path.loc === '/ckfi/for-initial-interview') {
+        else if (path.loc === '/ckfi/initial-interview') {
             let value = {
                 icon: <FaPersonWalkingDashedLineArrowRight style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[4]
             }
             return value
         }
-        else if (path.loc === '/ckfi/reassessed-to-marketing') {
+        else if (path.loc === '/ckfi/reassessed/marketing') {
             let value = {
                 icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[5]
@@ -93,21 +93,21 @@ function MiniAnimatedCard({ path }) {
             }
             return value
         }
-        else if (path.loc === '/ckfi/credit-assessment-list') {
+        else if (path.loc === '/ckfi/credit-list') {
             let value = {
                 icon: <FaRegCreditCard style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[7]
             }
             return value
         }
-        else if (path.loc === '/ckfi/credit-assessment/special-lane') {
+        else if (path.loc === '/ckfi/special-lane') {
             let value = {
                 icon: <MdLabelImportant style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[8]
             }
             return value
         }
-        else if (path.loc === '/ckfi/credit-assessment') {
+        else if (path.loc === '/ckfi/assessement/credit') {
             let value = {
                 icon: <RxEnter style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[9]
@@ -118,6 +118,13 @@ function MiniAnimatedCard({ path }) {
             let value = {
                 icon: <FaRegCreditCard style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[10]
+            }
+            return value
+        }
+        else if (path.loc === '/ckfi/approved') {
+            let value = {
+                icon: <RxExit style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[18]
             }
             return value
         }
@@ -142,14 +149,34 @@ function MiniAnimatedCard({ path }) {
             }
             return value
         }
-        else if (path.loc === '/ckfi/return/credit-associate') {
+
+        //RETURNED FROM MARKETING
+        else if (path.loc === '/ckfi/returned/marketing') {
+            let value = {
+                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[22]
+            }
+            return value
+        }
+
+        else if (path.loc === '/ckfi/returned/credit-associate') {
             let value = {
                 icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[14]
             }
             return value
         }
-        else if (path.loc === '/ckfi/return/credit-officer') {
+
+        //REASSESSED TO CREDIT ASSOCIATE
+        else if (path.loc === '/ckfi/reassessed/credit-associate') {
+            let value = {
+                icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[29]
+            }
+            return value
+        }
+
+        else if (path.loc === '/ckfi/returned/credit-officer') {
             let value = {
                 icon: <MdOutlineSevereCold style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[15]
@@ -170,45 +197,17 @@ function MiniAnimatedCard({ path }) {
             }
             return value
         }
-        else if (path.loc === '/ckfi/approved') {
-            let value = {
-                icon: <RxExit style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[18]
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/under-loan-processor') {
-            let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[19]
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/for-docusign') {
-            let value = {
-                icon: <MdEditDocument style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[20]
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/ok/for-docusign') {
-            let value = {
-                icon: <MdEditDocument style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[21]
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/tagged-for-release') {
-            let value = {
-                icon: <FaBoxOpen style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[22]
-            }
-            return value
-        }
         else if (path.loc === '/ckfi/on-waiver') {
             let value = {
                 icon: <FaFileSignature style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[23]
+            }
+            return value
+        }
+        else if (path.loc === '/ckfi/under-lp') {
+            let value = {
+                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[19]
             }
             return value
         }
@@ -226,10 +225,10 @@ function MiniAnimatedCard({ path }) {
             }
             return value
         }
-        else if (path.loc === '/ckfi/undecided') {
+        else if (path.loc === '/ckfi/for-docusign') {
             let value = {
-                icon: <BsPersonFillExclamation style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[26]
+                icon: <MdEditDocument style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[20]
             }
             return value
         }
@@ -247,10 +246,10 @@ function MiniAnimatedCard({ path }) {
             }
             return value
         }
-        else if (path.loc === '/ckfi/return/loan-processor') {
+        else if (path.loc === '/ckfi/undecided') {
             let value = {
-                icon: <PiKeyReturnBold style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[29]
+                icon: <BsPersonFillExclamation style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[26]
             }
             return value
         }

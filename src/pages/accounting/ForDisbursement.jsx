@@ -65,7 +65,7 @@ function ForDisbursement() {
                             </div>
                             <Table
                                 size='small'
-                                columns={ColumnList('FOR-DISBURSEMENT')}
+                                columns={ColumnList('FOR-DISBURSEMENT', AppDataListQuery)}
                                 scroll={{ y: 'calc(100vh - 450px)', x: '100%' }}
                                 dataSource={AppDataListQuery.data
                                     ?.filter(
