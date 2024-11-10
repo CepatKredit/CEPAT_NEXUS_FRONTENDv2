@@ -12,9 +12,12 @@ import moment from 'moment'
 import { jwtDecode } from 'jwt-decode';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { useDataContainer } from '@context/PreLoad';
 
 function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
-const [loading, setLoading] = useState(true);
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const { GetStatus } = ApplicationStatus()
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
@@ -35,14 +38,21 @@ const [loading, setLoading] = useState(true);
         queryKey: ['FileListQuery'],
         queryFn: async () => {
             const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
-            setLoading(false);
+            SET_LOADING_INTERNAL('UploadDocs', false);
             return result.list
         },
         enabled: true,
         retryDelay: 1000,
         staleTime: 5 * 1000
     })
-    
+
+    React.useEffect(() => {
+        if (!getAppDetails.loanIdCode) {
+            SET_LOADING_INTERNAL('UploadDocs', true)
+            FileListQuery.refetch();
+        }
+    }, [getAppDetails]);
+
     function GetFile(id, command) {
         let count = 0;
         let file_list = []
@@ -155,7 +165,7 @@ const [loading, setLoading] = useState(true);
 
     return (
         <div>
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+            <StatusRemarks isEdit={!isEdit} User={User} data={getAppDetails} />
 
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
@@ -172,15 +182,11 @@ const [loading, setLoading] = useState(true);
                             <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
                         </ConfigProvider>)
                 }
-                <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                    <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                        <div className={classname}>
-                            <div className='mr-[.5rem]'>
-                                <Collapse items={CollapseList()} />
-                            </div>
-                        </div>
-                    </Spin>
-                </ConfigProvider>
+                <div className={classname}>
+                    <div className='mr-[.5rem]'>
+                        <Collapse items={CollapseList()} />
+                    </div>
+                </div>
             </div>
         </div>
     )

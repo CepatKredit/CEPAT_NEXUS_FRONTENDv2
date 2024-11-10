@@ -187,12 +187,12 @@ function CheckerDocument({ data, ClientId, Uploader }) {
             key: 'nm',
             editable: true
         },
-        {
-            title: 'Remarks',
-            dataIndex: 'remarks',
-            key: 'remarks',
-            editable: true
-        },
+        // {
+        //     title: 'Remarks',
+        //     dataIndex: 'remarks',
+        //     key: 'remarks',
+        //     editable: true
+        // },
         {
             title: 'Action',
             dataIndex: 'action',

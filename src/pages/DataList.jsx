@@ -42,19 +42,27 @@ function DataList() {
       </div>
       <Divider />
       <Button type='primary' onClick={() => { navigate(`${localStorage.getItem('SP')}/12/tab=1`) }} hidden>TEST</Button>
-      <div className='pb-2 min-w-[25%] float-end'>
-        <Input addonAfter={<SearchOutlined />} placeholder='Search' size='large'
-          onChange={(e) => { setSearch(e.target.value.toUpperCase()) }}
-          value={getSearch} />
+      <div className="flex justify-between items-center mb-4">
+        <div></div>
+        <div className="w-[300px]">
+          <Input
+            addonAfter={<SearchOutlined />}
+            placeholder="Search"
+            size="middle"
+            className="w-full"
+            onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
+            value={getSearch}
+          />
+        </div>
       </div>
       <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                     <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-      <ResponsiveTable columns={ColumnList(3)} height={'calc(100vh - 505px)'} width={'100%'}
+      <ResponsiveTable columns={ColumnList(3, AppDataListQuery)} height={'calc(100vh - 505px)'} width={'100%'}
         rows={AppDataListQuery.data?.filter((x) =>
           x.loanAppCode.includes(getSearch) ||
           x.recDate.includes(getSearch) ||
           x.loanProduct.toUpperCase().includes(getSearch) ||
-          x.borrowersFullName.toUpperCase().includes(getSearch) ||
+          x.borrowersFullName.toUpperCase().includes(getSearch) ||  
           x.departureDate.includes(getSearch) ||
           x.beneficiaryFullName.toUpperCase().includes(getSearch) ||
           x.consultant.toUpperCase().includes(getSearch) ||
@@ -66,6 +74,7 @@ function DataList() {
             NO: i + 1,
             LAN: <Button key={i} onClick={() => {
               localStorage.setItem('SIDC', toEncrypt(x.loanAppId));
+              localStorage.setItem('activeTab','deduplication')
               navigate(`${localStorage.getItem('SP')}/${x.loanAppCode}/deduplication`)
               queryClient.invalidateQueries({ queryKey: ['getRemarks', x.loanAppCode] }, { exact: true })
             }} type='link'>{x.loanAppCode}</Button>,
