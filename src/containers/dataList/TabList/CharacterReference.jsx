@@ -193,6 +193,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
 
                 if (result.data.status === 'success') {
                     queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
+                    setStat(true);
+                    setAddStat(false);
                     setEditingKey('');
                     setInfo({
                         key: '',
@@ -257,7 +259,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                 </ConfigProvider>),
             dataIndex: 'no',
             key: 'no',
-            width: '40px',
+            width: '5%',
             fixed: 'left',
             align: 'center'
         },
@@ -265,35 +267,35 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: '150px',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Contact Number',
             dataIndex: 'conNum',
             key: 'conNum',
-            width: '100px',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Relationship',
             dataIndex: 'relShip',
             key: 'relShip',
-            width: '100px',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Province',
             dataIndex: 'prov',
             key: 'prov',
-            width: '120px',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '120px',
+            width: '20%',
             editable: true,
         },
         {
@@ -304,7 +306,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '60px',
+            width: '10%',
             fixed: 'right',
             align: 'center',
             render: (_, record) => {
@@ -313,29 +315,19 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickSave(); }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel this record?"
-                                    onConfirm={() => {
-                                        setStat(true)
-
-                                        setAddStat(!getAddStat)
-                                        setEditingKey('')
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
+                                        setStat(true);
+                                        setAddStat(!getAddStat);
+                                        setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="Cancel"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     )
@@ -344,28 +336,19 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickEdit(); }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel the edit?"
-                                    onConfirm={() => {
-                                        setStat(true)
-                                        setAddStat(!getAddStat)
-                                        setEditingKey('')
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
+                                        setStat(true);
+                                        setAddStat(!getAddStat);
+                                        setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="Cancel"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     ) : (
@@ -494,7 +477,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     <>
 
                         <Input
-                            className='w-[10rem]'
+                            className='w-[12rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'name'); }}
                             placeholder='Name' />
 
@@ -503,7 +486,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     : dataIndex === 'conNum' ? (
                         <>
                             <Input
-                                className='w-[10rem]'
+                                className='w-[9rem]'
                                 onChange={(e) => onChangeContactNo(e.target.value, 'conNum')}
                                 placeholder='Contact Number'
                                 maxLength={11}
@@ -513,7 +496,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                         : (
                             <>
                                 <Input
-                                    className='w-[10rem]'
+                                    className='w-[12rem]'
                                     onChange={(e) => { onChangeToUpper(e.target.value, 'remarks'); }}
                                     placeholder='Remarks' />
                             </>
@@ -581,6 +564,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
+                            scroll={{ y: 300 }}
                         />
                     </Form>
                 </div>

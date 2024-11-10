@@ -218,42 +218,42 @@ function OwnedAsset({ data, User }) {
             </ConfigProvider>),
             dataIndex: 'no',
             key: 'no',
-            width: '1rem',
+            width: '5%',
             align: 'center'
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            width: '22%',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Make',
             dataIndex: 'make',
             key: 'make',
-            width: '27%',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Year Model',
             dataIndex: 'yearModel',
             key: 'yearModel',
-            width: '27%',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Plate Number',
             dataIndex: 'plateNo',
             key: 'plateNo',
-            width: '27%',
+            width: '30%',
             editable: true,
         },
         {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '15px',
+            width: '10%',
             fixed: 'right',
             align: 'center',
             render: (_, record) => {
@@ -262,30 +262,19 @@ function OwnedAsset({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => {
-                                        onClickSave();
-                                    }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type="primary" />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel this record?"
-                                    onConfirm={() => {
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<CloseOutlined />} type="primary" danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     );
@@ -293,31 +282,19 @@ function OwnedAsset({ data, User }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save the changes?"
-                                    onConfirm={() => {
-                                        onClickEdit();
-                                    }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type="primary" />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel the edit?"
-                                    onConfirm={() => {
-
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<CloseOutlined />} type="primary" danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     ) : (
@@ -500,6 +477,7 @@ function OwnedAsset({ data, User }) {
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
+                            scroll={{ y: 300 }}
                         />
                     </Form>
                 </div>

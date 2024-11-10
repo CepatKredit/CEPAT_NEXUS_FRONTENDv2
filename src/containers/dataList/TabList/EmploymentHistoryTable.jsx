@@ -243,21 +243,21 @@ function EmploymentHistory({ data, User }) {
                     : 'Company / Agency',
             dataIndex: 'agency',
             key: 'agency',
-            width: '40%',
+            width: '35%',
             editable: true,
         },
         {
             title: 'Position',
             dataIndex: 'position',
             key: 'position',
-            width: '35%',
+            width: '30%',
             editable: true,
         },
         {
             title: 'Start Date',
             dataIndex: 'startdate',
             key: 'startdate',
-            width: '10%',
+            width: '15%',
             editable: true,
             render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
         },
@@ -265,7 +265,7 @@ function EmploymentHistory({ data, User }) {
             title: 'End Date',
             dataIndex: 'enddate',
             key: 'enddate',
-            width: '10%',
+            width: '15%',
             editable: true,
             render: (text) => text ? moment(text, "YYYY-MM-DD").format("YYYY-MM") : "",
 
@@ -312,7 +312,7 @@ function EmploymentHistory({ data, User }) {
                                     danger
                                     onClick={() => {
                                         setStat(true);
-                                        setAddStat(!getAddStat);
+                                        setAddSytat(!getAddStat);
                                         setEditingKey('');
                                     }}
                                 />

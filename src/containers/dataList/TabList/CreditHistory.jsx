@@ -128,29 +128,6 @@ function OtherLoanHistory({ data, User }) {
     }
 
     async function onClickEdit() {
-        /*let errors = {};
-        if (!validateLoan(getInfo.Loan)) {
-            errors.Loan = 'Other Loans History is required.';
-        }
-
-        if (!validateAmount(getInfo.Amount)) {
-            errors.Amount = 'Loan Approval is required.';
-        }
-        if (!validateAmort(getInfo.Amortization)) {
-            errors.Amortization = 'Amortization is required.';
-        }
-
-        if (!validateRemarks(getInfo.Remarks)) {
-            errors.Remarks = 'Remarks is required'
-        }
-
-
-
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-        setFieldErrors({ Loan: '', Amount: '', Amortization: '', Remarks: '' });*/
         try {
             const row = await form.validateFields();
             const data = {
@@ -237,42 +214,42 @@ function OtherLoanHistory({ data, User }) {
             </ConfigProvider>),
             dataIndex: 'no',
             key: 'no',
-            width: '10px',
+            width: '5%',
             align: 'center'
         },
         {
             title: 'Other Loans',
             dataIndex: 'loan',
             key: 'loan',
-            width: '20%',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Loan Approval',
             dataIndex: 'amount',
             key: 'amount',
-            width: '20%',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Amortization',
             dataIndex: 'amortization',
             key: 'amortization',
-            width: '20%',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '40%',
+            width: '30%',
             editable: true,
         },
         {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '15px',
+            width: '10%',
             fixed: 'right',
             align: 'center',
             render: (_, record) => {
@@ -281,69 +258,39 @@ function OtherLoanHistory({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickSave(); }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' disabled={User === 'Lp'} />
-                                </Popconfirm>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel this record?"
-                                    onConfirm={() => {
-                                        /*  setFocus({
-                                              name: false,
-                                              conNum: false,
-                                              remarks: false,
-                                          });*/
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger disabled={User === 'Lp'} />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     );
                 } else {
                     return editable ? (
                         <Space>
-                            <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save the changes?"
-                                    onConfirm={() => {
-                                        onClickEdit();
-                                    }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' disabled={User === 'Lp'} />
-                                </Popconfirm>
+                          <Tooltip title="Save">
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel the edit?"
-                                    onConfirm={() => {
-                                        /* setFocus({
-                                             name: false,
-                                             conNum: false,
-                                             remarks: false,
-                                         });*/
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger disabled={User === 'Lp'} />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     ) : (
@@ -351,11 +298,7 @@ function OtherLoanHistory({ data, User }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                        /* setFocus({
-                                             name: false,
-                                             conNum: false,
-                                             remarks: false,
-                                         });*/
+                                      
                                         edit(record);
                                         setAddStat(!getAddStat);
                                     }}
@@ -380,13 +323,6 @@ function OtherLoanHistory({ data, User }) {
             },
         },
     ];
-
-    /*const [getFocus, setFocus] = React.useState({
-        Loan: false,
-        Amount: false,
-        Amortization: false,
-        Remarks: false,
-    })*/
 
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
@@ -425,16 +361,11 @@ function OtherLoanHistory({ data, User }) {
         let formattedValue = value;
 
         if (pointer === 'amount' || pointer === 'amortization') {
-            // Remove any non-numeric characters except the decimal point
             formattedValue = value.replace(/[^0-9.]/g, '');
-
-            // Limit to two decimal places
             if (formattedValue.includes('.')) {
                 const [integerPart, decimalPart] = formattedValue.split('.');
                 formattedValue = integerPart + '.' + decimalPart.slice(0, 2);
             }
-
-            // Add commas for thousands
             formattedValue = formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
             form.setFieldsValue({ [pointer]: formattedValue });
@@ -459,7 +390,7 @@ function OtherLoanHistory({ data, User }) {
             ? (
                 <>
                     <Input
-                        className='w-[13rem]'
+                        className='w-[10rem]'
                         onChange={(e) => { onChangeToUpper(e.target.value, 'loan'); }}
                         placeholder='Other Loans' />
                 </>
@@ -468,7 +399,7 @@ function OtherLoanHistory({ data, User }) {
                 ? (
                     <>
                         <Input
-                            className='w-[13rem]'
+                            className='w-[10rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'amount') }}
                             placeholder='Loan Approval' />
                     </>
@@ -477,7 +408,7 @@ function OtherLoanHistory({ data, User }) {
                     ? (
                         <>
                             <Input
-                                className='w-[13rem]'
+                                className='w-[10rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'amortization') }}
                                 placeholder='Amortization' />
 
@@ -487,7 +418,7 @@ function OtherLoanHistory({ data, User }) {
                         ? (
                             <>
                                 <Input
-                                    className='w-[13rem]'
+                                    className='w-[18rem]'
                                     onChange={(e) => { onChangeToUpper(e.target.value, 'remarks') }}
                                     placeholder='Remarks' />
                             </>
@@ -546,6 +477,7 @@ function OtherLoanHistory({ data, User }) {
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
+                            scroll={{ y: 300 }}
                         />
                     </Form>
                 </div>
