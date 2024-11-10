@@ -574,7 +574,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
     return (
         <div className='h-[300px] flex flex-col items-center'>
             {contextHolder}
-            <div className='mt-4 w-[100%]'>
+            <div className='mt-4 w-[100%] px-2'>
                 <center>
                     <SectionHeader title="OFW Dependents" />
                 </center>

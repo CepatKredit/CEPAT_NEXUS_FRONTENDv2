@@ -292,7 +292,7 @@ function ViewLoanDetails({ data, User }) {
   const filteredItems = items.filter(Boolean);
 
   return (
-    <div className="w-full mx-auto mt-1 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg">
+    <div className="w-full mx-auto mt-1 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg ">
       <Descriptions
         title={
           <h2 className="text-2xl font-bold text-center mt-5">

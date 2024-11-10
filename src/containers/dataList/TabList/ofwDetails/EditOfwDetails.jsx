@@ -439,14 +439,16 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />
 
                 */}
+               {User !== 'LC' && (
                 <div className="w-full mt-[2rem] mx-auto">
-                    <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data}/>
+                    <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} />
                 </div>
+            )}
 
             </Flex>
 
-            <div className="mt-[13rem]">
-                <SectionHeader title="Present Address" />
+            <div className={`${User === 'LC' ? 'mt-[2rem]' : 'mt-[13rem]'}`}>
+            <SectionHeader title="Present Address" />
             </div>
             <Flex className='w-full' justify='center' gap='small' wrap>
 

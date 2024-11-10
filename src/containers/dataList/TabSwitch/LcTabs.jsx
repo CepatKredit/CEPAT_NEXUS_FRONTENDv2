@@ -49,7 +49,7 @@ function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, pres
                 <span>Loan Details</span>
             </div>,
             key: 'loan-details',
-            children: <LoanDetails classname={'h-[66vh] overflow-y-auto'} data={value} receive={(e) => { receive(e); }} isEdit={isEdit} User={'LC'}  />,
+            children: <LoanDetails classname={'h-[12rem]'} data={value} receive={(e) => { receive(e); }} isEdit={isEdit} User={'LC'}  />,
         },
         {
             label: <div className='flex flex-rows'>
@@ -57,7 +57,7 @@ function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, pres
                 <span>OFW Details</span>
             </div>,
             key: 'ofw-details',
-            children: <OfwDetails classname={'h-[65vh] overflow-y-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'LC'}  />,
+            children: <OfwDetails classname={'h-[12rem]'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'LC'}  />,
         },
         {
             label: <div className='flex flex-rows'>
@@ -65,7 +65,7 @@ function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, pres
                 <span>Upload Documents</span>
             </div>,
             key: 'upload-documents',
-            children: <UploadDocs classname={'h-[60vh] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'}
+            children: <UploadDocs classname={'h-[22rem] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'}
                 ClientId={ClientId} FileType={FileType} Uploader={Uploader} User={'LC'} data={value} LoanStatus={LoanStatus} />,
         },
         {

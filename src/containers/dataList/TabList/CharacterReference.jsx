@@ -547,7 +547,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         <div className={classname}>
             {User !== 'Credit' && User !== 'Lp' && (<StatusRemarks isEdit={!isEdit} User={User} data={data} />)}
             {contextHolder}
-            <div className='mt-[9rem] w-full'>
+            <div className='mt-[9rem] w-full px-2'>
                 <div className='mt-[-4rem]'>
                     <center>
                         <SectionHeader title="List of Character Reference" />

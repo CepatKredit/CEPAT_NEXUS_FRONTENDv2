@@ -468,7 +468,7 @@ function OwnedAsset({ data, User }) {
     return (
         <div className='h-[500px] flex flex-col items-center'>
             {contextHolder}
-            <div className='mt-[5rem] w-[100%]'>
+            <div className='mt-[5rem] w-[100%] px-2'>
                 <div className='mt-[-4rem]'>
                     <center>
                         <SectionHeader title="Owned Assets of OFW / Seaman" />

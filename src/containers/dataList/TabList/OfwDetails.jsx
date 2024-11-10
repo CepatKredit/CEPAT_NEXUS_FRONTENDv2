@@ -243,23 +243,22 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                         <StatusRemarks isEdit={!isEdit} User={User} data={data} />
                 )}
         <div className={`${
-        User === 'MARKETING' 
-            ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[55vh] overflow-y-auto' 
-            : ''
-    }`}
->
-    {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-        <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
-    ) : (
-        <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
-    )}
+                (User === 'MARKETING' || User === 'LC') 
+                    ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[55vh] overflow-y-auto' 
+                    : ''
+            }`}>
+                {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+                    <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
+                ) : (
+                    <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
+                )}
 
-    {!isEditCRAM && !isEdit && User !== 'LC' ? (
-        <div className="w-full mb-[10rem] mx-auto">
-            <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} />
+                {!isEditCRAM && !isEdit && User !== 'LC' ? (
+                    <div className="w-full mb-[10rem] mx-auto">
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} />
+                    </div>
+                ) : null}
         </div>
-    ) : null}
-</div>
                 {User !== 'Credit' && User !== 'Lp' && (
                     <ConfigProvider
                         theme={{

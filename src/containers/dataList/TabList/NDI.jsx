@@ -354,6 +354,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
     return (
         <>
             {contextHolder}
+            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
             <div className='w-full flex flex-row'>
                 <div className="h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh] w-full mb-10 overflow-y-auto">
                     <div className='w-full'>

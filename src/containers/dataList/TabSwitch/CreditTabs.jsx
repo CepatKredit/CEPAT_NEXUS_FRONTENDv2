@@ -577,9 +577,6 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             children: (
                 <div className='w-full flex flex-row'>
                     <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-10">
-                        <div className="sticky top-0 z-[1000] bg-white">
-                            <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
-                        </div>
                         <div id='OFW-NDI'>
                             <NDI 
                                 valueAmount={valueAmount} 
@@ -623,7 +620,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount classname={'h-[65vh] w-[86vw] mx-auto overflow-y-auto'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount classname={'h-[12rem]'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
         },
         {
             label: <div className='flex flex-row'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,

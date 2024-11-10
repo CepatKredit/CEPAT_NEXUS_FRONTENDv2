@@ -488,7 +488,7 @@ function EmploymentHistory({ data, User }) {
     return (
         <div className='h-[500px] flex flex-col items-center mt-[10rem]'>
             {contextHolder}
-            <div className='mt-[5rem] w-full'>
+            <div className='mt-[5rem] w-full px-2'>
                 <div className="mt-[-2rem]">
                     <center>
                         <SectionHeader title="Employment History of OFW / Seaman" />
