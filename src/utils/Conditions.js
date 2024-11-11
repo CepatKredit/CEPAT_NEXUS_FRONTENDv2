@@ -92,7 +92,7 @@ export const SET_PATH_LOCATION = (SELECTED_STATUS) => {
     else if (SELECTED_STATUS === 'UNDER CREDIT') { localStorage.setItem('SP', '/ckfi/under-credit'); }
     else if (SELECTED_STATUS === 'APPROVED (TRANS-OUT)') { localStorage.setItem('SP', '/ckfi/approved'); }
     else if (SELECTED_STATUS === 'SPECIAL LANE') { localStorage.setItem('SP', '/ckfi/special-lane'); }
-    else if (SELECTED_STATUS === 'FOR CREDIT ASSESSEMENT') { localStorage.setItem('SP', '/ckfi/assessement/credit'); }
+    else if (SELECTED_STATUS === 'FOR CREDIT ASSESSMENT') { localStorage.setItem('SP', '/ckfi/assessement/credit'); }
     else if (SELECTED_STATUS === 'QUEUE BUCKET') { localStorage.setItem('SP', '/ckfi/queue-bucket'); }
     else if (SELECTED_STATUS === 'FOR VERIFICATION') { localStorage.setItem('SP', '/ckfi/for-verification'); }
     else if (SELECTED_STATUS === 'PRE-CHECK') { localStorage.setItem('SP', '/ckfi/pre-check'); }
