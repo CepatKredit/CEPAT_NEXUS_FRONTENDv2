@@ -1,7 +1,15 @@
+import { mmddyy } from '@utils/Converter';
 import { DateFormat } from '@utils/Formatting';
 import { checkAgeisValid, CheckDateValid, checkDeployisValid } from '@utils/Validations';
 import dayjs from 'dayjs';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+
+function hookValid(KeyName, date) {
+    if (KeyName === 'ofwDeptDate' || KeyName==='loanDateDep'){return checkDeployisValid(date)}
+    else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate') { return checkAgeisValid(date)}
+
+    else {return CheckDateValid(date)}
+}
 
 export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName) {
     const [status, setStatus] = useState('');
@@ -18,7 +26,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     }, [search]);
 
     const handleSelectChange = useCallback((selectedValue) => {
-        setStatus(selectedValue ? 'success' : 'error');
+        setStatus(selectedValue ? '' : 'error');
         receive(selectedValue || undefined);
     }, [receive]);
 
@@ -61,8 +69,8 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
         if (readOnly) return;
         if(KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep'){ // reset the date when there is disable related in datepicker
             setDatePickerValue('')
-        }else{
-            setDatePickerValue(CheckDateValid(e.target.value)? dayjs(e.target.value): '')
+        } else {
+            setDatePickerValue(CheckDateValid(e.target.value) ? dayjs(e.target.value) : '')
         }
         const formattedValue = DateFormat(e.target.value);
         setInputValue(formattedValue);
@@ -86,20 +94,10 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
             const date = dayjs(debouncedInput, 'MM-DD-YYYY');
             if (debouncedInput.length === 10 && date.isValid()) {
                 setIconVisible(true);
-                if (KeyName==='Age Restriction' && checkAgeisValid(date)) {
-                    setStatus('success');
-                    receive(date);
-                }else if(KeyName==='ofwDeptDate' && checkDeployisValid(date)){
-                    setStatus('success');
-                    receive(date);
-                }else if(KeyName==='loanDateDep' && checkDeployisValid(date)){
-                    setStatus('success');
-                    receive(date);
-                    console.log("DUMAAN DITO AAAY", status)
-              /*  }else if((KeyName===undefined || KeyName==='Normal') && CheckDateValid(date)){
+                if (hookValid(KeyName, date)) {
                     setStatus('');
-                    receive(date); */
-                }else{
+                    receive(mmddyy(date));
+                } else {
                     setStatus('error');
                     receive();
                     console.log("DUMAAN DITO ELSE 1", status)
@@ -116,17 +114,12 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
     }, [debouncedInput]);
 
     useEffect(() => {
-        if (rendered) { // Not rendered
+        if (rendered) {
+            const date = value ? dayjs(value).format('MM-DD-YYYY') : '';
             setIconVisible(true);
-            if (KeyName==='Age Restriction' && checkAgeisValid(value ? dayjs(value).format('MM-DD-YYYY') : '')) {
-                setStatus('success');
-            }else if(KeyName==='ofwDeptDate' && checkDeployisValid(value ? dayjs(value).format('MM-DD-YYYY') : '')){
-                setStatus('success');
-          /*  }else if((KeyName===undefined || KeyName==='Normal') && CheckDateValid(date)){
-                setStatus(''); */
-            }else if(KeyName==='loanDateDep' && checkDeployisValid(value ? dayjs(value).format('MM-DD-YYYY') : '')){
-                setStatus('success');
-            }else{
+            if (hookValid(KeyName, date)) {
+                setStatus('');
+            } else {
                 setStatus('error');
             }
         }
@@ -143,4 +136,18 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
         toggleDatePicker,
         setDatePickerOpen,
     };
+}
+
+export function FocusHook() {
+    const inputRefs = useRef({});
+
+    const setfocus = useCallback((KeyName, ref) => {
+        inputRefs.current[KeyName] = ref;
+    }, []);
+
+    const focus = useCallback((KeyName) => {
+        inputRefs.current[KeyName]?.focus();
+    }, []);
+
+    return { setfocus, focus };
 }

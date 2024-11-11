@@ -7,6 +7,7 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { warning } from "framer-motion";
 import LabeledTextArea_Street from "./LabeledTextArea_Street";
+import { useDataContainer } from "@context/PreLoad";
 function AddressContainer({
   rendered,
   api,
@@ -35,6 +36,10 @@ function AddressContainer({
       ? data.coborrowStreet
       : "";
   // Province List Query
+  const { GET_PROVINCE_LIST } = useDataContainer();
+  //const get_loan_product_list = GET_PROVINCE_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+
+/*
   const provinceList = useQuery({
     queryKey: ["ProvinceListQuery"],
     queryFn: async () => {
@@ -45,7 +50,7 @@ function AddressContainer({
     enabled: true,
     retryDelay: 1000,
   });
-
+*/
   // Helper function to determine provCode
   const getProvCode = (type, data) => {
     if (type === "present") return data.ofwPresProv;
@@ -338,7 +343,7 @@ function AddressContainer({
               : null) ||
             (disabled ? true : disabled == undefined ? true : false)
           }
-          options={provinceList.data?.map((x) => ({
+          options={GET_PROVINCE_LIST?.map((x) => ({
             value: x.provinceCode,
             label: x.provinceDescription.toUpperCase(),
           }))}

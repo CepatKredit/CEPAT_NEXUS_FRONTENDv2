@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Select, ConfigProvider } from 'antd';
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { debounce } from '@utils/Debounce';
 import { SelectComponentHooks } from '@hooks/ComponentHooks';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function SelectOpt({
     label,
@@ -17,16 +18,25 @@ function SelectOpt({
     required,
     showSearch,
     options,
+    notValid,
     notValidMsg,
+    KeyName,
     keyName,
 }) {
     const [search, setSearchInput] = useState('');
+
+    const inputRef = useRef(null);
+    const { setfocus } = useContext(LoanApplicationContext)
+    useEffect(() => {
+        setfocus(KeyName, inputRef.current);
+    }, [KeyName, setfocus])
+
     const {
         status,
         filteredOptions,
         handleSelectChange,
         handleKeyDown
-    } = SelectComponentHooks( search, receive, options, setSearchInput, keyName );
+    } = SelectComponentHooks( search, receive, options, setSearchInput,keyName||KeyName );
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),
@@ -55,6 +65,7 @@ function SelectOpt({
                     },
                 }}>
                     <Select
+                        ref={inputRef}
                         className='text-left'
                         options={filteredOptions}
                         value={value || undefined}
@@ -73,14 +84,14 @@ function SelectOpt({
                         suffixIcon={
                             !disabled && (required || required === undefined) && status === 'error' ? (
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
-                            ) : status === 'success' ? (
+                            ) : status === '' ? (
                                 <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
                             ): null
                         }
                     />
                     {!disabled && (required || required === undefined) && status === 'error' && (
                         <div className='text-xs text-red-500 pt-1 pl-2'>
-                            {notValidMsg}
+                            {notValidMsg || notValid}
                         </div>
                     )}
                 </ConfigProvider>

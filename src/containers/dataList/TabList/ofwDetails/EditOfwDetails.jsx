@@ -28,9 +28,11 @@ import LabeledSelect_CollectionArea from '@components/marketing/LabeledSelect_Co
 import DatePicker_Deployment from '@components/marketing/DatePicker_Deployment';
 import LabeledInput_ForeignCurrency from '@components/marketing/LabeledInput_ForeignCurrency';
 import RelativesTable from '@containers/dataList/TabList/RelativesTable';
-import { GET_LIST } from '@api/base-api/BaseApi';
 import { getDependentsCount } from '@hooks/DependentsController';
 import { useStore } from 'zustand';
+import DatePickerOpt from '@components/optimized/DatePickerOpt';
+import { useDataContainer } from '@context/PreLoad';
+import SelectOpt from '@components/optimized/SelectOpt';
 
 
 function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, BorrowerId, addCoborrower }) {
@@ -44,10 +46,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     }, []);
 
     useEffect(() => {
-
         receive({ name: 'ofwdependents', value: Count - 1 });
-
     }, [Count]);
+
+    const [getAge,setAge] = useState(data.ofwbdate)
 
     const calculateAge = (birthday) => {
         const today = new Date();
@@ -69,6 +71,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
         return options;
     }
 
+    const { GET_COUNTRY_LIST } = useDataContainer();
+    const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+
     return (
         <div>
 
@@ -88,7 +93,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
-
                 />
                 <LabeledInput_NotRequired
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -125,29 +129,30 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     isEdit={isEdit}
                     rendered={rendered}
                 />
-                <DatePicker_BDate
+                <DatePickerOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Birthdate <span className="text-red-500">*</span></>}
-                    placeHolder='Birthdate Date'
+                    placeHolder='Enter Birthdate'
                     receive={(e) => {
                         receive({ name: 'ofwbdate', value: e });
-                        const age = calculateAge(e);
-                        receive({ name: 'age', value: age });
+                        setAge(e)
+                        //receive({ name: 'age', value: calculateAge(e) });
                     }}
                     value={data.ofwbdate}
-                    classification={'Age Restriction'}
                     category={'marketing'}
                     disabled={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
+                    KeyName={'ofwbdate'}
+                    notValidMsg={'Birthdate Required'}
                 />
                 {User === 'Credit' && (
                     <LabeledInput
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'Age'}
-                        value={calculateAge(data.ofwbdate)}
+                        value={calculateAge(getAge)}
                         readOnly={true}
                         placeHolder='Age'
                         rendered={rendered}
@@ -362,7 +367,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 disabled={User === 'Credit' && data.MarriedPBCB}
 
                             />
-                            <DatePicker_BDate
+                            <DatePickerOpt
                                 className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
                                 label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
@@ -372,6 +377,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 isEdit={isEdit}
                                 rendered={rendered}
                                 disabled={User === 'Credit' && data.MarriedPBCB}
+                                notValidMsg={'Spouse Birthdate Required'}
+                                KeyName={'ofwspousebdate'}
 
                             />
                             {User === 'Credit' && (
@@ -406,7 +413,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 <Form.Item
                     label="Dependents"
                     colon={false}
-                 //   labelCol={{ span: 24 }}
+                    //   labelCol={{ span: 24 }}
                     wrapperCol={{ span: 24 }}
                     className="w-[18.75rem] mt-4 font-bold"
                 >
@@ -439,16 +446,16 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />
 
                 */}
-               {User !== 'LC' && (
-                <div className="w-full mt-[2rem] mx-auto">
-                    <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} />
-                </div>
-            )}
+                {User !== 'LC' && (
+                    <div className="w-full mt-[2rem] mx-auto">
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} />
+                    </div>
+                )}
 
             </Flex>
 
             <div className={`${User === 'LC' ? 'mt-[2rem]' : 'mt-[13rem]'}`}>
-            <SectionHeader title="Present Address" />
+                <SectionHeader title="Present Address" />
             </div>
             <Flex className='w-full' justify='center' gap='small' wrap>
                 <AddressGroup_Component
@@ -633,7 +640,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             <Flex className='w-full' justify='center' gap='small' wrap>
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledSelect_Country
+                    : (<SelectOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem] mt-[-0.1rem]'}
                         className_label={'font-bold'}
                         label={<>Country of Employment for OFW or Joining Port for SEAFARER <span className="text-red-500">*</span></>}
@@ -642,7 +649,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         value={data.ofwcountry}
                         receive={(e) => receive({ name: 'ofwcountry', value: e })}
-                        rendered={rendered}
+                        //rendered={rendered}
+                        showSearch
+                        options={get_country_list}
+                        keyName={'ofwcountry'}
+                        notValidMsg={'Country Required'}
                     />)}
                 {User === 'LC' ? (
                     <></>
@@ -802,7 +813,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => receive({ name: 'landmark', value: e })}
                         />)*/}
                 {User === 'Credit' && (
-                    <SelectDatePicker
+                    <DatePickerOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Contract Date <span className="text-red-500">*</span></>}
@@ -813,6 +824,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         disabled={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
+                        notValidMsg={'Contract Date Required'}
+                        KeyName={'ContractDate'}
+
                     />)}
                 {User === 'Credit' && (<>
                     <LabeledInput_Numeric
@@ -857,16 +871,18 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             <Flex className='w-full' justify='center' gap='small' wrap>
 
                 {(User === 'Credit' && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL')) && (
-                    <DatePicker_Deployment
+                    <DatePickerOpt
+                        KeyName={'ofwDeptDate'}
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
-                        className_label="font-bold"
-                        className_dsub=""
-                        label={<>Departure Date <span className="text-red-500">*</span></>}
+                        className_label={'font-bold'}
+                        label={<>OFW Departure Date <span className="text-red-500">*</span></>}
                         value={data.ofwDeptDate}
                         receive={(e) => { receive({ name: 'ofwDeptDate', value: e }) }}
+                        //disabled={!isEdit && !(getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')}
                         placeHolder="Departure Date"
                         disabledate={disableDate_deployment}
                         rendered={rendered}
+                        notValidMsg={'Departure Date Required'}
                     />)}
                 {User === 'Credit' && (
                     <LabeledSelect

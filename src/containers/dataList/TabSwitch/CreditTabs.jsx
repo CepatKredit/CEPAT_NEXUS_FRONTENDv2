@@ -34,6 +34,8 @@ import { mmddyy } from '@utils/Converter';
 import { jwtDecode } from 'jwt-decode';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import StatusRemarks from '../TabList/StatusRemarks';
+import { FocusHook } from '@hooks/ComponentHooks';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading }) {
     //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
@@ -130,7 +132,6 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 ...(value.AcbPlanAbroad === 1 ? ['AcbRemarks'] : []),
             ] : []),
 
-
         ].some(field => {
             console.log(`field: ${field}, value:`, value[field]);
             const condition = value[field] === undefined || value[field] === '' || value[field] === false;
@@ -139,11 +140,14 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         });
     };
 
+    const {focus } = React.useContext(LoanApplicationContext)
+
+
     const toggleEditMode = async () => {
         if (isEdit) { //Add validation
-            //console.log(!Required())
-            if (true) {
-                //console.log('Peek ',value.benbdate)
+            console.log(!Required())
+            if (true) { // Assuming validation passes for this example
+                //focus('ofwbdate') working na to
                 updateData();
             } else {
                 api['warning']({
@@ -578,14 +582,14 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 <div className='w-full flex flex-row'>
                     <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-10">
                         <div id='OFW-NDI'>
-                            <NDI 
-                                valueAmount={valueAmount} 
-                                event={(e) => { event(e) }} 
-                                isEdit={true} 
-                                data={value} 
-                                isReadOnly={true} 
-                                activeKey={activeKey} 
-                                sepcoborrowfname={sepcoborrowfname} 
+                            <NDI
+                                valueAmount={valueAmount}
+                                event={(e) => { event(e) }}
+                                isEdit={true}
+                                data={value}
+                                isReadOnly={true}
+                                activeKey={activeKey}
+                                sepcoborrowfname={sepcoborrowfname}
                             />
                         </div>
                     </div>

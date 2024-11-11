@@ -1,10 +1,11 @@
 import { Input, DatePicker } from 'antd';
 import { ExclamationCircleFilled, CheckCircleFilled, CalendarOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { DateComponentHook } from '@hooks/ComponentHooks';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function DatePicker_BDay({
+function DatePicker_BDay ({
   rendered,
   required,
   placeHolder,
@@ -19,6 +20,7 @@ function DatePicker_BDay({
   KeyName,
   notValid,
   disabledate,
+  ref,
 }) {  
 
   const {
@@ -33,8 +35,13 @@ function DatePicker_BDay({
     setDatePickerOpen,
   } = DateComponentHook(value, receive, rendered, KeyName);
 
+  const inputRef = useRef(null);
 
-
+  const {focus, setfocus } = React.useContext(LoanApplicationContext)
+  
+  useEffect(()=>{
+    setfocus(KeyName, inputRef.current );
+  },[KeyName, setfocus])
 
   const icon = status === 'error' ? (
     <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
@@ -67,6 +74,7 @@ function DatePicker_BDay({
             status={status}
             maxLength={10}
             suffix={suffix}
+            ref={inputRef}
           />
         ) : (
           <DatePicker
@@ -82,6 +90,7 @@ function DatePicker_BDay({
             disabledDate={disabledate}
             status={status}
             suffix={iconVisible && icon}
+
           />
         )}
         { ((required || required === undefined) && status === 'error') && (

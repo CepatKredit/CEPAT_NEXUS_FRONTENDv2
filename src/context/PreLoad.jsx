@@ -1,14 +1,13 @@
 import * as React from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from "@api/base-api/BaseApi";
-import { LoanProductList } from '@api/loanApplicationsGetList/LoanProductAPI';
-import { ProvinceList } from '@api/addressGetList/ProvinceAPI';
+import { ComponentPreloads } from '@components/api-service';
 
 const DataContext = React.createContext()
 function PreLoad({ children }) {
     //From components
-    const GET_LOAN_PRODUCT_LIST = LoanProductList();
-    const GET_PROVINCE_LIST = ProvinceList();
+    const { GET_LOAN_PRODUCT_LIST, GET_COUNTRY_LIST, GET_PROVINCE_LIST } = ComponentPreloads();
+    //const GET_PROVINCE_LIST = ProvinceList();
 
     const [getPurpose, setPurpose] = React.useState([])
     const getPurposeList = useQuery({
@@ -86,6 +85,7 @@ function PreLoad({ children }) {
         <DataContext.Provider value={{
             //Components
             GET_LOAN_PRODUCT_LIST,
+            GET_COUNTRY_LIST,
             GET_PROVINCE_LIST,
             //Accounting
             getBank,

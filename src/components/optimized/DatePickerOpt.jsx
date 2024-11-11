@@ -1,12 +1,8 @@
-import { Input, DatePicker } from "antd";
-import {
-  ExclamationCircleFilled,
-  CheckCircleFilled,
-  CalendarOutlined,
-} from "@ant-design/icons";
-import React, { useState } from "react";
-import dayjs from "dayjs";
-import { DateComponentHook } from "@hooks/ComponentHooks";
+import { Input, DatePicker } from 'antd';
+import { ExclamationCircleFilled, CheckCircleFilled, CalendarOutlined } from '@ant-design/icons';
+import React, { useContext, useEffect, useRef } from 'react';
+import { DateComponentHook } from '@hooks/ComponentHooks';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function DatePickerOpt({
   rendered,
@@ -36,6 +32,12 @@ function DatePickerOpt({
     setDatePickerOpen,
   } = DateComponentHook(value, receive, rendered, KeyName);
 
+  const inputRef = useRef(null);
+  const { setfocus } = useContext(LoanApplicationContext)
+  useEffect(() => {
+      setfocus(KeyName, inputRef.current);
+  }, [KeyName, setfocus])
+
   const handleBlur = () => {
     if (required && !value) {
       handleDateChange("");
@@ -46,7 +48,7 @@ function DatePickerOpt({
   const icon =
     status === "error" ? (
       <ExclamationCircleFilled style={{ color: "#ff6767", fontSize: "12px" }} />
-    ) : status === "success" ? (
+    ) : status === "" ? (
       <CheckCircleFilled style={{ color: "#00cc00", fontSize: "12px" }} />
     ) : null;
 
@@ -64,7 +66,6 @@ function DatePickerOpt({
       {iconVisible && icon}
     </>
   );
-  console.log("STATUS DATE", status)
 
   return (
     <div className={className_dmain}>
@@ -82,6 +83,7 @@ function DatePickerOpt({
             status={status}
             maxLength={10}
             suffix={suffix}
+            ref={inputRef}
           />
         ) : (
           <DatePicker
@@ -100,7 +102,7 @@ function DatePickerOpt({
             suffix={iconVisible && icon}
           />
         )}
-        {(required || required === undefined) && status === "error" && (
+        {((required || required === undefined) && status === 'error') && (
           <div className="text-xs text-red-500 pt-1 pl-2">
             {`${notValidMsg}`}
           </div>

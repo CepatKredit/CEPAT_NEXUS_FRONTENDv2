@@ -1,7 +1,8 @@
 import createInitialAppDetails from "@utils/IntialValues";
 import { getBeneficiaryAddressUpdatedFields, getLoanDetailUpdatedFields, getOfwAddressUpdatedFields } from "@utils/Validations";
-import React from "react";
+import React, { useRef } from "react";
 import { notification } from 'antd'
+import { FocusHook } from "@hooks/ComponentHooks";
 
 export const LoanApplicationContext = React.createContext();
 
@@ -204,9 +205,18 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     return LOAD_DATA
   }
 
+  const {focus, setfocus} = FocusHook();
+/*
+  const inputRef = useRef(null);
+  const focusInput = () => {
+    inputRef.current && inputRef.current.focus();
+  };
+*/
+
   return (
     <LoanApplicationContext.Provider
       value={{
+        focus, setfocus,
         getAppDetails,
         setAppDetails,
         direct,
