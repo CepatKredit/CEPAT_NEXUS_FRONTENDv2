@@ -312,7 +312,7 @@ function EmploymentHistory({ data, User }) {
                                     danger
                                     onClick={() => {
                                         setStat(true);
-                                        setAddSytat(!getAddStat);
+                                        setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
                                 />

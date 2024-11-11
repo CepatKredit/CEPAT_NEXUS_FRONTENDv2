@@ -463,6 +463,10 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     onChange={(value) => { onChangeProvince(value); }}
                     placeholder='Province'
                     options={provinceList.data?.map((x) => ({ value: x.provinceDescription, label: x.provinceDescription, }))}
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                    }
                 />
             )
             : dataIndex === 'relShip' ? (
@@ -471,6 +475,10 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     onChange={(value) => { onChangeRelationship(value); }}
                     placeholder='Relationship'
                     options={getRelationshipList.data?.map(x => ({ value: x.code, label: x.description }))}
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                    }
                 />
             )
                 : dataIndex === 'name' ? (

@@ -394,7 +394,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
     }) => {
         const inputRef = React.useRef(null);
         const inputNode = inputType === 'fc' ? <Select ref={inputRef} className='w-[100%]' onChange={(e) => { setData({ ...getData, fc: e, name: '' }) }}
-            options={DocListICQuery.data?.map((x) => ({ value: x.docsType, label: x.docsType, }))} />
+            options={DocListICQuery.data?.map((x) => ({ value: x.docsType, label: x.docsType, }))}  />
             : inputType === 'name'
                 ? <Select ref={inputRef} value={getData.name} className='w-[100%]' options={NameList(getData.fc)?.map((x) => ({
                     value: x.name, label: x.name, emoji: x.emoji, desc: x.desc
@@ -482,7 +482,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                 clearFileList()
             }}
                 modalWidth={'90%'} modalTitle={'Upload Financial Checker Document'} contextHeight={'h-[500px]'}
-                contextInside={(<><CheckerDocument data={data} ClientId={ClientId} Uploader={Uploader} /></>)} />
+                contextInside={(<><CheckerDocument data={data} ClientId={ClientId} Uploader={Uploader} /></>)} style={{ zIndex: 997 }} />
             <div className='mt-[3%]'>
                 <SectionHeader title="List of 3rd Party Financial Checker" />
             </div>

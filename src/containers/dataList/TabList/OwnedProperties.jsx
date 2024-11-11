@@ -373,6 +373,10 @@ function OwnedProperties({ data, User }) {
                             value: x.value,
                             label: x.label
                         }))}
+                        showSearch
+                        filterOption={(input, option) =>
+                            option.label.toLowerCase().includes(input.toLowerCase())
+                        }
                     />
                 </>
             )

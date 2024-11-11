@@ -483,7 +483,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     <Input
                         className='w-[13rem] ml-[-1rem]'
                         onChange={(e) => { onChangeToUpper(e.target.value, 'fullName'); }}
-                        placeholder='First Name' />
+                        placeholder='Full Name' />
                 </>
             )
             : dataIndex === 'suffix'
@@ -527,6 +527,10 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                                         value: x.value,
                                         label: x.label
                                     }))}
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                        option.label.toLowerCase().includes(input.toLowerCase())
+                                    }
                                 />
 
                             </>
@@ -538,6 +542,10 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                                     onChange={(value) => { onChangedropdown(value); }}
                                     placeholder='Relationship'
                                     options={getRelationshipList.data?.map(x => ({ value: x.description, label: x.description }))}
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                        option.label.toLowerCase().includes(input.toLowerCase())
+                                    }
                                 />
 
                             </>

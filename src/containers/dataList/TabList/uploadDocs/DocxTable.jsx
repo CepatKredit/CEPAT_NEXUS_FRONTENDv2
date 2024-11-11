@@ -37,7 +37,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 description: `${file.name} is not allowed to upload in the system. 
                 Please contact the System Administrator.`
             });
-            
+
         }
         else {
             if (Display === 'USER') {
@@ -220,7 +220,8 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                     rules={dataIndex === 'docxType' ? [{ required: true, message: `${title} is required.` }] : []}>
                     {dataIndex === 'docxType'
                         ? (<Select ref={inputRef} value={fileList[record.key].status} onKeyDown={(e) => { if (e.key.toUpperCase() === 'ENTER') { save() } }}
-                            onBlur={save} className='w-[100%]' options={docTypeList?.map((x) => ({ value: x.docsType, label: x.docsType, }))} />)
+                            onBlur={save} className='w-[100%]' options={docTypeList?.map((x) => ({ value: x.docsType, label: x.docsType, }))} showSearch
+                            filterOption={(input, option) => option?.label.toLowerCase().includes(input.toLowerCase())} />)
                         : (<Input ref={inputRef} value={fileList[record.key].remarks}
                             onKeyDown={(e) => { if (e.key.toUpperCase() === 'ENTER') { save() } }} onBlur={save} />)}
                 </Form.Item>)
@@ -247,7 +248,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
         queryFn: async () => {
             let checker = false
             fileList.forEach((x) => {
-                if (  x.status.toUpperCase() === 'PLEASE SELECT STATUS') { checker = true; }
+                if (x.status.toUpperCase() === 'PLEASE SELECT STATUS') { checker = true; }
             })
             return checker
         },
@@ -285,7 +286,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                     docStatus_list += ',' + x.docStatus
                 }
             })
-            
+
             formData.append('client', ClientId)
             formData.append('docsID_list', docsID_list)
             formData.append('status_list', status_list)

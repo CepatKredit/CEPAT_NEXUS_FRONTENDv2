@@ -243,7 +243,7 @@ function OwnedAsset({ data, User }) {
             editable: true,
         },
         {
-            title: 'Plate Number',
+            title: 'Remarks',
             dataIndex: 'plateNo',
             key: 'plateNo',
             width: '30%',
@@ -390,6 +390,10 @@ function OwnedAsset({ data, User }) {
                             value: x.value,
                             label: x.label
                         }))}
+                        showSearch
+                        filterOption={(input, option) =>
+                            option.label.toLowerCase().includes(input.toLowerCase())
+                        }
                     />
                 </>
             )
