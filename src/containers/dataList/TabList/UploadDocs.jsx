@@ -103,12 +103,10 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 return count;
             case 'FILE':
                 return file_list;
-
             case 'COUNT-ARCH':
                 return count_arch;
             case 'FILE-ARCH':
                 return file_arch;
-
             default:
                 return;
         }
@@ -129,17 +127,34 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
 
         DocListQuery.data?.map((x, i) => {
             if (x.docsType !== 'Others') {
-                data.push({
-                    key: i + 1,
-                    label: <span className='font-bold'>
-                        {x.docsType}
-                        <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
-                    </span>,
-                    children: <div className='h-[300px] overflow-y-auto'>
-                        <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
-                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
-                    </div>
-                })
+                if (Display === 'USER') {
+                    data.push({
+                        key: i + 1,
+                        label: <span className='font-bold'>
+                            {x.docsType}
+                            <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                        </span>,
+                        children: <div className='h-[300px] overflow-y-auto'>
+                            <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                        </div>
+                    })
+                }
+                else {
+                    if (GetFile(x.id, 'COUNT') !== 0) {
+                        data.push({
+                            key: i + 1,
+                            label: <span className='font-bold'>
+                                {x.docsType}
+                                <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                            </span>,
+                            children: <div className='h-[300px] overflow-y-auto'>
+                                <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                            </div>
+                        })
+                    }
+                }
             }
             else {
                 data[0] = {
@@ -155,17 +170,18 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             }
         })
 
-        data[data.length + 1] = {
-            key: data.length + 1,
-            label: <span className='font-bold'>
-                Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
-            </span>,
-            children: <div className='h-[300px] overflow-y-auto'>
-                <FileLoader key={0} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
-                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} />
-            </div>
+        if (Display === 'USER') {
+            data[data.length + 1] = {
+                key: data.length + 1,
+                label: <span className='font-bold'>
+                    Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
+                </span>,
+                children: <div className='h-[300px] overflow-y-auto'>
+                    <FileLoader key={data.length + 1} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
+                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} />
+                </div>
+            }
         }
-
         return data
     }
 
