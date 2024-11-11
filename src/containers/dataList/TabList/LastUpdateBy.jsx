@@ -14,14 +14,11 @@ import axios from 'axios';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { RequestTypeDropdown } from '@utils/FixedData';
-import { STATUS_LIST } from '@api/lastUpdateBy/ChangeStatus';
-import { SET_PATH_LOCATION } from '@utils/Conditions';
-import { useDataContainer } from '@context/PreLoad';
+import { useDataContainer } from '@containers/PreLoad';
 
 function LastUpdateBy({ isEdit, User, data }) {
     const queryClient = useQueryClient()
     const { GetStatus } = ApplicationStatus()
-    const { SET_REFRESH_TILE_COUNTER } = useDataContainer()
     const [api, contextHolder] = notification.useNotification();
     const [isDisabled, setIsDisabled] = React.useState(false);
     const [isDisableUpdateBtn, setDisableUpdateBtn] = React.useState(false);
@@ -37,6 +34,7 @@ function LastUpdateBy({ isEdit, User, data }) {
 
     const { id } = useParams();
     const navigate = useNavigate();
+    const { SET_PATH_LOCATION } = useDataContainer()
 
     const approvedMessage = `CONGRATULATIONS! YOUR LOAN APPLICATION HAS BEEN APPROVED. PLEASE WAIT FOR A CALL FROM OUR TEAM TO FINALIZE THE PROCESS AND DISCUSS HOW YOU WILL RECEIVE THE LOAN PROCEEDS.`;
     const declinedMessage = "AFTER CAREFUL EVALUATION, WE REGRET TO INFORM YOU THAT THE LOAN APPLICATION SUBMITTED TO US HAS NOT BEEN APPROVED AT THIS TIME. PLEASE RE-APPLY AGAIN IN A FEW MONTHS.";
@@ -125,7 +123,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const StatusList = useQuery({
         queryKey: ['StatusList'],
         queryFn: async () => {
-            const result = await STATUS_LIST(jwtDecode(token).USRID, toDecrypt(localStorage.getItem('SIDC')));
+            const result = await GET_LIST(`/getStatusList/${jwtDecode(token).USRID}/${toDecrypt(localStorage.getItem('SIDC'))}`)
             return result.list
         },
         refetchInterval: (data) => {
@@ -260,7 +258,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         : dataContainer[0]
             );
             SET_PATH_LOCATION(getUpdate.Status)
-            SET_REFRESH_TILE_COUNTER(1)
+
             StatusList.refetch();
             api[result.data.status]({
                 message: result.data.message,
@@ -384,7 +382,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     return (
         <div>
             {contextHolder}
-            <div className='h-[55vh]'>
+            <div className='h-[65vh]'>
                 <div className="sticky top-0 z-10 bg-white">
                     <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={handleUrgentApp} />
                 </div>
@@ -392,7 +390,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                     <div className='pt-[1.5rem] font-bold text-2xl'>
                         Update Status
                     </div>
-                    <div className='h-[45vh]  w-[65vw]'>
+                    <div className='h-[60vh] overflow-y-auto w-[70vw]'>
                         <LabeledSelects
                             className={'mt-5 w-[46.5rem]'}
                             data={StatusList.data?.map((x) => ({

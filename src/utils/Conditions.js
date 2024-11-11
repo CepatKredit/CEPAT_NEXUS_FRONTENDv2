@@ -52,7 +52,7 @@ export const TileNumber = (container) => {
     else if (container === '/ckfi/lack-of-documents') { number = '275' }
     else if (container === '/ckfi/credit-assessment-list') { number = '300' }
     else if (container === '/ckfi/credit-assessment/special-lane') { number = '325' }
-    else if (container === '/ckfi/credit-assessment') { number = '350' }
+    else if (container === '/ckfi/credit-assessment' ) { number = '350' }
     else if (container === '/ckfi/under-credit') { number = '375' }
     else if (container === '/ckfi/queue-bucket') { number = '400' }
     else if (container === '/ckfi/for-verification') { number = '425' }
@@ -82,79 +82,3 @@ export const TileNumber = (container) => {
 
     return number
 }
-
-export const SET_PATH_LOCATION = (SELECTED_STATUS) => {
-    if (SELECTED_STATUS === 'DECLINED') { localStorage.setItem('SP', '/ckfi/declined'); }
-    else if (SELECTED_STATUS === 'CANCELLED') { localStorage.setItem('SP', '/ckfi/cancelled'); }
-
-    else if (SELECTED_STATUS === 'LACK OF DOCUMENTS') { localStorage.setItem('SP', '/ckfi/lack-of-documents'); }
-    else if (SELECTED_STATUS === 'FOR CREDIT ASSESSEMENT') { localStorage.setItem('SP', '/ckfi/credit-assessment-list'); }
-    else if (SELECTED_STATUS === 'FOR INITIAL INTERVIEW') { localStorage.setItem('SP', '/ckfi/for-initial-interview'); }
-    else if (SELECTED_STATUS === 'FOR WALK-IN') { localStorage.setItem('SP', '/ckfi/walk-in'); }
-    else if (SELECTED_STATUS === 'COMPLIED - LACK OF DOCUMENTS') { localStorage.setItem('SP', '/ckfi/complied/lack-of-documents'); }
-    else if (SELECTED_STATUS === 'RECEIVED') { localStorage.setItem('SP', '/ckfi/received'); }
-    else if (SELECTED_STATUS === 'REASSESSED TO CREDIT ASSOCIATE') { localStorage.setItem('SP', '/ckfi/return/credit-associate'); }
-    else if (SELECTED_STATUS === 'RETURN TO CREDIT OFFICER') { localStorage.setItem('SP', '/ckfi/return/credit-officer'); }
-    else if (SELECTED_STATUS === 'ON WAIVER') { localStorage.setItem('SP', '/ckfi/on-waiver'); }
-
-    else if (SELECTED_STATUS === 'SCREENING') { localStorage.setItem('SP', '/ckfi/queue-bucket'); }
-    else if (SELECTED_STATUS === 'INTERVIEW') { localStorage.setItem('SP', '/ckfi/queue-bucket'); }
-    else if (SELECTED_STATUS === 'FOR CALLBACK') { localStorage.setItem('SP', '/ckfi/queue-bucket'); }
-    else if (SELECTED_STATUS === 'FOR VERIFICATION') { localStorage.setItem('SP', '/ckfi/for-verification'); }
-    else if (SELECTED_STATUS === 'PRE-CHECK') { localStorage.setItem('SP', '/ckfi/pre-check'); }
-    else if (SELECTED_STATUS === 'FOR APPROVAL') { localStorage.setItem('SP', '/ckfi/for-approval'); }
-    else if (SELECTED_STATUS === 'REASSESSED TO MARKETING') { localStorage.setItem('SP', '/ckfi/reassessed/marketing'); }
-    else if (SELECTED_STATUS === 'PRE-APPROVAL') { localStorage.setItem('SP', '/ckfi/reassessed/credit-officer'); }
-    else if (SELECTED_STATUS === 'APPROVED (TRANS-OUT)') { localStorage.setItem('SP', '/ckfi/trans-in'); }
-
-    else if (SELECTED_STATUS === 'RETURN TO LOAN PROCESSOR') { localStorage.setItem('SP', '/ckfi/return/loan-processor'); }
-    else if (SELECTED_STATUS === 'FOR DOCUSIGN') { localStorage.setItem('SP', '/ckfi/for-docusign'); }
-    else if (SELECTED_STATUS === 'OK FOR DOCUSIGN') { localStorage.setItem('SP', '/ckfi/ok/for-docusign'); }
-    else if (SELECTED_STATUS === 'TAGGED FOR RELEASE') { localStorage.setItem('SP', '/ckfi/tagged-for-release'); }
-    else if (SELECTED_STATUS === 'FOR DISBURSMENT') { localStorage.setItem('SP', '/ckfi/for-disbursement'); }
-
-    else if (SELECTED_STATUS === 'RELEASED') { localStorage.setItem('SP', '/ckfi/released'); }
-    else if (SELECTED_STATUS === 'CONFIRMATION') { localStorage.setItem('SP', '/ckfi/confirmation'); }
-    else if (SELECTED_STATUS === 'CONFIRMED') { localStorage.setItem('SP', '/ckfi/confirmed'); }
-    else { localStorage.setItem('SP', '/ckfi/undecided'); }
-}
-
-export const CHECK_TILE_NAME = (path) => {
-    let name = ''
-    if (path === '/ckfi/under-marketing') { name = 'UNDER MARKETING' }
-    else if (path === '/ckfi/received') { name = 'RECEIVED' }
-    else if (path === '/ckfi/lack-of-documents/complied') { name = 'COMPLIED - LACK OF DOCUMENTS' }
-    else if (path === '/ckfi/walk-in') { name = 'FOR WALK-IN' }
-    else if (path === '/ckfi/for-initial-interview') { name = 'FOR INITIAL INTERVIEW' }
-    else if (path === '/ckfi/reassessed-to-marketing') { name = 'REASSESSED TO MARKETING' }
-    else if (path === '/ckfi/lack-of-documents') { name = 'LACK OF DOCUMENTS' }
-    else if (path === '/ckfi/credit-assessment-list') { name = 'CREDIT ASSESSMENT LIST' }
-    else if (path === '/ckfi/credit-assessment/special-lane') { name = 'SPECIAL LANE' }
-    else if (path === '/ckfi/credit-assessment') { name = 'FOR CREDIT ASSESSEMENT' }
-    else if (path === '/ckfi/under-credit') { name = 'UNDER CREDIT' }
-    else if (path === '/ckfi/queue-bucket') { name = 'QUEUE BUCKET' }
-    else if (path === '/ckfi/for-verification') { name = 'FOR VERIFICATION' }
-    else if (path === '/ckfi/pre-check') { name = 'PRE-CHECK' }
-    else if (path === '/ckfi/return/credit-associate') { name = 'RETURN TO CREDIT ASSOCIATE' }
-    else if (path === '/ckfi/return/credit-officer') { name = 'RETURN TO CREDIT OFFICER' }
-    else if (path === '/ckfi/reassessed/credit-officer') { name = 'REASSESSED TO CREDIT OFFICER' }
-    else if (path === '/ckfi/pre-approval') { name = 'PRE APPROVAL' }
-    else if (path === '/ckfi/for-approval') { name = 'FOR APPROVAL' }
-    else if (path === '/ckfi/approved') { name = 'APPROVED (TRANS-OUT)' }
-    else if (path === '/ckfi/under-loan-processor') { name = 'UNDER LP' }
-    else if (path === '/ckfi/for-docusign') { name = 'FOR DOCUSIGN' }
-    else if (path === '/ckfi/ok/for-docusign') { name = 'OK FOR DOCUSIGN' }
-    else if (path === '/ckfi/tagged-for-release') { name = 'TAGGED FOR RELEASE' }
-    else if (path === '/ckfi/on-waiver') { name = 'ON WAIVER' }
-    else if (path === '/ckfi/confirmation') { name = 'CONFIRMATION' }
-    else if (path === '/ckfi/confirmed') { name = 'CONFIRMED' }
-    else if (path === '/ckfi/undecided') { name = 'UNDECIDED' }
-    else if (path === '/ckfi/for-disbursement') { name = 'FOR DISBURSEMENT' }
-    else if (path === '/ckfi/released') { name = 'RELEASED' }
-    else if (path === '/ckfi/return/loan-processor') { name = 'RETURN TO LOANS PROCESSOR' }
-    else if (path === '/ckfi/cancelled') { name = 'CANCELLED' }
-    else if (path === '/ckfi/declined') { name = 'DECLINED' }
-    else { name = 'FOR RE-APPLICATION' }
-    return name
-}
-
