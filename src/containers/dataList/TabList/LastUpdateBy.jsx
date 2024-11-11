@@ -147,17 +147,14 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
     async function onClickUpdate() {
 
-        if (
-            (getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') &&
-            (
-                !ispreApproval ||
-                !isFFCCChecked ||
-                !isCRAFChecked ||
-                !isKaiserChecked ||
-                !isVideoCallChecked ||
-                !isShareLocationChecked ||
-                !isAgencyVerificationChecked
-            )
+        if ((getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') &&
+            !ispreApproval ||
+            !isFFCCChecked ||
+            !isCRAFChecked ||
+            !isKaiserChecked ||
+            !isVideoCallChecked ||
+            !isShareLocationChecked ||
+            !isAgencyVerificationChecked
         ) {
             api['info']({
                 message: 'Notification',
@@ -450,8 +447,8 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             </div>
                         )}
 
-                        {((GetData('ROLE').toString() === '60' && ['PRE-CHECK', 'FOR APPROVAL', 'PRE-APPROVAL'].includes(data.loanAppStat)) ||
-                            (GetData('ROLE').toString() === '50' && data.loanAppStat === 'FOR CREDIT ASSESSEMENT')) && (
+                        {((GetData('ROLE').toString() === '60' && ['PRE-CHECK', 'FOR APPROVAL'].includes(data.loanAppStat)) ||
+                            (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55' && data.loanAppStat === 'FOR CREDIT ASSESSEMENT')) && (
                                 <div className="grid grid-cols-7 mt-8">
                                     <div className="flex items-center justify-center">
                                         <Checkbox

@@ -78,12 +78,10 @@ export const TileNumber = (container) => {
     else if (container === '/ckfi/cancelled') { number = '850' }
     else if (container === '/ckfi/declined') { number = '875' }
     else { number = '900' }
-
     return number
 }
 
 export const SET_PATH_LOCATION = (SELECTED_STATUS) => {
-
     if (SELECTED_STATUS === 'RECEIVED') { localStorage.setItem('SP', '/ckfi/received'); }
     else if (SELECTED_STATUS === 'COMPLIED - LACK OF DOCUMENTS') { localStorage.setItem('SP', '/ckfi/lack-of-documents/complied'); }
     else if (SELECTED_STATUS === 'FOR WALK-IN') { localStorage.setItem('SP', '/ckfi/walk-in'); }
