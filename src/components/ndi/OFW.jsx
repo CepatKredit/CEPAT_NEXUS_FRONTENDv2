@@ -56,8 +56,8 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
     const token = localStorage.getItem('UTK')
 
     function formatNumberWithCommas(num) {
-        if (!num || num == 0) return '0.00';
-        const parts = num.toString().split('.');
+        if (!num) return '0.00';
+        const parts = num.split('.');
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas
         return parts.join('.');
     }
@@ -67,8 +67,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
         return num.toString().replace(/,/g, '');
     }
 
-    const [getOtherIncome, setOtherIncome] = React.useState([])
-    const [getOtherExpense, setOtherExpense] = React.useState([])
+    
 
     const NdiDataQuery = useQuery({
         queryKey: ['NdiDataQueryOfw'],
@@ -177,29 +176,30 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
         }
     }, [getTrigger, isComputing]);
 
-
-
-    React.useEffect(() => { validate() }, [getOtherIncome, getOtherExpense])
-    React.useEffect(() => { onValueChange(1, getValue); onOtherIncome(1, getOtherIncome); onOtherExpense(1, getOtherExpense); }, [getValue, getOtherIncome, getOtherExpense])
-
     function checkMisc() {
-        if(MiscExp){
+        if (MiscExp) {
             setMiscExp(false);
-        }else{
+        } else {
             setMiscExp(true);
         }
-        
-        if (MiscExp) { 
+        if (MiscExp) {
             setValue({
                 ...getValue,
                 MiscExpense: '0.00',
                 MiscExpenseDoc: '0.00',
             });
         }
-        console.log('CHKBX',MiscExp)
         setTrigger(1);
         setMiscellanious(1, MiscExp);
     }
+
+    const [getOtherIncome, setOtherIncome] = React.useState([])
+    const [getOtherExpense, setOtherExpense] = React.useState([])
+
+    React.useEffect(() => { validate() }, [getOtherIncome, getOtherExpense])
+    React.useEffect(() => { onValueChange(1, getValue); onOtherIncome(1, getOtherIncome); onOtherExpense(1, getOtherExpense); }, [getValue, getOtherIncome, getOtherExpense])
+
+    
     function validate() {
         let counter = 0;
         getOtherIncome.map((x) => { if (x.id === '' || x.documented === '' || x.declared === '') { counter += 1 } })
@@ -237,7 +237,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
     }
 
     async function compute() {
-        console.log(MiscExp)
+
         let TNI = (parseFloat(removeCommas(getValue.TotalSalary === '' ? 0 : getValue.TotalSalary)) + parseFloat(removeCommas(getValue.OtherIncome === '' ? 0 : getValue.OtherIncome))
             + parseFloat(totalOtherIncome('DEC'))).toFixed(2)
         let MISC = !MiscExp ? parseFloat(removeCommas(getValue.MiscExpense === '' ? 0.00 : getValue.MiscExpense)) : (removeCommas(TNI) * 0.08).toFixed(2);
@@ -263,9 +263,9 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
             TotalExpense: formatNumberWithCommas(TOTAL),
             NetDisposable: formatNumberWithCommas(NET),
         })
-        setTrigger(0)
         setOFW(NET)
         setOFWDOC(NETDOC)
+        setTrigger(0)
         return new Promise((resolve) => setTimeout(resolve, 500));
     }
 
@@ -306,7 +306,9 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
     }
 
     function onChange(e, target, index) {
+
         let num = e.target.value;
+
         if (num === '' || num === '0') {
             setTrigger(1);
 
@@ -342,7 +344,6 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
         if (num.startsWith('.')) {
             num = '0.' + num.substring(1);
         }
-
         const periodCount = (num.match(/\./g) || []).length;
         if (periodCount > 1) {
             num = num.substring(0, num.lastIndexOf('.'));
