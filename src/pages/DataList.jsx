@@ -24,9 +24,15 @@ function DataList() {
   const AppDataListQuery = useQuery({
     queryKey: ['AppDataListQuery'],
     queryFn: async () => {
+      try {
       const result = await GET_LIST(`/getAppDataList/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
       setLoading(false);
       return result.list;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false); 
+      return []; 
+    }
     },
     enabled: true,
     refetchInterval: 60 * 1000,

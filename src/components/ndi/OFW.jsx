@@ -154,6 +154,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
                 } else {
                     console.log('Error:', error);
                 }
+                SET_LOADING_INTERNAL('NDIOFW', false);
             }
             return null;
         },

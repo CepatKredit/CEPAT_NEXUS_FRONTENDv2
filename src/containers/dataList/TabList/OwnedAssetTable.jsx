@@ -39,32 +39,40 @@ function OwnedAsset({ data, User }) {
     const [getStat, setStat] = React.useState(true);
     const role = GetData('ROLE').toString();
 
+
+
     const getOwnedAssets = useQuery({
         queryKey: ['getOwnedAssets'],
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
-            const result = await axios.get(`/getOwnedAssets/${toDecrypt(localStorage.getItem('SIDC'))}`);
-            let dataList = [{
-                key: 0,
-                no: '',
-                Category: '',
-                Make: '',
-                YearModel: '',
-                PlateNo: '',
-            }];
+            try {
+                const result = await axios.get(`/getOwnedAssets/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                let dataList = [{
+                    key: 0,
+                    no: '',
+                    Category: '',
+                    Make: '',
+                    YearModel: '',
+                    PlateNo: '',
+                }];
 
-            result.data.list?.map((x, i) => {
-                dataList.push({
-                    key: x.id,
-                    no: i + 1,
-                    Category: x.category,
-                    Make: x.make,
-                    YearModel: x.yearModel,
-                    PlateNo: x.plateNo,
+                result.data.list?.map((x, i) => {
+                    dataList.push({
+                        key: x.id,
+                        no: i + 1,
+                        Category: x.category,
+                        Make: x.make,
+                        YearModel: x.yearModel,
+                        PlateNo: x.plateNo,
+                    });
                 });
-            });
-            SET_LOADING_INTERNAL('AssetTABLE', false)
-            return dataList;
+                SET_LOADING_INTERNAL('AssetTABLE', false)
+                return dataList;
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('AssetTABLE', false);
+            }
+            return null;
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;

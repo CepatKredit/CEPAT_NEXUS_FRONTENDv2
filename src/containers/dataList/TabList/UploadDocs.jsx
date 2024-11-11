@@ -16,7 +16,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { useDataContainer } from '@context/PreLoad';
 
 function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
-    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const { getAppDetails } = React.useContext(LoanApplicationContext)
     const { GetStatus } = ApplicationStatus()
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
@@ -37,9 +37,15 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     const FileListQuery = useQuery({
         queryKey: ['FileListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
-            SET_LOADING_INTERNAL('UploadDocs', false);
-            return result.list
+            try {
+                const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return result.list
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return [];
+            }
         },
         enabled: true,
         retryDelay: 1000,

@@ -161,7 +161,8 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
                     InitialOtherExpense(2, expenseData);
                     setTrigger(1);
                 }).catch((error) => {
-                    console.log(error)
+                    console.log(error);
+                    SET_LOADING_INTERNAL('BorrowerNDI', false);
                 })
             return null;
         },

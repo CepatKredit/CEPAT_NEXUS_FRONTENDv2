@@ -173,7 +173,8 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                     InitialOtherExpense(3, expenseData);
                     setTrigger(1)
                 }).catch((error) => {
-                    console.log(error)
+                    console.log(error);
+                    SET_LOADING_INTERNAL('ACBNDI', false);
                 })
             return null;
         },

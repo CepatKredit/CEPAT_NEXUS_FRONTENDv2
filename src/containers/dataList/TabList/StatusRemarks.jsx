@@ -6,7 +6,7 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
-    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const { TextArea } = Input;
     const { SetStatus } = ApplicationStatus()
 
@@ -18,13 +18,19 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
     const getRemarks = useQuery({
         queryKey: ['getRemarks', data?.loanIdCode],
         queryFn: async () => {
-            const result = await axios.get(`/getRemarks/${data?.loanIdCode}`);
-            SetStatus(result.data.list[0].status)
-            console.log(localStorage.getItem('activeTab'));
-            if (localStorage.getItem('activeTab') === 'last-update-by')
-                setUrgentApp(result.data.list[0].urgentApp)
-            SET_LOADING_INTERNAL('StatusRemarks', false);
-            return result.data.list[0];
+            try {
+                const result = await axios.get(`/getRemarks/${data?.loanIdCode}`);
+                SetStatus(result.data.list[0].status)
+                console.log(localStorage.getItem('activeTab'));
+                if (localStorage.getItem('activeTab') === 'last-update-by')
+                    setUrgentApp(result.data.list[0].urgentApp)
+                SET_LOADING_INTERNAL('StatusRemarks', false);
+                return result.data.list[0];
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('StatusRemarks', false); // Stop loading on error
+            }
+            return null;
         },
         enabled: true,
         retryDelay: 1000,
@@ -131,22 +137,22 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                             </div>
                         </div>
                     )}
-                        {isEdit && User === 'LC' && (
-                            <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
-                                <div className="w-full">
-                                    <label className="font-bold">External Remarks</label>
-                                    <TextArea
-                                        className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
-                                        value={getRemarks.data?.remarksEx}
-                                        style={{
-                                            height: 50,
-                                            resize: 'none',
-                                        }}
-                                        readOnly
-                                    />
-                                </div>
+                    {isEdit && User === 'LC' && (
+                        <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
+                            <div className="w-full">
+                                <label className="font-bold">External Remarks</label>
+                                <TextArea
+                                    className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
+                                    value={getRemarks.data?.remarksEx}
+                                    style={{
+                                        height: 50,
+                                        resize: 'none',
+                                    }}
+                                    readOnly
+                                />
                             </div>
-                        )}
+                        </div>
+                    )}
                 </Space>
             </div>
         </div>
