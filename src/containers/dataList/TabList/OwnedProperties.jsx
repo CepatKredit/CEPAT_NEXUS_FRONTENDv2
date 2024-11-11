@@ -18,7 +18,7 @@ import { toUpperText } from '@utils/Converter';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function OwnedProperties({ data, User }) {
-    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -45,26 +45,32 @@ function OwnedProperties({ data, User }) {
         queryKey: ['getOwnedProperties'],
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
-            const result = await axios.get(`/getOwnedProperties/${toDecrypt(localStorage.getItem('SIDC'))}`);
-            let dataList = [{
-                key: 0,
-                no: '',
-                Properties: '',
-                Location: '',
-                Remarks: '',
-            }];
+            try {
+                const result = await axios.get(`/getOwnedProperties/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                let dataList = [{
+                    key: 0,
+                    no: '',
+                    Properties: '',
+                    Location: '',
+                    Remarks: '',
+                }];
 
-            result.data.list?.map((x, i) => {
-                dataList.push({
-                    key: x.id,
-                    no: i + 1,
-                    Properties: x.properties,
-                    Location: x.location,
-                    Remarks: x.remarks,
+                result.data.list?.map((x, i) => {
+                    dataList.push({
+                        key: x.id,
+                        no: i + 1,
+                        Properties: x.properties,
+                        Location: x.location,
+                        Remarks: x.remarks,
+                    });
                 });
-            });
-            SET_LOADING_INTERNAL('PropertiesTABLE', false);
-            return dataList;
+                SET_LOADING_INTERNAL('PropertiesTABLE', false);
+                return dataList;
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('PropertiesTABLE', false);
+            }
+            return null;
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
@@ -250,7 +256,7 @@ function OwnedProperties({ data, User }) {
                 if (record.key === 0) {
                     return (
                         <Space>
-                             <Tooltip title="Save">
+                            <Tooltip title="Save">
                                 <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
                             </Tooltip>
                             <Tooltip title="Cancel">
@@ -270,7 +276,7 @@ function OwnedProperties({ data, User }) {
                 } else {
                     return editable ? (
                         <Space>
-                             <Tooltip title="Save">
+                            <Tooltip title="Save">
                                 <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
                             </Tooltip>
                             <Tooltip title="Cancel">

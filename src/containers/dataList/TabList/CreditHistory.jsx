@@ -17,7 +17,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function OtherLoanHistory({ data, User }) {
-    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -42,28 +42,34 @@ function OtherLoanHistory({ data, User }) {
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
             //  console.log("Decrypted SIDC:", sidcDecrypted);
-            const result = await axios.get(`/getOtherLoanHistory/${toDecrypt(localStorage.getItem('SIDC'))}`);
-            // console.log("Other Loan HIstory:", result);
-            let dataList = [{
-                key: 0,
-                no: '',
-                Loan: '',
-                Amount: '',
-                Amortization: '',
-                Remarks: '',
-            }];
-            result.data.list?.map((x, i) => {
-                dataList.push({
-                    key: x.id,
-                    no: i + 1,
-                    Loan: x.loan,
-                    Amount: x.amount,
-                    Amortization: x.amortization,
-                    Remarks: x.remarks,
+            try {
+                const result = await axios.get(`/getOtherLoanHistory/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                // console.log("Other Loan HIstory:", result);
+                let dataList = [{
+                    key: 0,
+                    no: '',
+                    Loan: '',
+                    Amount: '',
+                    Amortization: '',
+                    Remarks: '',
+                }];
+                result.data.list?.map((x, i) => {
+                    dataList.push({
+                        key: x.id,
+                        no: i + 1,
+                        Loan: x.loan,
+                        Amount: x.amount,
+                        Amortization: x.amortization,
+                        Remarks: x.remarks,
+                    });
                 });
-            });
-            SET_LOADING_INTERNAL('CreditHistoryTABLE', false);
-            return dataList;
+                SET_LOADING_INTERNAL('CreditHistoryTABLE', false);
+                return dataList;
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('CreditHistoryTABLE', false);
+            }
+            return null;
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
@@ -277,7 +283,7 @@ function OtherLoanHistory({ data, User }) {
                 } else {
                     return editable ? (
                         <Space>
-                          <Tooltip title="Save">
+                            <Tooltip title="Save">
                                 <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
                             </Tooltip>
                             <Tooltip title="Cancel">
@@ -298,7 +304,7 @@ function OtherLoanHistory({ data, User }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
                                     <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                      
+
                                         edit(record);
                                         setAddStat(!getAddStat);
                                     }}

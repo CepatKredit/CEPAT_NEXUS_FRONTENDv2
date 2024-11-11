@@ -26,9 +26,15 @@ function UploadRecord({ data, ClientId, Uploader }) {
     const DocListICQuery = useQuery({
         queryKey: ['DocListICQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${'IC'}`)
-            SET_LOADING_INTERNAL('FinancialChecker', false);
-            return result.list
+            try {
+                const result = await GET_LIST(`/getFileType/${'IC'}`)
+                SET_LOADING_INTERNAL('FinancialChecker', false);
+                return result.list
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('FinancialChecker', false); // Stop loading on error
+            }
+            return [];
         },
         enabled: true,
         retryDelay: 1000,
@@ -154,23 +160,29 @@ function UploadRecord({ data, ClientId, Uploader }) {
     const FileListQuery = useQuery({
         queryKey: ['FileListFinQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileList/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
-            let dataContainer = []
-            SET_LOADING_INTERNAL('FinancialChecker', false);
-            result.list?.map((x) => {
-                var dfn = x.docsFileName.split(' ')
-                var fullname = toDecrypt(dfn[0]).split(' ')
-                dataContainer.push({
-                    id: x.id,
-                    file: x.base64,
-                    fileExtension: x.fileExtension,
-                    fname: dfn[1] === 'ML' ? fullname[1] : fullname[0],
-                    lname: dfn[1] === 'ML' ? fullname[0] : fullname[1],
-                    fc: dfn[1],
-                    remarks: x.remarks
+            try {
+                const result = await GET_LIST(`/getFileList/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
+                let dataContainer = []
+                SET_LOADING_INTERNAL('FinancialChecker', false);
+                result.list?.map((x) => {
+                    var dfn = x.docsFileName.split(' ')
+                    var fullname = toDecrypt(dfn[0]).split(' ')
+                    dataContainer.push({
+                        id: x.id,
+                        file: x.base64,
+                        fileExtension: x.fileExtension,
+                        fname: dfn[1] === 'ML' ? fullname[1] : fullname[0],
+                        lname: dfn[1] === 'ML' ? fullname[0] : fullname[1],
+                        fc: dfn[1],
+                        remarks: x.remarks
+                    })
                 })
-            })
-            return dataContainer
+                return dataContainer;
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('FinancialChecker', false); // Stop loading on error
+            }
+            return [];
         },
         enabled: true
     })
@@ -394,7 +406,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
     }) => {
         const inputRef = React.useRef(null);
         const inputNode = inputType === 'fc' ? <Select ref={inputRef} className='w-[100%]' onChange={(e) => { setData({ ...getData, fc: e, name: '' }) }}
-            options={DocListICQuery.data?.map((x) => ({ value: x.docsType, label: x.docsType, }))}  />
+            options={DocListICQuery.data?.map((x) => ({ value: x.docsType, label: x.docsType, }))} />
             : inputType === 'name'
                 ? <Select ref={inputRef} value={getData.name} className='w-[100%]' options={NameList(getData.fc)?.map((x) => ({
                     value: x.name, label: x.name, emoji: x.emoji, desc: x.desc

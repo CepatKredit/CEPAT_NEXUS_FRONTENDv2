@@ -35,30 +35,36 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     const getCharacterRef = useQuery({
         queryKey: ['getCharacterRef'],
         queryFn: async () => {
-            const result = await axios.get(`/getCharacterRef/${BorrowerId}`);
-            let dataList = [{
-                key: 0,
-                no: '',
-                name: '',
-                conNum: '',
-                relShip: '',
-                prov: '',
-                remarks: '',
-            }]
+            try {
+                const result = await axios.get(`/getCharacterRef/${BorrowerId}`);
+                let dataList = [{
+                    key: 0,
+                    no: '',
+                    name: '',
+                    conNum: '',
+                    relShip: '',
+                    prov: '',
+                    remarks: '',
+                }]
 
-            result.data.list?.map((x, i) => {
-                dataList.push({
-                    key: x.characterRefId,
-                    no: i + 1,
-                    name: x.fullName,
-                    conNum: x.mobileNo,
-                    relShip: x.relationship,
-                    prov: x.province,
-                    remarks: x.remarks
+                result.data.list?.map((x, i) => {
+                    dataList.push({
+                        key: x.characterRefId,
+                        no: i + 1,
+                        name: x.fullName,
+                        conNum: x.mobileNo,
+                        relShip: x.relationship,
+                        prov: x.province,
+                        remarks: x.remarks
+                    })
                 })
-            })
-            SET_LOADING_INTERNAL('CharRefTABLE', false);
-            return dataList
+                SET_LOADING_INTERNAL('CharRefTABLE', false);
+                return dataList
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('CharRefTABLE', false);
+            }
+            return null;
         },
         refetchInterval: 5000,
         enabled: true,

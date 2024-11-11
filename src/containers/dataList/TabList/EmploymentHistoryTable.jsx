@@ -42,31 +42,37 @@ function EmploymentHistory({ data, User }) {
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
             // console.log("Decrypted SIDC:", sidcDecrypted);
-            const result = await axios.get(`/getEmploymentHistory/${toDecrypt(localStorage.getItem('SIDC'))}`);
+            try {
+                const result = await axios.get(`/getEmploymentHistory/${toDecrypt(localStorage.getItem('SIDC'))}`);
 
-            //   console.log("Employment History:", result);
+                //   console.log("Employment History:", result);
 
-            let dataList = [{
-                key: 0,
-                no: '',
-                Agency: '',
-                Position: '',
-                StartDate: '',
-                EndDate: '',
-            }];
+                let dataList = [{
+                    key: 0,
+                    no: '',
+                    Agency: '',
+                    Position: '',
+                    StartDate: '',
+                    EndDate: '',
+                }];
 
-            result.data.list?.map((x, i) => {
-                dataList.push({
-                    key: x.id,
-                    no: i + 1,
-                    Agency: x.agency,
-                    Position: x.position,
-                    StartDate: x.startDate,
-                    EndDate: x.endDate,
+                result.data.list?.map((x, i) => {
+                    dataList.push({
+                        key: x.id,
+                        no: i + 1,
+                        Agency: x.agency,
+                        Position: x.position,
+                        StartDate: x.startDate,
+                        EndDate: x.endDate,
+                    });
                 });
-            });
-            SET_LOADING_INTERNAL('EmploymentHistoryTABLE', false);
-            return dataList;
+                SET_LOADING_INTERNAL('EmploymentHistoryTABLE', false);
+                return dataList;
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('EmploymentHistoryTABLE', false); 
+            }
+            return null;
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
@@ -210,7 +216,7 @@ function EmploymentHistory({ data, User }) {
                     <Button className='bg-[#3b0764]' type='primary' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
                         icon={<PlusOutlined style={{ fontSize: '15px' }} />}
                         onClick={() => {
-                            const record = { key: 0, agency: '', position: '', startdate: undefined, enddate: undefined}
+                            const record = { key: 0, agency: '', position: '', startdate: undefined, enddate: undefined }
                             edit(record)
                             setStat(false);
                             setEditingKey(0);
