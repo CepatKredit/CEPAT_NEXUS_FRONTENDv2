@@ -80,8 +80,12 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         <div className={classname}>
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
 
-            <div className='w-full h-[45vh] overflow-y-auto'>
-            {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+            <div className={`w-full overflow-y-auto ${
+            (!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit) 
+                ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[48vh] 3xl:h-[57vh]' 
+                : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[58vh] 3xl:h-[65vh]'
+        }`}>            
+        {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                 <ViewApprovalAmount loading={loading} data={data} User={User} />
             ) : (
                 <EditApprovalAmount data={data} receive={receive} User={User} />
@@ -105,11 +109,10 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 },
             }}
         >
-            <div className="w-full p-8 flex justify-center items-center h-[5rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 
+            <div className="w-full p-8 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 
                             space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
                 {isEdit ? (
                     <>
-                        {/* Save Button */}
                         <ConfigProvider
                             theme={{
                                 token: {
@@ -127,8 +130,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                                 SAVE
                             </Button>
                         </ConfigProvider>
-
-                        {/* Cancel Button */}
                         <ConfigProvider
                             theme={{
                                 token: {
@@ -159,7 +160,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                             },
                         }}
                     >
-                        {/* Edit Button */}
                         <Button
                             type="primary"
                             icon={<EditOutlined />}

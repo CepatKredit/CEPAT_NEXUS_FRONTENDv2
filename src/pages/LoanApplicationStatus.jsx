@@ -235,7 +235,7 @@ function LoanApplicationTracker({ data }) {
         </span>
       ),
       children: (
-        <div className="max-h-[calc(80vh-220px)] overflow-y-auto pr-2 sm:max-h-[calc(90vh-180px)] md:max-h-[calc(90vh-150px)] lg:max-h-[calc(90vh-120px)] xl:max-h-[calc(90vh-100px)]">
+        <div className="max-h-[calc(80vh-220px)] overflow-y-auto pr-2 sm:max-h-[calc(90vh-200px)] md:max-h-[calc(90vh-200px)] lg:max-h-[calc(90vh-220px)] xl:max-h-[calc(90vh-220px)]">
           <Card bordered={false}>
             <SectionHeader borrower="Loan Details" />
             <LoanDetails
@@ -654,8 +654,8 @@ function LoanApplicationTracker({ data }) {
           />
         </div>
       )}
-      <Layout className="h-[120vh] bg-[#e8eee5] p-6">
-        <Content className="w-full lg:w-[80vw] h-auto mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
+      <Layout className="h-[100vh] bg-[#e8eee5] p-6">
+        <Content className="w-full lg:w-[80vw] h-[120vh] mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
           <div className="mb-6">
             <div className="flex flex-wrap justify-between items-center">
               <div className="flex items-center space-x-3">

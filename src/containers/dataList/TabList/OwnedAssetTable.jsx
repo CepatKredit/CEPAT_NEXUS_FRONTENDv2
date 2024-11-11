@@ -450,8 +450,8 @@ function OwnedAsset({ data, User }) {
         <div className='h-[500px] flex flex-col items-center'>
             {contextHolder}
             <div className='mt-[5rem] w-[100%] px-2'>
-                <div className='mt-[-4rem]'>
-                    <center>
+            <div className="mt-[-15rem]">
+            <center>
                         <SectionHeader title="Owned Assets of OFW / Seaman" />
                     </center>
                 </div>
@@ -481,7 +481,7 @@ function OwnedAsset({ data, User }) {
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
-                            scroll={{ y: 300 }}
+                            scroll={{ y: 200 }}
                         />
                     </Form>
                 </div>

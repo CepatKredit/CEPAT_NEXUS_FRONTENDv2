@@ -580,7 +580,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         : [];
 
     return (
-        <div className='h-[300px] flex flex-col items-center'>
+        <div className='h-[500px] flex flex-col items-center'>
             {contextHolder}
             <div className='mt-4 w-[100%] px-2'>
                 <center>
@@ -616,7 +616,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
-                            scroll={{ y: 300 }}
+                            scroll={{ y: 200 }}
                         />
                     </Form>
 

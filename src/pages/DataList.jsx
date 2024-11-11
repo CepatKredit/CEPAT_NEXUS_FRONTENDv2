@@ -42,14 +42,14 @@ function DataList() {
       </div>
       <Divider />
       <Button type='primary' onClick={() => { navigate(`${localStorage.getItem('SP')}/12/tab=1`) }} hidden>TEST</Button>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-1">
         <div></div>
-        <div className="w-[300px]">
+        <div className="w-[400px]">
           <Input
             addonAfter={<SearchOutlined />}
             placeholder="Search"
-            size="middle"
-            className="w-full"
+            size="large" 
+            className="w-full h-[50px] px-4" 
             onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
             value={getSearch}
           />
@@ -57,7 +57,7 @@ function DataList() {
       </div>
       <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
         <Spin spinning={loading} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center" size='large'>
-          <ResponsiveTable columns={ColumnList(3, AppDataListQuery)} height={'calc(100vh - 505px)'} width={'100%'}
+          <ResponsiveTable columns={ColumnList(3, AppDataListQuery)} height={'calc(95vh - 505px)'} width={'100%'}
             rows={AppDataListQuery.data?.filter((x) =>
               x.loanAppCode.includes(getSearch) ||
               x.recDate.includes(getSearch) ||

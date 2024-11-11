@@ -539,7 +539,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             {User !== 'Credit' && User !== 'Lp' && (<StatusRemarks isEdit={!isEdit} User={User} data={data} />)}
             {contextHolder}
             <div className='mt-[9rem] w-full px-2'>
-                <div className='mt-[-4rem]'>
+            <div className={`${User === 'Credit' || User === 'Lp' ? 'mt-[-15rem]' : 'mt-[-4rem]'}`}>
                     <center>
                         <SectionHeader title="List of Character Reference" />
                     </center>
@@ -572,8 +572,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
-                            scroll={{ y: 300 }}
-                        />
+                            scroll={{ y: User === 'Credit' || User === 'Lp' ? 200 : 300 }} 
+                            />
                     </Form>
                 </div>
             </div>

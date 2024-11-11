@@ -242,11 +242,13 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 {User !== 'Credit' && User !== 'Lp' && (
                         <StatusRemarks isEdit={!isEdit} User={User} data={data} />
                 )}
-        <div className={`${
-                (User === 'MARKETING' || User === 'LC') 
-                    ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[55vh] overflow-y-auto' 
-                    : ''
-            }`}>
+                    <div className={`w-full mt-4 ${
+                    (User === 'MARKETING' || User === 'LC') ? 
+                        (isEdit ? 
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[54vh] 3xl:h-[61vh] overflow-y-auto' 
+                            : 
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[44vh] 3xl:h-[53vh] overflow-y-auto'
+                        )  : ''}`}>      
                 {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                     <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
                 ) : (
@@ -254,7 +256,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 )}
 
                 {!isEditCRAM && !isEdit && User !== 'LC' ? (
-                    <div className="w-full mb-[10rem] mx-auto">
+                    <div className="w-full mb-[10rem] mx-auto ">
                         <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} />
                     </div>
                 ) : null}

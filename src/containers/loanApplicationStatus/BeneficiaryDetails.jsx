@@ -160,7 +160,7 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
         {
             isEdit
                 ?
-                (<div className="h-full">
+                (<div className="h-full ">
                     <div className="flex flex-col items-center justify-center h-full">
                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mb-8">
                             <LabeledInput_UpperCase
@@ -281,7 +281,7 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                     </div>
                 </div>)
                 : (<>
-                    <Descriptions className="mt-6" column={{ md: 2, lg: 3, xl: 4 }} items={items} />
+                    <Descriptions className="mt-5" column={{ md: 2, lg: 3, xl: 4 }} items={items} />
                     </>)
         }
         <div className="flex justify-center space-x-4 mb-2 mt-6">

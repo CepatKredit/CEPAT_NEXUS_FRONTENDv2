@@ -490,7 +490,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                 <Button className='bg-[#3b0764] w-[200px]' onClick={() => { setModalStatus(true) }}
                     size='large' type='primary'>Upload Record</Button>
             </ConfigProvider>
-            <div className='h-[300px]'>
+            <div className='h-[300px] px-2'>
                 <div className='mt-2'>
                     <Form form={form} component={false}>
                         <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>

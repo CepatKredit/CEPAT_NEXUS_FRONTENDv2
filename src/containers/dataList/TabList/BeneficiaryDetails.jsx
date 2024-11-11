@@ -247,18 +247,19 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 {User !== 'Credit' && User !== 'Lp' && (
                         <StatusRemarks isEdit={!isEdit} User={User} data={data} />
                     )}
-                    <div className={`${
-                            User === 'MARKETING' 
-                                ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[47vh] 3xl:h-[55vh] overflow-y-auto' 
-                                : ''
-                        }`}
-                    >                    
-                    {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                        <ViewBeneficiaryDetails data={data} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} />
-                    ) : (
-                        <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
-                            showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
-                    )}
+                   <div className={`w-full mt-4 ${
+                    (User === 'MARKETING' || User === 'LC') ? 
+                        (isEdit ? 
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[56vh] 3xl:h-[62vh] overflow-y-auto' 
+                            : 
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[46vh] 3xl:h-[54vh] overflow-y-auto'
+                        )  : ''}`}>        
+                        {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+                            <ViewBeneficiaryDetails data={data} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} />
+                        ) : (
+                            <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
+                                showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
+                        )}
                     </div>
                     {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
                             <ConfigProvider

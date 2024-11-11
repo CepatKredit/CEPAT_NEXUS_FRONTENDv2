@@ -446,7 +446,7 @@ function OtherLoanHistory({ data, User }) {
         <div className='h-[500px] flex flex-col items-center'>
             {contextHolder}
             <div className='mt-[5rem] w-full px-2'>
-                <div className="mt-[-3rem]">
+                <div className="mt-[-15rem]">
                     <center>
                         <SectionHeader title="Credit History of OFW / Seaman" />
                     </center>
@@ -477,7 +477,7 @@ function OtherLoanHistory({ data, User }) {
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
-                            scroll={{ y: 300 }}
+                            scroll={{ y: 200 }}
                         />
                     </Form>
                 </div>

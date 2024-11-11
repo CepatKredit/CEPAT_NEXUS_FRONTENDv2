@@ -489,7 +489,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
     <>
       {/* {contextHolder} */}
       {isEdit ? (
-        <div className="h-full">
+        <div className="h-full ">
           <div className="flex flex-col items-center justify-center h-full">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mb-8">
               <LabeledInput_Fullname
@@ -753,7 +753,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
       ) : (
         <>
           <Descriptions
-            className="mt-6"
+            className="mt-5"
             column={{ md: 2, lg: 3, xl: 4 }}
             items={items}
           />

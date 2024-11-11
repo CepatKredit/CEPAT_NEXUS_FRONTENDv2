@@ -159,16 +159,19 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
     {User !== 'Credit' && User !== 'Lp' && (
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
     )}
-        <div className={`${
-           (User === 'MARKETING' || User === 'LC') 
-           ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[55vh] overflow-y-auto' 
-           : ''
-        }`}>
-            {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                <ViewLoanDetails data={data} User={User} />
-            ) : (
-                <EditLoanDetails data={data} receive={receive} User={User} />
-            )}
+       <div
+            className={`w-full ${
+                (User === 'MARKETING' || User === 'LC') ? 
+                    (isEdit ? 
+                        'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[58vh] 3xl:h-[64vh] overflow-y-auto' 
+                        : 
+                        'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[70vh] xl:h-[49vh] 2xl:h-[48vh] 3xl:h-[56vh] overflow-y-auto'
+                    )  : ''}`}>
+                    {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+                        <ViewLoanDetails data={data} User={User} />
+                    ) : (
+                        <EditLoanDetails data={data} receive={receive} User={User} />
+                    )}
         </div>
     {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
         <ConfigProvider

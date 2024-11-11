@@ -170,7 +170,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
                 clearFileList()
-            }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} style={{ zIndex: 998 }} />
+            }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} />
             <div className='space-x-[1.5rem]'>
                 {
                     GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
@@ -179,7 +179,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                         LoanStatus === 'COMPLIED - LACK OF DOCUMENTS'
                         ? (<></>)
                         : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                            <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
+                            <Button size='large' className='ml-6 mb-2 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
                         </ConfigProvider>)
                 }
                 <div className={classname}>

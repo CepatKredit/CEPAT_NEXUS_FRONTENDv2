@@ -87,7 +87,7 @@ function MarketingTabs({ value, receive, ClientId, FileType, Uploader, BorrowerI
                 <span>Upload Documents</span>
             </div>,
             key: 'upload-documents',
-            children: <UploadDocs classname={'h-[48vh] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'}
+            children: <UploadDocs classname={'xs:h-[45vh] sm:h-[50vh] md:h-[20vh] lg:h-[60vh] xl:h-[70vh] 2xl:h-[43vh] 3xl:h-[52vh] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'}
                 Display={'USER'}
                 ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} />,
         },

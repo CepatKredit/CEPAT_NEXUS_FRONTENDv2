@@ -515,7 +515,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             key: 'CRAM',
             children: (
                 <div className='w-full flex flex-row'>
-                    <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-10 overflow-y-auto">
+                    <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-9 overflow-y-auto">
                         <div className="sticky top-0 z-[1000] bg-white">
                             <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
                         </div>
@@ -523,12 +523,12 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                             <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} creditisEdit={isEdit} User={'Credit'} />
                         </div>
                         <div id='OFW-Details'>
-                            <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
+                            <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto '} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
                         </div>
                         <div id="Employment-History" className="w-full">
                             <EmploymentHistoryTable data={value} isEdit={isEdit} />
                         </div>
-                        <div id='Credit-History' className="w-full">
+                        <div id='Credit-History' className="w-full ">
                             <CreditHistory data={value} receive={receive} isEdit={isEdit} />
                         </div>
                         <div id='Owned-Assets' className="w-full">
@@ -615,12 +615,12 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         {
             label: <div className='flex flex-row'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs Display={'USER'} classname={'h-[47vh] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} />,
+            children: <UploadDocs Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[43vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} />,
         },
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount classname={'h-[12rem]'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount classname={'h-[14rem]'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
         },
         {
             label: <div className='flex flex-row'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
