@@ -1,15 +1,13 @@
 import React, { useRef } from 'react';
 import ViewApprovalAmount from './approvalAmount/ViewApprovalAmount';
 import EditApprovalAmount from './approvalAmount/EditApprovalAmount';
-import { FloatButton, notification, ConfigProvider } from 'antd';
+import { Button, notification, ConfigProvider } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import AmountTable from './approvalAmount/AmountTable';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
-import { mmddyy } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
-import { GetBranchCode, GetPurposeId } from '@api/base-api/BaseApi';
 import StatusRemarks from './StatusRemarks';
-import { Hckfi } from '@utils/FixedData';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
 
@@ -46,11 +44,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         }
     };
 
-    function GetChannelId(command) {
-        var getId = Hckfi().find(x => x.value === command || x.label === command).value;
-        return getId;
-    }
-
     async function updateData() {
         const value = {
             LoanAppId: data.loanIdCode,
@@ -86,47 +79,99 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     return (
         <div className={classname}>
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+
+            <div className='w-full h-[45vh] overflow-y-auto'>
             {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                 <ViewApprovalAmount loading={loading} data={data} User={User} />
             ) : (
                 <EditApprovalAmount data={data} receive={receive} User={User} />
             )}
-
+             {!isEdit && (
+                <div className="w-[73rem] mb-[2rem] mt-[1rem] mx-auto">
+                    <AmountTable data={data} receive={receive} User="Credit" creditisEdit={false} loading={false} />
+                </div>
+            )}
+            </div>
             {contextHolder}
             {/*(*/GetData('ROLE').toString() === '60' &&
                 /*['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) &&*/ (
-                    <FloatButton.Group
-                        shape="circle"
-                        style={{ right: 24, bottom: 24 }}
-                    >
-                        {isEdit ? (
-                            <>
-                                <FloatButton
-                                    className="bg-green-500"
-                                    icon={<SaveOutlined className="text-[#3b0764]" />}
-                                    tooltip="Save"
-                                    onClick={() => { toggleEditMode(); }}
-                                />
-                                <FloatButton
-                                    className="bg-red-500"
-                                    icon={<CloseOutlined />}
-                                    tooltip="Cancel"
-                                    onClick={() => {
-                                        setEdit(false);
-                                        queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
+                    <ConfigProvider
+            theme={{
+                token: {
+                    fontSize: 14,
+                    borderRadius: 8,
+                    fontWeightStrong: 600,
+                    colorText: '#ffffff',
+                },
+            }}
+        >
+            <div className="w-full p-8 flex justify-center items-center h-[5rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 
+                            space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
+                {isEdit ? (
+                    <>
+                        {/* Save Button */}
+                        <ConfigProvider
+                            theme={{
+                                token: {
+                                    colorPrimary: '#2b972d',
+                                    colorPrimaryHover: '#34b330',
+                                },
+                            }}
+                        >
+                            <Button
+                                type="primary"
+                                icon={<SaveOutlined />}
+                                onClick={() => { toggleEditMode(); }}
+                                size="large"
+                            >
+                                SAVE
+                            </Button>
+                        </ConfigProvider>
 
-                                    }}
-                                />
-                            </>
-                        ) : (
-                            <FloatButton
-                                className="bg-[#3b0764] text-white"
-                                icon={<EditOutlined className="text-[#1ad819]" />}
-                                tooltip="Edit"
-                                onClick={toggleEditMode}
-                            />
-                        )}
-                    </FloatButton.Group>
+                        {/* Cancel Button */}
+                        <ConfigProvider
+                            theme={{
+                                token: {
+                                    colorPrimary: '#dc3545',
+                                    colorPrimaryHover: '#f0aab1',
+                                },
+                            }}
+                        >
+                            <Button
+                                type="primary"
+                                icon={<CloseOutlined />}
+                                onClick={() => {
+                                    setEdit(false);
+                                    queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+                                }}
+                                size="large"
+                            >
+                                CANCEL
+                            </Button>
+                        </ConfigProvider>
+                    </>
+                ) : (
+                    <ConfigProvider
+                        theme={{
+                            token: {
+                                colorPrimary: '#3b0764',
+                                colorPrimaryHover: '#6b21a8',
+                            },
+                        }}
+                    >
+                        {/* Edit Button */}
+                        <Button
+                            type="primary"
+                            icon={<EditOutlined />}
+                            onClick={toggleEditMode}
+                            size="large"
+                        >
+                            EDIT
+                        </Button>
+                    </ConfigProvider>
+                )}
+            </div>
+        </ConfigProvider>
                 )}
         </div>
     );

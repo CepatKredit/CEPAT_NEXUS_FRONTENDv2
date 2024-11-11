@@ -2,7 +2,8 @@ import * as React from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Card } from 'antd'
 import { motion } from 'framer-motion'
-
+import { useDataContainer } from '@context/PreLoad';
+import { CHECK_TILE_NAME } from '@utils/Conditions';
 import { TbUserScreen } from 'react-icons/tb';
 import { FaFileCircleExclamation } from 'react-icons/fa6';
 import { FaFileCircleQuestion } from 'react-icons/fa6';
@@ -31,8 +32,9 @@ import { MdCancel } from 'react-icons/md';
 import { FaThumbsDown } from 'react-icons/fa';
 import { BiRedo } from 'react-icons/bi';
 
-function AnimatedCard({ value, path }) {
+function AnimatedCard({ path }) {
 
+    const { GET_DATA_COUNTER } = useDataContainer()
     const colorList = ['#283618', '#29274c', '#FF8C00', '#3bceac', '#532b88',
         '#DB7093', '#8B4513', '#006d77', '#B8860B', '#008B8B',
         '#293241', '#00a6fb', '#003566', '#4a4e69', '#0f4c5c',
@@ -318,10 +320,11 @@ function AnimatedCard({ value, path }) {
         }
     }
 
-    const randomNumberInRange = (min, max) => {
-        return Math.floor(Math.random()
-            * (max - min + 1)) + min;
-    };
+    function LOAD_COUNT() {
+        let count = '0'
+        GET_DATA_COUNTER?.filter((x) => x.status.includes(CHECK_TILE_NAME(path))).map((x) => { count = x.statusCount.toString(); })
+        return count
+    }
 
     return (
         <motion.div
@@ -338,7 +341,7 @@ function AnimatedCard({ value, path }) {
                     </div>
                 </div>
                 <div className='flex flex-col absolute right-5 text-right bottom-5 right-5'>
-                    <p className='text-4xl text-white font-bold'>{value}</p>
+                    <p className='text-4xl text-white font-bold'>{LOAD_COUNT()}</p>
                     <p className='mt-[5px] text-md text-white font-bold'>{name}</p>
                 </div>
             </Card>

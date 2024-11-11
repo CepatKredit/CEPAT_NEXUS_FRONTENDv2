@@ -217,7 +217,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
         if (editable) {
             childNode = editing ?
                 (<Form.Item style={{ margin: 0 }} name={dataIndex}
-                    rules={[{ required: true, message: `${title} is required.`, },]}>
+                    rules={dataIndex === 'docxType' ? [{ required: true, message: `${title} is required.` }] : []}>
                     {dataIndex === 'docxType'
                         ? (<Select ref={inputRef} value={fileList[record.key].status} onKeyDown={(e) => { if (e.key.toUpperCase() === 'ENTER') { save() } }}
                             onBlur={save} className='w-[100%]' options={docTypeList?.map((x) => ({ value: x.docsType, label: x.docsType, }))} />)
@@ -245,13 +245,10 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
     const CheckList = useQuery({
         queryKey: ['CheckList'],
         queryFn: async () => {
-            let count = 0;
             let checker = false
-            fileList.map((x) => {
-                if (x.remarks.toUpperCase() === 'PLEASE INPUT REMARKS' ||
-                    x.remarks.toUpperCase() === 'PLEASE SELECT STATUS') { count += 1 }
+            fileList.forEach((x) => {
+                if (  x.status.toUpperCase() === 'PLEASE SELECT STATUS') { checker = true; }
             })
-            if (count >= 1) { checker = true }
             return checker
         },
         refetchInterval: 500,

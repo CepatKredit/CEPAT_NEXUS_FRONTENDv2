@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import Logo from "@assets/images/logo.png";
 
 import Modal_Result from "@components/loanApplication/Modal_Result";
-import createInitialAppDetails from "@utils/IntialValues";
 import {
   isValidLoanDetails,
   isValidOFWDetails,
@@ -21,7 +20,6 @@ import {
 import { getLoanApplicationSteps } from "@components/loanApplication/LoanApplicationSteps";
 import { useAppDetailsEffects, useDirectLoan } from "@hooks/LoanApplicationHooks";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
-
 
 function LoanApplication() {
     React.useEffect(() => {
@@ -33,28 +31,25 @@ function LoanApplication() {
       return () => window.removeEventListener("beforeunload", unloadCallBack);
     }, []);
 
-  // Control if it is direct / lc / marketing
-  // let direct = true;
   document.title = "Loan Application Form";
 
   const [loanrendered, setloanrendered] = React.useState(false);
   const [ofwrendered, setofwrendered] = React.useState(false);
   const [benrendered, setbenrendered] = React.useState(false);
 
-  const [api, contextHolder] = notification.useNotification();
   const [getLoanDetail, setLoanDetail] = React.useState();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [getStep, setStep] = React.useState(0);
   const [confirm, setconfirm] = React.useState(true);
 
-  const {getAppDetails, setAppDetails, direct, resetAppDetails } = React.useContext(LoanApplicationContext)
+  const {getAppDetails, setAppDetails, direct, resetAppDetails, api } = React.useContext(LoanApplicationContext)
 
   const [loadings, setLoadings] = React.useState(false);
   const [getDetails, setDetails] = React.useState();
   const { directLoan } = useDirectLoan(setDetails, setLoadings, setIsModalOpen)
-
+  console.log("HII", getAppDetails)
   const lc_loandetails =
-    !getAppDetails.dataPrivacy || parseInt(getAppDetails.loanAmount) < 30000 || !isValidLoanDetails(getAppDetails);
+    !getAppDetails.dataPrivacy || !isValidLoanDetails(getAppDetails);
 
   const lc_ofwdetails = !isValidOFWDetails(getAppDetails);
 
@@ -83,6 +78,10 @@ function LoanApplication() {
 
   const onClickNext = () => {
     setStep(getStep + 1);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const onClickBack = () => {
@@ -94,7 +93,7 @@ function LoanApplication() {
 
   const applyDirectLoan = () => {
     directLoan(direct)
-    resetAppDetails();
+   // resetAppDetails();
   };
 
   const cancelModal = () => {

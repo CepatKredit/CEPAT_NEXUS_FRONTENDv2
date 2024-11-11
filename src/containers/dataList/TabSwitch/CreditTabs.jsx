@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Tabs, Space, Anchor, FloatButton, notification, ConfigProvider } from 'antd';
+import { Tabs, Space, Anchor, Button, notification, ConfigProvider } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { MdApproval } from "react-icons/md";
 import { MdOutlineUpdate } from "react-icons/md";
@@ -36,18 +36,22 @@ import { UpdateLoanDetails } from '@utils/LoanDetails';
 import StatusRemarks from '../TabList/StatusRemarks';
 
 function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading }) {
-    React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
+    //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
     const { GetStatus } = ApplicationStatus();
-    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || '');
+    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
     function onChangeTab(e) {
+        //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
+        //if(validate)
+        //console.log(e)
         setActiveKey(e);
         localStorage.setItem('activeTab', e);
         navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
     }
+
     const [addCoborrower, setAddCoborrower] = React.useState(false);
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
@@ -166,7 +170,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             DepartureDate: value.ofwDeptDate ? mmddyy(value.ofwDeptDate) : '',
             LoanType: value.loanType,
             Purpose: value.loanPurpose,
-            Amount:value.loanAmount? parseFloat(value.loanAmount.toString().replaceAll(',', '')): 0.00,
+            Amount: value.loanAmount ? parseFloat(value.loanAmount.toString().replaceAll(',', '')) : 0.00,
             //Channel: value.channelId,
             //Consultant: value.consultName,
             //ConsultantNo: value.consultNumber,
@@ -195,7 +199,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             PEP: value.PEP || null,
             CivilStatus: value.ofwmstatus || null,
             SpouseName: value.ofwspouse || '',
-            SpouseBirthday:value.ofwspousebdate? mmddyy(value.ofwspousebdate) : '',
+            SpouseBirthday: value.ofwspousebdate ? mmddyy(value.ofwspousebdate) : '',
             SpSrcIncome: value.SpSrcIncome || null,
             SpIncome: value.SpIncome ? parseFloat(value.SpIncome.toString().replaceAll(',', '')) : 0.00,
             MarriedPBCB: value.MarriedPBCB ? 1 : 0,
@@ -216,16 +220,16 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             OfwPoBRemarks: value.OfwPoBRemarks || '',
 
             IsCurrPerm: value.ofwSameAdd ? 1 : 0,
-            PerProvinceId: value.ofwPermProv|| '',
-            PerMunicipalityId: value.ofwPermMunicipality|| '',
-            PerBarangayId: value.ofwPermBarangay|| '',
-            PerAddress1: value.ofwPermStreet|| '',
+            PerProvinceId: value.ofwPermProv || '',
+            PerMunicipalityId: value.ofwPermMunicipality || '',
+            PerBarangayId: value.ofwPermBarangay || '',
+            PerAddress1: value.ofwPermStreet || '',
 
             IsPermProv: value.ofwProvSameAdd ? 1 : 0,
-            ProAddress1: value.ofwprovStreet|| '',
-            ProBarangayId: value.ofwprovBarangay|| '',
-            ProMunicipalityId: value.ofwprovMunicipality|| '',
-            ProProvinceId: value.ofwprovProv|| '',
+            ProAddress1: value.ofwprovStreet || '',
+            ProBarangayId: value.ofwprovBarangay || '',
+            ProMunicipalityId: value.ofwprovMunicipality || '',
+            ProProvinceId: value.ofwprovProv || '',
 
             ValidId: value.ofwvalidid ? parseInt(value.ofwvalidid) : null,
             ValidIdNo: value.ofwidnumber || '',
@@ -269,7 +273,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             BenMiddleName: value.benmname || '',
             BenLastName: value.benlname || '',
             BenSuffix: value.bensuffix || null,
-            BenBirthday:value.benbdate? mmddyy(value.benbdate) : '',
+            BenBirthday: value.benbdate ? mmddyy(value.benbdate) : '',
             BenGender: value.bengender || null,
             BenEmail: value.benemail || '',
             BenMobileNo: value.benmobile || null,
@@ -325,8 +329,8 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 AcbFbProfile: value.coborrowfblink,
                 AcbGrpChat: value.AcbGrpChat || '',
                 AcbRelationship: value.AcbRelationship || null,
-                AcbSrcIncome: value.AcbSrcIncome || '',
-                AcbReligion: value.AcbReligion || '',
+                AcbSrcIncome: value.AcbSrcIncome || 0,
+                AcbReligion: value.AcbReligion || 0,
                 AcbFormerOFW: value.AcbFormerOFW ? 1 : 0,
                 AcbLastReturn: value.AcbLastReturn || '',
                 AcbPlanAbroad: value.AcbPlanAbroad ? (value.AcbPlanAbroad == 1 ? 1 : 0) : null,
@@ -338,8 +342,8 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 AcbBarangay: value.coborrowBarangay || '',
                 AcbMunicipality: value.coborrowMunicipality || '',
                 AcbProvince: value.coborrowProv || '',
-                AcbStayMonths: value.AcbStayMonths,
-                AcbStayYears: value.AcbStayYears,
+                AcbStayMonths: value.AcbStayMonths || 0,
+                AcbStayYears: value.AcbStayYears || 0,
                 AcbLandMark: value.AcbLandMark || '',
                 AcbPoBRemarks: value.AcbPoBRemarks || '',
                 AcbRentAmount: value.AcbRentAmount ? parseFloat(value.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
@@ -353,17 +357,17 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             AcbMiddleName: value.coborrowmname || '',
             AcbLastName: value.coborrowlname || '',
             AcbSuffix: value.coborrowsuffix || 0,
-            AcbBirthday: value.coborrowbdate? mmddyy(value.coborrowbdate) : '',
-            AcbGender: value.coborrowgender || null,
-            AcbCivilStatus: value.coborrowmstatus || null,
+            AcbBirthday: value.coborrowbdate ? mmddyy(value.coborrowbdate) : '',
+            AcbGender: value.coborrowgender || 0,
+            AcbCivilStatus: value.coborrowmstatus || 0,
             AcbDependent: value.coborrowdependents || 0,
             AcbEmail: value.coborrowemail || '',
-            AcbMobileNo: value.coborrowmobile || null,
-            AcbMobileNo2: value.coborrowothermobile || null,
+            AcbMobileNo: value.coborrowmobile || '',
+            AcbMobileNo2: value.coborrowothermobile || '',
             AcbFbProfile: value.coborrowfblink || '',
             AcbSpouseName: value.coborrowspousename || '',
             AcbSpouseBirthday: value.coborrowerspousebdate ? mmddyy(value.coborrowerspousebdate) : '',
-            AcbOwnership: value.coborrowresidences || null,
+            AcbOwnership: value.coborrowresidences || 0,
             AcbAddress1: value.coborrowStreet || '',
             AcbBarangayId: value.coborrowBarangay || '',
             AcbMunicipalityId: value.coborrowMunicipality || '',
@@ -502,16 +506,16 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
 
     const TabsItems = [
         {
-            label: <div className='flex flex-rows'><GrDuplicate style={{ fontSize: '20px', marginRight: 5 }} /><span>Deduplication</span></div>,
+            label: <div className='flex flex-row'><GrDuplicate style={{ fontSize: '20px', marginRight: 5 }} /><span>Deduplication</span></div>,
             key: 'deduplication',
             children: <Deduplication data={value} />,
         },
         {
-            label: <div className='flex flex-rows'><TbFileDescription style={{ fontSize: '20px', marginRight: 5 }} /><span>CRAM</span></div>,
+            label: <div className='flex flex-row'><TbFileDescription style={{ fontSize: '20px', marginRight: 5 }} /><span>CRAM</span></div>,
             key: 'CRAM',
             children: (
-                <Space>
-                    <div className='h-[65vh] w-[75vw] overflow-y-auto'>
+                <div className='w-full flex flex-row'>
+                    <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-10 overflow-y-auto">
                         <div className="sticky top-0 z-[1000] bg-white">
                             <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
                         </div>
@@ -521,28 +525,26 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                         <div id='OFW-Details'>
                             <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
                         </div>
-                        <div id="Employment-History" className="w-[70rem]">
+                        <div id="Employment-History" className="w-full">
                             <EmploymentHistoryTable data={value} isEdit={isEdit} />
                         </div>
-                        <div id='Credit-History' className="w-[70rem]">
+                        <div id='Credit-History' className="w-full">
                             <CreditHistory data={value} receive={receive} isEdit={isEdit} />
                         </div>
-                        <div id='Owned-Assets' className="w-[70rem]">
+                        <div id='Owned-Assets' className="w-full">
                             <AssetTable data={value} receive={receive} isEdit={isEdit} />
                         </div>
-                        <div id='Owned-Properties' className="w-[70rem]">
+                        <div id='Owned-Properties' className="w-full">
                             <OwnedProperties data={value} receive={receive} isEdit={isEdit} />
                         </div>
-                        <div id='Character-Reference' className="w-[70rem]">
+                        <div id='Character-Reference' className="w-full">
                             <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
                         </div>
                         <div id='Beneficiary-Details'>
-                            <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit}
-                                sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
+                            <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
                         </div>
-
                     </div>
-                    <div className='h-[65vh] bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none'>
+                    <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[58vh] sm:h-[50vh] md:h-[55vh] lg:h-[58vh] xl:h-[60vh] 2xl:h-[58vh] 3xl:h-[63vh]">
                         <ConfigProvider
                             theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
                             <Anchor
@@ -557,81 +559,153 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                                     { key: 'Owned-Properties', href: '#Owned-Properties', title: 'Owned Properties' },
                                     { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
                                     { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
-
                                 ]}
                             />
                         </ConfigProvider>
                     </div>
-                </Space>
+                </div>
             ),
         },
         {
-            label: <div className='flex flex-rows'><MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>,
+            label: (
+                <div className='flex flex-row'>
+                    <MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} />
+                    <span>NDI</span>
+                </div>
+            ),
             key: 'NDI',
-            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={GetData('ROLE').toString() === '60'} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />,
+            children: (
+                <div className='w-full flex flex-row'>
+                    <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-10">
+                        <div id='OFW-NDI'>
+                            <NDI 
+                                valueAmount={valueAmount} 
+                                event={(e) => { event(e) }} 
+                                isEdit={true} 
+                                data={value} 
+                                isReadOnly={true} 
+                                activeKey={activeKey} 
+                                sepcoborrowfname={sepcoborrowfname} 
+                            />
+                        </div>
+                    </div>
+                    <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[58vh] sm:h-[50vh] md:h-[55vh] lg:h-[58vh] xl:h-[60vh] 2xl:h-[57vh] 3xl:h-[64vh]">
+                        <ConfigProvider
+                            theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}
+                        >
+                            <Anchor
+                                replace
+                                affix={false}
+                                items={[
+                                    { key: 'OFW-NDI', href: '#OFW-NDI', title: 'NDI OFW' },
+                                    { key: 'BORROWER-NDI', href: '#BORROWER-NDI', title: 'NDI Beneficiary' },
+                                    { key: 'ACB-NDI', href: '#ACB-NDI', title: 'NDI ACB' },
+                                ]}
+                            />
+                        </ConfigProvider>
+                    </div>
+                </div>
+            ),
         },
         {
-            label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
+            label: <div className='flex flex-row'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
             key: 'internal-checking',
-            children: <InternalChecking classname={'h-[65vh] w-[86vw] mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }}
-             sepcoborrowfname={sepcoborrowfname}  ClientId={ClientId} Uploader={Uploader}/>,
+            children: <InternalChecking classname={'h-[65vh] w-full mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} sepcoborrowfname={sepcoborrowfname} ClientId={ClientId} Uploader={Uploader} />,
         },
         {
-            label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
+            label: <div className='flex flex-row'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs Display={'USER'} classname={'h-[47vh] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'} 
-                ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} />,
+            children: <UploadDocs Display={'USER'} classname={'h-[47vh] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} />,
         },
         GetData('ROLE').toString() === '60' && {
-            label: <div className="flex flex-rows"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
+            label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount classname={'h-[12rem]'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
         },
         {
-            label: <div className='flex flex-rows'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
+            label: <div className='flex flex-row'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
             key: 'audit-trail',
             children: <AuditTrail />,
         },
         {
-            label: <div className='flex flex-rows'><MdOutlineUpdate style={{ fontSize: '20px', marginRight: 5 }} /><span>Update Status</span></div>,
+            label: <div className='flex flex-row'><MdOutlineUpdate style={{ fontSize: '20px', marginRight: 5 }} /><span>Update Status</span></div>,
             key: 'last-update-by',
             children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} /></div>,
         },
     ].filter(Boolean);
 
     return (
-        <>
+        <div className='w-full'>
             {contextHolder}
-            <Tabs defaultActiveKey={tabs} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
+            <Tabs defaultActiveKey={tabs} activeKey={activeKey} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
             {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && (
-                <FloatButton.Group shape="circle" style={{ right: 24, bottom: 24 }}>
-                    {isEdit ? (
-                        <>
-                            <FloatButton
-                                className="bg-green-500"
-                                icon={<SaveOutlined className="text-[#3b0764]" />}
-                                tooltip="Save"
-                                onClick={() => { toggleEditMode() }}
-                            />
-                            <FloatButton
-                                className="bg-red-500"
-                                icon={<CloseOutlined />}
-                                tooltip="Cancel"
-                                onClick={() => { setEdit(false) }}
-                            />
-                        </>
-                    ) : (
-                        <FloatButton
-                            className="bg-[#3b0764] text-white"
-                            icon={<EditOutlined className="text-[#1ad819]" />}
-                            tooltip="Edit"
-                            onClick={() => { toggleEditMode() }}
-                            disabled={disabledStatuses.includes(GetStatus)}
-                        />
-                    )}
-                </FloatButton.Group>
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            fontSize: 14,
+                            borderRadius: 8,
+                            fontWeightStrong: 600,
+                            colorText: '#ffffff',
+                        },
+                    }}
+                >
+                    <div className="flex justify-center items-center mr-40 mb-2 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 3xl:mb-16 4xl:mb-20
+         space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
+                        {isEdit ? (
+                            <>
+                                <ConfigProvider
+                                    theme={{
+                                        token: {
+                                            colorPrimary: '#2b972d',
+                                            colorPrimaryHover: '#34b330',
+                                        },
+                                    }}>
+                                    <Button
+                                        type="primary"
+                                        icon={<SaveOutlined />}
+                                        onClick={toggleEditMode}
+                                        size="large"
+                                        className="-mt-5">SAVE
+                                    </Button>
+                                </ConfigProvider>
+                                <ConfigProvider
+                                    theme={{
+                                        token: {
+                                            colorPrimary: '#dc3545',
+                                            colorPrimaryHover: '#f0aab1',
+                                        },
+                                    }}>
+                                    <Button
+                                        type="primary"
+                                        icon={<CloseOutlined />}
+                                        onClick={() => setEdit(false)}
+                                        size="large"
+                                        className="-mt-5">CANCEL
+                                    </Button>
+                                </ConfigProvider>
+                            </>
+                        ) : (
+                            <ConfigProvider
+                                theme={{
+                                    token: {
+                                        colorPrimary: '#3b0764', // Purple color for EDIT button
+                                        colorPrimaryHover: '#6b21a8', // Darker purple on hover
+                                    },
+                                }}>
+                                <Button
+                                    type="primary"
+                                    icon={<EditOutlined />}
+                                    onClick={toggleEditMode}
+                                    size="large"
+                                    className="-mt-5"
+                                    disabled={disabledStatuses.includes(GetStatus)}>EDIT
+                                </Button>
+                            </ConfigProvider>
+                        )}
+                    </div>
+                </ConfigProvider>
             )}
-        </>
+        </div>
     );
 }
 

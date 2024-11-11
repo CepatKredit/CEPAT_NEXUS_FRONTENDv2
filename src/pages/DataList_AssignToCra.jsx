@@ -91,7 +91,7 @@ function DataList_AssignToCra() {
                             onChange={(e) => { setSearch(e.target.value.toUpperCase()) }}
                             value={getSearch} />
                     </div>
-                    <ResponsiveTable columns={ColumnList('11')} height={'calc(100vh - 505px)'} width={'100%'}
+                    <ResponsiveTable columns={ColumnList('11', AppDataListQuery)} height={'calc(100vh - 505px)'} width={'100%'}
                         rows={AppDataListQuery.data?.filter((x) =>
                             x.loanAppCode.includes(getSearch) ||
                             x.recDate.includes(getSearch) ||

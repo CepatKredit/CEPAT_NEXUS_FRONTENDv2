@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import ViewBeneficiaryDetails from './beneficiaryDetails/ViewBeneficiaryDetails';
 import EditBeneficiaryDetails from './beneficiaryDetails/EditBeneficiaryDetails';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
-import { FloatButton, ConfigProvider, Button, notification,Spin } from 'antd';
+import { FloatButton, ConfigProvider, Button, notification, Spin } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import StatusRemarks from './StatusRemarks';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
@@ -23,10 +23,10 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
 
     const valid_addcoborrow = !data.coborrowfname || data.coborrowfname.trim() === "" ||
         !data.coborrowlname || data.coborrowlname.trim() === "" ||
-        !data.coborrowbdate || !data.coborrowsuffix || !data.coborrowgender ||
+        !data.coborrowbdate || !data.coborrowsuffix || !data.coborrowgender /*||
         !data.coborrowmstatus || !data.coborrowdependents || !data.coborrowfblink ||
         !data.coborrowemail || !data.coborrowmobile ||
-        ((data.coborrowmstatus === 2 || data.coborrowmstatus === 5 || data.coborrowmstatus === 6) && (!data.coborrowspousename || !data.coborrowerspousebdate))
+        ((data.coborrowmstatus === 2 || data.coborrowmstatus === 5 || data.coborrowmstatus === 6) && (!data.coborrowspousename || !data.coborrowerspousebdate))*/
 
     const benReq = [
         'benfname',
@@ -86,14 +86,23 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
     }
     const toggleEditMode = async () => {
         if (isEdit) {
-            console.log(!showCoBorrower, !Required())
-            if ((!showCoBorrower && !valid_addcoborrow && !Required()) || (showCoBorrower && !Required())) {
+            //console.log(!showCoBorrower, !Required())
+            /* if ((!showCoBorrower && !valid_addcoborrow && !Required()) || (showCoBorrower && !Required())) {
+                 await updateData();
+             } else {
+                 api['warning']({
+                     message: 'Please complete all required fields.',
+                     description: 'Please complete all required details.',
+                 });
+             }*/
+            if ((!showCoBorrower && !valid_addcoborrow ) || (showCoBorrower )) {
                 await updateData();
             } else {
                 api['warning']({
-                    message: 'Please complete all required fields.',
-                    description: 'Please complete all required details.',
+                    message: 'Incomplete Additional Co-Borrower Info',
+                    description: 'Please Input the Basic Info of Additional Co-Borrower',
                 });
+                
             }
         } else {
             setEdit(true);
@@ -106,54 +115,54 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             Tab: 3,
             //...(!!data.benfname && !!data.benlname && !!data.bensuffix? )
             BorrowersCode: data.ofwBorrowersCode,
-            BenFirstName: data.benfname,
-            BenMiddleName: data.benmname,
-            BenLastName: data.benlname,
-            BenSuffix: data.bensuffix,
-            BenBirthday: mmddyy(data.benbdate),
-            BenGender: data.bengender,
-            BenDependent: parseInt(data.bendependents) || 0,
-            BenFbProfile: data.benfblink,
-            BenEmail: data.benemail,
-            BenMobileNo: data.benmobile,
-            BenMobileNo2: data.benothermobile,
-            BenCivilStatus: data.benmstatus,
-            BenSpouseName: data.benspouse,
-            BenSpouseBirthday: mmddyy(data.benspousebdate),
+            BenFirstName: data.benfname || '',
+            BenMiddleName: data.benmname || '',
+            BenLastName: data.benlname || '',
+            BenSuffix: data.bensuffix || null,
+            BenBirthday:data.benbdate? mmddyy(data.benbdate) : '',
+            BenGender: data.bengender || null,
+            BenDependent:data.bendependents? parseInt(data.bendependents) : 0,
+            BenFbProfile: data.benfblink || '',
+            BenEmail: data.benemail || '',
+            BenMobileNo: data.benmobile || '',
+            BenMobileNo2: data.benothermobile || '',
+            BenCivilStatus: data.benmstatus || null,
+            BenSpouseName: data.benspouse || '',
+            BenSpouseBirthday:data.benspousebdate? mmddyy(data.benspousebdate) : '',
 
-            BenOwnership: data.benresidences,
-            BenStayYears: data.benstayyears,
-            BenStayMonths: data.benstaymonths,
-            BenProvinceId: data.benpresprov,
-            BenMunicipalityId: data.benpresmunicipality,
-            BenBarangayId: data.benpresbarangay,
-            BenAddress1: data.benpresstreet,
-            BenRentAmount: parseFloat(data.BenRentAmount.toString().replaceAll(',', '')),
+            BenOwnership: data.benresidences || null,
+            BenStayYears: data.benstayyears || 0,
+            BenStayMonths: data.benstaymonths || 0,
+            BenProvinceId: data.benpresprov || '',
+            BenMunicipalityId: data.benpresmunicipality || '',
+            BenBarangayId: data.benpresbarangay || '',
+            BenAddress1: data.benpresstreet || '',
+            BenRentAmount:data.BenRentAmount? parseFloat(data.BenRentAmount.toString().replaceAll(',', '')) : 0.00,
             ModUser: jwtDecode(token).USRID,
 
             ...(!!sepcoborrowfname ? {
-                AcbFirstName: data.coborrowfname,
-                AcbMiddleName: data.coborrowmname,
-                AcbLastName: data.coborrowlname,
-                AcbSuffix: data.coborrowsuffix || 0,
-                AcbBirthday: mmddyy(data.coborrowbdate),
-                AcbGender: data.coborrowgender,
-                AcbCivilStatus: data.coborrowmstatus,
+                AcbFirstName: data.coborrowfname || '',
+                AcbMiddleName: data.coborrowmname || '',
+                AcbLastName: data.coborrowlname || '',
+                AcbSuffix: data.coborrowsuffix || null,
+                AcbBirthday:data.coborrowbdate? mmddyy(data.coborrowbdate):'' ,
+                AcbGender: data.coborrowgender || null,
+                AcbCivilStatus: data.coborrowmstatus || null,
                 AcbDependent: data.coborrowdependents || 0,
-                AcbEmail: data.coborrowemail,
-                AcbMobileNo: data.coborrowmobile,
+                AcbEmail: data.coborrowemail || '',
+                AcbMobileNo: data.coborrowmobile || '',
                 AcbMobileNo2: data.coborrowothermobile || '',
-                AcbFbProfile: data.coborrowfblink,
+                AcbFbProfile: data.coborrowfblink || '',
                 AcbSpouseName: data.coborrowspousename || '',
-                AcbSpouseBirthday: mmddyy(data.coborrowerspousebdate),
-                AcbOwnership: data.coborrowresidences,
+                AcbSpouseBirthday:data.coborrowerspousebdate? mmddyy(data.coborrowerspousebdate) : '',
+                AcbOwnership: data.coborrowresidences || 0,
                 AcbAddress1: data.coborrowStreet || '',
                 AcbBarangay: data.coborrowBarangay || '',
                 AcbMunicipality: data.coborrowMunicipality || '',
                 AcbProvince: data.coborrowProv || '',
-                AcbStayMonths: data.AcbStayMonths,
-                AcbStayYears: data.AcbStayYears,
-                AcbRentAmount: parseFloat(data.AcbRentAmount.toString().replaceAll(',', '')),
+                AcbStayMonths: data.AcbStayMonths || 0,
+                AcbStayYears: data.AcbStayYears || 0,
+                AcbRentAmount:data.AcbRentAmount? parseFloat(data.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
 
             } : {})
 
@@ -162,27 +171,27 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
         const dataHolder = {
             BorrowersCode: BorrowerId,
             Tab: 3,
-            AcbFirstName: data.coborrowfname,
-            AcbMiddleName: data.coborrowmname,
-            AcbLastName: data.coborrowlname,
+            AcbFirstName: data.coborrowfname || '',
+            AcbMiddleName: data.coborrowmname || '',
+            AcbLastName: data.coborrowlname || '',
             AcbSuffix: data.coborrowsuffix || 0,
-            AcbBirthday: mmddyy(data.coborrowbdate),
-            AcbGender: data.coborrowgender,
-            AcbCivilStatus: data.coborrowmstatus,
+            AcbBirthday:data.coborrowbdate? mmddyy(data.coborrowbdate) : '',
+            AcbGender: data.coborrowgender ,
+            AcbCivilStatus: data.coborrowmstatus || 0,
             AcbDependent: data.coborrowdependents || 0,
-            AcbEmail: data.coborrowemail,
-            AcbMobileNo: data.coborrowmobile,
+            AcbEmail: data.coborrowemail || '',
+            AcbMobileNo: data.coborrowmobile || '',
             AcbMobileNo2: data.coborrowothermobile || '',
-            AcbFbProfile: data.coborrowfblink,
+            AcbFbProfile: data.coborrowfblink || '',
             AcbSpouseName: data.coborrowspousename || '',
             AcbSpouseBirthday: data.coborrowerspousebdate ? mmddyy(data.coborrowerspousebdate) : '',
-            AcbOwnership: data.coborrowresidences,
-            AcbAddress1: data.coborrowStreet,
-            AcbBarangayId: data.coborrowBarangay,
-            AcbMunicipalityId: data.coborrowMunicipality,
-            AcbProvinceId: data.coborrowProv,
-            AcbStayMonths: data.AcbStayMonths,
-            AcbStayYears: data.AcbStayYears,
+            AcbOwnership: data.coborrowresidences || 0,
+            AcbAddress1: data.coborrowStreet || '',
+            AcbBarangayId: data.coborrowBarangay || '',
+            AcbMunicipalityId: data.coborrowMunicipality || '',
+            AcbProvinceId: data.coborrowProv || '',
+            AcbStayMonths: data.AcbStayMonths || 0,
+            AcbStayYears: data.AcbStayYears || 0,
             RecUser: jwtDecode(token).USRID
         };
         console.log('bentest', value)
@@ -233,54 +242,103 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
 
     }
     return (<>
-        <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-            <Spin spinning={loading} tip="Loading..." className="flex justify-center items-center">
                 {contextHolder}
                 <div className={classname}>
-                    {User !== 'Credit' && User !== 'Lp' && (<div className="sticky top-0 z-[1000] bg-white">
+                {User !== 'Credit' && User !== 'Lp' && (
                         <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-                    </div>)}
+                    )}
+                    <div className={`${
+                            User === 'MARKETING' 
+                                ? 'w-full h-[58vh] xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[47vh] 3xl:h-[55vh] overflow-y-auto' 
+                                : ''
+                        }`}
+                    >                    
                     {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                         <ViewBeneficiaryDetails data={data} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} />
                     ) : (
                         <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
                             showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
                     )}
+                    </div>
                     {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
-                        <FloatButton.Group
-                            shape="circle"
-                            style={{ right: 24, bottom: 24 }}
-                        >
-                            {isEdit ? (
-                                <>
-                                    <FloatButton
-                                        className="bg-green-500"
-                                        icon={<SaveOutlined className="text-[#3b0764]" />}
-                                        tooltip="Save"
-                                        onClick={() => { toggleEditMode(); }}
-                                    />
-
-                                    <FloatButton
-                                        className="bg-red-500"
-                                        icon={<CloseOutlined />}
-                                        tooltip="Cancel"
-                                        onClick={() => setEdit(false)}
-                                    />
-                                </>
-                            ) : (
-                                <FloatButton
-                                    className="bg-[#3b0764] text-white"
-                                    icon={<EditOutlined className="text-[#1ad819]" />}
-                                    tooltip="Edit"
-                                    onClick={toggleEditMode}
-                                />
-                            )}
-                        </FloatButton.Group>
-                    )}
+                            <ConfigProvider
+                                theme={{
+                                    token: {
+                                        fontSize: 14,
+                                        borderRadius: 8,
+                                        fontWeightStrong: 600,
+                                        colorText: '#ffffff',
+                                    },
+                                }}
+                            >
+                                    <div className=" w-full bg-white pt-10 flex 
+                                    justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 
+                                     space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3 ">
+                                    {isEdit ? (
+                                        <>
+                                            <ConfigProvider
+                                                theme={{
+                                                    token: {
+                                                        colorPrimary: '#2b972d',
+                                                        colorPrimaryHover: '#34b330',
+                                                    },
+                                                }}
+                                            >
+                                                <Button
+                                                    type="primary"
+                                                    icon={<SaveOutlined />}
+                                                    onClick={toggleEditMode}
+                                                    size="large"
+                                                    className="-mt-5"
+                                                >
+                                                    SAVE
+                                                </Button>
+                                            </ConfigProvider>
+        
+                                            <ConfigProvider
+                                                theme={{
+                                                    token: {
+                                                        colorPrimary: '#dc3545',
+                                                        colorPrimaryHover: '#f0aab1',
+                                                    },
+                                                }}
+                                            >
+                                                <Button
+                                                    type="primary"
+                                                    icon={<CloseOutlined />}
+                                                    onClick={() => setEdit(false)}
+                                                    size="large"
+                                                    className="-mt-5"
+                                                >
+                                                    CANCEL
+                                                </Button>
+                                            </ConfigProvider>
+                                        </>
+                                    ) : (
+                                        <ConfigProvider
+                                            theme={{
+                                                token: {
+                                                    colorPrimary: '#3b0764',
+                                                    colorPrimaryHover: '#6b21a8',
+                                                },
+                                            }}
+                                        >
+                                            <Button
+                                                type="primary"
+                                                icon={<EditOutlined />}
+                                                onClick={toggleEditMode}
+                                                size="large"
+                                                className="-mt-5"
+                                            >
+                                                EDIT
+                                            </Button>
+                                        </ConfigProvider>
+                                    )}
+                                </div>
+                            </ConfigProvider>
+                        )}
                 </div>
-                </Spin>
-                </ConfigProvider>
-            </>);
+    </>);
 }
 
-            export default BeneficiaryDetails;
+export default BeneficiaryDetails;

@@ -1,5 +1,5 @@
-import React, { useEffect,useState } from 'react';
-import { Flex, notification, Checkbox, Input } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Flex, notification, Checkbox, Input, Form } from 'antd';
 import LabeledInput from '@components/marketing/LabeledInput';
 import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
 import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
@@ -34,7 +34,7 @@ import { useStore } from 'zustand';
 
 
 function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, BorrowerId, addCoborrower }) {
-    const {Count} = useStore(getDependentsCount);
+    const { Count } = useStore(getDependentsCount);
     const [isEdit, setEdit] = React.useState(false);
     const { TextArea } = Input;
     const [api, contextHolder] = notification.useNotification();
@@ -44,21 +44,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     }, []);
 
     useEffect(() => {
-       
-            receive({ name: 'ofwdependents', value: Count });
-     
+
+        receive({ name: 'ofwdependents', value: Count - 1 });
+
     }, [Count]);
-
-    React.useEffect(() => 
-    {
-        console.log('testcount......', data.ofwdependents);
-    },[data.ofwdependents])
-
-
-   /* React.useEffect(() =>
-    {
-        console.log('counting.....', Count);
-    },[Count])*/
 
     const calculateAge = (birthday) => {
         const today = new Date();
@@ -82,8 +71,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
     return (
         <div>
+
+
             {contextHolder}
             <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
+
+
                 <LabeledInput_Fullname
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
@@ -143,6 +136,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         receive({ name: 'age', value: age });
                     }}
                     value={data.ofwbdate}
+                    classification={'Age Restriction'}
                     category={'marketing'}
                     disabled={isEdit}
                     isEdit={isEdit}
@@ -212,16 +206,15 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     isEdit={isEdit}
                     rendered={rendered}
                 />
-                            {User === 'Credit' ? (
+                {User === 'Credit' ? (
                     <div className="mt-5 w-[18.75rem] h-[3.875rem">
                         <label className="font-bold">Facebook Name / Profile <span className="text-red-500">*</span></label>
                         <input
                             type="text"
-                            className={`w-full p-2 border rounded-lg border-gray-300 ${
-                                !isEdit && data.ofwfblink && data.ofwfblink.startsWith('https://')
-                                    ? 'text-blue-500 underline'
-                                    : 'text-black'
-                            }`}
+                            className={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.ofwfblink && data.ofwfblink.startsWith('https://')
+                                ? 'text-blue-500 underline'
+                                : 'text-black'
+                                }`}
                             placeholder="Facebook Name / Profile"
                             value={data.ofwfblink || ''}
                             readOnly={isEdit}
@@ -237,8 +230,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             onChange={(e) => {
                                 if (!isEdit) {
                                     const inputValue = e.target.value.trim();
-                                    const formattedValue = inputValue.startsWith('https://') 
-                                        ? inputValue 
+                                    const formattedValue = inputValue.startsWith('https://')
+                                        ? inputValue
                                         : `https://www.facebook.com/${inputValue}`;
                                     receive({ name: 'ofwfblink', value: formattedValue });
                                 }
@@ -289,7 +282,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         showSearch
                     />)}
-                 {(User === 'Credit' && addCoborrower )&& (
+                {(User === 'Credit' && addCoborrower) && (
                     <LabeledSelect_Relationship
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
@@ -342,7 +335,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 />
                 {User === 'Credit' && (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
                     <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
-                    <Checkbox
+                        <Checkbox
                             checked={data.MarriedPBCB}
                             onClick={() => {
                                 receive({ name: 'MarriedPBCB', value: !data.MarriedPBCB });
@@ -410,7 +403,25 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     )
                 )}
 
-                {
+                <Form.Item
+                    label="Dependents"
+                    colon={false}
+                 //   labelCol={{ span: 24 }}
+                    wrapperCol={{ span: 24 }}
+                    className="w-[18.75rem] mt-4 font-bold"
+                >
+                    <Input
+                        value={data.ofwdependents || '0'}
+                        className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
+                        readOnly
+                        placeholder="No. of Dependents"
+                    />
+                </Form.Item>
+
+
+
+
+                {/*
                     <LabeledInput
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
@@ -426,15 +437,18 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         required={false}
 
                     />
-                }
-                <div className="w-[68rem] mt-[2rem] mx-auto">
-                <RelativesTable BorrowerId={BorrowerId}  onUpdateCount={(count) => setRelativesCount(count)}  />
+
+                */}
+               {User !== 'LC' && (
+                <div className="w-full mt-[2rem] mx-auto">
+                    <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} />
                 </div>
+            )}
 
             </Flex>
 
-            <div className="mt-[13rem]">
-                <SectionHeader title="Present Address" />
+            <div className={`${User === 'LC' ? 'mt-[2rem]' : 'mt-[13rem]'}`}>
+            <SectionHeader title="Present Address" />
             </div>
             <Flex className='w-full' justify='center' gap='small' wrap>
 
@@ -446,11 +460,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     type={"present"}
                     disabled={isEdit}
                     category={"marketing"}
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 w-[16.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     vertical_algin={true}
                     rendered={rendered}
-                    />
+                />
                 <LabeledSelect
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
@@ -515,7 +529,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         receiveY={(e) => receive({ name: 'ofwlosYear', value: e })}
                         receiveM={(e) => receive({ name: 'ofwlosMonth', value: e })}
                         rendered={rendered}
-                        placeHolder={'Length of Stay'}
                     />)}
                 {User === 'LC'
                     ? (<></>)
@@ -527,8 +540,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         showSearch={true}
                         readOnly={isEdit}
-                        value_prov = {data.ofwPresProv}
-                        value_mun = {data.ofwPresMunicipality}
+                        value_prov={data.ofwPresProv}
+                        value_mun={data.ofwPresMunicipality}
                         value={data.collectionarea}
                         get_presprov={data.ofwPresProv}
                         receive={(e) => receive({ name: 'collectionarea', value: e })}
@@ -550,7 +563,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"permanent"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 w-[16.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}
@@ -571,7 +584,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"provincial"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 w-[16.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}
@@ -678,8 +691,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         showSearch
                         rendered={rendered}
                     />)}
-                {User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL' ) && (
-                     <LabeledInput_Fullname
+                {User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL') && (
+                    <LabeledInput_Fullname
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Principal Employer <span className="text-red-500">*</span></>}
@@ -837,8 +850,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     </div>
                 </div>)}
             <Flex className='w-full' justify='center' gap='small' wrap>
-           
-                {(User === 'Credit' && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') ) && (
+
+                {(User === 'Credit' && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL')) && (
                     <DatePicker_Deployment
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label="font-bold"
@@ -880,7 +893,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             rendered={rendered}
                         />
                         <LabeledInput_Fullname
-                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                            className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>IMO Vessel <span className="text-red-500">*</span></>}
                             placeHolder='IMO Vessel'
@@ -891,7 +904,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             rendered={rendered}
                         />
                         <LabeledInput
-                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                            className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>Type of Vessel <span className="text-red-500">*</span></>}
                             placeHolder='Type of Vessel'
@@ -920,7 +933,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'Credit' && data.loanProd === '0303-VA' && (
                     <LabeledInput_NotRequired
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Exact Location'}
                         placeHolder='Exact Location'
@@ -931,7 +944,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'Credit' && data.loanProd === '0303-WA' && (
                     <LabeledInput_NotRequired
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Possible Vacation'}
                         placeHolder='Possible Vacation'
@@ -942,7 +955,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'Credit' && (
                     <LabeledInput
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={<>Beneficiary or Allotment Name <span className="text-red-500">*</span></>}
                         placeHolder='Allotment Name'
@@ -967,7 +980,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             />)*/}
                 {User === 'Credit' && (
                     <LabeledCurrencyInput
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label="font-bold"
                         value={data.AllotAmount}
                         receive={(e) => receive({ name: 'AllotAmount', value: e })}
