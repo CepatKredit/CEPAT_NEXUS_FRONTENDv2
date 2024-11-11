@@ -8,6 +8,9 @@ import { useQuery } from "@tanstack/react-query";
 import { warning } from "framer-motion";
 import LabeledTextArea_Street from "./LabeledTextArea_Street";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { ProvinceList } from "@api/addressGetList/ProvinceAPI";
+import { MunicipalityAreaList } from "@api/addressGetList/MunicipalityAreaAPI";
+import { BarangayList } from "@api/addressGetList/BarangayAPI";
 function AddressContainer({
   rendered,
   // api,
@@ -145,6 +148,39 @@ function AddressContainer({
     enabled: true,
     retryDelay: 1000,
   });
+
+
+// const provinceList = ProvinceList() || [];
+
+// const getMunFromProvCode = MunicipalityAreaList(type, {
+//   ofwPresProv: data.ofwPresProv,
+//   ofwPermProv: data.ofwPermProv,
+//   benpresprov: data.benpresprov,
+//   ofwprovProv: data.ofwprovProv,
+//   coborrowProv: data.coborrowProv,
+//   ofwSameAdd: data.ofwSameAdd,
+//   bensameadd: data.bensameadd,
+//   ofwProvSameAdd: data.ofwProvSameAdd,
+//   coborrowSameAdd: data.coborrowSameAdd
+// });
+
+// const getBarangayFromProvCode = BarangayList(type, {
+//   ofwPresMunicipality: data.ofwPresMunicipality,
+//   ofwPermMunicipality: data.ofwPermMunicipality,
+//   benpresmunicipality: data.benpresmunicipality,
+//   ofwprovMunicipality: data.ofwprovMunicipality,
+//   coborrowMunicipality: data.coborrowMunicipality,
+//   ofwSameAdd: data.ofwSameAdd,
+//   bensameadd: data.bensameadd,
+//   ofwProvSameAdd: data.ofwProvSameAdd,
+//   coborrowSameAdd: data.coborrowSameAdd
+// });  
+
+// console.log("PROVINCE", provinceList)
+
+// console.log("MUNI", getMunFromProvCode)
+
+// console.log("BARANGAY", getBarangayFromProvCode)
 
   return (
     <>

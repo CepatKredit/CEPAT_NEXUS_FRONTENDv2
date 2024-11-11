@@ -25,7 +25,6 @@ export async function GET_LIST(path) {
 
 //Nico 11/09/2024 since axios is already a promise 
 //I think taking advantage of async/await is much cleaner and more optimized since it is not calling Promise twice
-
 export async function GET_LIST_ASYNC (path) {
     try {
         const res = await axios.get(path);

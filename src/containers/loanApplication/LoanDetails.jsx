@@ -19,26 +19,19 @@ import LabeledSelect_BranchMarketing from "@components/loanApplication/LabeledSe
 import LabeledSelect_Consultant from "@components/loanApplication/LabeledSelect_Consultant";
 import { getHCKFILoanCases } from "@utils/Validations";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import SelectOpt from "@components/optimized/SelectOpt";
+import DatePickerOpt from "@components/optimized/DatePickerOpt";
+import { LoanProductList } from "@api/loanApplicationsGetList/LoanProductAPI";
+import { useDataContainer } from "@context/PreLoad";
 
-function LoanDetails({
-  loanrendered,
-  setloanrendered,
-  direct
-}) {
-
+function LoanDetails({ loanrendered, setloanrendered, direct }) {
   const { getAppDetails, updateAppDetails } = React.useContext(
     LoanApplicationContext
   );
+
+  const {GET_LOAN_PRODUCT_LIST} = useDataContainer()
   const [readMore, setReadMore] = React.useState(false);
 
-  // const [loanStates, setLoanStates] = React.useState({
-  //   validDDate: loanrendered,
-  //   consulant: loanrendered,
-  //   consulNo: loanrendered,
-  //   branch: loanrendered,
-  //   referred: loanrendered,
-  // });
-  // const { validDDate, consulant, consulNo, branch, referred } = loanStates;
 
   const classname_main =
     "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
@@ -50,7 +43,7 @@ function LoanDetails({
   }, [setloanrendered]);
 
   const disableDate_deployment = React.useCallback((current) => {
-    // Disable past dates including today
+    
     return current && current < dayjs().startOf("day");
   }, []);
 
@@ -112,31 +105,76 @@ function LoanDetails({
         ) : (
           <></>
         )}
-        <LabeledSelectLoanProduct
+        <SelectOpt
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={<>Select Loan Product <span className="text-red-500">*</span></>}
-          category={"direct"}
-          placeHolder="Loan Product"
+          label={
+            <>
+              Select Loan Product <span className="text-red-500">*</span>
+            </>
+          }
+          value={getAppDetails.loanProd}
           disabled={!getAppDetails.dataPrivacy}
-          rendered={loanrendered}
+          placeHolder={"Loan Product"}
+          required={true}
           showSearch
+          notValidMsg={"Loan Product is required."}
+          KeyName={"loanProd"}
+          receive={(e) => {
+            updateAppDetails({
+              name: "loanProd",
+              value: e,
+            });
+          }}
+          options={GET_LOAN_PRODUCT_LIST.map((product) => ({
+            value: product.code,
+            label: product.description,
+          }))}
         />
         {getAppDetails.loanProd === "0303-DHW" ||
         getAppDetails.loanProd === "0303-VL" ||
         getAppDetails.loanProd === "0303-WL" ? (
-          <DatePicker_Deployment
-            className_dmain={classname_main}
-            className_label={className_label}
-            className_dsub={className_dsub}
-            label={<>OFW Departure Date <span className="text-red-500">*</span></>}
-            disabled={false || !getAppDetails.dataPrivacy}
-            category={"direct"}
-            placeHolder={"MM-DD-YYYY"}
-            disabledate={disableDate_deployment}
-            rendered={loanrendered}
-          />
+          <>
+            <DatePickerOpt
+              className_dmain={classname_main}
+              className_label={className_label}
+              className_dsub={className_dsub}
+              label={
+                <>
+                  OFW Departure Date <span className="text-red-500">*</span>
+                </>
+              }
+              required={true}
+              placeHolder={"MM-DD-YYYY"}
+              value={getAppDetails.loanDateDep}
+              receive={(e) => {
+                updateAppDetails({
+                  name: "loanDateDep",
+                  value: e,
+                });
+              }}
+              notValidMsg={"OFW Departure Date is required."}
+              disabled={false || !getAppDetails.dataPrivacy}
+              KeyName={"loanDateDep"}
+              disabledate={disableDate_deployment}
+            />
+            {/* <DatePicker_Deployment
+              className_dmain={classname_main}
+              className_label={className_label}
+              className_dsub={className_dsub}
+              label={
+                <>
+                  OFW Departure Date <span className="text-red-500">*</span>
+                </>
+              }
+              disabled={false || !getAppDetails.dataPrivacy}
+              category={"direct"}
+              placeHolder={"MM-DD-YYYY"}
+              disabledate={disableDate_deployment}
+              rendered={loanrendered}
+            /> */}
+          </>
         ) : (
           <></>
         )}
@@ -144,7 +182,11 @@ function LoanDetails({
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={<>Select Loan Purpose <span className="text-red-500">*</span></>}
+          label={
+            <>
+              Select Loan Purpose <span className="text-red-500">*</span>
+            </>
+          }
           category={"direct"}
           placeHolder={"Loan Purpose"}
           disabled={!getAppDetails.dataPrivacy}
@@ -155,7 +197,11 @@ function LoanDetails({
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={<>Loan Amount <span className="text-red-500">*</span></>}
+          label={
+            <>
+              Loan Amount <span className="text-red-500">*</span>
+            </>
+          }
           fieldName="loanAmount"
           category={"direct"}
           placeHolder={"Loan Amount"}
@@ -166,7 +212,11 @@ function LoanDetails({
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={<>Loan Terms (in Months) <span className="text-red-500">*</span></>}
+          label={
+            <>
+              Loan Terms (in Months) <span className="text-red-500">*</span>
+            </>
+          }
           fieldName="loanTerms"
           data={LoanTerms(12)}
           placeHolder={"Loan Terms"}
@@ -174,14 +224,17 @@ function LoanDetails({
           disabled={!getAppDetails.dataPrivacy}
           rendered={loanrendered}
         />
-        {!direct ? (
-          null
-        ) : (
+        {!direct ? null : (
           <LabeledSelect
             className_dmain={classname_main}
             className_label={className_label}
             className_dsub={className_dsub}
-            label={<>How did you know about Cepat Kredit Financing? <span className="text-red-500">*</span></>}
+            label={
+              <>
+                How did you know about Cepat Kredit Financing?{" "}
+                <span className="text-red-500">*</span>
+              </>
+            }
             fieldName="hckfi"
             data={Hckfi()}
             category={"direct"}
@@ -216,7 +269,11 @@ function LoanDetails({
                 className_dmain={classname_main}
                 className_label={className_label}
                 className_dsub={className_dsub}
-                label={<>Loan Consultant Name<span className="text-red-500">*</span></>}
+                label={
+                  <>
+                    Loan Consultant Name<span className="text-red-500">*</span>
+                  </>
+                }
                 fieldName="consultName"
                 placeHolder="Consultant Fullname"
                 // required={false}
@@ -231,7 +288,11 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={<>Loan Consultant Name <span className="text-red-500">*</span></>}
+              label={
+                <>
+                  Loan Consultant Name <span className="text-red-500">*</span>
+                </>
+              }
               fieldName="consultName"
               placeHolder="Consultant Fullname"
               // required={false}
@@ -269,7 +330,11 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={<>Loan Consultant Number <span className="text-red-500">*</span></>}
+              label={
+                <>
+                  Loan Consultant Number <span className="text-red-500">*</span>
+                </>
+              }
               fieldName="consultNumber"
               placeHolder={"Consultant No."}
               category={"direct"}
@@ -306,7 +371,11 @@ function LoanDetails({
                   className_dmain={classname_main}
                   className_label={className_label}
                   className_dsub={className_dsub}
-                  label={<>Select Branch <span className="text-red-500">*</span></>}
+                  label={
+                    <>
+                      Select Branch <span className="text-red-500">*</span>
+                    </>
+                  }
                   // value={getAppDetails.loanBranch}
                   // placeHolder={"Branch"}
                   // receive={(e) => {
@@ -335,7 +404,11 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={<>Select Branch <span className="text-red-500">*</span></>}
+              label={
+                <>
+                  Select Branch <span className="text-red-500">*</span>
+                </>
+              }
               // value={getAppDetails.loanBranch}
               placeHolder={"Branch"}
               // receive={(e) => {
@@ -365,7 +438,11 @@ function LoanDetails({
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
-              label={<>Referred By <span className="text-red-500">*</span></>}
+              label={
+                <>
+                  Referred By <span className="text-red-500">*</span>
+                </>
+              }
               data={ReferredBy()}
               showSearch={true}
               fieldName="loanReferredBy"

@@ -15,11 +15,67 @@ import { loanterm } from "@utils/FixedData";
 import { UpdateLoanDetails } from "@utils/LoanDetails";
 import { mmddyy } from "@utils/Converter";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { isValidLoanDetails } from "@utils/Validations";
 
 function LoanDetails({ /*data*/ receive, loancases }) {
   const [isEdit, setEdit] = React.useState(false);
   // const [api, contextHolder] = notification.useNotification();
   const { api, getAppDetails } = React.useContext(LoanApplicationContext);
+  const fieldsRef = React.useRef({});
+
+  // const loanValidation = !isValidLoanDetails(getAppDetails) ||
+  // ([15, 6].includes(getAppDetails.hckfi) && !getAppDetails.loanBranch);
+
+  const validateFields = () => {
+    let isValid = true;
+
+    // Validate each field that is required and show errors for empty ones
+    const requiredFields = [
+      { key: "loanProd", value: getAppDetails.loanProd },
+      { key: "loanPurpose", value: getAppDetails.loanPurpose },
+      { key: "loanAmount", value: getAppDetails.loanAmount },
+      { key: "loanTerms", value: getAppDetails.loanTerms },
+      {
+        key: "loanBranch",
+        value: getAppDetails.loanBranch,
+        condition: [15, 6].includes(getAppDetails.hckfi),
+      },
+      {
+        key: "loanDateDep",
+        value: getAppDetails.loanDateDep,
+        condition: ["0303-DHW", "0303-VL", "0303-WL"].includes(
+          getAppDetails.loanProd
+        ),
+      },
+      {
+        key: "consultName",
+        value: getAppDetails.consultName,
+        condition: getAppDetails.hckfi === 10,
+      },
+      {
+        key: "consultNumber",
+        value: getAppDetails.consultNumber,
+        condition: getAppDetails.hckfi === 10,
+      },
+      {
+        key: "loanReferredBy",
+        value: getAppDetails.loanReferredBy,
+        condition: getAppDetails.hckfi === 14,
+      },
+    ];
+
+    requiredFields.forEach(({ key, value, condition = true }) => {
+      if (!value && condition) {
+        fieldsRef.current[key]?.setErrorStatus(true);
+        if (isValid) {
+          fieldsRef.current[key]?.focus();
+        }
+        isValid = false;
+      }
+    });
+
+    return isValid && isValidLoanDetails(getAppDetails); 
+  };
 
   const disableDate_deployment = React.useCallback((current) => {
     // Disable past dates including today
@@ -58,8 +114,8 @@ function LoanDetails({ /*data*/ receive, loancases }) {
       key: "1",
       label: <span className="font-semibold text-black">Loan Product</span>,
       children:
-        loanProducts.data?.find((x) => x.code === getAppDetails.loanProd)?.description ||
-        "",
+        loanProducts.data?.find((x) => x.code === getAppDetails.loanProd)
+          ?.description || "",
     },
     ...(getAppDetails.loanDateDep &&
     ["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd)
@@ -80,7 +136,9 @@ function LoanDetails({ /*data*/ receive, loancases }) {
       label: <span className="font-semibold text-black">Loan Purpose</span>,
       children:
         loanPurpose.data?.find(
-          (x) => x.id === getAppDetails.loanPurpose || x.purpose === getAppDetails.loanPurpose
+          (x) =>
+            x.id === getAppDetails.loanPurpose ||
+            x.purpose === getAppDetails.loanPurpose
         )?.purpose || "",
     },
     {
@@ -156,7 +214,12 @@ function LoanDetails({ /*data*/ receive, loancases }) {
   }
 
   const queryClient = useQueryClient();
+
   async function updateData() {
+    if (!validateFields()) {
+      return;
+    }
+
     const value = {
       LoanAppId: getAppDetails.loanIdCode,
       Tab: 1,
@@ -244,9 +307,6 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             placeHolder="Loan Product"
             value={getAppDetails.loanProd}
             options={loanProducts}
-            // receive={(e) => {
-            //     receive({ name: 'loanProd', value: e });
-            // }}
             category="marketing"
           />
 
@@ -259,7 +319,6 @@ function LoanDetails({ /*data*/ receive, loancases }) {
               className_dsub=""
               label="OFW Departure Date"
               value={getAppDetails.loanDateDep}
-              // receive={(e) => { receive({ name: 'loanDateDep', value: e }); }}
               disabled={!isEdit}
               category="marketing"
               placeHolder="MM-DD-YYYY"
@@ -273,7 +332,6 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             className_dsub=""
             category="marketing"
             value={getAppDetails.loanPurpose}
-            // receive={(e) => { receive({ name: 'loanPurpose', value: e }); }}
             label="Loan Purpose"
             placeHolder="Purpose"
           />
@@ -283,7 +341,6 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             className_dmain="w-full h-[3rem] mt-4"
             className_label="font-bold"
             value={getAppDetails.loanBranch}
-            // receive={(e) => receive({ name: 'loanBranch', value: e })}
             label="Assigned Branch"
             category="marketing"
             placeHolder={"Branch"}
@@ -297,7 +354,6 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             placeHolder="Loan Amount"
             value={getAppDetails.loanAmount}
             fieldName="loanAmount"
-            // receive={(e) => { receive({ name: 'loanAmount', value: e }); }}
             category="marketing"
           />
 
@@ -310,12 +366,6 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             value={getAppDetails.loanTerms}
             data={loanterm()}
             fieldName="loanTerms"
-            // receive={(e) => {
-            //     receive({
-            //         name: 'loanTerms',
-            //         value: e
-            //     });
-            // }}
             category="marketing"
           />
         </div>
@@ -327,6 +377,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             <Button
               type="primary"
               icon={<SaveOutlined />}
+              // disabled={loanValidation}
               onClick={() => {
                 updateData();
               }}
