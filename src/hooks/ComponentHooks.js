@@ -18,7 +18,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     }, [search]);
 
     const handleSelectChange = useCallback((selectedValue) => {
-        setStatus(selectedValue ? '' : 'error');
+        setStatus(selectedValue ? 'success' : 'error');
         receive(selectedValue || undefined);
     }, [receive]);
 
@@ -59,7 +59,7 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
 
     const handleInputChange = (e, readOnly) => {
         if (readOnly) return;
-        if(KeyName === 'ofwDeptDate'){ // reset the date when there is disable related in datepicker
+        if(KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep'){ // reset the date when there is disable related in datepicker
             setDatePickerValue('')
         }else{
             setDatePickerValue(CheckDateValid(e.target.value)? dayjs(e.target.value): '')
@@ -87,21 +87,28 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
             if (debouncedInput.length === 10 && date.isValid()) {
                 setIconVisible(true);
                 if (KeyName==='Age Restriction' && checkAgeisValid(date)) {
-                    setStatus('');
+                    setStatus('success');
                     receive(date);
                 }else if(KeyName==='ofwDeptDate' && checkDeployisValid(date)){
-                    setStatus('');
+                    setStatus('success');
                     receive(date);
+                }else if(KeyName==='loanDateDep' && checkDeployisValid(date)){
+                    setStatus('success');
+                    receive(date);
+                    console.log("DUMAAN DITO AAAY", status)
               /*  }else if((KeyName===undefined || KeyName==='Normal') && CheckDateValid(date)){
                     setStatus('');
                     receive(date); */
                 }else{
                     setStatus('error');
                     receive();
+                    console.log("DUMAAN DITO ELSE 1", status)
+                    console.log("DUMAAN DITO ELSE LAMAN", debouncedInput.length)
                 }
             } else {
                 setStatus('error');
                 receive();
+                console.log("DUMAAN DITO ELSE 2", status)
             }
         }, 200);
 
@@ -112,11 +119,13 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
         if (rendered) { // Not rendered
             setIconVisible(true);
             if (KeyName==='Age Restriction' && checkAgeisValid(value ? dayjs(value).format('MM-DD-YYYY') : '')) {
-                setStatus('');
+                setStatus('success');
             }else if(KeyName==='ofwDeptDate' && checkDeployisValid(value ? dayjs(value).format('MM-DD-YYYY') : '')){
-                setStatus('');
+                setStatus('success');
           /*  }else if((KeyName===undefined || KeyName==='Normal') && CheckDateValid(date)){
                 setStatus(''); */
+            }else if(KeyName==='loanDateDep' && checkDeployisValid(value ? dayjs(value).format('MM-DD-YYYY') : '')){
+                setStatus('success');
             }else{
                 setStatus('error');
             }

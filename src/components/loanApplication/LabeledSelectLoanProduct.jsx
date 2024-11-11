@@ -30,6 +30,7 @@ function LabeledSelectLoanProduct({
     (e) => updateAppDetails({ name: "loanProd", value: e })
   );
 
+  
   const ProductSelect = useQuery({
     queryKey: ["getProductSelect"],
     queryFn: async () => {

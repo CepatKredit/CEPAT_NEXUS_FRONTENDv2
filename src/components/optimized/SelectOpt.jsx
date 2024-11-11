@@ -17,7 +17,7 @@ function SelectOpt({
     required,
     showSearch,
     options,
-    notValid,
+    notValidMsg,
     keyName,
 }) {
     const [search, setSearchInput] = useState('');
@@ -26,7 +26,7 @@ function SelectOpt({
         filteredOptions,
         handleSelectChange,
         handleKeyDown
-    } = SelectComponentHooks( search, receive, options, setSearchInput,keyName );
+    } = SelectComponentHooks( search, receive, options, setSearchInput, keyName );
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),
@@ -36,6 +36,13 @@ function SelectOpt({
     const handleSearch = (value) => {
         debouncedSearch(value);
     };
+
+    const handleBlur = () => {
+        if (required && !value) {
+            handleSelectChange('')
+        }
+    };
+
     return (
         <div className={className_dmain}>
             <label className={className_label}>{label}</label>
@@ -55,6 +62,7 @@ function SelectOpt({
                         size='large'
                         placeholder={placeHolder}
                         onChange={handleSelectChange}
+                        onBlur={handleBlur}
                         showSearch={showSearch}
                         filterOption={false}
                         onSearch={handleSearch}
@@ -65,14 +73,14 @@ function SelectOpt({
                         suffixIcon={
                             !disabled && (required || required === undefined) && status === 'error' ? (
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
-                            ) : (
+                            ) : status === 'success' ? (
                                 <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
-                            )
+                            ): null
                         }
                     />
                     {!disabled && (required || required === undefined) && status === 'error' && (
                         <div className='text-xs text-red-500 pt-1 pl-2'>
-                            {notValid}
+                            {notValidMsg}
                         </div>
                     )}
                 </ConfigProvider>

@@ -140,6 +140,11 @@ function LoanApplicationTracker({ data }) {
             ...updatedFields,
             ofwjobtitle: "DOMESTIC HELPER",
           };
+        } else {
+          updatedFields = {
+            ...updatedFields,
+            ofwjobtitle: "",
+          };
         }
         return {
           ...prevDetails,
