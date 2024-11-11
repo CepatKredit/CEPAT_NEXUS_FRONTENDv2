@@ -54,7 +54,7 @@ function SelectExpense({ data, event, excludeItems }) {
     const handleScroll = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setScrollCount((prevCount) => {
-                if (prevCount + 1 >= 15) {
+                if (prevCount + 1 >= 5) {
                     if (selectRef.current) {
                         selectRef.current.blur();
                     }

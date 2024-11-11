@@ -15,6 +15,7 @@ import * as React from "react";
                 setStatus("");
                 setIcon(true);  
                 receive(e);
+                
             }
         };
 

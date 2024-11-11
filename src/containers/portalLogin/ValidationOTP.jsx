@@ -48,6 +48,12 @@ function ValidationOTP({ username, accessList }) {
         setOTP(e)
     }
 
+    function keydown(e) {
+        if (e.key === 'Enter') onClickValidate.mutate();
+        if (e.key === 'Tab') e.preventDefault();
+
+    }
+
     React.useEffect(() => {
         setTime(300)
         setStartTime(Date.now())
@@ -137,13 +143,26 @@ function ValidationOTP({ username, accessList }) {
                         )}
 
                         <span className='text-2xl font-bold'>OTP Verification</span>
-                    </div> 
+                    </div>
                     <div className='pb-4'>
                         <span className='text-sm'>Enter the OTP sent to your&nbsp;
-                            <span className='font-bold'>{maskEmail(username)}</span>
+                            <span className='font-bold'>{maskEmail(username)}</span>f
                         </span>
                     </div>
-                    <Input.OTP value={getOTP} formatter={(str) => str.replace(/[^0-9]/g, '')} onChange={(e) => onChangeOTP(e)} disabled={isLocked} onKeyDown={(e) => { if (e.key === 'Enter') onClickValidate.mutate() }} />
+                    <Input.OTP
+                        value={getOTP}
+                        formatter={(str) => str.replace(/[^0-9]/g, '')}
+                        onChange={(e) => onChangeOTP(e)}
+                        disabled={isLocked}
+                        onKeyDown={(e) => {
+                            if ((e.key && !/[0-9]/.test(e.key) && e.key !== 'Backspace')|| e.key === 'Tab') {
+                                e.preventDefault();
+                            }else if(e.key === 'Enter'){
+                                onClickValidate.mutate();
+                            }
+                            keydown(e);
+                        }}
+                    />
                     <div className='pt-1'>
                         {
                             time === 0

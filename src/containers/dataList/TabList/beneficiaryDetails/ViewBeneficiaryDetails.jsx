@@ -76,29 +76,39 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         { key: '21', label: <span className={`font-semibold ${data.benmstatus ? 'text-black' : 'text-orange-500'}`}>Marital Status</span>, children: MaritalStatus().find(status => status.value === data.benmstatus)?.label || '' },
     ].filter(Boolean);
 
-
     const beneficiaryAddressItems = [
-        { key: '26', label: <span className='font-semibold text-black'>Present Area/Province</span>, children: data.benpresprovname || '' },
-        { key: '27', label: <span className='font-semibold text-black'>Present City/Municipality</span>, children: data.benpresmunicipalityname || '' },
-        { key: '28', label: <span className='font-semibold text-black'>Present Barangay</span>, children: data.benpresbarangayname || '' },
-        { key: '29', label: <span className='font-semibold text-black'>Present Street</span>, children: data.benpresstreet || '' },
-        { key: '30', label: <span className={`font-semibold ${data.benstaymonths && benstayyears ? 'text-black' : 'text-orange-500'}`}>Length of Stay</span>, children: `${data.benstaymonths ? `${data.benstaymonths} months` : ''}${data.benstayyears ? ` and ${data.benstayyears} years` : ''}` },
-        { key: '31', label: <span className='font-semibold text-black'>Type of Residences</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
-        data.benresidences === 3 && { key: '32', label: <span className='font-semibold text-black'>Rent Amount</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenRentAmount)).toString() },
-        (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className='font-semibold text-black'>Landmark</span>, children: data.BenLandMark || '' },
-        (User === 'Credit' || User === 'Lp') && { key: '34', label: <span className='font-semibold text-black'>Proof of Billing Remarks</span>, children: data.BenPoBRemarks || '' },     
+        { key: '26', label: <span className={`font-semibold ${data.benpresprovname ? 'text-black' : 'text-orange-500'}`}>Present Area/Province</span>, children: data.benpresprovname || '' },
+        { key: '27', label: <span className={`font-semibold ${data.benpresmunicipalityname ? 'text-black' : 'text-orange-500'}`}>Present City/Municipality</span>, children: data.benpresmunicipalityname || '' },
+        { key: '28', label: <span className={`font-semibold ${data.benpresbarangayname ? 'text-black' : 'text-orange-500'}`}>Present Barangay</span>, children: data.benpresbarangayname || '' },
+        { key: '29', label: <span className={`font-semibold ${data.benpresstreet ? 'text-black' : 'text-orange-500'}`}>Present Street</span>, children: data.benpresstreet || '' },
+        { key: '30', label: (<span className={`font-semibold ${data.benstaymonths || data.benstayyears ? 'text-black' : 'text-orange-500'}`}> Length of Stay</span> ),children: `${data.benstayyears ? `${data.benstayyears} years` : ''}${ data.benstaymonths || data.benstaymonths === 0 ? ` / ${data.benstaymonths} months` : ''}`},
+        { key: '31', label: <span className={`font-semibold ${data.benresidences ? 'text-black' : 'text-orange-500'}`}>Type of Residences</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className={`font-semibold ${data.BenLandMark ? 'text-black' : 'text-orange-500'}`}>Landmark</span>, children: data.BenLandMark || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '34', label: <span className={`font-semibold ${data.BenPoBRemarks ? 'text-black' : 'text-orange-500'}`}>Proof of Billing Remarks</span>, children: data.BenPoBRemarks || '' },     
     ].filter(Boolean);
 
+    if (data.benresidences === 3) {
+        beneficiaryAddressItems.push({
+            key: '32',
+            label: <span className={`font-semibold ${data.BenRentAmount ? 'text-black' : 'text-orange-500'}`}>Rent Amount</span>,
+            children: data.BenRentAmount ? formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenRentAmount)) : '',
+        });
+    } else if (data.benresidences === 2) {
+        beneficiaryAddressItems.push({
+            key: '32',
+            label: <span className={`font-semibold ${data.BenRentAmount ? 'text-black' : 'text-orange-500'}`}>Monthly Amortization</span>,
+            children: data.BenRentAmount ? formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenRentAmount)) : '',
+        });
+    }
     if (data.benmstatus === 2 || data.benmstatus === 5 || data.benmstatus === 6) {
         beneficiaryItems.push(
-            { key: '22', label: <span className='font-semibold text-black'>Spouse Name</span>, children: data.benspouse || '' },
-            { key: '23', label: <span className='font-semibold text-black'>Spouse Birthdate</span>, children: data.benspousebdate ? mmddyy(data.benspousebdate, 'MM-DD-YYYY') : '' },
-            (User === 'Credit' || User === 'Lp') && { key: '24', label: <span className="font-semibold text-black">Spouse Source of Income</span>, children: SpouseSourceIncome().find(status => status.value === data.BenSpSrcIncome)?.label || '' },
-            (User === 'Credit' || User === 'Lp') && { key: '25', label: <span className="font-semibold text-black">Spouse Income</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenSpIncome)).toString() },
+            { key: '22', label: <span className={`font-semibold ${data.benspouse ? 'text-black' : 'text-orange-500'}`}>Spouse Name</span>, children: data.benspouse || '' },
+            { key: '23', label: <span className={`font-semibold ${data.benspousebdate ? 'text-black' : 'text-orange-500'}`}>Spouse Birthdate</span>, children: data.benspousebdate ? mmddyy(data.benspousebdate, 'MM-DD-YYYY') : '' },
+            (User === 'Credit' || User === 'Lp') && { key: '24', label: <span className={`font-semibold ${data.BenSpSrcIncome ? 'text-black' : 'text-orange-500'}`}>Spouse Source of Income</span>, children: SpouseSourceIncome().find(status => status.value === data.BenSpSrcIncome)?.label || '' },
+            (User === 'Credit' || User === 'Lp') && { key: '25', label: <span className={`font-semibold ${data.BenSpIncome ? 'text-black' : 'text-orange-500'}`}>Spouse Income</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenSpIncome)).toString() },
         );
     }
 
-    
     // Co-Borrower Information
     const coBorrowerItems = [
         { key: '1', label: <span className='font-semibold text-black'>First Name</span>, children: data.coborrowfname || '' },
@@ -139,7 +149,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         { key: '28', label: <span className='font-semibold text-black'>Present City/Municipality</span>, children: data.coborrowMunicipalityname || '' },
         { key: '29', label: <span className='font-semibold text-black'>Present Barangay</span>, children: data.coborrowBarangayname || '' },
         { key: '30', label: <span className='font-semibold text-black'>Present Street</span>, children: data.coborrowStreet || '' },
-        { key: '31', label: <span className='font-semibold text-black'>Length of Stay</span>, children: `${data.AcbStayMonths ? `${data.AcbStayMonths} months` : ''}${data.AcbStayYears ? ` and ${data.AcbStayYears} years` : ''}` },
+        { key: '31', label: (<span className='font-semibold text-black'> Length of Stay</span> ),children: `${data.AcbStayYears ? `${data.AcbStayYears} years` : ''}${ data.AcbStayMonths || data.AcbStayMonths === 0 ? ` / ${data.AcbStayMonths} months` : ''}`},
         (User === 'Credit' || User === 'Lp') && { key: '32', label: <span className='font-semibold text-black'>Landmark</span>, children: data.AcbLandMark || '' },
         (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className='font-semibold text-black'>Proof of Billing Remarks</span>, children: data.AcbPoBRemarks || '' },
         { key: '34', label: <span className='font-semibold text-black'>Type of Residences</span>, children: Residences().find(residence => residence.value === data.coborrowresidences)?.label || '' },
@@ -151,7 +161,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
     const filteredCoBorrowerAddressItems = coBorrowerAddressItems.filter(field => field.children && field.children !== '');
 
     return (
-        <div className="container mt-1 mx-auto p-10 bg-white rounded-lg shadow-md w-[75vw]">
+        <div className="w-full mx-auto mt-1 mb-20 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg">
             <Descriptions title={<div className="text-center"><h2 className="text-2xl font-bold">Beneficiary Information</h2>
                 <div className="mt-2 flex justify-center">
                 <a href={`https://www.google.com/search?q=${encodeURIComponent(`${data.benfname} ${data.benmname} ${data.benlname}`)}`} target="_blank" rel="noopener noreferrer"><FcGoogle className="text-3xl" /></a></div></div>}

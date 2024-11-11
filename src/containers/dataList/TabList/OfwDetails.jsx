@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { FloatButton, notification, Descriptions, ConfigProvider, Spin } from 'antd';
+import { Button, notification, Descriptions, ConfigProvider, Spin } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import ViewOfwDetails from './ofwDetails/ViewOfwDetails';
 import EditOfwDetails from './ofwDetails/EditOfwDetails';
@@ -15,9 +15,7 @@ import StatusRemarks from './StatusRemarks';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
 
-
-
-function OfwDetails({ getTab, classname, data, receive, presaddress, User, BorrowerId, creditisEdit, loading, isEditCRAM }) {
+function OfwDetails({ getTab, classname, data, receive, presaddress, User, BorrowerId, creditisEdit, isEditCRAM }) {
     const [isEdit, setEdit] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
@@ -83,7 +81,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 else { updateData(); }
             }
             else {
-                if (Marketing_valid) { // inlcude marketing valid?
+                if (false) { // inlcude marketing valid?
                     api['warning']({
                         message: 'Incomplete Details',
                         description: 'Please complete all required details.',
@@ -152,61 +150,60 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 LoanAppId: data.loanIdCode,
                 Tab: 2,
                 BorrowersCode: data.ofwBorrowersCode,
-                FirstName: data.ofwfname,
-                MiddleName: data.ofwmname,
-                LastName: data.ofwlname,
-                Suffix: data.ofwsuffix,
-                BirthDay: mmddyy(data.ofwbdate),
-                Gender: data.ofwgender,
-                MobileNo: data.ofwmobile,
-                MobileNo2: data.ofwothermobile,
-                Email: data.ofwemail,
-                FbProfile: data.ofwfblink,
-                GroupChat: data.ofwgroupchat,
-                
+                FirstName: data.ofwfname || '',
+                MiddleName: data.ofwmname || '',
+                LastName: data.ofwlname || '',
+                Suffix: data.ofwsuffix || null,
+                BirthDay: data.ofwbdate ? mmddyy(data.ofwbdate) : '',
+                Gender: data.ofwgender || null,
+                MobileNo: data.ofwmobile || '',
+                MobileNo2: data.ofwothermobile || '',
+                Email: data.ofwemail || '',
+                FbProfile: data.ofwfblink || '',
+                GroupChat: data.ofwgroupchat || '',
 
-                CivilStatus: data.ofwmstatus,
-                SpouseName: data.ofwspouse,
-                SpouseBirthday: mmddyy(data.ofwspousebdate),
-                Dependent: data.ofwdependents,
-                ProvinceId: data.ofwPresProv,
-                MunicipalityId: data.ofwPresMunicipality,
-                BarangayId: data.ofwPresBarangay,
-                Address1: data.ofwPresStreet,
-                Ownership: data.ofwresidences,
+
+                CivilStatus: data.ofwmstatus || null,
+                SpouseName: data.ofwspouse || '',
+                SpouseBirthday: data.ofwspousebdate ? mmddyy(data.ofwspousebdate) : '',
+                Dependent: data.ofwdependents || null,
+                ProvinceId: data.ofwPresProv || '',
+                MunicipalityId: data.ofwPresMunicipality || '',
+                BarangayId: data.ofwPresBarangay || '',
+                Address1: data.ofwPresStreet || '',
+                Ownership: data.ofwresidences || null,
                 RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,
-                Landmark: data.landmark,
-                StayYears: data.ofwlosMonth,
-                StayMonths: data.ofwlosYear,
-                CollectionArea: data.collectionarea,
+                Landmark: data.landmark || '',
+                StayYears: data.ofwlosMonth || 0,
+                StayMonths: data.ofwlosYear || 0,
+                CollectionArea: data.collectionarea || '',
 
                 //set
                 IsCurrPerm: data.ofwSameAdd ? 1 : 0,
                 IsPermProv: data.ofwProvSameAdd ? 1 : 0,
 
-                PerProvinceId: data.ofwPermProv,
-                PerMunicipalityId: data.ofwPermMunicipality,
-                PerBarangayId: data.ofwPermBarangay,
-                PerAddress1: data.ofwPermStreet,
+                PerProvinceId: data.ofwPermProv || '',
+                PerMunicipalityId: data.ofwPermMunicipality || '',
+                PerBarangayId: data.ofwPermBarangay || '',
+                PerAddress1: data.ofwPermStreet || '',
 
-                ProAddress1: data.ofwprovStreet,
-                ProBarangayId: data.ofwprovBarangay,
-                ProMunicipalityId: data.ofwprovMunicipality,
-                ProProvinceId: data.ofwprovProv,
+                ProAddress1: data.ofwprovStreet || '',
+                ProBarangayId: data.ofwprovBarangay || '',
+                ProMunicipalityId: data.ofwprovMunicipality || '',
+                ProProvinceId: data.ofwprovProv || '',
 
                 ValidId: data.ofwvalidid ? parseInt(data.ofwvalidid) : null,
-                ValidIdNo: data.ofwidnumber,
+                ValidIdNo: data.ofwidnumber || '',
 
-                Country: data.ofwcountry,
-                JobTitle: data.ofwjobtitle,
-                Employer: data.ofwcompany,
-                Salary: parseFloat(data.ofwsalary.toString().replaceAll(',', '')),
+                Country: data.ofwcountry || '',
+                JobTitle: data.ofwjobtitle || '',
+                Employer: data.ofwcompany || null,
+                Salary: data.ofwsalary ? parseFloat(data.ofwsalary.toString().replaceAll(',', '')) : 0.00,
 
-                EducationLevel: data.ofwHighestEdu,
-                School: data.ofwschool,
-                Course: data.ofwcourse,
+                EducationLevel: data.ofwHighestEdu || null,
+                School: data.ofwschool || '',
+                Course: data.ofwcourse || '',
                 ModUser: jwtDecode(token).USRID
-
 
             };
 
@@ -240,61 +237,108 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
 
     return (
         <>
-            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                    {contextHolder}
-                    <div className={classname}>
-                        {User !== 'Credit' && User !== 'Lp' && (<div className="sticky top-0 z-[1000] bg-white">
-                            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-                        </div>)}
-                        {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                            <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} loading={loading} />
-                        ) : (
-                            <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
-                        )}
+            {contextHolder}
+            <div className={classname}>
+                {User !== 'Credit' && User !== 'Lp' && (
+                        <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+                )}
+                    <div className={`w-full mt-4 ${
+                    (User === 'MARKETING' || User === 'LC') ? 
+                        (isEdit ? 
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[54vh] 3xl:h-[61vh] overflow-y-auto' 
+                            : 
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[44vh] 3xl:h-[53vh] overflow-y-auto'
+                        )  : ''}`}>      
+                {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
+                    <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
+                ) : (
+                    <EditOfwDetails presaddress={presaddress} BorrowerId={BorrowerId} data={data} receive={receive} User={User} RelativesCount={relativesCount} />
+                )}
 
-                        {!isEditCRAM && !isEdit && User !== 'LC' ? (
-                            <div className="w-[69rem] mb-[10rem] mx-auto ">
-                                <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} />
-                            </div>
-                        ) : (
-                            <></>
-                        )}
-                        {User !== 'Credit' && User !== 'Lp' && (
-                            <FloatButton.Group
-                                shape="circle"
-                                style={{ right: 24, bottom: 24 }}
-                            >
-                                {isEdit ? (
-                                    <>
-                                        <FloatButton
-                                            className="bg-green-500"
-                                            icon={<SaveOutlined className="text-[#3b0764]" />}
-                                            tooltip="Save"
-                                            onClick={() => { toggleEditMode(); }}
-                                        />
-                                        <FloatButton
-                                            className="bg-red-500"
-                                            icon={<CloseOutlined />}
-                                            tooltip="Cancel"
-                                            onClick={() => setEdit(false)}
-                                        />
-                                    </>
-                                ) : (
-                                    <FloatButton
-                                        className="bg-[#3b0764] text-white"
-                                        icon={<EditOutlined className="text-[#1ad819]" />}
-                                        tooltip="Edit"
-                                        onClick={toggleEditMode}
-                                    />
-                                )}
-                            </FloatButton.Group>
-                        )}
+                {!isEditCRAM && !isEdit && User !== 'LC' ? (
+                    <div className="w-full mb-[10rem] mx-auto ">
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} />
                     </div>
-                    </Spin>
+                ) : null}
+        </div>
+                {User !== 'Credit' && User !== 'Lp' && (
+                    <ConfigProvider
+                        theme={{
+                            token: {
+                                fontSize: 14,
+                                borderRadius: 8,
+                                fontWeightStrong: 600,
+                                colorText: '#ffffff',
+                            },
+                        }}
+                    >
+                        <div className=" w-full  pt-14 flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
+                            {isEdit ? (
+                                <>
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#2b972d',
+                                                colorPrimaryHover: '#34b330',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<SaveOutlined />}
+                                            onClick={toggleEditMode}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            SAVE
+                                        </Button>
+                                    </ConfigProvider>
+
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#dc3545',
+                                                colorPrimaryHover: '#f0aab1',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<CloseOutlined />}
+                                            onClick={() => setEdit(false)}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            CANCEL
+                                        </Button>
+                                    </ConfigProvider>
+                                </>
+                            ) : (
+                                <ConfigProvider
+                                    theme={{
+                                        token: {
+                                            colorPrimary: '#3b0764',
+                                            colorPrimaryHover: '#6b21a8',
+                                        },
+                                    }}
+                                >
+                                    <Button
+                                        type="primary"
+                                        icon={<EditOutlined />}
+                                        onClick={toggleEditMode}
+                                        size="large"
+                                        className="-mt-5"
+                                    >
+                                        EDIT
+                                    </Button>
+                                </ConfigProvider>
+                            )}
+                        </div>
                     </ConfigProvider>
-                </>
-                );
+                )}
+            </div>
+        </>
+    );
 }
 
-                export default OfwDetails;
+export default OfwDetails;

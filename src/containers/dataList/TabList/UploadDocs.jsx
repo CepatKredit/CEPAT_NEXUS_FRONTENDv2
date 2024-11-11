@@ -12,9 +12,12 @@ import moment from 'moment'
 import { jwtDecode } from 'jwt-decode';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { useDataContainer } from '@context/PreLoad';
 
 function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
-const [loading, setLoading] = useState(true);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const { GetStatus } = ApplicationStatus()
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
@@ -34,15 +37,28 @@ const [loading, setLoading] = useState(true);
     const FileListQuery = useQuery({
         queryKey: ['FileListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
-            setLoading(false);
-            return result.list
+            try {
+                const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return result.list
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return [];
+            }
         },
         enabled: true,
         retryDelay: 1000,
         staleTime: 5 * 1000
     })
-    
+
+    React.useEffect(() => {
+        if (!getAppDetails.loanIdCode) {
+            SET_LOADING_INTERNAL('UploadDocs', true)
+            FileListQuery.refetch();
+        }
+    }, [getAppDetails]);
+
     function GetFile(id, command) {
         let count = 0;
         let file_list = []
@@ -87,12 +103,10 @@ const [loading, setLoading] = useState(true);
                 return count;
             case 'FILE':
                 return file_list;
-
             case 'COUNT-ARCH':
                 return count_arch;
             case 'FILE-ARCH':
                 return file_arch;
-
             default:
                 return;
         }
@@ -113,17 +127,34 @@ const [loading, setLoading] = useState(true);
 
         DocListQuery.data?.map((x, i) => {
             if (x.docsType !== 'Others') {
-                data.push({
-                    key: i + 1,
-                    label: <span className='font-bold'>
-                        {x.docsType}
-                        <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
-                    </span>,
-                    children: <div className='h-[300px] overflow-y-auto'>
-                        <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
-                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
-                    </div>
-                })
+                if (Display === 'USER') {
+                    data.push({
+                        key: i + 1,
+                        label: <span className='font-bold'>
+                            {x.docsType}
+                            <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                        </span>,
+                        children: <div className='h-[300px] overflow-y-auto'>
+                            <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                        </div>
+                    })
+                }
+                else {
+                    if (GetFile(x.id, 'COUNT') !== 0) {
+                        data.push({
+                            key: i + 1,
+                            label: <span className='font-bold'>
+                                {x.docsType}
+                                <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                            </span>,
+                            children: <div className='h-[300px] overflow-y-auto'>
+                                <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                            </div>
+                        })
+                    }
+                }
             }
             else {
                 data[0] = {
@@ -139,23 +170,24 @@ const [loading, setLoading] = useState(true);
             }
         })
 
-        data[data.length + 1] = {
-            key: data.length + 1,
-            label: <span className='font-bold'>
-                Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
-            </span>,
-            children: <div className='h-[300px] overflow-y-auto'>
-                <FileLoader key={0} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
-                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} />
-            </div>
+        if (Display === 'USER') {
+            data[data.length + 1] = {
+                key: data.length + 1,
+                label: <span className='font-bold'>
+                    Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
+                </span>,
+                children: <div className='h-[300px] overflow-y-auto'>
+                    <FileLoader key={data.length + 1} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
+                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} />
+                </div>
+            }
         }
-
         return data
     }
 
     return (
         <div>
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+            <StatusRemarks isEdit={!isEdit} User={User} data={getAppDetails} />
 
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
@@ -169,18 +201,14 @@ const [loading, setLoading] = useState(true);
                         LoanStatus === 'COMPLIED - LACK OF DOCUMENTS'
                         ? (<></>)
                         : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                            <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
+                            <Button size='large' className='ml-6 mb-2 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
                         </ConfigProvider>)
                 }
-                <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                    <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                        <div className={classname}>
-                            <div className='mr-[.5rem]'>
-                                <Collapse items={CollapseList()} />
-                            </div>
-                        </div>
-                    </Spin>
-                </ConfigProvider>
+                <div className={classname}>
+                    <div className='mr-[.5rem]'>
+                        <Collapse items={CollapseList()} />
+                    </div>
+                </div>
             </div>
         </div>
     )

@@ -14,11 +14,14 @@ import axios from 'axios';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { RequestTypeDropdown } from '@utils/FixedData';
-import { useDataContainer } from '@containers/PreLoad';
+import { STATUS_LIST } from '@api/lastUpdateBy/ChangeStatus';
+import { SET_PATH_LOCATION } from '@utils/Conditions';
+import { useDataContainer } from '@context/PreLoad';
 
 function LastUpdateBy({ isEdit, User, data }) {
     const queryClient = useQueryClient()
     const { GetStatus } = ApplicationStatus()
+    const { SET_REFRESH_TILE_COUNTER } = useDataContainer()
     const [api, contextHolder] = notification.useNotification();
     const [isDisabled, setIsDisabled] = React.useState(false);
     const [isDisableUpdateBtn, setDisableUpdateBtn] = React.useState(false);
@@ -34,7 +37,6 @@ function LastUpdateBy({ isEdit, User, data }) {
 
     const { id } = useParams();
     const navigate = useNavigate();
-    const { SET_PATH_LOCATION } = useDataContainer()
 
     const approvedMessage = `CONGRATULATIONS! YOUR LOAN APPLICATION HAS BEEN APPROVED. PLEASE WAIT FOR A CALL FROM OUR TEAM TO FINALIZE THE PROCESS AND DISCUSS HOW YOU WILL RECEIVE THE LOAN PROCEEDS.`;
     const declinedMessage = "AFTER CAREFUL EVALUATION, WE REGRET TO INFORM YOU THAT THE LOAN APPLICATION SUBMITTED TO US HAS NOT BEEN APPROVED AT THIS TIME. PLEASE RE-APPLY AGAIN IN A FEW MONTHS.";
@@ -123,7 +125,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const StatusList = useQuery({
         queryKey: ['StatusList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getStatusList/${jwtDecode(token).USRID}/${toDecrypt(localStorage.getItem('SIDC'))}`)
+            const result = await STATUS_LIST(jwtDecode(token).USRID, toDecrypt(localStorage.getItem('SIDC')));
             return result.list
         },
         refetchInterval: (data) => {
@@ -145,17 +147,14 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
     async function onClickUpdate() {
 
-        if (
-            (getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') &&
-            (
-                !ispreApproval ||
+        if ((getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') &&
+            (!ispreApproval ||
                 !isFFCCChecked ||
                 !isCRAFChecked ||
                 !isKaiserChecked ||
                 !isVideoCallChecked ||
                 !isShareLocationChecked ||
-                !isAgencyVerificationChecked
-            )
+                !isAgencyVerificationChecked)
         ) {
             api['info']({
                 message: 'Notification',
@@ -258,7 +257,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         : dataContainer[0]
             );
             SET_PATH_LOCATION(getUpdate.Status)
-
+            SET_REFRESH_TILE_COUNTER(1)
             StatusList.refetch();
             api[result.data.status]({
                 message: result.data.message,
@@ -293,9 +292,9 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
     function DISABLE_STATUS(LOCATION) {
         if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
-            if (LOCATION === '/ckfi/credit-assessment-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
-                || LOCATION === '/ckfi/under-loan-processor' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
-                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/re-application') {
+            if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application') {
                 console.log('MA')
                 return true
             }
@@ -303,9 +302,8 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         }
         else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
             {
-                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/reassessed/credit-officer' || LOCATION === '/ckfi/return/credit-officer'
-                    || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-loan-processor' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
-                    || LOCATION === '/ckfi/declined') {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
                     console.log('CRA')
                     return true
                 }
@@ -313,16 +311,23 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             }
         }
         else if (GetData('ROLE').toString() === '60') {
-            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-loan-processor'
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
                 || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
                 console.log('CRO')
                 return true
             }
             else { return false }
         }
-        else if (GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80') {
-            if (LOCATION === '/ckfi/reassessed/credit-officer' || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/released'
-                || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
             else { return false }
         }
         else { return false }
@@ -382,7 +387,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     return (
         <div>
             {contextHolder}
-            <div className='h-[65vh]'>
+            <div className='h-[55vh]'>
                 <div className="sticky top-0 z-10 bg-white">
                     <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={handleUrgentApp} />
                 </div>
@@ -390,7 +395,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                     <div className='pt-[1.5rem] font-bold text-2xl'>
                         Update Status
                     </div>
-                    <div className='h-[60vh] overflow-y-auto w-[70vw]'>
+                    <div className='h-[45vh]  w-[65vw]'>
                         <LabeledSelects
                             className={'mt-5 w-[46.5rem]'}
                             data={StatusList.data?.map((x) => ({
@@ -442,8 +447,8 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             </div>
                         )}
 
-                        {((GetData('ROLE').toString() === '60' && ['PRE-CHECK', 'FOR APPROVAL', 'PRE-APPROVAL'].includes(data.loanAppStat)) ||
-                            (GetData('ROLE').toString() === '50' && data.loanAppStat === 'FOR CREDIT ASSESSEMENT')) && (
+                        {((GetData('ROLE').toString() === '60' && ['PRE-CHECK', 'FOR APPROVAL'].includes(data.loanAppStat)) ||
+                            (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55' && data.loanAppStat === 'FOR CREDIT ASSESSEMENT')) && (
                                 <div className="grid grid-cols-7 mt-8">
                                     <div className="flex items-center justify-center">
                                         <Checkbox
