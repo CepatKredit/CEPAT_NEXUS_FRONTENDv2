@@ -170,7 +170,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
                 clearFileList()
-            }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} />
+            }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} style={{ zIndex: 998 }} />
             <div className='space-x-[1.5rem]'>
                 {
                     GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
