@@ -3,43 +3,31 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
 
-export function BarangayList(type, municipalityAreaCode) {
-    const [getBarangay, setBarangay] = React.useState([]);
-  
-    const municipalityAreaCodeList =
-      type === "present"
-        ? municipalityAreaCode.ofwPresMunicipality
-        : type === "permanent" && municipalityAreaCode.ofwSameAdd
-        ? municipalityAreaCode.ofwPresMunicipality
-        : type === "permanent" && !municipalityAreaCode.ofwSameAdd
-        ? municipalityAreaCode.ofwPermMunicipality
-        : type === "beneficiary" && municipalityAreaCode.bensameadd
-        ? municipalityAreaCode.ofwPresMunicipality
-        : type === "beneficiary" && !municipalityAreaCode.bensameadd
-        ? municipalityAreaCode.benpresmunicipality
-        : type === "provincial" && municipalityAreaCode.ofwProvSameAdd
-        ? municipalityAreaCode.ofwPresMunicipality
-        : type === "provincial" && !municipalityAreaCode.ofwProvSameAdd
-        ? municipalityAreaCode.ofwprovMunicipality
-        : type === "coborrow" && municipalityAreaCode.coborrowSameAdd
-        ? municipalityAreaCode.ofwPresMunicipality
-        : type === "coborrow" && !municipalityAreaCode.coborrowSameAdd
-        ? municipalityAreaCode.coborrowMunicipality
-        : null;
-  
-    if (!municipalityAreaCodeList) return [];
-  
-    useQuery({
-      queryKey: ["BarangayCode", municipalityAreaCodeList],
+export const BarangayList = (type, data) => {
+  const [barangayList, setBarangayList] = React.useState([]);
+  const munCode = React.useMemo(() => {
+      switch (type) {
+          case 'present': return data.ofwPresMunicipality;
+          case 'permanent': return data.ofwSameAdd ? data.ofwPresMunicipality : data.ofwPermMunicipality;
+          case 'beneficiary': return data.bensameadd ? data.ofwPresMunicipality : data.benpresmunicipality;
+          case 'provincial': return data.ofwProvSameAdd ? data.ofwPresMunicipality : data.ofwprovMunicipality;
+          case 'coborrow': return data.coborrowSameAdd ? data.ofwPresMunicipality : data.coborrowMunicipality;
+          default: return null;
+      }
+  }, [type, data]);
+
+  useQuery({
+      queryKey: ['getBarangayFromMunCode', munCode],
       queryFn: async () => {
-        const result = await axios.get(`/getbarangaylist/${municipalityAreaCodeList}`);
-        return result.data.list;
+          if (!munCode) return [];
+          const result = await axios.get(`/getbarangaylist/${munCode}`);
+          setBarangayList(result.data.list);
+          return result.data.list;
       },
-      onSuccess: (data) => setBarangay(data),
-      enabled: !!municipalityAreaCodeList,
-      refetchInterval: (data) => (data && data.length === 0 ? 500 : false),
+      refetchInterval: (data) => (data?.length === 0 ? 500 : false),
       retryDelay: 1000,
-    });
-  
-    return getBarangay;
-  }
+      enabled: !!munCode,
+  });
+
+  return barangayList;
+};

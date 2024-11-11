@@ -3,44 +3,31 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
 
-export function MunicipalityAreaList(type, provinceCode) {
-    const [getMunicipalityArea, setMunicipalityArea] = React.useState([]);
-  
-    const provinceCodeList =
-      type === "present"
-        ? provinceCode.ofwPresProv
-        : type === "permanent" && provinceCode.ofwSameAdd
-        ? provinceCode.ofwPresProv
-        : type === "permanent" && !provinceCode.ofwSameAdd
-        ? provinceCode.ofwPermProv
-        : type === "beneficiary" && provinceCode.bensameadd
-        ? provinceCode.ofwPresProv
-        : type === "beneficiary" && !provinceCode.bensameadd
-        ? provinceCode.benpresprov
-        : type === "provincial" && provinceCode.ofwProvSameAdd
-        ? provinceCode.ofwPresProv
-        : type === "provincial" && !provinceCode.ofwProvSameAdd
-        ? provinceCode.ofwprovProv
-        : type === "coborrow" && provinceCode.coborrowSameAdd
-        ? provinceCode.ofwPresProv
-        : type === "coborrow" && !provinceCode.coborrowSameAdd
-        ? provinceCode.coborrowProv
-        : null;
-  
-    if (!provinceCodeList) return [];
-  
-    useQuery({
-      queryKey: ["MunicipalityCode", provinceCodeList],
+export const MunicipalityList = (type, data) => {
+  const [municipalityList, setMunicipalityList] = React.useState([]);
+  const provCode = React.useMemo(() => {
+      switch (type) {
+          case 'present': return data.ofwPresProv;
+          case 'permanent': return data.ofwSameAdd ? data.ofwPresProv : data.ofwPermProv;
+          case 'beneficiary': return data.bensameadd ? data.ofwPresProv : data.benpresprov;
+          case 'provincial': return data.ofwProvSameAdd ? data.ofwPresProv : data.ofwprovProv;
+          case 'coborrow': return data.coborrowSameAdd ? data.ofwPresProv : data.coborrowProv;
+          default: return null;
+      }
+  }, [type, data]);
+
+  useQuery({
+      queryKey: ['getMunFromProvCode', provCode],
       queryFn: async () => {
-        const result = await axios.get(`/getMuniArea/${provinceCodeList}`);
-        console.log("MUNIIIIII API", result.data.list);
-        return result.data.list;
+          if (!provCode) return [];
+          const result = await axios.get(`/getMuniArea/${provCode}`);
+          setMunicipalityList(result.data.list);
+          return result.data.list;
       },
-      onSuccess: (data) => setMunicipalityArea(data),
-      refetchInterval: (data) => (data && data.length === 0 ? 500 : false), 
+      refetchInterval: (data) => (data?.length === 0 ? 500 : false),
       retryDelay: 1000,
-      enabled: !!provinceCodeList,
-    });
-  
-    return getMunicipalityArea;
-  }
+      enabled: !!provCode,
+  });
+
+  return municipalityList;
+};
