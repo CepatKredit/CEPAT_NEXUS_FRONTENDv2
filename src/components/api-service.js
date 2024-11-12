@@ -4,48 +4,59 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
 
 export function ComponentPreloads() {
-    const [getLoanProdList, setLoanProdList] = React.useState([]);
-    useQuery({
-        queryKey: ['LoanProductList'],
-        queryFn: async () => {
-            const result = await GET_LIST('/getListLoanProduct');
-            setLoanProdList(result.list)
-            return result.list;
-        },
-        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
-        retryDelay: 1000,
-    });
+  const [getLoanProdList, setLoanProdList] = React.useState([]);
+  useQuery({
+    queryKey: ["LoanProductList"],
+    queryFn: async () => {
+      const result = await GET_LIST("/getListLoanProduct");
+      setLoanProdList(result.list);
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
 
-    const [getCountryList, setCountryList] = React.useState([]);
-    useQuery({
-        queryKey: ['CountryList'],
-        queryFn: async () => {
-            const result = await GET_LIST('/OFWDetails/getCountry');
-            //console.log(result.list)
-            setCountryList(result.list)
-            return result.list;
-        },
-        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
-        retryDelay: 1000,
-    });
+  const [getCountryList, setCountryList] = React.useState([]);
+  useQuery({
+    queryKey: ["CountryList"],
+    queryFn: async () => {
+      const result = await GET_LIST("/OFWDetails/getCountry");
+      //console.log(result.list)
+      setCountryList(result.list);
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
 
-    const [getProvinceList, setProvinceList] = React.useState([]);
-    useQuery({
-        queryKey: ['ProvinceList'],
-        queryFn: async () => {
-            const result = await GET_LIST('/getProvinceList');
-            //console.log(result.list)
-            setProvinceList(result.list)
-            return result.list;
-        },
-        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
-        retryDelay: 1000,
-    });
+  const [getProvinceList, setProvinceList] = React.useState([]);
+  useQuery({
+    queryKey: ["ProvinceList"],
+    queryFn: async () => {
+      const result = await GET_LIST("/getProvinceList");
+      //console.log(result.list)
+      setProvinceList(result.list);
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
 
-    //////////////////////////////////
-    //const { getAppDetails } = useContext(LoanApplicationContext)
-   // const data = getAppDetails
-/*
+  const [getLoanPurpose, setLoanPurpose] = React.useState([]);
+  useQuery({
+    queryKey: ["getLoanPurpose"],
+    queryFn: async () => {
+      const result = await GET_LIST("/getLoanPurpose");
+      setLoanPurpose(result.list);
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
+  //////////////////////////////////
+  //const { getAppDetails } = useContext(LoanApplicationContext)
+  // const data = getAppDetails
+  /*
     const getProvCode = (type, data) => {
         if (type === "present") return data.ofwPresProv;
         if (type === "permanent")
@@ -72,10 +83,11 @@ export function ComponentPreloads() {
         retryDelay: 1000,
     });
 */
-    return {
-        GET_COUNTRY_LIST: getCountryList,
-        GET_LOAN_PRODUCT_LIST: getLoanProdList,
-        GET_PROVINCE_LIST: getProvinceList,
-   //     GET_MUNICIPALITY: getMunicipalityList,
-    };
+  return {
+    GET_COUNTRY_LIST: getCountryList,
+    GET_LOAN_PRODUCT_LIST: getLoanProdList,
+    GET_PROVINCE_LIST: getProvinceList,
+    GET_LOAN_PURPOSE_LIST: getLoanPurpose,
+    //     GET_MUNICIPALITY: getMunicipalityList,
+  };
 }

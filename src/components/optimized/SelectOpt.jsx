@@ -22,6 +22,7 @@ function SelectOpt({
     notValidMsg,
     KeyName,
     keyName,
+    rendered,
 }) {
     const [search, setSearchInput] = useState('');
 
@@ -36,7 +37,7 @@ function SelectOpt({
         filteredOptions,
         handleSelectChange,
         handleKeyDown
-    } = SelectComponentHooks( search, receive, options, setSearchInput,keyName||KeyName );
+    } = SelectComponentHooks( search, receive, options, setSearchInput,keyName||KeyName, rendered, value );
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),
@@ -84,7 +85,7 @@ function SelectOpt({
                         suffixIcon={
                             !disabled && (required || required === undefined) && status === 'error' ? (
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
-                            ) : status === '' ? (
+                            ) : status === 'success' ? (
                                 <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
                             ): null
                         }

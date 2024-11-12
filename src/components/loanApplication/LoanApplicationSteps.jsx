@@ -40,8 +40,6 @@ export const getLoanApplicationSteps = (props) => {
           loanrendered={loanrendered}
           setloanrendered={setloanrendered}
           direct={direct}
-          // receive={(e) => updateAppDetails(e, setAppDetails, getAppDetails)}
-          // loanDatailCases={(e) => handleLoanDetailCases(e, setAppDetails)}
         />
       ),
     },

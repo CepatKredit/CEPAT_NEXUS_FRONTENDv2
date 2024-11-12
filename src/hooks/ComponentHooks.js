@@ -11,7 +11,7 @@ function hookValid(KeyName, date) {
     else {return CheckDateValid(date)}
 }
 
-export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName) {
+export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value) {
     const [status, setStatus] = useState('');
     const [highlightedIndex, setHighlightedIndex] = useState(0);
 
@@ -26,7 +26,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     }, [search]);
 
     const handleSelectChange = useCallback((selectedValue) => {
-        setStatus(selectedValue ? '' : 'error');
+        setStatus(selectedValue ? 'success' : 'error');
         receive(selectedValue || undefined);
     }, [receive]);
 
@@ -43,6 +43,16 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
             setSearchInput('')
         }
     }, [filteredOptions, highlightedIndex, handleSelectChange]);
+
+    useEffect(() => {
+        if (rendered) {
+            if (!value) {
+                setStatus("error")
+            } else {
+                setStatus("success")
+            }
+        }
+    }, []);
 
     return {
         status,

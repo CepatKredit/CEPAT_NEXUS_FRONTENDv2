@@ -37,7 +37,7 @@ export const generateLoanDataLc = (getAppDetails) => {
         Address1: getAppDetails.ofwPresStreet,
         CountryId: '',
         Salary: getAppDetails.ofwsalary ? parseFloat(getAppDetails.ofwsalary.replace(',', '')) : 0,
-        Status: 29,
+        Status: 25,
     };
 };
 
@@ -56,7 +56,7 @@ export const generateLoanDataDirect = (getAppDetails) => ({
     ConsultantNo: getAppDetails.consultNumber,
     ConsultantProfile: getAppDetails.consultProfile ? ChangeText(getAppDetails.consultProfile) : '',
     ReferredBy: getAppDetails.loanReferredBy ? parseInt(getAppDetails.loanReferredBy) : 0,
-    Status: 29,
+    Status: 25,
     IsOfw: 1,
     FirstName: getAppDetails.ofwfname,
     MiddleName: getAppDetails.ofwmname,

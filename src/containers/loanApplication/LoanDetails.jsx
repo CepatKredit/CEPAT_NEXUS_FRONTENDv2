@@ -29,9 +29,8 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
     LoanApplicationContext
   );
 
-  const {GET_LOAN_PRODUCT_LIST} = useDataContainer()
+  const { GET_LOAN_PRODUCT_LIST, GET_LOAN_PURPOSE_LIST } = useDataContainer();
   const [readMore, setReadMore] = React.useState(false);
-
 
   const classname_main =
     "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
@@ -43,7 +42,6 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
   }, [setloanrendered]);
 
   const disableDate_deployment = React.useCallback((current) => {
-    
     return current && current < dayjs().startOf("day");
   }, []);
 
@@ -131,6 +129,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
             value: product.code,
             label: product.description,
           }))}
+          rendered={loanrendered}
         />
         {getAppDetails.loanProd === "0303-DHW" ||
         getAppDetails.loanProd === "0303-VL" ||
@@ -178,7 +177,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
         ) : (
           <></>
         )}
-        <LabeledSelectLoanPurpose
+        {/* <LabeledSelectLoanPurpose
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
@@ -192,6 +191,34 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           disabled={!getAppDetails.dataPrivacy}
           rendered={loanrendered}
           showSearch
+        /> */}
+        <SelectOpt
+          className_dmain={classname_main}
+          className_label={className_label}
+          className_dsub={className_dsub}
+          label={
+            <>
+              Select Loan Purpose <span className="text-red-500">*</span>
+            </>
+          }
+          value={getAppDetails.loanPurpose}
+          disabled={!getAppDetails.dataPrivacy}
+          placeHolder={"Loan Purpose"}
+          required={true}
+          showSearch
+          notValidMsg={"Loan Purpose is required."}
+          KeyName={"loanPurpose"}
+          receive={(e) => {
+            updateAppDetails({
+              name: "loanPurpose",
+              value: e,
+            });
+          }}
+          options={GET_LOAN_PURPOSE_LIST.map((item) => ({
+            value: item.id,
+            label: item.purpose,
+          }))}
+          rendered={loanrendered}
         />
         <LabeledCurrencyInput
           className_dmain={classname_main}
@@ -208,7 +235,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           disabled={!getAppDetails.dataPrivacy}
           rendered={loanrendered}
         />
-        <LabeledSelect
+        {/* <LabeledSelect
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
@@ -223,23 +250,81 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           category={"direct"}
           disabled={!getAppDetails.dataPrivacy}
           rendered={loanrendered}
+        /> */}
+        <SelectOpt
+          className_dmain={classname_main}
+          className_label={className_label}
+          className_dsub={className_dsub}
+          label={
+            <>
+              Select Loan Terms <span className="text-red-500">*</span>
+            </>
+          }
+          value={getAppDetails.loanTerms}
+          disabled={!getAppDetails.dataPrivacy}
+          placeHolder={"Loan Terms"}
+          required={true}
+          showSearch
+          notValidMsg={"Loan Terms is required."}
+          KeyName={"loanTerms"}
+          receive={(e) => {
+            updateAppDetails({
+              name: "loanTerms",
+              value: e,
+            });
+          }}
+          options={LoanTerms(12)?.map((item) => ({
+            value: item.value,
+            label: item.label.toString(),
+          }))}
+          rendered={loanrendered}
         />
         {!direct ? null : (
-          <LabeledSelect
+          // <LabeledSelect
+          //   className_dmain={classname_main}
+          //   className_label={className_label}
+          //   className_dsub={className_dsub}
+          //   label={
+          //     <>
+          //       How did you know about Cepat Kredit Financing?{" "}
+          //       <span className="text-red-500">*</span>
+          //     </>
+          //   }
+          //   fieldName="hckfi"
+          //   data={Hckfi()}
+          //   category={"direct"}
+          //   placeHolder={"Please select..."}
+          //   disabled={!getAppDetails.dataPrivacy}
+          //   rendered={loanrendered}
+          // />
+
+          <SelectOpt
             className_dmain={classname_main}
             className_label={className_label}
             className_dsub={className_dsub}
             label={
               <>
-                How did you know about Cepat Kredit Financing?{" "}
+                How did you know about Cepat Kredit Financing?
                 <span className="text-red-500">*</span>
               </>
             }
-            fieldName="hckfi"
-            data={Hckfi()}
-            category={"direct"}
-            placeHolder={"Please select..."}
+            value={getAppDetails.hckfi}
             disabled={!getAppDetails.dataPrivacy}
+            placeHolder={"Please select..."}
+            required={true}
+            showSearch
+            notValidMsg={"This field is required."}
+            KeyName={"hckfi"}
+            receive={(e) => {
+              updateAppDetails({
+                name: "hckfi",
+                value: e,
+              });
+            }}
+            options={Hckfi()?.map((item) => ({
+              value: item.value,
+              label: item.label.toString(),
+            }))}
             rendered={loanrendered}
           />
         )}

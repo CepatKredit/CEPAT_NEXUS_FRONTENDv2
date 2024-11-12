@@ -6,7 +6,7 @@ import { ComponentPreloads } from '@components/api-service';
 const DataContext = React.createContext()
 function PreLoad({ children }) {
     //From components
-    const { GET_LOAN_PRODUCT_LIST, GET_COUNTRY_LIST, GET_PROVINCE_LIST } = ComponentPreloads();
+    const { GET_LOAN_PRODUCT_LIST, GET_COUNTRY_LIST, GET_PROVINCE_LIST, GET_LOAN_PURPOSE_LIST } = ComponentPreloads();
     //const GET_PROVINCE_LIST = ProvinceList();
 
     const [getPurpose, setPurpose] = React.useState([])
@@ -87,6 +87,7 @@ function PreLoad({ children }) {
             GET_LOAN_PRODUCT_LIST,
             GET_COUNTRY_LIST,
             GET_PROVINCE_LIST,
+            GET_LOAN_PURPOSE_LIST,
             //Accounting
             getBank,
             getPurpose,

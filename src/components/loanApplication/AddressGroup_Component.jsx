@@ -12,6 +12,7 @@ import { ProvinceList } from "@api/addressGetList/ProvinceAPI";
 import { MunicipalityList } from "@api/addressGetList/MunicipalityAreaAPI";
 import { BarangayList } from "@api/addressGetList/BarangayAPI";
 import { useDataContainer } from "@context/PreLoad";
+import { ChangeText } from "@utils/Converter";
 function AddressContainer({
   rendered,
   // api,
@@ -675,7 +676,7 @@ const barangayList = BarangayList(type, data)
                       : type === "coborrow"
                       ? "coborrowStreet"
                       : "",
-                  value: e.target.value.toUpperCase(),
+                  value: ChangeText(e.target.value.toUpperCase()),
                 });
               }
             }}

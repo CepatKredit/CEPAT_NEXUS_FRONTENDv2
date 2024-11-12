@@ -1,4 +1,4 @@
-import { GET_DATA } from "@api/base-api/BaseApi";
+import { GET_DATA, GET_LIST } from "@api/base-api/BaseApi";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
@@ -20,9 +20,9 @@ export const BarangayList = (type, data) => {
       queryKey: ['getBarangayFromMunCode', munCode],
       queryFn: async () => {
           if (!munCode) return [];
-          const result = await axios.get(`/getbarangaylist/${munCode}`);
-          setBarangayList(result.data.list);
-          return result.data.list;
+          const result = await GET_LIST(`/getbarangaylist/${munCode}`);
+          setBarangayList(result.list);
+          return result.list;
       },
       refetchInterval: (data) => (data?.length === 0 ? 500 : false),
       retryDelay: 1000,
