@@ -160,7 +160,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 message: 'Notification',
                 description: (
                     <span>
-                        Please ensure that <strong>FFCC</strong>, <strong>CRAF</strong>, <strong>KAISER</strong>, <strong>Video Call- LB/SB</strong>, <strong>Share Location</strong>, and <strong>Agency Verification</strong> are all checked before updating.
+                        All checkboxes are required to be checked before proceeding to "FOR APPROVAL."
                     </span>
                 ),
             });
