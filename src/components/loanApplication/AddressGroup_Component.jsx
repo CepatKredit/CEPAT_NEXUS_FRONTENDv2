@@ -8,6 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import { warning } from "framer-motion";
 import LabeledTextArea_Street from "./LabeledTextArea_Street";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { ProvinceList } from "@api/addressGetList/ProvinceAPI";
+import { MunicipalityList } from "@api/addressGetList/MunicipalityAreaAPI";
+import { BarangayList } from "@api/addressGetList/BarangayAPI";
+import { useDataContainer } from "@context/PreLoad";
+import { ChangeText } from "@utils/Converter";
 function AddressContainer({
   rendered,
   // api,
@@ -24,6 +29,7 @@ function AddressContainer({
 }) {
   const { api, updateAppDetails, handleAddressCases } = React.useContext(LoanApplicationContext);
 
+  const {GET_PROVINCE_LIST} = useDataContainer()
 
   let getStreet =
     type === "present"
@@ -37,114 +43,149 @@ function AddressContainer({
       : type === "coborrow"
       ? data.coborrowStreet
       : "";
-  const provinceList = useQuery({
-    queryKey: ["ProvinceListQuery"],
-    queryFn: async () => {
-      const result = await axios.get("/getProvinceList");
-      return result.data.list;
-    },
-    refetchInterval: (data) => {
-      data?.length === 0 ? 500 : false;
-    },
-    enabled: true,
-    retryDelay: 1000,
-  });
+  // const provinceList = useQuery({
+  //   queryKey: ["ProvinceListQuery"],
+  //   queryFn: async () => {
+  //     const result = await axios.get("/getProvinceList");
+  //     return result.data.list;
+  //   },
+  //   refetchInterval: (data) => {
+  //     data?.length === 0 ? 500 : false;
+  //   },
+  //   enabled: true,
+  //   retryDelay: 1000,
+  // });
 
-  const getMunFromProvCode = useQuery({
-    queryKey: [
-      "getMunFromProvCode",
-      type === "present"
-        ? data.ofwPresProv
-        : type === "permanent"
-        ? data.ofwPermProv
-        : type === "beneficiary"
-        ? data.benpresprov
-        : type === "provincial"
-        ? data.ofwprovProv
-        : type === "coborrow"
-        ? data.coborrowProv
-        : null,
-    ],
-    queryFn: async () => {
-      const provCode =
-        type === "present"
-          ? data.ofwPresProv
-          : type === "permanent" && data.ofwSameAdd
-          ? data.ofwPresProv
-          : type === "permanent" && !data.ofwSameAdd
-          ? data.ofwPermProv
-          : type === "beneficiary" && data.bensameadd
-          ? data.ofwPresProv
-          : type === "beneficiary" && !data.bensameadd
-          ? data.benpresprov
-          : type === "provincial" && data.ofwProvSameAdd
-          ? data.ofwPresProv
-          : type === "provincial" && data.ofwProvSameAdd
-          ? data.ofwprovProv
-          : type === "coborrow" && data.coborrowSameAdd
-          ? data.ofwPresProv
-          : type === "coborrow" && !data.coborrowSameAdd
-          ? data.coborrowProv
-          : null;
+  // const getMunFromProvCode = useQuery({
+  //   queryKey: [
+  //     "getMunFromProvCode",
+  //     type === "present"
+  //       ? data.ofwPresProv
+  //       : type === "permanent"
+  //       ? data.ofwPermProv
+  //       : type === "beneficiary"
+  //       ? data.benpresprov
+  //       : type === "provincial"
+  //       ? data.ofwprovProv
+  //       : type === "coborrow"
+  //       ? data.coborrowProv
+  //       : null,
+  //   ],
+  //   queryFn: async () => {
+  //     const provCode =
+  //       type === "present"
+  //         ? data.ofwPresProv
+  //         : type === "permanent" && data.ofwSameAdd
+  //         ? data.ofwPresProv
+  //         : type === "permanent" && !data.ofwSameAdd
+  //         ? data.ofwPermProv
+  //         : type === "beneficiary" && data.bensameadd
+  //         ? data.ofwPresProv
+  //         : type === "beneficiary" && !data.bensameadd
+  //         ? data.benpresprov
+  //         : type === "provincial" && data.ofwProvSameAdd
+  //         ? data.ofwPresProv
+  //         : type === "provincial" && data.ofwProvSameAdd
+  //         ? data.ofwprovProv
+  //         : type === "coborrow" && data.coborrowSameAdd
+  //         ? data.ofwPresProv
+  //         : type === "coborrow" && !data.coborrowSameAdd
+  //         ? data.coborrowProv
+  //         : null;
 
-      if (!provCode) return [];
-      const result = await axios.get(`/getMuniArea/${provCode}`);
-      return result.data.list;
-    },
-    refetchInterval: (data) => {
-      data?.length === 0 ? 500 : false;
-    },
-    enabled: true,
-    retryDelay: 1000,
-  });
+  //     if (!provCode) return [];
+  //     const result = await axios.get(`/getMuniArea/${provCode}`);
+  //     return result.data.list;
+  //   },
+  //   refetchInterval: (data) => {
+  //     data?.length === 0 ? 500 : false;
+  //   },
+  //   enabled: true,
+  //   retryDelay: 1000,
+  // });
 
 
-  const getBarangayFromProvCode = useQuery({
-    queryKey: [
-      "getBarangayFromMunCode",
-      type === "present"
-        ? data.ofwPresMunicipality
-        : type === "permanent"
-        ? data.ofwPermMunicipality
-        : type === "beneficiary"
-        ? data.benpresmunicipality
-        : type === "provincial"
-        ? data.ofwprovMunicipality
-        : type === "coborrow"
-        ? data.coborrowMunicipality
-        : null,
-    ],
-    queryFn: async () => {
-      const munCode =
-        type === "present"
-          ? data.ofwPresMunicipality
-          : type === "permanent" && data.ofwSameAdd
-          ? data.ofwPresMunicipality
-          : type === "permanent" && !data.ofwSameAdd
-          ? data.ofwPermMunicipality
-          : type === "beneficiary" && data.bensameadd
-          ? data.ofwPresMunicipality
-          : type === "beneficiary" && !data.bensameadd
-          ? data.benpresmunicipality
-          : type === "provincial" && data.ofwProvSameAdd
-          ? data.ofwPresMunicipality
-          : type === "provincial" && data.ofwProvSameAdd
-          ? data.ofwprovMunicipality
-          : type === "coborrow" && data.coborrowSameAdd
-          ? data.ofwPresMunicipality
-          : type === "coborrow" && !data.coborrowSameAdd
-          ? data.coborrowMunicipality
-          : null;
-      if (!munCode) return [];
-      const result = await axios.get(`/getbarangaylist/${munCode}`);
-      return result.data.list;
-    },
-    refetchInterval: (data) => {
-      data?.length === 0 ? 500 : false;
-    },
-    enabled: true,
-    retryDelay: 1000,
-  });
+  // const getBarangayFromProvCode = useQuery({
+  //   queryKey: [
+  //     "getBarangayFromMunCode",
+  //     type === "present"
+  //       ? data.ofwPresMunicipality
+  //       : type === "permanent"
+  //       ? data.ofwPermMunicipality
+  //       : type === "beneficiary"
+  //       ? data.benpresmunicipality
+  //       : type === "provincial"
+  //       ? data.ofwprovMunicipality
+  //       : type === "coborrow"
+  //       ? data.coborrowMunicipality
+  //       : null,
+  //   ],
+  //   queryFn: async () => {
+  //     const munCode =
+  //       type === "present"
+  //         ? data.ofwPresMunicipality
+  //         : type === "permanent" && data.ofwSameAdd
+  //         ? data.ofwPresMunicipality
+  //         : type === "permanent" && !data.ofwSameAdd
+  //         ? data.ofwPermMunicipality
+  //         : type === "beneficiary" && data.bensameadd
+  //         ? data.ofwPresMunicipality
+  //         : type === "beneficiary" && !data.bensameadd
+  //         ? data.benpresmunicipality
+  //         : type === "provincial" && data.ofwProvSameAdd
+  //         ? data.ofwPresMunicipality
+  //         : type === "provincial" && data.ofwProvSameAdd
+  //         ? data.ofwprovMunicipality
+  //         : type === "coborrow" && data.coborrowSameAdd
+  //         ? data.ofwPresMunicipality
+  //         : type === "coborrow" && !data.coborrowSameAdd
+  //         ? data.coborrowMunicipality
+  //         : null;
+  //     if (!munCode) return [];
+  //     const result = await axios.get(`/getbarangaylist/${munCode}`);
+  //     return result.data.list;
+  //   },
+  //   refetchInterval: (data) => {
+  //     data?.length === 0 ? 500 : false;
+  //   },
+  //   enabled: true,
+  //   retryDelay: 1000,
+  // });
+
+
+// const provinceList = ProvinceList() || [];
+
+// const getMunFromProvCode = MunicipalityAreaList(type, {
+//   ofwPresProv: data.ofwPresProv,
+//   ofwPermProv: data.ofwPermProv,
+//   benpresprov: data.benpresprov,
+//   ofwprovProv: data.ofwprovProv,
+//   coborrowProv: data.coborrowProv,
+//   ofwSameAdd: data.ofwSameAdd,
+//   bensameadd: data.bensameadd,
+//   ofwProvSameAdd: data.ofwProvSameAdd,
+//   coborrowSameAdd: data.coborrowSameAdd
+// });
+
+// const getBarangayFromProvCode = BarangayList(type, {
+//   ofwPresMunicipality: data.ofwPresMunicipality,
+//   ofwPermMunicipality: data.ofwPermMunicipality,
+//   benpresmunicipality: data.benpresmunicipality,
+//   ofwprovMunicipality: data.ofwprovMunicipality,
+//   coborrowMunicipality: data.coborrowMunicipality,
+//   ofwSameAdd: data.ofwSameAdd,
+//   bensameadd: data.bensameadd,
+//   ofwProvSameAdd: data.ofwProvSameAdd,
+//   coborrowSameAdd: data.coborrowSameAdd
+// });  
+
+// console.log("PROVINCE", provinceList)
+
+// console.log("MUNI", getMunFromProvCode)
+
+// console.log("BARANGAY", getBarangayFromProvCode)
+const municipalityList = MunicipalityList(type, data);
+const barangayList = BarangayList(type, data)
 
   return (
     <>
@@ -327,11 +368,11 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Area / Province"}
+          label={<>Area / Province <span className="text-red-500">*</span></>}
           placeHolder={"Select Area/Province"}
           rendered={rendered}
           data={data}
-          type={type}
+          // type={type}
           receive={(e) => {
             // Existing logic to handle the change of province, municipality or barangay
             updateAppDetails({
@@ -379,7 +420,7 @@ function AddressContainer({
               : null) ||
             (disabled ? true : disabled == undefined ? true : false)
           }
-          options={provinceList.data?.map((x) => ({
+          options={GET_PROVINCE_LIST.map((x) => ({
             value: x.provinceCode,
             label: x.provinceDescription.toUpperCase(),
           }))}
@@ -401,7 +442,7 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"City / Municipality"}
+          label={<>City / Municipality <span className="text-red-500">*</span></>}
           placeHolder={"Select City/Municipality"}
           rendered={rendered}
           data={data}
@@ -444,7 +485,7 @@ function AddressContainer({
               value: e,
             }, type);
           }}
-          options={getMunFromProvCode.data?.map((x) => ({
+          options={municipalityList.map((x) => ({
             value: x.munCode,
             label: x.munDesc.toUpperCase(),
           }))}
@@ -478,7 +519,7 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Barangay"}
+          label={<>Barangay <span className="text-red-500">*</span></>}
           placeHolder={"Select Barangay"}
           rendered={rendered}
           data={data}
@@ -521,7 +562,7 @@ function AddressContainer({
               value: e,
             }, type);
           }}
-          options={getBarangayFromProvCode.data?.map((x) => ({
+          options={barangayList.map((x) => ({
             value: x.code,
             label: x.description.toUpperCase(),
           }))}
@@ -587,7 +628,7 @@ function AddressContainer({
               });
             }}
             placeHolder={"Block / Unit / Street"}
-            label={"Block / Unit / Street"}
+            label={<>Block / Unit / Street <span className="text-red-500">*</span></>}
             disabled={disabled}
             className_dmain={className_dmain}
             className_label={className_label}
@@ -635,7 +676,7 @@ function AddressContainer({
                       : type === "coborrow"
                       ? "coborrowStreet"
                       : "",
-                  value: e.target.value.toUpperCase(),
+                  value: ChangeText(e.target.value.toUpperCase()),
                 });
               }
             }}

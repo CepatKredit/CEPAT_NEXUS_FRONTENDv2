@@ -3,26 +3,34 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const { TextArea } = Input;
     const { SetStatus } = ApplicationStatus()
-    const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
+        SET_LOADING_INTERNAL('UploadDocs', true);
         getRemarks.refetch()
     }, [data?.loanIdCode]);
 
     const getRemarks = useQuery({
         queryKey: ['getRemarks', data?.loanIdCode],
         queryFn: async () => {
-            const result = await axios.get(`/getRemarks/${data?.loanIdCode}`);
-            SetStatus(result.data.list[0].status)
-            console.log(localStorage.getItem('activeTab'));
-            if (localStorage.getItem('activeTab') === 'last-update-by')
-                setUrgentApp(result.data.list[0].urgentApp)
-            setLoading(false);
-            return result.data.list[0];
+            try {
+                const result = await axios.get(`/getRemarks/${data?.loanIdCode}`);
+                SetStatus(result.data.list[0].status)
+                console.log(localStorage.getItem('activeTab'));
+                if (localStorage.getItem('activeTab') === 'last-update-by')
+                    setUrgentApp(result.data.list[0].urgentApp)
+                SET_LOADING_INTERNAL('StatusRemarks', false);
+                return result.data.list[0];
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('StatusRemarks', false); // Stop loading on error
+            }
+            return null;
         },
         enabled: true,
         retryDelay: 1000,
@@ -44,7 +52,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                 return 'bg-[#DB7093] text-white';
             case 'LACK OF DOCUMENTS':
                 return 'bg-[#8B4513] text-white';
-            case 'FOR CREDIT ASSESSEMENT':
+            case 'FOR CREDIT ASSESSMENT':
                 return 'bg-[#006d77] text-white';
             case 'CREDIT ASSESSEMENT SPECIAL LANE':
                 return 'bg-[#B8860B] text-white';
@@ -99,21 +107,24 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
 
     return (
         <div className={isEdit ? 'h-[5rem]' : ''}>
-            <div className="w-[75vw] mx-auto">
+            <div className="w-full mx-auto">
                 <Space className="w-full flex justify-center">
-                    {isEdit && User !== 'LC' && (
-                        <div className="top-5 left-10 lg:left-4 mb-3">
-                            <div className={`inline-flex font-bold items-center px-10 py-2 rounded-full ${getStatusBackgroundColor(getRemarks.data?.status)}`}>
+                {isEdit && User !== 'LC' && (
+                        <div className="relative mb-3 flex justify-start xs:left-1 sm:left-1 md:left-1 lg:right-3">
+                            <div 
+                                className={`inline-flex font-bold items-center 
+                                            px-6 xs:px-5 sm:px-4 md:px-6 lg:px-6 xl:px-8 2xl:px-10
+                                            py-1 xs:py-1 sm:py-1 md:py-2 lg:py-2 xl:py-2
+                                            rounded-full text-center ${getStatusBackgroundColor(getRemarks.data?.status)}`}
+                            >
                                 {getRemarks.data?.status}
                             </div>
                         </div>
                     )}
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                     {isEdit && User !== 'LC' && (
-                        <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
-                            <div className="w-full">
+                        <div className="flex justify-center w-full xs:w-[10rem] sm:w-[15rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] 2xl:w-[45rem] 3xl:w-[55rem] mx-auto mb-5 space-x-4">
+                            <div className="w-full xs:w-[10rem] sm:w-[25rem] md:w-[30rem] lg:w-[32rem] xl:w-[35rem] 2xl:w-[45rem] 3xl:w-[55rem] ">
                                 <label className="font-bold">Internal Remarks</label>
-                                <Spin spinning={getRemarks.isLoading} size="medium">
                                 <TextArea
                                     className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
                                     value={getRemarks.data?.remarksIn}
@@ -123,32 +134,25 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                                     }}
                                     readOnly
                                 />
-                                </Spin>
                             </div>
                         </div>
                     )}
-                    </ConfigProvider>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        {isEdit && User === 'LC' && (
-
-                            <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
-                                <div className="w-full">
-                                    <label className="font-bold">External Remarks</label>
-                                    <Spin spinning={getRemarks.isLoading} size="medium">
-                                        <TextArea
-                                            className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
-                                            value={getRemarks.data?.remarksEx}
-                                            style={{
-                                                height: 50,
-                                                resize: 'none',
-                                            }}
-                                            readOnly
-                                        />
-                                    </Spin>
-                                </div>
+                    {isEdit && User === 'LC' && (
+                        <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
+                            <div className="w-full">
+                                <label className="font-bold">External Remarks</label>
+                                <TextArea
+                                    className="w-full h-[40px] p-2 border border-gray-300 rounded-md resize-none"
+                                    value={getRemarks.data?.remarksEx}
+                                    style={{
+                                        height: 50,
+                                        resize: 'none',
+                                    }}
+                                    readOnly
+                                />
                             </div>
-                        )}
-                    </ConfigProvider>
+                        </div>
+                    )}
                 </Space>
             </div>
         </div>

@@ -511,7 +511,9 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             presaddress={(e) => { presaddress(e) }}
                             type={"beneficiary"}
                             category={"marketing"}
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${
+                                (User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                            } 3xl:w-[20.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             className_dsub={''}
                             vertical_algin={true}
@@ -997,7 +999,9 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             presaddress={(e) => { presaddress(e) }}
                             type={"coborrow"}
                             category={"marketing"}
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${
+                                (User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                            } 3xl:w-[20.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             className_dsub={''}
                             vertical_algin={true}

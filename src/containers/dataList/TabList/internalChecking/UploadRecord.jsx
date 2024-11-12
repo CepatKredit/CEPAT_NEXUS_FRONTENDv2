@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Image, Space, Button, ConfigProvider, notification, Popconfirm, Tooltip, Form, Table, Input, Select, Spin } from 'antd'
-import { SaveOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SaveOutlined, CloseOutlined, DeleteOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import ResponsiveModal from '@components/validation/ResponsiveModal';
 import { viewModal, viewPDFView } from '@hooks/ModalController';
@@ -13,13 +13,33 @@ import { toDecrypt, toEncrypt } from '@utils/Converter';
 import ViewPdf from '../uploadDocs/pdfToolbar/ViewPdf';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function UploadRecord({ data, ClientId, Uploader }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const [api, contextHolder] = notification.useNotification();
     const getModalStatus = viewModal((state) => state.modalStatus)
     const setModalStatus = viewModal((state) => state.setStatus)
     const clearFileList = FileUpload((state) => state.clearList)
-    const [loading, setLoading] = React.useState(true);
+
+
+    const DocListICQuery = useQuery({
+        queryKey: ['DocListICQuery'],
+        queryFn: async () => {
+            try {
+                const result = await GET_LIST(`/getFileType/${'IC'}`)
+                SET_LOADING_INTERNAL('FinancialChecker', false);
+                return result.list
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('FinancialChecker', false); // Stop loading on error
+            }
+            return [];
+        },
+        enabled: true,
+        retryDelay: 1000,
+        staleTime: 5 * 1000
+    })
 
     const colFinalCheck = [
         {
@@ -47,6 +67,27 @@ function UploadRecord({ data, ClientId, Uploader }) {
             key: 'fc',
             width: '200px',
             editable: true,
+            //default sorting of antd Nico 11/08/20204
+            // defaultSortOrder: 'ascend',
+            sortDirections: ['ascend', 'descend'],
+            sorter: (a, b) => a.fc.localeCompare(b.fc),
+            // sortIcon: ({ sortOrder }) => (
+            //     <div className="flex flex-col items-center">
+            //     <CaretUpOutlined 
+            //         className={`${sortOrder === 'ascend' ? 'text-white' : 'text-gray-600'} text-xs`}
+            //     />
+            //     <CaretDownOutlined 
+            //         className={`${sortOrder === 'descend' ? 'text-white' : 'text-gray-600'} text-xs`}
+            //     />
+            // </div>
+            // ),
+
+            //for filter in case Nico 11/08/2024
+            // filters: DocListICQuery.data?.map((x) => ({
+            //     text: x.docsType, 
+            //     value: x.docsType,
+            // })),
+            // onFilter: (value, record) => record.fc === value,
         },
         {
             title: 'File Uploaded',
@@ -96,7 +137,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                             <Button disabled={editingKey !== ''} onClick={() => edit(record)} className='bg-[#3b0764]' type='primary' icon={<MdEditSquare />} />
                         </Tooltip>
                     </ConfigProvider>
-                    <Tooltip title="Delete">
+                    {/* <Tooltip title="Delete">
                         <Popconfirm
                             title="Are you sure you want to delete this record?"
                             onConfirm={() => { file_delete(record) }}
@@ -104,7 +145,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                             cancelText="Cancel"  >
                             <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                         </Popconfirm>
-                    </Tooltip>
+                    </Tooltip> */}
                 </Space>);
             },
         },
@@ -112,29 +153,36 @@ function UploadRecord({ data, ClientId, Uploader }) {
 
     React.useEffect(() => {
         FileListQuery.refetch()
+        SET_LOADING_INTERNAL('FinancialChecker', true);
     }, [ClientId])
 
     const token = localStorage.getItem('UTK');
     const FileListQuery = useQuery({
         queryKey: ['FileListFinQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileList/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
-            let dataContainer = []
-            result.list?.map((x) => {
-                var dfn = x.docsFileName.split(' ')
-                var fullname = toDecrypt(dfn[0]).split(' ')
-                dataContainer.push({
-                    id: x.id,
-                    file: x.base64,
-                    fileExtension: x.fileExtension,
-                    fname: dfn[1] === 'ML' ? fullname[1] : fullname[0],
-                    lname: dfn[1] === 'ML' ? fullname[0] : fullname[1],
-                    fc: dfn[1],
-                    remarks: x.remarks
+            try {
+                const result = await GET_LIST(`/getFileList/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
+                let dataContainer = []
+                SET_LOADING_INTERNAL('FinancialChecker', false);
+                result.list?.map((x) => {
+                    var dfn = x.docsFileName.split(' ')
+                    var fullname = toDecrypt(dfn[0]).split(' ')
+                    dataContainer.push({
+                        id: x.id,
+                        file: x.base64,
+                        fileExtension: x.fileExtension,
+                        fname: dfn[1] === 'ML' ? fullname[1] : fullname[0],
+                        lname: dfn[1] === 'ML' ? fullname[0] : fullname[1],
+                        fc: dfn[1],
+                        remarks: x.remarks
+                    })
                 })
-            })
-            setLoading(false);
-            return dataContainer
+                return dataContainer;
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('FinancialChecker', false); // Stop loading on error
+            }
+            return [];
         },
         enabled: true
     })
@@ -146,16 +194,16 @@ function UploadRecord({ data, ClientId, Uploader }) {
         file: ''
     })
 
-    const DocListICQuery = useQuery({
-        queryKey: ['DocListICQuery'],
-        queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${'IC'}`)
-            return result.list
-        },
-        enabled: true,
-        retryDelay: 1000,
-        staleTime: 5 * 1000
-    })
+    // const DocListICQuery = useQuery({
+    //     queryKey: ['DocListICQuery'],
+    //     queryFn: async () => {
+    //         const result = await GET_LIST(`/getFileType/${'IC'}`)
+    //         return result.list
+    //     },
+    //     enabled: true,
+    //     retryDelay: 1000,
+    //     staleTime: 5 * 1000
+    // })
 
     function GetDocsCode(data) {
         const DocsCode = DocListICQuery.data?.find((x) => x.docsType === data ||
@@ -446,7 +494,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                 clearFileList()
             }}
                 modalWidth={'90%'} modalTitle={'Upload Financial Checker Document'} contextHeight={'h-[500px]'}
-                contextInside={(<><CheckerDocument data={data} ClientId={ClientId} Uploader={Uploader} /></>)} />
+                contextInside={(<><CheckerDocument data={data} ClientId={ClientId} Uploader={Uploader} /></>)} style={{ zIndex: 997 }} />
             <div className='mt-[3%]'>
                 <SectionHeader title="List of 3rd Party Financial Checker" />
             </div>
@@ -454,43 +502,37 @@ function UploadRecord({ data, ClientId, Uploader }) {
                 <Button className='bg-[#3b0764] w-[200px]' onClick={() => { setModalStatus(true) }}
                     size='large' type='primary'>Upload Record</Button>
             </ConfigProvider>
-            <div className='h-[300px]'>
+            <div className='h-[300px] px-2'>
                 <div className='mt-2'>
                     <Form form={form} component={false}>
                         <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
                             <Table components={{ body: { cell: EditableCell } }} columns={mergedColumns}
                                 dataSource={
-                                    FileListQuery.isLoading
-                                        ? []
-                                        : FileListQuery.data?.map((x, i) => ({
-                                            key: x.id,
-                                            num: i + 1,
-                                            name: x.fc === 'ML' ? `${x.lname} ${x.fname}` : `${x.fname} ${x.lname}`,
-                                            br: data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL'
-                                                ? data.ofwfname === x.fname && data.ofwlname === x.lname
-                                                    ? 'Principal Borrower'
-                                                    : data.benfname === x.fname && data.benlname === x.lname
-                                                        ? 'Co-Borrower'
-                                                        : 'Additional Co-Borrower'
-                                                : data.ofwfname === x.fname && data.ofwlname === x.lname
+                                    FileListQuery.data?.map((x, i) => ({
+                                        key: x.id,
+                                        num: i + 1,
+                                        name: x.fc === 'ML' ? `${x.lname} ${x.fname}` : `${x.fname} ${x.lname}`,
+                                        br: data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL'
+                                            ? data.ofwfname === x.fname && data.ofwlname === x.lname
+                                                ? 'Principal Borrower'
+                                                : data.benfname === x.fname && data.benlname === x.lname
                                                     ? 'Co-Borrower'
-                                                    : data.benfname === x.fname && data.benlname === x.lname
-                                                        ? 'Principal Borrower'
-                                                        : 'Additional Co-Borrower',
-                                            fc: x.fc,
-                                            file: x.fileExtension === '.pdf'
-                                                ? (<Button type='link' onClick={async () => {
-                                                    setStatus(true); storeData(x.file)
-                                                }}>View PDF</Button>)
-                                                : (<Button type='link' onClick={async () => {
-                                                    setImg({ ...getImg, display: true, file: x.file })
-                                                }}>View Image</Button>),
-                                            remarks: x.remarks
-                                        }))}
-                                loading={{
-                                    spinning: FileListQuery.isLoading,
-                                    indicator: <Spin tip="Loading..." />,
-                                }}
+                                                    : 'Additional Co-Borrower'
+                                            : data.ofwfname === x.fname && data.ofwlname === x.lname
+                                                ? 'Co-Borrower'
+                                                : data.benfname === x.fname && data.benlname === x.lname
+                                                    ? 'Principal Borrower'
+                                                    : 'Additional Co-Borrower',
+                                        fc: x.fc,
+                                        file: x.fileExtension === '.pdf'
+                                            ? (<Button type='link' onClick={async () => {
+                                                setStatus(true); storeData(x.file)
+                                            }}>View PDF</Button>)
+                                            : (<Button type='link' onClick={async () => {
+                                                setImg({ ...getImg, display: true, file: x.file })
+                                            }}>View Image</Button>),
+                                        remarks: x.remarks
+                                    }))}
                             />
                         </ConfigProvider>
                     </Form>

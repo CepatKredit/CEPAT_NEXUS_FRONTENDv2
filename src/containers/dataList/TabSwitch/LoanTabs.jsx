@@ -35,7 +35,7 @@ import Charges from '../TabList/Charges';
 import StatusRemarks from '../TabList/StatusRemarks';
 
 
-function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, FileType, value, valueAmount, LoanStatus, ClientId, loading }) {
+function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, FileType, value, valueAmount, LoanStatus, ClientId }) {
     const [isEdit, setEdit] = React.useState(false);
     const [activeKey, setActiveKey] = React.useState('CRAM');
     const [relativesCount, setRelativesCount] = React.useState(0);
@@ -200,10 +200,10 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
                             <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
                         </div>
                         <div id='Loan-Details'>
-                            <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} User={'Lp'} />
+                            <LoanDetails  getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} User={'Lp'} />
                         </div>
                         <div id='OFW-Details'>
-                            <OfwDetails loading={loading} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Lp'} />
+                            <OfwDetails  getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Lp'} />
                         </div>
                         <div id='Employment-History'>
                             <EmploymentHistoryTable data={value} isEdit={isEdit} User={'Lp'} />
@@ -221,7 +221,7 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
                             <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Lp'} LoanStatus={LoanStatus} />
                         </div>
                         <div id='Beneficiary-Details'>
-                            <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Lp'}
+                            <BeneficiaryDetails  getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Lp'}
                                 sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />
                         </div>
 
@@ -249,7 +249,7 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
         {
             label: <div className='flex flex-rows'><MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>,
             key: 'NDI',
-            children: <NDI loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} isEdit={true} isReadOnly={['70', '80'].includes(GetData('ROLE').toString())} />,
+            children: <NDI  valueAmount={valueAmount} event={(e) => { event(e) }} data={value} isEdit={true} isReadOnly={['70', '80'].includes(GetData('ROLE').toString())} />,
         },
         {
             label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
@@ -269,7 +269,7 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
         {
             label: <div className="flex flex-rows"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount  valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
         },
         {
             label: <div className='flex flex-rows'><LuCalculator style={{ fontSize: '20px', marginRight: 5 }} /><span>Charges</span></div>,

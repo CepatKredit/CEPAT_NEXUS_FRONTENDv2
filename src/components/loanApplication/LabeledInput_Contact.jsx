@@ -32,38 +32,51 @@ function LabeledInput_Contact({
   function onChangeValue(e) {
     let newValue = e.target.value;
 
-    if (/^[0-9]*$/.test(newValue)) {
-      if (newValue.length <= 10) {
-        if (!newValue.startsWith("09")) {
-          newValue = "09" + newValue.slice(2);
-        }
-        setItem(newValue);
-        updateAppDetails({ name: fieldName, value: newValue }); // Update context
+    if (/^[0-9]*$/.test(newValue)) { // Check if input is numeric
+      // Update the value to ensure it starts with "09" if less than 11 digits
+      if (newValue.length < 11 && !newValue.startsWith("09")) {
+        newValue = "09" + newValue.slice(2); // Adjust to start with "09"
+      }
+      
+      // Set the item state
+      setItem(newValue);
+
+      // If the new value has 11 digits, it's valid
+      if (newValue.length === 11) {
+        setStatus(""); // Clear error status
+        setIcon(true); // Set icon state to show success
+        updateAppDetails({ name: fieldName, value: newValue }); // Update app details with valid value
+      } else {
+        // If less than 11 digits, show error
         setStatus("error");
         setIcon(true);
-      } else if (newValue.length === 11) {
-        setItem(newValue);
-        updateAppDetails({ name: fieldName, value: newValue }); // Update context
-        setStatus("");
-        setIcon(true);
+        updateAppDetails({ name: fieldName, value: null })
       }
     }
   }
 
-  function onBlur() {
-    setIcon(true);
-    if (getItem.length !== 11 || isNaN(getItem)) {
-      setStatus("error");
-    } else {
-      setStatus("");
-    }
-  }
+  // function onBlur() {
+  //   setIcon(true);
+  //   if (getItem.length !== 11 || isNaN(getItem)) {
+  //     setStatus("error");
+  //   } else {
+  //     setStatus("success");
+  //     setIcon(true)
+  //   }
+  // }
 
   React.useEffect(() => {
     if (rendered) {
-      onBlur();
+      setIcon(false);
+      if (getAppDetails[fieldName]) {
+        setStatus(""); 
+        setIcon(true);
+      } else {
+        setStatus("error");
+        setIcon(true); 
+      }
     }
-  }, []);
+  }, [])
 
   return (
     <div className={className_dmain}>
@@ -82,10 +95,10 @@ function LabeledInput_Contact({
           value={getItem}
           onChange={onChangeValue}
           size="large"
-          placeholder={placeHolder}
+          placeholder={placeHolder} 
           autoComplete="off"
           style={{ width: "100%" }}
-          onBlur={onBlur}
+          // onBlur={onBlur}
           status={required || required === undefined ? getStatus : false}
           maxLength={11}
           suffix={
