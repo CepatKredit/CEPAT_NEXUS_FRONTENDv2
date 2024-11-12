@@ -100,6 +100,19 @@ export function ComponentPreloads() {
     enabled: true,
     retryDelay: 1000,
   });
+
+  const [getCurrency, setCurrency] = React.useState([]);
+  useQuery({
+    queryKey: ['getCurrency'],
+    queryFn: async () => {
+        const result = await GET_LIST('/getCurrencyList');
+        setCurrency(result.list)
+        return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+});
+
   //////////////////////////////////
   //const { getAppDetails } = useContext(LoanApplicationContext)
   // const data = getAppDetails
@@ -139,6 +152,7 @@ export function ComponentPreloads() {
     GET_OFW_SUFFIX: getSuffix,
     GET_VALID_ID_LIST: getValidId,
     GET_RELATIONSHIP_LIST: getRelationship,
+    GET_CURRENCY_LIST: getCurrency,
     //     GET_MUNICIPALITY: getMunicipalityList,
   };
 }

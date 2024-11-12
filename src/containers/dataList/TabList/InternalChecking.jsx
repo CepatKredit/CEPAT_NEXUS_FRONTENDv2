@@ -194,15 +194,11 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
             key: '1',
             label: 'Kaiser Check',
             children: (<>
-                {gettrigger && (<center><div >
+                <center>
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                        <Button
-                            onClick={() => { genKaiser() }}
-                            className='bg-[#3b0764] w-[8rem]'
-                            type='primary' > Load Kaiser
-                        </Button>
+                        <Button  size='large' className='mb-2 bg-[#3b0764]' type='primary' onClick={() => { genKaiser() }}  >Load Kaiser</Button>
                     </ConfigProvider>
-                </div></center>)}
+                </center>
                 {
                     data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL'
                         ? (<div>

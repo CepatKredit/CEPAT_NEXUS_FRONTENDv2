@@ -32,8 +32,11 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     React.useEffect(() => { getCharacterRef.refetch() }, [BorrowerId])
     const [getStat, setStat] = React.useState(true)
     const role = GetData('ROLE') ? GetData('ROLE').toString() : null;
+
+    React.useEffect(() => { getCharacterRef.refetch() }, [data.loanIdCode]);
+
     const getCharacterRef = useQuery({
-        queryKey: ['getCharacterRef'],
+        queryKey: ['getCharacterRef',BorrowerId],
         queryFn: async () => {
             try {
                 const result = await axios.get(`/getCharacterRef/${BorrowerId}`);
@@ -66,7 +69,9 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             }
             return null;
         },
-        refetchInterval: 5000,
+        refetchInterval: (data) => {
+            return data?.length === 0 ? 500 : false;
+        },
         enabled: true,
         retryDelay: 1000,
     })

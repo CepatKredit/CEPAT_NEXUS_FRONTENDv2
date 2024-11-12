@@ -68,7 +68,9 @@ const createInitialAppDetails = (direct) => {
     ofwprovBarangay: "",
     ofwprovStreet: "",
     ofwBorrowersCode: "",
-
+    ofwlosYear: "",
+    ofwlosMonth: "",
+    
     // Beneficiary Details
     benfname: "",
     benmname: "",

@@ -15,6 +15,7 @@ function PreLoad({ children }) {
     GET_OFW_SUFFIX,
     GET_VALID_ID_LIST,
     GET_RELATIONSHIP_LIST,
+    GET_CURRENCY_LIST,
   } = ComponentPreloads();
   //const GET_PROVINCE_LIST = ProvinceList();
 
@@ -122,6 +123,7 @@ function PreLoad({ children }) {
         GET_OFW_SUFFIX,
         GET_VALID_ID_LIST,
         GET_RELATIONSHIP_LIST,
+        GET_CURRENCY_LIST,
         //Accounting
         getBank,
         getPurpose,

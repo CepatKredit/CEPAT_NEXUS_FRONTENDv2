@@ -206,12 +206,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
   }
 
   const {focus, setfocus} = FocusHook();
-/*
-  const inputRef = useRef(null);
-  const focusInput = () => {
-    inputRef.current && inputRef.current.focus();
-  };
-*/
+
 
   return (
     <LoanApplicationContext.Provider

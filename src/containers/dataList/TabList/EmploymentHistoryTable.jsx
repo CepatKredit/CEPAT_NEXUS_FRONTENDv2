@@ -35,7 +35,6 @@ function EmploymentHistory({ data, User }) {
 
     const [getStat, setStat] = React.useState(true);
     const role = GetData('ROLE').toString();
-   // React.useEffect(() => { getEmploymentHistory.refetch() }, [data.loanIdCode]);
 
     const getEmploymentHistory = useQuery({
         queryKey: ['getEmploymentHistory'],
@@ -45,7 +44,7 @@ function EmploymentHistory({ data, User }) {
             try {
                 const result = await axios.get(`/getEmploymentHistory/${toDecrypt(localStorage.getItem('SIDC'))}`);
 
-                //   console.log("Employment History:", result);
+                  //console.log("Employment History:", result);
 
                 let dataList = [{
                     key: 0,
@@ -393,6 +392,12 @@ function EmploymentHistory({ data, User }) {
     async function onEndDateChange(e) {
         form.setFieldsValue({ 'enddate': e });
         console.log("Selected End Date:", e ? e.format('YYYY-MM') : "No date selected");
+    }
+
+    async function onChangeToUpper(e, pointer) {
+        if (pointer === 'agency') {
+            form.setFieldsValue({ 'agency': toUpperText(e) });
+        }
     }
 
     /*  const disabledStartDate = (current) => {

@@ -64,27 +64,60 @@ function LabeledCurrencyInput({
         const parsedNum = parseFloat(plainNum);
         const formattedValue = plainNum ? formatNumberWithCommas(plainNum) : '';
 
-        setItem(formattedValue); // Display the user's input
-        debreceive(formattedValue || '0.00'); // Send '0.00' if input is empty
-
-        setStatus('');
-        setIcon(true);
+        setItem(formattedValue);
+        if (placeHolder === 'Enter Interest Rate') {
+            debreceive(formattedValue);
+            console.log(plainNum)
+            if ((required || required === undefined) && (num === '' || plainNum < 0)) {
+                setStatus('error');
+                setIcon(true);
+                //debreceive();
+            } else {
+                setStatus('');
+                setIcon(true);
+                //debreceive(formattedValue);
+            }
+        } else if ((required || required === undefined) && (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure')) {
+            if (!plainNum || parsedNum < 30000) {
+                setStatus('error');
+                setIcon(true);
+                debreceive();
+            } else {
+                setStatus('');
+                setIcon(true);
+                debreceive(formattedValue);
+            }
+        } else {
+            setStatus('');
+            setIcon(true);
+            debreceive(formattedValue);
+        }
     }
 
     function onBlur() {
         setIcon(true);
         const plainNum = removeCommas(getItem);
         const parsedNum = parseFloat(plainNum);
-
-        // If the input is empty, set it back to "0.00"
-        if (!plainNum) {
-            setItem('0.00');
-            debreceive('0.00');
-        } else {
-            setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum || 0)));
+        if (placeHolder === 'Enter Interest Rate') {
+            if ((!plainNum || !getItem) && parsedNum < 0 ) {
+                setStatus('error');
+            } else {
+                setStatus('');
+            }
+        } else if (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure') {
+            if (!plainNum || parsedNum < 30000) { 
+                setStatus('error');
+            } else {
+                setStatus('');
+            }
+        } else { if (!plainNum){ 
+            setStatus('error');
+        }else{
+            setStatus('');
+            }
         }
+        setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
 
-        setStatus('');
     }
 
     React.useEffect(() => {

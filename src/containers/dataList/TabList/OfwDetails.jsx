@@ -24,7 +24,6 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
     const queryClient = useQueryClient();
     const token = localStorage.getItem('UTK')
 
-
     const [relativesCount, setRelativesCount] = React.useState(0);
     const fetchRelativesAndUpdateCount = () => {
 
@@ -249,6 +248,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
         'TAGGED FOR RELEASE', 'FOR DISBURSEMENT', 'ON WAIVER', 'CONFIRMATION', 'CONFIRMED',
         'UNDECIDED', 'RELEASED', 'FOR CREDIT ASSESSMENT', 'FOR RE-APPLICATION', 'PRE-APPROVAL'
     ];
+
 
 
     return (
