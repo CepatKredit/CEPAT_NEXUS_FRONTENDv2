@@ -158,7 +158,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
       children: getAppDetails.loanAmount
         ? formatNumberWithCommas(
             formatToTwoDecimalPlaces(
-              getAppDetails.loanAmount.replaceAll(",", "")
+              getAppDetails.loanAmount.toString().replaceAll(",", "")
             )
           )
         : "",
@@ -230,9 +230,9 @@ function LoanDetails({ /*data*/ receive, loancases }) {
         : "",
       Purpose: getAppDetails.loanPurpose,
       BranchId: parseInt(getAppDetails.loanBranch),
-      Amount: parseFloat(
+      Amount: getAppDetails.loanAmount ? parseFloat(
         getAppDetails.loanAmount.toString().replaceAll(",", "")
-      ),
+      ): 0,
       Channel: getAppDetails.hckfi,
       Terms: getAppDetails.loanTerms,
       Consultant: getAppDetails.consultant,

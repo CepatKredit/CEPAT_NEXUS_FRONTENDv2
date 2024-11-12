@@ -33,7 +33,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     const [getStat, setStat] = React.useState(true)
     const role = GetData('ROLE') ? GetData('ROLE').toString() : null;
 
-    React.useEffect(() => { getCharacterRef.refetch() }, [data.loanIdCode]);
+    React.useEffect(() => { getCharacterRef.refetch() }, [getAppDetails.loanIdCode]);
 
     const getCharacterRef = useQuery({
         queryKey: ['getCharacterRef',BorrowerId],

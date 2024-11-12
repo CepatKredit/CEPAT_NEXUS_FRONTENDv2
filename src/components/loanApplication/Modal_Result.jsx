@@ -34,31 +34,56 @@ function Modal_Result({
   const navigate = useNavigate();
   const [getList, setList] = React.useState([]);
 
-  // const showErrorNotification = (status, message, description) => {
-  //     api[status]({
-  //         message: message,
-  //         description: description,
-  //     });
-  // };
 
-  async function CheckDuplication() { 
-    const checkLoan = {
-      LoanAppId: code.LoanAppId,
-      FirstName: code.FirstName,
-      LastName: code.LastName,
-      Birthday: code.Birthday,
-    };
-    const result = await POST_DATA("/checkLoan", checkLoan);
-    if (result.list.length === 0) {
+  // async function CheckDuplication() { 
+  //   const checkLoan = {
+  //     LoanAppId: code.LoanAppId,
+  //     FirstName: code.FirstName,
+  //     LastName: code.LastName,
+  //     Birthday: code.Birthday,
+  //   };
+  //   const result = await POST_DATA("/checkLoan", checkLoan);
+  //   if (result.list.length === 0) {
+  //       ClickLoan.mutate();
+  //   } else {
+  //     api["info"]({
+  //       message: "Loan Already Exists",
+  //       description: `Please be advised that you have an ongoing application with Cepat Kredit ${result.list[0].branch} branch with Loan Application No. 
+  //               ${result.list[0].loanAppCode}. For further concerns, please email our Customer Service Department at customerservice@cepatkredit.com. Thank you!`,
+  //     });
+  //   }
+  // }
+
+  const checkLoanMutation = useMutation({
+    mutationFn: async () => {
+      const checkLoan = {
+        LoanAppId: code.LoanAppId,
+        FirstName: code.FirstName,
+        LastName: code.LastName,
+        Birthday: code.Birthday,
+      };
+      return await POST_DATA("/checkLoan", checkLoan);
+    },
+    onSuccess: (result) => {
+      if (result.list.length === 0) {
         ClickLoan.mutate();
-    } else {
-      api["info"]({
-        message: "Loan Already Exists",
-        description: `Please be advised that you have an ongoing application with Cepat Kredit ${result.list[0].branch} branch with Loan Application No. 
-                ${result.list[0].loanAppCode}. For further concerns, please email our Customer Service Department at customerservice@cepatkredit.com. Thank you!`,
-      });
-    }
-  }
+      } else {
+        api["info"]({
+          message: "Loan Already Exists",
+          description: `Please be advised that you have an ongoing application with Cepat Kredit ${result.list[0].branch} branch with Loan Application No. 
+                        ${result.list[0].loanAppCode}. For further concerns, please email our Customer Service Department at customerservice@cepatkredit.com. Thank you!`,
+        });
+      }
+    },
+    onError: (error) => {
+      console.error("Error checking duplication:", error);
+      // Handle any additional error handling here if needed
+    },
+  });
+  
+  const handleCheckDuplication = () => {
+    checkLoanMutation.mutate();
+  };  
 
   const ClickLoan = useMutation({
     mutationFn: async () => {
@@ -140,7 +165,7 @@ function Modal_Result({
           </p>
         )}
         <center>
-          {ClickLoan.isIdle ? (
+          {ClickLoan.isIdle && checkLoanMutation.isIdle ? (
             <>
               <ConfigProvider theme={{ token: { colorPrimary: "#6067AD" } }}>
                 <Button
@@ -151,23 +176,21 @@ function Modal_Result({
                 </Button>
               </ConfigProvider>
               <ConfigProvider theme={{ token: { colorPrimary: "#898FCD" } }}>
-                <Button
-                  type="primary"
-                  className="mt-[5%] ml-[2%] bg-[#6B73C1]"
-                  onClick={CheckDuplication}
-                  disabled={ClickLoan.isPending}
-                >
-               {ClickLoan.isPending ? (
-                    <Spin
-                      indicator={
-                        <LoadingOutlined style={{ fontSize: 18 }} spin />
-                      }
-                    />
-                  ) : (
-                    "Confirm"
-                  )}
-                </Button>
-              </ConfigProvider>
+              <Button
+                type="primary"
+                className="mt-[5%] ml-[2%] bg-[#6B73C1]"
+                onClick={handleCheckDuplication}
+                disabled={checkLoanMutation.isLoading || ClickLoan.isLoading}
+              >
+                {checkLoanMutation.isLoading || ClickLoan.isLoading ? (
+                  <Spin
+                    indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />}
+                  />
+                ) : (
+                  "Confirm"
+                )}
+              </Button>
+            </ConfigProvider>
             </>
           ) : ClickLoan.isLoading ? null : ClickLoan.isSuccess ? (
             <ConfigProvider theme={{ token: { colorPrimary: "#898FCD" } }}>
@@ -213,3 +236,4 @@ function Modal_Result({
 }
 
 export default Modal_Result;
+
