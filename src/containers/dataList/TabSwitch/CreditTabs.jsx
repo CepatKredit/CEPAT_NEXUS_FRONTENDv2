@@ -702,7 +702,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                                     onClick={toggleEditMode}
                                     size="large"
                                     className="-mt-5"
-                                    disabled={disabledStatuses.includes(GetStatus)}>EDIT
+                                    > EDIT
                                 </Button>
                             </ConfigProvider>
                         )}

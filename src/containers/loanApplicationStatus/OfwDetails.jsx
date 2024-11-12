@@ -414,8 +414,8 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
     if (update === 0) {
       const value = {
         LoanAppId: getAppDetails.loanIdCode,
-        BorrowersCode: getAppDetails.borrowersCode,
         Tab: 2,
+        BorrowersCode: getAppDetails.borrowersCode,
         Product: getAppDetails.loanProd,
         BranchId: parseInt(getAppDetails.loanBranch),
         DepartureDate: mmddyy(getAppDetails.loanDateDep),
@@ -681,6 +681,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
                   fieldName={"ofwvalidid"}
                   // receive={(e) => receive({ name: "ofwvalidid", value: e })}
                   category="marketing"
+                  required={false}
                 />
                 <LabeledInput
                   className_dmain="w-full h-[3.5rem]"
@@ -691,6 +692,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
                   value={getAppDetails.ofwidnumber}
                   fieldName={"ofwidnumber"}
                   category="marketing"
+                  required={false}
                 />
               </div>
             </div>
@@ -759,41 +761,42 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
           />
         </>
       )}
-      <div className="flex justify-center space-x-10 mb-2 mt-6">
-        {isEdit ? (
-          <>
+      {getAppDetails.loanStatus === "RECEIVED" && (
+        <div className="flex justify-center space-x-10 mb-2 mt-6">
+          {isEdit ? (
+            <>
+              <Button
+                type="primary"
+                icon={<SaveOutlined />}
+                onClick={() => {
+                  updateData();
+                }}
+              >
+                Save
+              </Button>
+
+              <Button
+                type="default"
+                onClick={() => {
+                  setEdit(!isEdit);
+                }}
+              >
+                Cancel
+              </Button>
+            </>
+          ) : (
             <Button
               type="primary"
-              icon={<SaveOutlined />}
-              onClick={() => {
-                updateData();
-              }}
-            >
-              Save
-            </Button>
-
-            <Button
-              type="default"
+              icon={<EditOutlined />}
               onClick={() => {
                 setEdit(!isEdit);
               }}
             >
-              Cancel
+              Edit
             </Button>
-          </>
-        ) : (
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setEdit(!isEdit);
-            }}
-            disabled={getAppDetails.loanStatus !== "RECEIVED"}
-          >
-            Edit
-          </Button>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </>
   );
 }

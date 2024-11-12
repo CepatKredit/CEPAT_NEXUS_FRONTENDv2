@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Descriptions, ConfigProvider, Spin } from 'antd';
 import { jwtDecode } from 'jwt-decode';
 
-function ViewApprovalAmount({ data, loading, receive }) { 
+function ViewApprovalAmount({ data, loading, receive = () => {} }) {
     const [getMAmort, setMAmort] = React.useState(0);
     useEffect(() => {
         const approvedAmount = data.ApprvAmount ? parseFloat(data.ApprvAmount.toString().replaceAll(',', '')) : 0;
@@ -11,8 +11,10 @@ function ViewApprovalAmount({ data, loading, receive }) {
         if (approvedAmount && interestRate && terms) {
             const calculatedAmort = ((((interestRate * terms)/100) * approvedAmount) + approvedAmount) / terms;
             setMAmort(calculatedAmort || 0);
+            receive({ name: 'MonthlyAmort', value: calculatedAmort || 0 })
         } else {
             setMAmort(0);
+            receive({ name: 'MonthlyAmort', value: '0' })
         }
     }, [data.ApprvAmount, data.ApprvInterestRate, data.ApprvTerms]);
     const [getTExposure, setTExposure] = React.useState(0);
@@ -20,12 +22,15 @@ function ViewApprovalAmount({ data, loading, receive }) {
         const approvedAmount = data.ApprvAmount ? parseFloat(data.ApprvAmount.toString().replaceAll(',', '')) : 0;
         const otherExposure = data.OtherExposure ? parseFloat(data.OtherExposure.toString().replaceAll(',', '')) : 0;
         const calculatedTotal = approvedAmount + otherExposure;
-        if(approvedAmount === 0 || otherExposure === 0){
-            setTExposure(0)
-        }else{
-            setTExposure(calculatedTotal || 0)
+        if (approvedAmount === 0) {
+            setTExposure("0.00");
+            receive({ name: 'TotalExposure', value: '0.00' }) 
+        } else {
+            setTExposure(calculatedTotal ? calculatedTotal.toFixed(2) : "0.00");
+            receive({ name: 'TotalExposure', value: calculatedTotal ? calculatedTotal.toFixed(2) : "0.00" }) 
         }
     }, [data.ApprvAmount, data.OtherExposure]);
+
 
     function formatNumberWithCommas(num) {
         if (!num) return '';
@@ -53,7 +58,9 @@ function ViewApprovalAmount({ data, loading, receive }) {
         { key: '2', label: <span className={`font-semibold ${data.ApprvInterestRate ? 'text-black' : 'text-orange-500'}`}>Approved Interest Rate (%)</span>, children: data.ApprvInterestRate || '' },
         { key: '3', label: <span className={`font-semibold ${data.ApprvTerms ? 'text-black' : 'text-orange-500'}`}>Approved Terms (Months)</span>, children: data.ApprvTerms || '' },
         { key: '4', label: <span className={`font-semibold ${getMAmort ? 'text-black' : 'text-orange-500'}`}>Monthly Amort</span>, children: getMAmort ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getMAmort))) : ''},
-        { key: '5', label: <span className="font-semibold text-black">Other Exposure</span>, children: data.OtherExposure ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(data.OtherExposure).replaceAll(',', ''))) : '' },
+        { key: '5', label: <span className="font-semibold text-black">Other Exposure</span>, children: (data.OtherExposure !== undefined && data.OtherExposure !== null && data.OtherExposure !== '')
+                ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(data.OtherExposure).replaceAll(',', '')))
+                : '0.00'},        
         { key: '6', label: <span className={`font-semibold ${getTExposure ? 'text-black' : 'text-orange-500'}`}>Total Exposure</span>, children: getTExposure ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getTExposure).replaceAll(',', ''))) : '' },
         { key: '7', label: <span className="font-semibold text-black">Remarks</span>, children: data.CRORemarks || '' },
         { /*key: '8', label: <span className={`font-semibold ${data.ModUser || modUser ? 'text-black' : 'text-orange-500'}`}>Approved By</span>, children: data.ModUser || modUser || '' */},

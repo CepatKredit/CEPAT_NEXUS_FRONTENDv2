@@ -284,34 +284,35 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                     <Descriptions className="mt-5" column={{ md: 2, lg: 3, xl: 4 }} items={items} />
                     </>)
         }
-        <div className="flex justify-center space-x-4 mb-2 mt-6">
-            {isEdit ? (
-                <>
+        {getAppDetails.loanStatus === 'RECEIVED' && (
+            <div className="flex justify-center space-x-4 mb-2 mt-6">
+                {isEdit ? (
+                    <>
+                        <Button
+                            type="primary"
+                            icon={<SaveOutlined />}
+                            onClick={() => { updateData() }}
+                        >
+                            Save
+                        </Button>
+                        <Button
+                            type="default"
+                            onClick={() => { setEdit(!isEdit) }}
+                        >
+                            Cancel
+                        </Button>
+                    </>
+                ) : (
                     <Button
                         type="primary"
-                        icon={<SaveOutlined />}
-                        onClick={() => { updateData() }}
-                    >
-                        Save
-                    </Button>
-                    <Button
-                        type="default"
+                        icon={<EditOutlined />}
                         onClick={() => { setEdit(!isEdit) }}
                     >
-                        Cancel
+                        Edit
                     </Button>
-                </>
-            ) : (
-                <Button
-                    type="primary"
-                    icon={<EditOutlined />}
-                    onClick={() => { setEdit(!isEdit) }}
-                    disabled={getAppDetails.loanStatus !== 'RECEIVED'}
-                >
-                    Edit
-                </Button>
-            )}
-        </div>
+                )}
+            </div>
+        )}
     </>
     );
 }

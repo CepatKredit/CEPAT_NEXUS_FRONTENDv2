@@ -52,7 +52,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                 return 'bg-[#DB7093] text-white';
             case 'LACK OF DOCUMENTS':
                 return 'bg-[#8B4513] text-white';
-            case 'FOR CREDIT ASSESSEMENT':
+            case 'FOR CREDIT ASSESSMENT':
                 return 'bg-[#006d77] text-white';
             case 'CREDIT ASSESSEMENT SPECIAL LANE':
                 return 'bg-[#B8860B] text-white';

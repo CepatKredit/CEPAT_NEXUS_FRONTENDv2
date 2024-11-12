@@ -31,17 +31,29 @@ import { MdEditDocument } from "react-icons/md";
 import { MdCancel } from "react-icons/md";
 import { FaThumbsDown } from "react-icons/fa";
 import { BiRedo } from 'react-icons/bi';
+import { BiSolidCreditCardAlt } from "react-icons/bi";
+import { AiOutlineRollback } from "react-icons/ai";
+import { MdOutlineAssignmentReturn } from "react-icons/md";
+import { MdOutlineAssessment } from "react-icons/md";
+import { GiReceiveMoney } from "react-icons/gi";
+import { MdOutlineConfirmationNumber } from "react-icons/md";
+import { MdApproval } from "react-icons/md";
+import { AiOutlineSignature } from "react-icons/ai";
+import { TbArrowBackUpDouble } from "react-icons/tb";
+import { FcDataBackup } from "react-icons/fc";
+
 
 function MiniAnimatedCard({ path }) {
 
     const { GET_DATA_COUNTER } = useDataContainer()
-    const colorList = ['#283618', '#29274c', '#FF8C00', '#3bceac', '#532b88',
-        '#DB7093', '#8B4513', '#006d77', '#B8860B', '#008B8B',
-        '#293241', '#00a6fb', '#003566', '#4a4e69', '#0f4c5c',
-        '#3d5a80', '#7B68EE', '#2d6a4f', '#6d597a', '#2f2f2f',
-        '#008080', '#20B2AA', '#90EE90', '#FFD700', '#228B22',
-        '#32CD32', '#F08080', '#2E8B57', '#006400', '#FF7F50',
-        '#1c1c1c', '#FF0000', '#708090']
+    const colorList = ['#283618', 
+        '#29274c', '#FF8C00', '#3bceac', '#532b88','#DB7093',
+        '#8B4513', '#006d77', '#ff5400', '#003566', 
+        '#B8860B', '#b5179e', '#4a4e69', '#80b918','#3d5a80',
+        '#7B68EE', '#2d6a4f', '#6d597a', '#720026','#ff0054',
+        '#20B2AA', '#2196f3', '#FFD700', '#E3B6B1','#32CD32',
+        '#c77dff', '#cd5c5c', '#006400', '#FF7F50','#1c1c1c',
+        '#FF0000', '#708090']
     const navigate = useNavigate()
     function Data() {
         if (path.loc === '/ckfi/under-marketing') {
@@ -81,7 +93,7 @@ function MiniAnimatedCard({ path }) {
         }
         else if (path.loc === '/ckfi/reassessed/marketing') {
             let value = {
-                icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
+                icon: <TbArrowBackUpDouble  style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[5]
             }
             return value
@@ -100,6 +112,20 @@ function MiniAnimatedCard({ path }) {
             }
             return value
         }
+        else if (path.loc === '/ckfi/under-credit') {
+            let value = {
+                icon: <BiSolidCreditCardAlt style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[10]
+            }
+            return value
+        }
+        else if (path.loc === '/ckfi/approved') {
+            let value = {
+                icon: <RxExit style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[11]
+            }
+            return value
+        }
         else if (path.loc === '/ckfi/special-lane') {
             let value = {
                 icon: <MdLabelImportant style={{ fontSize: '40px', color: '#ffffff' }} />,
@@ -109,43 +135,29 @@ function MiniAnimatedCard({ path }) {
         }
         else if (path.loc === '/ckfi/assessement/credit') {
             let value = {
-                icon: <RxEnter style={{ fontSize: '40px', color: '#ffffff' }} />,
+                icon: <MdOutlineAssessment style={{ fontSize: '40px', color: '#ffffff' }} />,
                 color: colorList[9]
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/under-credit') {
-            let value = {
-                icon: <FaRegCreditCard style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[10]
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/approved') {
-            let value = {
-                icon: <RxExit style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[18]
             }
             return value
         }
         else if (path.loc === '/ckfi/queue-bucket') {
             let value = {
                 icon: <HiMiniQueueList style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[11]
+                color: colorList[12]
             }
             return value
         }
         else if (path.loc === '/ckfi/for-verification') {
             let value = {
                 icon: <FaFileShield style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[12]
+                color: colorList[13]
             }
             return value
         }
         else if (path.loc === '/ckfi/pre-check') {
             let value = {
                 icon: <FaFileSignature style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[13]
+                color: colorList[14]
             }
             return value
         }
@@ -153,16 +165,16 @@ function MiniAnimatedCard({ path }) {
         //RETURNED FROM MARKETING
         else if (path.loc === '/ckfi/returned/marketing') {
             let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[22]
+                icon: <MdOutlineAssignmentReturn  style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[15]
             }
             return value
         }
 
         else if (path.loc === '/ckfi/returned/credit-associate') {
             let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[14]
+                icon: <AiOutlineRollback style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[16]
             }
             return value
         }
@@ -171,7 +183,7 @@ function MiniAnimatedCard({ path }) {
         else if (path.loc === '/ckfi/reassessed/credit-associate') {
             let value = {
                 icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[29]
+                color: colorList[17]
             }
             return value
         }
@@ -179,98 +191,98 @@ function MiniAnimatedCard({ path }) {
         else if (path.loc === '/ckfi/returned/credit-officer') {
             let value = {
                 icon: <MdOutlineSevereCold style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[15]
+                color: colorList[18]
             }
             return value
         }
         else if (path.loc === '/ckfi/reassessed/credit-officer') {
             let value = {
-                icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[16]
+                icon: <FcDataBackup style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[19]
             }
             return value
         }
         else if (path.loc === '/ckfi/for-approval') {
             let value = {
-                icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[17]
+                icon: <MdApproval style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[20]
             }
             return value
         }
         else if (path.loc === '/ckfi/on-waiver') {
             let value = {
-                icon: <FaFileSignature style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[23]
+                icon: <AiOutlineSignature  style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[21]
             }
             return value
         }
         else if (path.loc === '/ckfi/under-lp') {
             let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[19]
+                icon: <GiReceiveMoney  style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[22]
             }
             return value
         }
         else if (path.loc === '/ckfi/confirmation') {
             let value = {
-                icon: <GiConfirmed style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[24]
+                icon: <MdOutlineConfirmationNumber style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[23]
             }
             return value
         }
         else if (path.loc === '/ckfi/confirmed') {
             let value = {
                 icon: <GiConfirmed style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[25]
+                color: colorList[24]
             }
             return value
         }
         else if (path.loc === '/ckfi/for-docusign') {
             let value = {
                 icon: <MdEditDocument style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[20]
+                color: colorList[25]
             }
             return value
         }
         else if (path.loc === '/ckfi/for-disbursement') {
             let value = {
                 icon: <FaRegMoneyBillAlt style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[27]
+                color: colorList[26]
             }
             return value
         }
         else if (path.loc === '/ckfi/released') {
             let value = {
                 icon: <LuFileBox style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[28]
+                color: colorList[27]
             }
             return value
         }
         else if (path.loc === '/ckfi/undecided') {
             let value = {
                 icon: <BsPersonFillExclamation style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[26]
+                color: colorList[28]
             }
             return value
         }
         else if (path.loc === '/ckfi/cancelled') {
             let value = {
                 icon: <MdCancel style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[30]
+                color: colorList[29]
             }
             return value
         }
         else if (path.loc === '/ckfi/declined') {
             let value = {
                 icon: <FaThumbsDown style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[31]
+                color: colorList[30]
             }
             return value
         }
         else {
             let value = {
                 icon: <BiRedo style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[32]
+                color: colorList[31]
             }
             return value
         }

@@ -23,8 +23,10 @@ function EditApprovalAmount({ data, receive }) {
         if (approvedAmount && interestRate && terms) {
             const calculatedAmort = ((((interestRate * terms)/100) * approvedAmount) + approvedAmount) / terms;
             setMAmort(calculatedAmort || 0);
+            receive({ name: 'MonthlyAmort', value: calculatedAmort || 0 })
         } else {
             setMAmort(0);
+            receive({ name: 'MonthlyAmort', value: '0' })
         }
     }, [data.ApprvAmount, data.ApprvInterestRate, data.ApprvTerms]);
 
@@ -32,10 +34,12 @@ function EditApprovalAmount({ data, receive }) {
         const approvedAmount = data.ApprvAmount ? parseFloat(data.ApprvAmount.toString().replaceAll(',', '')) : 0;
         const otherExposure = data.OtherExposure ? parseFloat(data.OtherExposure.toString().replaceAll(',', '')) : 0;
         const calculatedTotal = approvedAmount + otherExposure;
-        if(approvedAmount === 0 ){
-            setTExposure(0)
-        }else{
-            setTExposure(calculatedTotal || 0)
+        if (approvedAmount === 0) {
+            setTExposure("0.00");
+            receive({ name: 'TotalExposure', value: '0.00' }) 
+        } else {
+            setTExposure(calculatedTotal ? calculatedTotal.toFixed(2) : "0.00");
+            receive({ name: 'TotalExposure', value: calculatedTotal ? calculatedTotal.toFixed(2) : "0.00" }) 
         }
     }, [data.ApprvAmount, data.OtherExposure]);
 

@@ -370,22 +370,19 @@ function LoanDetails({ /*data*/ receive, loancases }) {
           />
         </div>
       )}
+      {getAppDetails.loanStatus === "RECEIVED" && (
       <div className="flex justify-center space-x-4 mb-2 mt-6">
         {isEdit ? (
           <>
-            {/* Save Button */}
             <Button
               type="primary"
               icon={<SaveOutlined />}
-              // disabled={loanValidation}
               onClick={() => {
                 updateData();
               }}
             >
               Save
             </Button>
-
-            {/* Cancel Button */}
             <Button
               type="default"
               onClick={() => {
@@ -400,19 +397,18 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             </Button>
           </>
         ) : (
-          /* Edit Button when not in edit mode */
           <Button
             type="primary"
             icon={<EditOutlined />}
             onClick={() => {
               toggleEditMode();
             }}
-            disabled={getAppDetails.loanStatus !== "RECEIVED"}
           >
             Edit
           </Button>
         )}
       </div>
+    )}
     </div>
   );
 }

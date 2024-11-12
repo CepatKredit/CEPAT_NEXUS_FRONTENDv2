@@ -66,7 +66,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
         'RETURN TO CREDIT ASSOCIATE', 'RETURN TO CREDIT OFFICER', 'REASSESSED TO CREDIT OFFICER',
         'APPROVED (TRANS-OUT)', 'RETURN TO LOANS PROCESSOR', 'FOR DOCUSIGN', 'OK FOR DOCUSIGN',
         'TAGGED FOR RELEASE', 'FOR DISBURSEMENT', 'ON WAIVER', 'CONFIRMATION', 'CONFIRMED',
-        'UNDECIDED', 'RELEASED', 'FOR CREDIT ASSESSEMENT', 'FOR RE-APPLICATION', 'PRE-APPROVAL'
+        'UNDECIDED', 'RELEASED', 'FOR CREDIT ASSESSMENT', 'FOR RE-APPLICATION', 'PRE-APPROVAL'
     ];
 
     React.useEffect(() => {
@@ -330,8 +330,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                                                 onClick={toggleEditMode}
                                                 size="large"
                                                 className="-mt-5"
-                                            >
-                                                EDIT
+                                                disabled={disabledStatuses.includes(GetStatus)}>EDIT
                                             </Button>
                                         </ConfigProvider>
                                     )}

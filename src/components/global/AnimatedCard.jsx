@@ -31,17 +31,29 @@ import { MdEditDocument } from 'react-icons/md';
 import { MdCancel } from 'react-icons/md';
 import { FaThumbsDown } from 'react-icons/fa';
 import { BiRedo } from 'react-icons/bi';
+import { BiSolidCreditCardAlt } from "react-icons/bi";
+import { AiOutlineRollback } from "react-icons/ai";
+import { MdOutlineAssessment } from "react-icons/md";
+import { GiReceiveMoney } from "react-icons/gi";
+import { MdOutlineConfirmationNumber } from "react-icons/md";
+import { MdApproval } from "react-icons/md";
+import { AiOutlineSignature } from "react-icons/ai";
+import { TbArrowBackUpDouble } from "react-icons/tb";
+import { FcDataBackup } from "react-icons/fc";
+import { MdOutlineAssignmentReturn } from "react-icons/md";
+
 
 function AnimatedCard({ path }) {
 
     const { GET_DATA_COUNTER } = useDataContainer()
-    const colorList = ['#283618', '#29274c', '#FF8C00', '#3bceac', '#532b88',
-        '#DB7093', '#8B4513', '#006d77', '#B8860B', '#008B8B',
-        '#293241', '#00a6fb', '#003566', '#4a4e69', '#0f4c5c',
-        '#3d5a80', '#7B68EE', '#c6249a', '#2d6a4f', '#6d597a', '#2f2f2f',
-        '#008080', '#20B2AA', '#90EE90', '#FFD700', '#228B22',
-        '#32CD32', '#F08080', '#2E8B57', '#006400', '#FF7F50',
-        '#1c1c1c', '#FF0000', '#708090']
+    const colorList = ['#283618', 
+        '#29274c', '#FF8C00', '#3bceac', '#532b88','#DB7093',
+        '#8B4513', '#006d77', '#B8860B', '#b5179e',
+        '#ff5400', '#003566', '#4a4e69', '#80b918','#3d5a80',
+        '#7B68EE', '#2d6a4f', '#6d597a', '#720026','#ff0054',
+        '#20B2AA', '#2196f3', '#FFD700', '#E3B6B1','#32CD32',
+        '#c77dff', '#cd5c5c', '#006400', '#FF7F50','#1c1c1c',
+        '#FF0000', '#708090']
     let name = ''
     const navigate = useNavigate()
 
@@ -90,7 +102,7 @@ function AnimatedCard({ path }) {
         else if (path === '/ckfi/reassessed/marketing') {
             name = 'REASSESSED TO MARKETING'
             let value = {
-                icon: <TbFileIsr style={{ fontSize: '80px', color: '#ffffff' }} />,
+                icon: <TbArrowBackUpDouble  style={{ fontSize: '80px', color: '#ffffff' }} />,
                 color: colorList[5]
             }
             return value
@@ -114,8 +126,8 @@ function AnimatedCard({ path }) {
         else if (path === '/ckfi/under-credit') {
             name = 'UNDER CREDIT'
             let value = {
-                icon: <FaRegCreditCard style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[10]
+                icon: <BiSolidCreditCardAlt style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[8]
             }
             return value
         }
@@ -123,7 +135,7 @@ function AnimatedCard({ path }) {
             name = 'APPROVED (TRANS-OUT)'
             let value = {
                 icon: <RxExit style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[19]
+                color: colorList[9]
             }
             return value
         }
@@ -131,15 +143,15 @@ function AnimatedCard({ path }) {
             name = 'SPECIAL LANE'
             let value = {
                 icon: <MdLabelImportant style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[8]
+                color: colorList[10]
             }
             return value
         }
         else if (path === '/ckfi/assessement/credit') {
             name = 'FOR CREDIT ASSESSEMENT'
             let value = {
-                icon: <RxEnter style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[9]
+                icon: <MdOutlineAssessment style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[11]
             }
             return value
         }
@@ -147,7 +159,7 @@ function AnimatedCard({ path }) {
             name = 'QUEUE BUCKET'
             let value = {
                 icon: <HiMiniQueueList style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[11]
+                color: colorList[12]
             }
             return value
         }
@@ -155,7 +167,7 @@ function AnimatedCard({ path }) {
             name = 'FOR VERIFICATION'
             let value = {
                 icon: <FaFileShield style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[12]
+                color: colorList[13]
             }
             return value
         }
@@ -163,7 +175,7 @@ function AnimatedCard({ path }) {
             name = 'PRE-CHECK'
             let value = {
                 icon: <FaFileSignature style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[13]
+                color: colorList[14]
             }
             return value
         }
@@ -172,8 +184,8 @@ function AnimatedCard({ path }) {
         else if (path === '/ckfi/returned/marketing') {
             name = 'RETURNED FROM MARKETING'
             let value = {
-                icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[17]
+                icon: <MdOutlineAssignmentReturn  style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[15]
             }
             return value
         }
@@ -181,8 +193,8 @@ function AnimatedCard({ path }) {
         else if (path === '/ckfi/returned/credit-associate') {
             name = 'RETURNED FROM CREDIT ASSOCIATE'
             let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[14]
+                icon: <AiOutlineRollback  style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[16]
             }
             return value
         }
@@ -192,7 +204,7 @@ function AnimatedCard({ path }) {
             name = 'REASSESSED TO CREDIT ASSOCIATE'
             let value = {
                 icon: <TbFileIsr style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[16]
+                color: colorList[17]
             }
             return value
         }
@@ -201,47 +213,47 @@ function AnimatedCard({ path }) {
             name = 'RETURNED FROM CREDIT OFFICER'
             let value = {
                 icon: <MdOutlineSevereCold style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[15]
+                color: colorList[18]
             }
             return value
         }
         else if (path === '/ckfi/reassessed/credit-officer') {
             name = 'REASSESSED TO CREDIT OFFICER'
             let value = {
-                icon: <TbFileIsr style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[16]
+                icon: <FcDataBackup  style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[19]
             }
             return value
         }
         else if (path === '/ckfi/for-approval') {
             name = 'FOR APPROVAL'
             let value = {
-                icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[18]
+                icon: <MdApproval style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[20]
             }
             return value
         }
         else if (path === '/ckfi/on-waiver') {
             name = 'ON WAIVER'
             let value = {
-                icon: <FaFileSignature style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[24]
+                icon: <AiOutlineSignature  style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[21]
             }
             return value
         }
         else if (path === '/ckfi/under-lp') {
             name = 'UNDER LP'
             let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[20]
+                icon: <GiReceiveMoney  style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[22]
             }
             return value
         }
         else if (path === '/ckfi/confirmation') {
             name = 'CONFIRMATION'
             let value = {
-                icon: <GiConfirmed style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[25]
+                icon: <MdOutlineConfirmationNumber  style={{ fontSize: '80px', color: '#ffffff' }} />,
+                color: colorList[23]
             }
             return value
         }
@@ -249,7 +261,7 @@ function AnimatedCard({ path }) {
             name = 'CONFIRMED'
             let value = {
                 icon: <GiConfirmed style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[26]
+                color: colorList[24]
             }
             return value
         }
@@ -257,7 +269,7 @@ function AnimatedCard({ path }) {
             name = 'FOR DOCUSIGN'
             let value = {
                 icon: <MdEditDocument style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[21]
+                color: colorList[25]
             }
             return value
         }
@@ -265,7 +277,7 @@ function AnimatedCard({ path }) {
             name = 'FOR DISBURSEMENT'
             let value = {
                 icon: <FaRegMoneyBillAlt style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[28]
+                color: colorList[26]
             }
             return value
         }
@@ -273,7 +285,7 @@ function AnimatedCard({ path }) {
             name = 'RELEASED'
             let value = {
                 icon: <LuFileBox style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[29]
+                color: colorList[27]
             }
             return value
         }
@@ -281,7 +293,7 @@ function AnimatedCard({ path }) {
             name = 'UNDECIDED'
             let value = {
                 icon: <BsPersonFillExclamation style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[27]
+                color: colorList[28]
             }
             return value
         }
@@ -289,7 +301,7 @@ function AnimatedCard({ path }) {
             name = 'CANCELLED'
             let value = {
                 icon: <MdCancel style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[31]
+                color: colorList[29]
             }
             return value
         }
@@ -297,7 +309,7 @@ function AnimatedCard({ path }) {
             name = 'DECLINED'
             let value = {
                 icon: <FaThumbsDown style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[31]
+                color: colorList[30]
             }
             return value
         }
@@ -305,7 +317,7 @@ function AnimatedCard({ path }) {
             name = 'FOR RE-APPLICATION'
             let value = {
                 icon: <BiRedo style={{ fontSize: '80px', color: '#ffffff' }} />,
-                color: colorList[33]
+                color: colorList[31]
             }
             return value
         }

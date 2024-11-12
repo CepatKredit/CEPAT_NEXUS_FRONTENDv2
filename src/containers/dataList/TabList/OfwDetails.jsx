@@ -14,9 +14,12 @@ import { mmddyy } from '@utils/Converter';
 import StatusRemarks from './StatusRemarks';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
+import { ApplicationStatus } from '@hooks/ApplicationStatusController';
+
 
 function OfwDetails({ getTab, classname, data, receive, presaddress, User, BorrowerId, creditisEdit, isEditCRAM }) {
     const [isEdit, setEdit] = useState(false);
+    const { GetStatus } = ApplicationStatus();
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
     const token = localStorage.getItem('UTK')
@@ -238,7 +241,14 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
 
      
     }
-
+    const disabledStatuses = [
+        'DECLINED', 'CANCELLED', 'SCREENING AND INTERVIEW', 'REASSESSED TO CREDIT ASSOCIATE',
+        'FOR CALLBACK', 'FOR VERIFICATION', 'PRE-CHECK', 'FOR APPROVAL',
+        'RETURN TO CREDIT ASSOCIATE', 'RETURN TO CREDIT OFFICER', 'REASSESSED TO CREDIT OFFICER',
+        'APPROVED (TRANS-OUT)', 'RETURN TO LOANS PROCESSOR', 'FOR DOCUSIGN', 'OK FOR DOCUSIGN',
+        'TAGGED FOR RELEASE', 'FOR DISBURSEMENT', 'ON WAIVER', 'CONFIRMATION', 'CONFIRMED',
+        'UNDECIDED', 'RELEASED', 'FOR CREDIT ASSESSMENT', 'FOR RE-APPLICATION', 'PRE-APPROVAL'
+    ];
 
 
     return (
@@ -267,7 +277,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     </div>
                 ) : null}
         </div>
-                {User !== 'Credit' && User !== 'Lp' && (
+        {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
                     <ConfigProvider
                         theme={{
                             token: {
