@@ -77,8 +77,10 @@ function PreLoad({ children }) {
   }
 
   React.useEffect(() => {
-    getDisbursementList.refetch();
-    SET_REFRESH_LAN(0);
+    if (GET_REFRESH_LAN === 1) {
+      getDisbursementList.refetch();
+      SET_REFRESH_LAN(0);
+    }
   }, [GET_REFRESH_LAN]);
 
   const [GET_DATA_COUNTER, setDataCounter] = React.useState([]);
