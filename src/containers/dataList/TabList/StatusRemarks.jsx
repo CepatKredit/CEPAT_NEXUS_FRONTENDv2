@@ -38,12 +38,11 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
 
 
     function getStatusBackgroundColor(status) {
-
         switch (status) {
             case 'RECEIVED':
                 return 'bg-[#29274c] text-white';
             case 'COMPLIED-LACK OF DOCUMENTS':
-                return 'bg-[#FF8C00] text-white';
+                return 'bg-[#ff8c00] text-white';
             case 'FOR WALK-IN':
                 return 'bg-[#3bceac] text-white';
             case 'FOR INITIAL INTERVIEW':
@@ -54,24 +53,24 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                 return 'bg-[#8B4513] text-white';
             case 'FOR CREDIT ASSESSMENT':
                 return 'bg-[#006d77] text-white';
-            case 'CREDIT ASSESSEMENT SPECIAL LANE':
-                return 'bg-[#B8860B] text-white';
+            case 'CREDIT ASSESSMENT SPECIAL LANE':
+                return 'bg-[#ff5400] text-white';
             case 'FOR VERIFICATION':
-                return 'bg-[#003566] text-white';
+                return 'bg-[#80b918] text-white';
             case 'FOR APPROVAL':
-                return 'bg-[#2d6a4f] text-white';
+                return 'bg-[#20b2aa] text-white';
             case 'APPROVED (TRANS-OUT)':
-                return 'bg-[#6d597a] text-white';
+                return 'bg-[#b5179e] text-white';
             case 'UNDER LOAN PROCESSOR':
-                return 'bg-[#2f2f2f] text-white';
+                return 'bg-[#ffd700] text-white';
             case 'FOR DOCUSIGN':
                 return 'bg-[#008080] text-white';
-            case 'TAGGED FOR RELEASE':
-                return 'bg-[#FFD700] text-white';
+            case 'RETURNED FROM MARKETING':
+                return 'bg-[#7b68ee] text-white';
             case 'FOR DISBURSEMENT':
-                return 'bg-[#32CD32] text-white';
+                return 'bg-[#cd5c5c] text-white';
             case 'RELEASED':
-                return 'bg-[#FF7F50] text-white';
+                return 'bg-[#006400] text-white';
             case 'CANCELLED':
                 return 'bg-[#1c1c1c] text-white';
             case 'DECLINED':
@@ -79,27 +78,27 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
             case 'FOR RE-APPLICATION':
                 return 'bg-[#708090] text-white';
             case 'RETURN TO CREDIT OFFICER':
-                return 'bg-[#3d5a80] text-white';
+                return 'bg-[#720026] text-white';
             case 'RETURN TO CREDIT ASSOCIATE':
-                return 'bg-[#3d5a7f] text-white';
+                return 'bg-[#2d6a4f] text-white';
             case 'REASSESSED TO CREDIT ASSOCIATE':
-                return 'bg-[#3d5a7f] text-white';
+                return 'bg-[#6d597a] text-white';
             case 'REASSESSED TO CREDIT OFFICER':
-                return 'bg-[#7b68ee] text-white';
+                return 'bg-[#ff0054] text-white';
             case 'RETURN TO LOANS PROCESSOR':
                 return 'bg-[#ff7f50] text-white';
             case 'OK FOR DOCUSIGN':
-                return 'bg-[#20b2aa] text-white';
+                return 'bg-[#c77dff] text-white';
             case 'ON WAIVER':
-                return 'bg-[#ffd700] text-white';
+                return 'bg-[#2196f3] text-white';
             case 'CONFIRMATION':
                 return 'bg-[#228b22] text-white';
             case 'CONFIRMED':
                 return 'bg-[#32cd32] text-white';
             case 'UNDECIDED':
-                return 'bg-[#f08080] text-white';
+                return 'bg-[#ff7f50] text-white';
             case 'PRE-CHECK':
-                return 'bg-[#4a4e69] text-white';
+                return 'bg-[#3d5a80] text-white';
             default:
                 return 'bg-blue-500 text-white';
         }
