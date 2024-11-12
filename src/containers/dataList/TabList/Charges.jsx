@@ -2,8 +2,9 @@ import * as React from 'react'
 import { Space, Input, Radio, Select } from 'antd'
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
+import StatusRemarks from './StatusRemarks';
 
-function Charges({data, User}) {
+function Charges({ data, User }) {
     const [isEdit, setEdit] = React.useState(false);
     const loanProducts = useQuery({
         queryKey: ['getProductSelect'],
@@ -194,17 +195,17 @@ function Charges({data, User}) {
         return options;
     };
 
-    
+
 
     return (
         <>
-        <div className="sticky top-0 z-[1000] bg-white">
-                    <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-                </div> 
+            <div className="sticky top-0 z-[1000] bg-white">
+                <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+            </div>
             <div className='h-[58vh] overflow-y-auto'>
                 <div className='w-[80vw]'>
                     <div className='flex justify-center items-center pt-[4rem]'>
-                    
+
                         <div className='flex flex-col justify-center items-center w-[60vw]'>
                             <div className='font-semibold text-xl pb-4'>Other Charges</div>
 

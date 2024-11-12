@@ -327,8 +327,9 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                             description: error.message
                         })
                     })
-
-                if (LoanStatus === 'LACK OF DOCUMENTS') { UpdateStatus(); console.log(LoanStatus) }
+                if (LoanStatus === 'LACK OF DOCUMENTS' && Display !== 'USER') {
+                    UpdateStatus()
+                }
             }
         }
     })

@@ -435,7 +435,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                                 )}
                         </Space>
 
-                        {['CANCELLED', 'REASSESSED TO CREDIT OFFICER', 'DECLINED'].includes(getUpdate.Status) && GetData('ROLE').toString() === '80' && (
+                        {['CONFIRMATION'].includes(getUpdate.Status) && GetData('ROLE').toString() === '80' && (
                             <div className='pt-4 flex justify-start ml-[10rem]'>
                                 <Checkbox
                                     className='font-bold'

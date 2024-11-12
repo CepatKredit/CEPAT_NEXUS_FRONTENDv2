@@ -19,7 +19,7 @@ function LoanApplicationInfo() {
     const [api, contextHolder] = notification.useNotification();
     const [sepcoborrowfname, setCoborrowfname] = React.useState('');
     const [sepBenfname, setBenfname] = React.useState('');
-    const {getAppDetails, setAppDetails } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, setAppDetails } = React.useContext(LoanApplicationContext)
 
 
     React.useEffect(() => {
@@ -318,8 +318,8 @@ function LoanApplicationInfo() {
 
     return (
         <div className="px-7 mt-[2%] h-[500px] w-full">
-            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(7, 175, 4)'}} }}>
-                <Spin spinning={getLoading}  tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>}  className="flex justify-center items-center mt-[8%]" size='large'>
+            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(7, 175, 4)' } } }}>
+                <Spin spinning={getLoading} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center mt-[8%]" size='large'>
                     {contextHolder}
                     <div className="h-[100%] mt-[1%]">
                         {
