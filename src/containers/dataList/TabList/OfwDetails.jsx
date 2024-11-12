@@ -3,7 +3,7 @@ import { Button, notification, Descriptions, ConfigProvider, Spin } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import ViewOfwDetails from './ofwDetails/ViewOfwDetails';
 import EditOfwDetails from './ofwDetails/EditOfwDetails';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import RelativesTable from './RelativesTable';
 import axios from 'axios';
@@ -78,7 +78,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                         description: 'Please complete all required details.',
                     });
                 }
-                else { updateData(); }
+                else { onClickSaveData.mutate(); }
             }
             else {
                 if (false) { // inlcude marketing valid?
@@ -87,12 +87,145 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                         description: 'Please complete all required details.',
                     });
                 }
-                else { updateData(); }
+                else { onClickSaveData.mutate(); }
             }
         } else {
             setEdit(true);
         }
     };
+
+    const onClickSaveData = useMutation({
+        mutationFn: async () => {
+            if (GetData('ROLE').toString() === '20') {
+                const value = {
+                    LoanAppId: data.loanIdCode,
+                    Tab: 2,
+                    BorrowersCode: data.ofwBorrowersCode,
+                    FirstName: data.ofwfname,
+                    MiddleName: data.ofwmname,
+                    LastName: data.ofwlname,
+                    Suffix: data.ofwsuffix,
+                    Birthday: mmddyy(data.ofwbdate),
+                    Gender: data.ofwgender,
+                    CivilStatus: data.ofwmstatus,
+                    Dependent: data.ofwdependents ? parseInt(data.ofwdependents) : 0,
+                    Email: data.ofwemail,
+                    MobileNo: data.ofwmobile,
+                    FBProfile: data.ofwfblink,
+                    Salary: parseFloat(data.ofwsalary.toString().replaceAll(',', '')),
+                    Ownership: data.ofwresidences,
+                    RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,
+                    ProvinceId: data.ofwPresProv,
+                    MunicipalityId: data.ofwPresMunicipality,
+                    BarangayId: data.ofwPresBarangay,
+                    Address1: data.ofwPresStreet,
+                    ModUser: jwtDecode(token).USRID
+    
+                };
+                console.log('testtset', value)
+                let result = await UpdateLoanDetails(value);
+                if (result.data.status === "success") {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description,
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
+                    setEdit(!isEdit);
+                } else {
+                    api['warning']({
+                        message: 'Error: Failed to Update',
+                        description: "Fail Connection",
+                    });
+                }
+            }
+            else {
+                const value = {
+                    LoanAppId: data.loanIdCode,
+                    Tab: 2,
+                    BorrowersCode: data.ofwBorrowersCode,
+                    FirstName: data.ofwfname || '',
+                    MiddleName: data.ofwmname || '',
+                    LastName: data.ofwlname || '',
+                    Suffix: data.ofwsuffix || null,
+                    BirthDay: data.ofwbdate ? mmddyy(data.ofwbdate) : '',
+                    Gender: data.ofwgender || null,
+                    MobileNo: data.ofwmobile || '',
+                    MobileNo2: data.ofwothermobile || '',
+                    Email: data.ofwemail || '',
+                    FbProfile: data.ofwfblink || '',
+                    GroupChat: data.ofwgroupchat || '',
+    
+    
+                    CivilStatus: data.ofwmstatus || null,
+                    SpouseName: data.ofwspouse || '',
+                    SpouseBirthday: data.ofwspousebdate ? mmddyy(data.ofwspousebdate) : '',
+                    Dependent: data.ofwdependents || null,
+                    ProvinceId: data.ofwPresProv || '',
+                    MunicipalityId: data.ofwPresMunicipality || '',
+                    BarangayId: data.ofwPresBarangay || '',
+                    Address1: data.ofwPresStreet || '',
+                    Ownership: data.ofwresidences || null,
+                    RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,
+                    Landmark: data.landmark || '',
+                    StayYears: data.ofwlosMonth || 0,
+                    StayMonths: data.ofwlosYear || 0,
+                    CollectionArea: data.collectionarea || '',
+    
+                    //set
+                    IsCurrPerm: data.ofwSameAdd ? 1 : 0,
+                    IsPermProv: data.ofwProvSameAdd ? 1 : 0,
+    
+                    PerProvinceId: data.ofwPermProv || '',
+                    PerMunicipalityId: data.ofwPermMunicipality || '',
+                    PerBarangayId: data.ofwPermBarangay || '',
+                    PerAddress1: data.ofwPermStreet || '',
+    
+                    ProAddress1: data.ofwprovStreet || '',
+                    ProBarangayId: data.ofwprovBarangay || '',
+                    ProMunicipalityId: data.ofwprovMunicipality || '',
+                    ProProvinceId: data.ofwprovProv || '',
+    
+                    ValidId: data.ofwvalidid ? parseInt(data.ofwvalidid) : null,
+                    ValidIdNo: data.ofwidnumber || '',
+    
+                    Country: data.ofwcountry || '',
+                    JobTitle: data.ofwjobtitle || '',
+                    Employer: data.ofwcompany || null,
+                    Salary: data.ofwsalary ? parseFloat(data.ofwsalary.toString().replaceAll(',', '')) : 0.00,
+    
+                    EducationLevel: data.ofwHighestEdu || null,
+                    School: data.ofwschool || '',
+                    Course: data.ofwcourse || '',
+                    ModUser: jwtDecode(token).USRID
+    
+                };
+    
+                console.log('testtset', value)
+                let result = await UpdateLoanDetails(value);
+                if (result.data.status === "success") {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description,
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
+                    setEdit(!isEdit);
+                }
+                else if (result.data.status === "info") {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description,
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
+                    setEdit(!isEdit);
+                } else {
+                    api['warning']({
+                        message: 'Error: Failed to Update',
+                        description: "Fail Connection",
+                    });
+                }
+            }
+        }
+    })
 
     function GetChannelId(command) {
         var getId = Hckfi().find(x => x.value === command || x.label === command).value;
@@ -103,134 +236,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
 
     async function updateData() {
 
-        if (GetData('ROLE').toString() === '20') {
-            const value = {
-                LoanAppId: data.loanIdCode,
-                Tab: 2,
-                BorrowersCode: data.ofwBorrowersCode,
-                FirstName: data.ofwfname,
-                MiddleName: data.ofwmname,
-                LastName: data.ofwlname,
-                Suffix: data.ofwsuffix,
-                Birthday: mmddyy(data.ofwbdate),
-                Gender: data.ofwgender,
-                CivilStatus: data.ofwmstatus,
-                Dependent: data.ofwdependents ? parseInt(data.ofwdependents) : 0,
-                Email: data.ofwemail,
-                MobileNo: data.ofwmobile,
-                FBProfile: data.ofwfblink,
-                Salary: parseFloat(data.ofwsalary.toString().replaceAll(',', '')),
-                Ownership: data.ofwresidences,
-                RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,
-                ProvinceId: data.ofwPresProv,
-                MunicipalityId: data.ofwPresMunicipality,
-                BarangayId: data.ofwPresBarangay,
-                Address1: data.ofwPresStreet,
-                ModUser: jwtDecode(token).USRID
-
-            };
-            console.log('testtset', value)
-            let result = await UpdateLoanDetails(value);
-            if (result.data.status === "success") {
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description,
-                });
-                queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
-                setEdit(!isEdit);
-            } else {
-                api['warning']({
-                    message: 'Error: Failed to Update',
-                    description: "Fail Connection",
-                });
-            }
-        }
-        else {
-            const value = {
-                LoanAppId: data.loanIdCode,
-                Tab: 2,
-                BorrowersCode: data.ofwBorrowersCode,
-                FirstName: data.ofwfname || '',
-                MiddleName: data.ofwmname || '',
-                LastName: data.ofwlname || '',
-                Suffix: data.ofwsuffix || null,
-                BirthDay: data.ofwbdate ? mmddyy(data.ofwbdate) : '',
-                Gender: data.ofwgender || null,
-                MobileNo: data.ofwmobile || '',
-                MobileNo2: data.ofwothermobile || '',
-                Email: data.ofwemail || '',
-                FbProfile: data.ofwfblink || '',
-                GroupChat: data.ofwgroupchat || '',
-
-
-                CivilStatus: data.ofwmstatus || null,
-                SpouseName: data.ofwspouse || '',
-                SpouseBirthday: data.ofwspousebdate ? mmddyy(data.ofwspousebdate) : '',
-                Dependent: data.ofwdependents || null,
-                ProvinceId: data.ofwPresProv || '',
-                MunicipalityId: data.ofwPresMunicipality || '',
-                BarangayId: data.ofwPresBarangay || '',
-                Address1: data.ofwPresStreet || '',
-                Ownership: data.ofwresidences || null,
-                RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,
-                Landmark: data.landmark || '',
-                StayYears: data.ofwlosMonth || 0,
-                StayMonths: data.ofwlosYear || 0,
-                CollectionArea: data.collectionarea || '',
-
-                //set
-                IsCurrPerm: data.ofwSameAdd ? 1 : 0,
-                IsPermProv: data.ofwProvSameAdd ? 1 : 0,
-
-                PerProvinceId: data.ofwPermProv || '',
-                PerMunicipalityId: data.ofwPermMunicipality || '',
-                PerBarangayId: data.ofwPermBarangay || '',
-                PerAddress1: data.ofwPermStreet || '',
-
-                ProAddress1: data.ofwprovStreet || '',
-                ProBarangayId: data.ofwprovBarangay || '',
-                ProMunicipalityId: data.ofwprovMunicipality || '',
-                ProProvinceId: data.ofwprovProv || '',
-
-                ValidId: data.ofwvalidid ? parseInt(data.ofwvalidid) : null,
-                ValidIdNo: data.ofwidnumber || '',
-
-                Country: data.ofwcountry || '',
-                JobTitle: data.ofwjobtitle || '',
-                Employer: data.ofwcompany || null,
-                Salary: data.ofwsalary ? parseFloat(data.ofwsalary.toString().replaceAll(',', '')) : 0.00,
-
-                EducationLevel: data.ofwHighestEdu || null,
-                School: data.ofwschool || '',
-                Course: data.ofwcourse || '',
-                ModUser: jwtDecode(token).USRID
-
-            };
-
-            console.log('testtset', value)
-            let result = await UpdateLoanDetails(value);
-            if (result.data.status === "success") {
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description,
-                });
-                queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
-                setEdit(!isEdit);
-            }
-            else if (result.data.status === "info") {
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description,
-                });
-                queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
-                setEdit(!isEdit);
-            } else {
-                api['warning']({
-                    message: 'Error: Failed to Update',
-                    description: "Fail Connection",
-                });
-            }
-        }
+     
     }
 
 
@@ -289,6 +295,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                                             onClick={toggleEditMode}
                                             size="large"
                                             className="-mt-5"
+                                            loading={onClickSaveData.isPending}
                                         >
                                             SAVE
                                         </Button>

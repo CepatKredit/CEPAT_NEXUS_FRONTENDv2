@@ -35,7 +35,7 @@ function EmploymentHistory({ data, User }) {
 
     const [getStat, setStat] = React.useState(true);
     const role = GetData('ROLE').toString();
-    React.useEffect(() => { getEmploymentHistory.refetch() }, [data.loanIdCode]);
+   // React.useEffect(() => { getEmploymentHistory.refetch() }, [data.loanIdCode]);
 
     const getEmploymentHistory = useQuery({
         queryKey: ['getEmploymentHistory'],
@@ -467,10 +467,16 @@ function EmploymentHistory({ data, User }) {
                                 : Promise.reject("Start Date cannot be in the future."),
                     },
                     dataIndex === 'enddate' && {
-                        validator: (_, value) =>
-                            !value || (form.getFieldValue('startdate') && dayjs(value).isAfter(form.getFieldValue('startdate'), 'day'))
-                                ? Promise.resolve()
-                                : Promise.reject("End Date must be after Start Date."),
+                        validator: (_, value) => {
+                            if (!value) return Promise.resolve();
+                            if (dayjs(value).isAfter(dayjs(), 'day')) {
+                                return Promise.reject("End Date cannot be in the future.");
+                            }
+                            if (form.getFieldValue('startdate') && dayjs(value).isBefore(form.getFieldValue('startdate'), 'day')) {
+                                return Promise.reject("End Date must be after Start Date.");
+                            }
+                            return Promise.resolve();
+                        },
                     },
                 ].filter(Boolean)}
                 >
