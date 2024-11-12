@@ -13,6 +13,10 @@ import LabeledSelect_Suffix from "@components/loanApplication/LabeledSelect_Suff
 import LabeledSelect_Relationship from "../../components/loanApplication/LabeledSelect_Relationship";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import GenderRadioGroup from "@components/loanApplication/GenderRadioGroup";
+import SelectOpt from "@components/optimized/SelectOpt";
+import { useDataContainer } from "@context/PreLoad";
+import DatePickerOpt from "@components/optimized/DatePickerOpt";
+import { toUpperText } from "@utils/Converter";
 dayjs.extend(customParseFormat);
 
 function BeneficiaryDetails({
@@ -25,6 +29,8 @@ function BeneficiaryDetails({
 }) {
   const { getAppDetails, handleAddressCases, updateAppDetails } =
     React.useContext(LoanApplicationContext);
+
+  const { GET_OFW_SUFFIX, GET_RELATIONSHIP_LIST } = useDataContainer();
   const classname_main =
     "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
   const className_label = "mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[200px]";
@@ -95,12 +101,14 @@ function BeneficiaryDetails({
                     onClick={() => {
                       updateAppDetails({
                         name: "withBenMName",
+                        fieldName: "withBenMName",
                         value: !getAppDetails.withBenMName,
                       });
                       handleAddressCases({
                         name: "resetBenMiddleName",
+                        fieldName: "resetBenMiddleName",
                         value: "",
-                      });
+                      }, "beneficiary");
                     }}
                     className="text-xs"
                     disabled={!getAppDetails.dataPrivacy}
@@ -134,7 +142,7 @@ function BeneficiaryDetails({
           category={"direct"}
           rendered={benrendered}
         />
-        <LabeledSelect_Suffix
+        {/* <LabeledSelect_Suffix
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
@@ -155,8 +163,37 @@ function BeneficiaryDetails({
           placeHolder={"Suffix"}
           rendered={benrendered}
           showSearch
+        /> */}
+
+        <SelectOpt
+          className_dmain={classname_main}
+          className_label={className_label}
+          className_dsub={className_dsub}
+          label={
+            <>
+              Suffix <span className="text-red-500">*</span>
+            </>
+          }
+          value={getAppDetails.bensuffix}
+          disabled={!getAppDetails.dataPrivacy}
+          placeHolder={"Suffix"}
+          required={true}
+          showSearch
+          notValidMsg={"Suffix is required."}
+          KeyName={"bensuffix"}
+          receive={(e) => {
+            updateAppDetails({
+              name: "bensuffix",
+              value: e,
+            });
+          }}
+          options={GET_OFW_SUFFIX.map((item) => ({
+            label: item.description,
+            value: item.code,
+          }))}
+          rendered={benrendered}
         />
-        <DatePicker_BDate
+        {/* <DatePicker_BDate
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
@@ -177,23 +214,31 @@ function BeneficiaryDetails({
           // }}
           category={"direct"}
           rendered={benrendered}
+        /> */}
+        <DatePickerOpt
+          className_dmain={classname_main}
+          className_label={className_label}
+          className_dsub={className_dsub}
+          label={
+            <>
+              Birth Date <span className="text-red-500">*</span>
+            </>
+          }
+          required={true}
+          placeHolder={"MM-DD-YYYY"}
+          value={getAppDetails.benbdate}
+          receive={(e) => {
+            updateAppDetails({
+              name: "benbdate",
+              value: e,
+            });
+          }}
+          notValidMsg={"OFW Birth Date is required."}
+          disabled={false || !getAppDetails.dataPrivacy}
+          KeyName={"benbdate"}
+          rendered={benrendered}
+          // disabledate={disableDate_deployment}
         />
-        {/* <div className='flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]'>
-                    <label className='mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[9.4rem] '>Gender <span className="text-red-500">*</span></label>
-                    <div className='mx-[2%] w-[100px]'>
-                        <Radio.Group
-                            onChange={(e) => {
-                                receive({
-                                    name: 'bengender',
-                                    value: e.target.value
-                                });
-                            }} value={data.bengender} >
-
-                            <Radio value={1}>Male</Radio>
-                            <Radio value={2}>Female</Radio>
-                        </Radio.Group>
-                    </div>
-                </div> */}
         <GenderRadioGroup
           classname_main={classname_main}
           className_label={className_label}
@@ -202,7 +247,7 @@ function BeneficiaryDetails({
           rendered={benrendered}
         />
 
-        <LabeledSelect
+        {/* <LabeledSelect
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
@@ -215,15 +260,38 @@ function BeneficiaryDetails({
 
           error_status={"Marital Status is required."}
           placeHolder={"Marital Status"}
-          // receive={(e) => {
-          //     receive({
-          //         name: 'benmstatus',
-          //         value: e
-          //     })
-          // }}
           fieldName="benmstatus"
           data={MaritalStatus()}
           category={"direct"}
+          rendered={benrendered}
+        /> */}
+
+        <SelectOpt
+          className_dmain={classname_main}
+          className_label={className_label}
+          className_dsub={className_dsub}
+          label={
+            <>
+              Marital Status <span className="text-red-500">*</span>
+            </>
+          }
+          value={getAppDetails.benmstatus}
+          disabled={!getAppDetails.dataPrivacy}
+          placeHolder={"Marital Status"}
+          required={true}
+          showSearch
+          notValidMsg={"Marital Status is required."}
+          KeyName={"benmstatus"}
+          receive={(e) => {
+            updateAppDetails({
+              name: "benmstatus",
+              value: e,
+            });
+          }}
+          options={MaritalStatus().map((item) => ({
+            label: item.label,
+            value: item.value,
+          }))}
           rendered={benrendered}
         />
         <LabeledInput_Email
@@ -239,12 +307,6 @@ function BeneficiaryDetails({
           fieldName="benemail"
           error_status={"Email Address is required."}
           placeHolder={"Email Adress"}
-          // receive={(e) => {
-          //     receive({
-          //         name: 'benemail',
-          //         value: e
-          //     })
-          // }}
           category={"direct"}
           rendered={benrendered}
         />
@@ -258,19 +320,12 @@ function BeneficiaryDetails({
             </>
           }
           fieldName="bennumber"
-          // value={data.bennumber}
           error_status={"Contact Number is required."}
-          // receive={(e) => {
-          //     receive({
-          //         name: 'bennumber',
-          //         value: e
-          //     })
-          // }}
           category={"direct"}
           placeHolder={"Contact No."}
           rendered={benrendered}
         />
-        <LabeledSelect_Relationship
+        {/* <LabeledSelect_Relationship
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
@@ -286,6 +341,36 @@ function BeneficiaryDetails({
           placeHolder={"Relationship"}
           rendered={benrendered}
           showSearch
+        /> */}
+
+        <SelectOpt
+          className_dmain={classname_main}
+          className_label={className_label}
+          className_dsub={className_dsub}
+          label={
+            <>
+              Relationship to the OFW (Kaano-ano mo si OFW)
+              <span className="text-red-500">*</span>
+            </>
+          }
+          value={getAppDetails.benrelationship}
+          disabled={!getAppDetails.dataPrivacy}
+          placeHolder={"Relationship"}
+          required={true}
+          showSearch
+          notValidMsg={"Relationship is required."}
+          KeyName={"benrelationship"}
+          receive={(e) => {
+            updateAppDetails({
+              name: "benrelationship",
+              value: e,
+            });
+          }}
+          options={GET_RELATIONSHIP_LIST.map((item) => ({
+            label: item.description,
+            value: item.code,
+          }))}
+          rendered={benrendered}
         />
         <h2 className=" mt-[5%]">
           <b>PRESENT ADDRESS</b>

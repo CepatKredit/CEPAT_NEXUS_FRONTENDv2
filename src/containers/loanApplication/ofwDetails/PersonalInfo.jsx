@@ -16,12 +16,17 @@ import React from "react";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { toUpperText } from "@utils/Converter";
 import GenderRadioGroup from "@components/loanApplication/GenderRadioGroup";
+import DatePickerOpt from "@components/optimized/DatePickerOpt";
+import SelectOpt from "@components/optimized/SelectOpt";
+import { useDataContainer } from "@context/PreLoad";
 
 dayjs.extend(customParseFormat);
 
 function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
   const { getAppDetails, handleAddressCases, updateAppDetails } =
     React.useContext(LoanApplicationContext);
+  const { GET_OFW_SUFFIX } = useDataContainer();
+
   const classname_main =
     "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
   const className_label = "mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[200px]";
@@ -42,16 +47,8 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
             First Name <span className="text-red-500">*</span>
           </>
         }
-        // value={getAppDetails.ofwfname}
         fieldName="ofwfname"
         placeHolder="First Name"
-        // receive={(e) => {
-        //     receive({
-        //         name: 'ofwfname',
-        //         value: e
-        //     })
-        // }}
-
         category={"direct"}
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
@@ -120,20 +117,13 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
             Last Name <span className="text-red-500">*</span>
           </>
         }
-        // value={getAppDetails.ofwlname}
         fieldName="ofwlname"
         placeHolder="Last Name"
-        // receive={(e) => {
-        //     receive({
-        //         name: 'ofwlname',
-        //         value: e
-        //     })
-        // }}
         category={"direct"}
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
       />
-      <LabeledSelect_Suffix
+      {/* <LabeledSelect_Suffix
         className_dmain={classname_main}
         className_label={className_label}
         className_dsub={className_dsub}
@@ -156,8 +146,36 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
         showSearch
+      /> */}
+      <SelectOpt
+        className_dmain={classname_main}
+        className_label={className_label}
+        className_dsub={className_dsub}
+        label={
+          <>
+            Suffix <span className="text-red-500">*</span>
+          </>
+        }
+        value={getAppDetails.ofwsuffix}
+        disabled={!getAppDetails.dataPrivacy}
+        placeHolder={"Suffix"}
+        required={true}
+        showSearch
+        notValidMsg={"Suffix is required."}
+        KeyName={"ofwsuffix"}
+        receive={(e) => {
+          updateAppDetails({
+            name: "ofwsuffix",
+            value: e,
+          });
+        }}
+        options={GET_OFW_SUFFIX.map((item) => ({
+          label: item.description,
+          value: item.code,
+        }))}
+        rendered={ofwrendered}
       />
-      <DatePicker_BDate
+      {/* <DatePicker_BDate
         className_dmain={classname_main}
         className_label={className_label}
         className_dsub={className_dsub}
@@ -179,6 +197,30 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         placeHolder={"MM-DD-YYYY"}
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
+      /> */}
+      <DatePickerOpt
+        className_dmain={classname_main}
+        className_label={className_label}
+        className_dsub={className_dsub}
+        label={
+          <>
+            Birth Date <span className="text-red-500">*</span>
+          </>
+        }
+        required={true}
+        placeHolder={"MM-DD-YYYY"}
+        value={getAppDetails.ofwbdate}
+        receive={(e) => {
+          updateAppDetails({
+            name: "ofwbdate",
+            value: e,
+          });
+        }}
+        notValidMsg={"OFW Birth Date is required."}
+        disabled={false || !getAppDetails.dataPrivacy}
+        KeyName={"ofwbdate"}
+        rendered={ofwrendered}
+        // disabledate={disableDate_deployment}
       />
       {/* <div className={classname_main}>
                 <label className={className_label}>Gender<span className="text-red-500"> *</span></label>
@@ -202,12 +244,12 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         className_label={className_label}
         className_dsub={className_dsub}
         direct={direct}
-        fieldName={'ofwgender'}
+        fieldName={"ofwgender"}
         rendered={ofwrendered}
-         disabled={!direct && !getAppDetails.dataPrivacy}
+        disabled={!direct && !getAppDetails.dataPrivacy}
       />
 
-      <LabeledSelect
+      {/* <LabeledSelect
         className_dmain={classname_main}
         className_label={className_label}
         className_dsub={className_dsub}
@@ -233,6 +275,34 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         filterOption={(input, option) =>
           option.label.toLowerCase().includes(input.toLowerCase())
         }
+      /> */}
+      <SelectOpt
+        className_dmain={classname_main}
+        className_label={className_label}
+        className_dsub={className_dsub}
+        label={
+          <>
+            Marital Status <span className="text-red-500">*</span>
+          </>
+        }
+        value={getAppDetails.ofwmstatus}
+        disabled={!getAppDetails.dataPrivacy}
+        placeHolder={"Marital Status"}
+        required={true}
+        showSearch
+        notValidMsg={"Marital Status is required."}
+        KeyName={"ofwmstatus"}
+        receive={(e) => {
+          updateAppDetails({
+            name: "ofwmstatus",
+            value: e,
+          });
+        }}
+        options={MaritalStatus().map((item) => ({
+          label: item.label,
+          value: item.value,
+        }))}
+        rendered={ofwrendered}
       />
 
       <LabeledInput_Numeric
@@ -326,7 +396,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         category={"direct"}
         rendered={ofwrendered}
       />
-      <LabeledSelect
+      {/* <LabeledSelect
         className_dmain={classname_main}
         className_label={className_label}
         className_dsub={className_dsub}
@@ -352,6 +422,35 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         filterOption={(input, option) =>
           option.label.toLowerCase().includes(input.toLowerCase())
         }
+      /> */}
+
+      <SelectOpt
+        className_dmain={classname_main}
+        className_label={className_label}
+        className_dsub={className_dsub}
+        label={
+          <>
+            Type of Residences <span className="text-red-500">*</span>
+          </>
+        }
+        value={getAppDetails.ofwresidences}
+        disabled={!getAppDetails.dataPrivacy}
+        placeHolder={"Marital Status"}
+        required={true}
+        showSearch
+        notValidMsg={"Residence is required."}
+        KeyName={"ofwresidences"}
+        receive={(e) => {
+          updateAppDetails({
+            name: "ofwresidences",
+            value: e,
+          });
+        }}
+        options={Residences().map((item) => ({
+          label: item.label,
+          value: item.value,
+        }))}
+        rendered={ofwrendered}
       />
 
       {(getAppDetails.ofwresidences === 3 ||
@@ -369,13 +468,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
             </>
           }
           fieldName="rentAmount"
-          // value={getAppDetails.rentAmount}
-          // receive={(e) => {
-          //     receive({
-          //         name: 'rentAmount',
-          //         value: e
-          //     })
-          // }}
           category={"direct"}
           placeHolder={
             getAppDetails.ofwresidences === 3

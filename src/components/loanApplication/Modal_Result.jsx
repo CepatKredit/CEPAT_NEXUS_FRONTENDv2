@@ -41,7 +41,7 @@ function Modal_Result({
   //     });
   // };
 
-  async function CheckDuplication() {
+  async function CheckDuplication() { 
     const checkLoan = {
       LoanAppId: code.LoanAppId,
       FirstName: code.FirstName,
@@ -50,7 +50,7 @@ function Modal_Result({
     };
     const result = await POST_DATA("/checkLoan", checkLoan);
     if (result.list.length === 0) {
-      ClickLoan.mutate();
+        ClickLoan.mutate();
     } else {
       api["info"]({
         message: "Loan Already Exists",
@@ -155,8 +155,17 @@ function Modal_Result({
                   type="primary"
                   className="mt-[5%] ml-[2%] bg-[#6B73C1]"
                   onClick={CheckDuplication}
+                  disabled={ClickLoan.isPending}
                 >
-                  Confirm
+               {ClickLoan.isPending ? (
+                    <Spin
+                      indicator={
+                        <LoadingOutlined style={{ fontSize: 18 }} spin />
+                      }
+                    />
+                  ) : (
+                    "Confirm"
+                  )}
                 </Button>
               </ConfigProvider>
             </>

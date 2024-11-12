@@ -53,6 +53,53 @@ export function ComponentPreloads() {
     retryDelay: 1000,
   });
 
+  const [getBranchList, setBranchList] = React.useState([]);
+  useQuery({
+    queryKey: ["BranchListQuery"],
+    queryFn: async () => {
+      const result = await GET_LIST("/getBranchList");
+      console.log("BRANCH API", result.list);
+      setBranchList(result.list);
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
+  const [getSuffix, setSuffix] = React.useState([]);
+  useQuery({
+    queryKey: ["getSuffix"],
+    queryFn: async () => {
+      const result = await GET_LIST("/OFWDetails/GetSuffix");
+      setSuffix(result.list);
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
+  const [getValidId, setValidId] = React.useState([]);
+  useQuery({
+    queryKey: ["getValidIdSelect"],
+    queryFn: async () => {
+      const result = await GET_LIST("/OFWDetails/getIDtype");
+      setValidId(result.list);
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
+  const [getRelationship, setRelationship] = React.useState([])
+  useQuery({
+    queryKey: ["getRelationship"],
+    queryFn: async () => {
+      const result = await GET_LIST("/getListRelationship");
+      setRelationship(result.list)
+    },
+    refetchInterval: (data) => {
+      data?.length === 0 ? 500 : false;
+    },
+    enabled: true,
+    retryDelay: 1000,
+  });
   //////////////////////////////////
   //const { getAppDetails } = useContext(LoanApplicationContext)
   // const data = getAppDetails
@@ -88,6 +135,10 @@ export function ComponentPreloads() {
     GET_LOAN_PRODUCT_LIST: getLoanProdList,
     GET_PROVINCE_LIST: getProvinceList,
     GET_LOAN_PURPOSE_LIST: getLoanPurpose,
+    GET_BRANCH_LIST: getBranchList,
+    GET_OFW_SUFFIX: getSuffix,
+    GET_VALID_ID_LIST: getValidId,
+    GET_RELATIONSHIP_LIST: getRelationship,
     //     GET_MUNICIPALITY: getMunicipalityList,
   };
 }

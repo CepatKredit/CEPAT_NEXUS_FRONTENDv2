@@ -30,6 +30,8 @@ function DatePickerOpt({
     datePickerValue,
     toggleDatePicker,
     setDatePickerOpen,
+    validationMessage,
+    handleBlur,
   } = DateComponentHook(value, receive, rendered, KeyName);
 
   const inputRef = useRef(null);
@@ -38,12 +40,6 @@ function DatePickerOpt({
       setfocus(KeyName, inputRef.current);
   }, [KeyName, setfocus])
 
-  const handleBlur = () => {
-    if (required && !value) {
-      handleDateChange("");
-      handleInputChange("")
-    }
-  };
 
   const icon =
     status === "error" ? (
@@ -104,7 +100,7 @@ function DatePickerOpt({
         )}
         {((required || required === undefined) && status === 'error') && (
           <div className="text-xs text-red-500 pt-1 pl-2">
-            {`${notValidMsg}`}
+            {validationMessage || notValidMsg}
           </div>
         )}
       </div>

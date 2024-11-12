@@ -397,11 +397,14 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
 
     if (update === 1) {
       const checkLoan = {
+        LoanAppId: getAppDetails.loanIdCode,
         FirstName: getAppDetails.ofwfname,
         LastName: getAppDetails.ofwlname,
-        Suffix: parseInt(getAppDetails.ofwsuffix),
+        // Suffix: parseInt(getAppDetails.ofwsuffix),
         Birthday: getAppDetails.ofwbdate,
       };
+
+      console.log("DITOOO",checkLoan)
 
       var result = await POST_DATA("/checkLoan", checkLoan);
       if (result.list.length === 0) {
@@ -458,7 +461,8 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
         Salary: parseFloat(getAppDetails.ofwsalary.replaceAll(",", "")),
         ModUser: getAppDetails.borrowersCode,
       };
-      console.log("testtset", value);
+      console.log("Update Data Payload:", value);
+      console.log("Update Data Payload NAME:",getAppDetails.ofwfname);
       let result = await UpdateLoanDetails(value);
       if (result.data.status === "success") {
         api[result.data.status]({

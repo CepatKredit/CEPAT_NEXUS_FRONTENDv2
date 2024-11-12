@@ -34,11 +34,13 @@ const { updateAppDetails } = React.useContext(LoanApplicationContext)
     if (newValue) {
       setStatus("");
       setIcon(true);
-      receive(upperValue);
+      // receive(upperValue);
+      updateAppDetails({ name: fieldName, value: upperValue });
     } else {
       setStatus("error");
       setIcon(true);
-      receive();
+      // receive();
+      updateAppDetails({ name: fieldName, value: null});
     }
   }
 

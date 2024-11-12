@@ -42,7 +42,7 @@ function LoanApplicationTracker({ data }) {
     resetAppDetails,
     setOldClientNameAndBDay,
     populateClientDetails,
-    getOldData,
+    getOldData
   } = React.useContext(LoanApplicationContext);
 
   React.useEffect(() => {
@@ -80,7 +80,6 @@ function LoanApplicationTracker({ data }) {
     enabled: true,
     retryDelay: 1000,
   });
-
 
   const getRemarks = useQuery({
     queryKey: ["getRemarks", getAppDetails.loanIdCode],
@@ -273,8 +272,8 @@ function LoanApplicationTracker({ data }) {
             />
           </Card>
           {getAppDetails.loanProd === "0303-DHW" ||
-            getAppDetails.loanProd === "0303-VL" ||
-            getAppDetails.loanProd === "0303-WL" ? (
+          getAppDetails.loanProd === "0303-VL" ||
+          getAppDetails.loanProd === "0303-WL" ? (
             <>
               <Card bordered={false}>
                 <SectionHeader
@@ -282,86 +281,86 @@ function LoanApplicationTracker({ data }) {
                   borrower="Principal Borrower"
                 />
                 <OfwDetails
-                  // OldData={getOldData}
                   data={getAppDetails}
-                // receive={(e) => {
-                //   setAppDetails({
-                //     ...getAppDetails,
-                //     [e.name]: e.value,
-                //   });
-                // }}
-                // presaddress={(e) => {
-                //   setAppDetails((prevDetails) => {
-                //     let updatedFields = {};
-                //     switch (e.name) {
-                //       case "ofwPresProv":
-                //         updatedFields = {
-                //           ofwPresMunicipality: "",
-                //           ofwPresBarangay: "",
-                //           ofwPresStreet: "",
-                //         };
-                //         break;
-                //       case "ofwPresMunicipality":
-                //         updatedFields = {
-                //           ofwPresBarangay: "",
-                //           ofwPresStreet: "",
-                //         };
-                //         break;
-                //       case "ofwPresBarangay":
-                //         updatedFields = {
-                //           ofwPresStreet: "",
-                //         };
-                //         break;
-                //       case "ofwPermProv":
-                //         updatedFields = {
-                //           ofwPermMunicipality: "",
-                //           ofwPermBarangay: "",
-                //           ofwPermStreet: "",
-                //         };
-                //         break;
-                //       case "ofwPermMunicipality":
-                //         updatedFields = {
-                //           ofwPermBarangay: "",
-                //           ofwPermStreet: "",
-                //         };
-                //         break;
-                //       case "ofwPermBarangay":
-                //         updatedFields = {
-                //           ofwPermStreet: "",
-                //         };
-                //         break;
-                //       case "ofwPerm":
-                //         updatedFields = {
-                //           ofwPermProv: getAppDetails.ofwPresProv,
-                //           ofwPermMunicipality:
-                //             getAppDetails.ofwPresMunicipality,
-                //           ofwPermBarangay: getAppDetails.ofwPresBarangay,
-                //           ofwPermStreet: getAppDetails.ofwPresStreet,
-                //         };
-                //         break;
-                //       case "ofwSameAdd":
-                //         updatedFields = {
-                //           ofwPermProv: "",
-                //           ofwPermMunicipality: "",
-                //           ofwPermBarangay: "",
-                //           ofwPermStreet: "",
-                //         };
-                //         break;
-                //       case "resetMiddleName":
-                //         updatedFields = {
-                //           ofwmname: "",
-                //         };
-                //         break;
-                //       default:
-                //         break;
-                //     }
-                //     return {
-                //       ...prevDetails,
-                //       [e.name]: e.value,
-                //       ...updatedFields,
-                //     };
-                //   });
-                // }}
+                  OldData={getOldData}
+                  // receive={(e) => {
+                  //   setAppDetails({
+                  //     ...getAppDetails,
+                  //     [e.name]: e.value,
+                  //   });
+                  // }}
+                  // presaddress={(e) => {
+                  //   setAppDetails((prevDetails) => {
+                  //     let updatedFields = {};
+                  //     switch (e.name) {
+                  //       case "ofwPresProv":
+                  //         updatedFields = {
+                  //           ofwPresMunicipality: "",
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresMunicipality":
+                  //         updatedFields = {
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresBarangay":
+                  //         updatedFields = {
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermProv":
+                  //         updatedFields = {
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermMunicipality":
+                  //         updatedFields = {
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermBarangay":
+                  //         updatedFields = {
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPerm":
+                  //         updatedFields = {
+                  //           ofwPermProv: getAppDetails.ofwPresProv,
+                  //           ofwPermMunicipality:
+                  //             getAppDetails.ofwPresMunicipality,
+                  //           ofwPermBarangay: getAppDetails.ofwPresBarangay,
+                  //           ofwPermStreet: getAppDetails.ofwPresStreet,
+                  //         };
+                  //         break;
+                  //       case "ofwSameAdd":
+                  //         updatedFields = {
+                  //           ofwPermProv: "",
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "resetMiddleName":
+                  //         updatedFields = {
+                  //           ofwmname: "",
+                  //         };
+                  //         break;
+                  //       default:
+                  //         break;
+                  //     }
+                  //     return {
+                  //       ...prevDetails,
+                  //       [e.name]: e.value,
+                  //       ...updatedFields,
+                  //     };
+                  //   });
+                  // }}
                 />
               </Card>
               <Card bordered={false}>
@@ -514,86 +513,86 @@ function LoanApplicationTracker({ data }) {
               <Card bordered={false}>
                 <SectionHeader title="(OFW Details)" borrower="Co-Borrower" />
                 <OfwDetails
-                  OldData={getOldData}
+                  // OldData={getOldData}
                   data={getAppDetails}
-                  receive={(e) => {
-                    setAppDetails({
-                      ...getAppDetails,
-                      [e.name]: e.value,
-                    });
-                  }}
-                  presaddress={(e) => {
-                    setAppDetails((prevDetails) => {
-                      let updatedFields = {};
-                      switch (e.name) {
-                        case "ofwPresProv":
-                          updatedFields = {
-                            ofwPresMunicipality: "",
-                            ofwPresBarangay: "",
-                            ofwPresStreet: "",
-                          };
-                          break;
-                        case "ofwPresMunicipality":
-                          updatedFields = {
-                            ofwPresBarangay: "",
-                            ofwPresStreet: "",
-                          };
-                          break;
-                        case "ofwPresBarangay":
-                          updatedFields = {
-                            ofwPresStreet: "",
-                          };
-                          break;
-                        case "ofwPermProv":
-                          updatedFields = {
-                            ofwPermMunicipality: "",
-                            ofwPermBarangay: "",
-                            ofwPermStreet: "",
-                          };
-                          break;
-                        case "ofwPermMunicipality":
-                          updatedFields = {
-                            ofwPermBarangay: "",
-                            ofwPermStreet: "",
-                          };
-                          break;
-                        case "ofwPermBarangay":
-                          updatedFields = {
-                            ofwPermStreet: "",
-                          };
-                          break;
-                        case "ofwPerm":
-                          updatedFields = {
-                            ofwPermProv: getAppDetails.ofwPresProv,
-                            ofwPermMunicipality:
-                              getAppDetails.ofwPresMunicipality,
-                            ofwPermBarangay: getAppDetails.ofwPresBarangay,
-                            ofwPermStreet: getAppDetails.ofwPresStreet,
-                          };
-                          break;
-                        case "ofwSameAdd":
-                          updatedFields = {
-                            ofwPermProv: "",
-                            ofwPermMunicipality: "",
-                            ofwPermBarangay: "",
-                            ofwPermStreet: "",
-                          };
-                          break;
-                        case "resetMiddleName":
-                          updatedFields = {
-                            ofwmname: "",
-                          };
-                          break;
-                        default:
-                          break;
-                      }
-                      return {
-                        ...prevDetails,
-                        [e.name]: e.value,
-                        ...updatedFields,
-                      };
-                    });
-                  }}
+                  // receive={(e) => {
+                  //   setAppDetails({
+                  //     ...getAppDetails,
+                  //     [e.name]: e.value,
+                  //   });
+                  // }}
+                  // presaddress={(e) => {
+                  //   setAppDetails((prevDetails) => {
+                  //     let updatedFields = {};
+                  //     switch (e.name) {
+                  //       case "ofwPresProv":
+                  //         updatedFields = {
+                  //           ofwPresMunicipality: "",
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresMunicipality":
+                  //         updatedFields = {
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresBarangay":
+                  //         updatedFields = {
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermProv":
+                  //         updatedFields = {
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermMunicipality":
+                  //         updatedFields = {
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermBarangay":
+                  //         updatedFields = {
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPerm":
+                  //         updatedFields = {
+                  //           ofwPermProv: getAppDetails.ofwPresProv,
+                  //           ofwPermMunicipality:
+                  //             getAppDetails.ofwPresMunicipality,
+                  //           ofwPermBarangay: getAppDetails.ofwPresBarangay,
+                  //           ofwPermStreet: getAppDetails.ofwPresStreet,
+                  //         };
+                  //         break;
+                  //       case "ofwSameAdd":
+                  //         updatedFields = {
+                  //           ofwPermProv: "",
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "resetMiddleName":
+                  //         updatedFields = {
+                  //           ofwmname: "",
+                  //         };
+                  //         break;
+                  //       default:
+                  //         break;
+                  //     }
+                  //     return {
+                  //       ...prevDetails,
+                  //       [e.name]: e.value,
+                  //       ...updatedFields,
+                  //     };
+                  //   });
+                  // }}
                 />
               </Card>
             </>
@@ -614,7 +613,7 @@ function LoanApplicationTracker({ data }) {
           classname={
             "h-[50vh] mt-[.5rem] overflow-y-hidden hover:overflow-y-auto"
           }
-          Display={''}
+          Display={""}
           ClientId={toDecrypt(localStorage.getItem("CLID"))}
           FileType={getAppDetails.loanProd}
           Uploader={getAppDetails.borrowersCode}

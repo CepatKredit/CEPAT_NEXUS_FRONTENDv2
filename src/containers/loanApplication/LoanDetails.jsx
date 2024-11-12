@@ -28,8 +28,8 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
   const { getAppDetails, updateAppDetails } = React.useContext(
     LoanApplicationContext
   );
-
-  const { GET_LOAN_PRODUCT_LIST, GET_LOAN_PURPOSE_LIST } = useDataContainer();
+  const { GET_LOAN_PRODUCT_LIST, GET_LOAN_PURPOSE_LIST, GET_BRANCH_LIST } =
+    useDataContainer();
   const [readMore, setReadMore] = React.useState(false);
 
   const classname_main =
@@ -75,7 +75,6 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           )}
         </div>
       </div>
-
       <Divider className="mt-[3%]" />
       <div className="flex flex-col justify-center items-center w-[850px]">
         {!direct ? (
@@ -177,21 +176,6 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
         ) : (
           <></>
         )}
-        {/* <LabeledSelectLoanPurpose
-          className_dmain={classname_main}
-          className_label={className_label}
-          className_dsub={className_dsub}
-          label={
-            <>
-              Select Loan Purpose <span className="text-red-500">*</span>
-            </>
-          }
-          category={"direct"}
-          placeHolder={"Loan Purpose"}
-          disabled={!getAppDetails.dataPrivacy}
-          rendered={loanrendered}
-          showSearch
-        /> */}
         <SelectOpt
           className_dmain={classname_main}
           className_label={className_label}
@@ -235,22 +219,6 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           disabled={!getAppDetails.dataPrivacy}
           rendered={loanrendered}
         />
-        {/* <LabeledSelect
-          className_dmain={classname_main}
-          className_label={className_label}
-          className_dsub={className_dsub}
-          label={
-            <>
-              Loan Terms (in Months) <span className="text-red-500">*</span>
-            </>
-          }
-          fieldName="loanTerms"
-          data={LoanTerms(12)}
-          placeHolder={"Loan Terms"}
-          category={"direct"}
-          disabled={!getAppDetails.dataPrivacy}
-          rendered={loanrendered}
-        /> */}
         <SelectOpt
           className_dmain={classname_main}
           className_label={className_label}
@@ -280,24 +248,6 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           rendered={loanrendered}
         />
         {!direct ? null : (
-          // <LabeledSelect
-          //   className_dmain={classname_main}
-          //   className_label={className_label}
-          //   className_dsub={className_dsub}
-          //   label={
-          //     <>
-          //       How did you know about Cepat Kredit Financing?{" "}
-          //       <span className="text-red-500">*</span>
-          //     </>
-          //   }
-          //   fieldName="hckfi"
-          //   data={Hckfi()}
-          //   category={"direct"}
-          //   placeHolder={"Please select..."}
-          //   disabled={!getAppDetails.dataPrivacy}
-          //   rendered={loanrendered}
-          // />
-
           <SelectOpt
             className_dmain={classname_main}
             className_label={className_label}
@@ -452,26 +402,33 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
             GetData("ROLE").toString() === "30" ||
             GetData("ROLE").toString() === "40" ? (
               <div className="flex flex-col justify-center items-center w-[850px]">
-                <LabeledSelect_BranchMarketing
+                <SelectOpt
                   className_dmain={classname_main}
                   className_label={className_label}
                   className_dsub={className_dsub}
                   label={
                     <>
-                      Select Branch <span className="text-red-500">*</span>
+                      Select Branch
+                      <span className="text-red-500">*</span>
                     </>
                   }
-                  // value={getAppDetails.loanBranch}
-                  // placeHolder={"Branch"}
-                  // receive={(e) => {
-                  //   receive({
-                  //     name: "loanBranch",
-                  //     value: e,
-                  //   });
-                  // }}
-                  category={"direct"}
-                  showSearch={true}
+                  value={getAppDetails.loanBranch}
                   disabled={!getAppDetails.dataPrivacy}
+                  placeHolder={"Please select..."}
+                  required={true}
+                  showSearch
+                  notValidMsg={"This field is required."}
+                  KeyName={"loanBranch"}
+                  receive={(e) => {
+                    updateAppDetails({
+                      name: "loanBranch",
+                      value: e,
+                    });
+                  }}
+                  options={GET_BRANCH_LIST.map((item) => ({
+                    value: item.code,
+                    label: item.name,
+                  }))}
                   rendered={loanrendered}
                 />
               </div>
@@ -485,33 +442,33 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
       ) : (
         <div className="flex flex-col justify-center items-center w-[850px] mt-[3%]">
           {[10, 15, 6].includes(getAppDetails.hckfi) ? (
-            <LabeledSelect_Branch
+            <SelectOpt
               className_dmain={classname_main}
               className_label={className_label}
               className_dsub={className_dsub}
               label={
                 <>
-                  Select Branch <span className="text-red-500">*</span>
+                  Select Branch
+                  <span className="text-red-500">*</span>
                 </>
               }
-              // value={getAppDetails.loanBranch}
-              placeHolder={"Branch"}
-              // receive={(e) => {
-              //   receive({
-              //     name: "loanBranch",
-              //     value: e,
-              //   });
-              // }}
-              category={"direct"}
-              showSearch={true}
-              mod={
-                [16, 1, 3, 2, 4, 11, 12, 13, 8, 5, 14].includes(
-                  getAppDetails.hckfi
-                )
-                  ? true
-                  : false
-              } //include fb in the list to auto select
+              value={getAppDetails.loanBranch}
               disabled={!getAppDetails.dataPrivacy}
+              placeHolder={"Please select..."}
+              required={true}
+              showSearch
+              notValidMsg={"This field is required."}
+              KeyName={"loanBranch"}
+              receive={(e) => {
+                updateAppDetails({
+                  name: "loanBranch",
+                  value: e,
+                });
+              }}
+              options={GET_BRANCH_LIST.map((item) => ({
+                value: item.code,
+                label: item.name,
+              }))}
               rendered={loanrendered}
             />
           ) : (
@@ -519,23 +476,34 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           )}
 
           {getAppDetails.hckfi === 14 ? (
-            <LabeledSelect
-              className_dmain={classname_main}
-              className_label={className_label}
-              className_dsub={className_dsub}
-              label={
-                <>
-                  Referred By <span className="text-red-500">*</span>
-                </>
-              }
-              data={ReferredBy()}
-              showSearch={true}
-              fieldName="loanReferredBy"
-              category={"direct"}
-              placeHolder={"Please Select..."}
-              disabled={!getAppDetails.dataPrivacy}
-              rendered={loanrendered}
-            />
+            <SelectOpt
+            className_dmain={classname_main}
+            className_label={className_label}
+            className_dsub={className_dsub}
+            label={
+              <>
+                Referred By <span className="text-red-500">*</span>
+              </>
+            }
+            value={getAppDetails.loanReferredBy}
+            disabled={!getAppDetails.dataPrivacy}
+            placeHolder={"Please select..."}
+            required={true}
+            showSearch
+            notValidMsg={"This field is required."}
+            KeyName={"loanReferredBy"}
+            receive={(e) => {
+              updateAppDetails({
+                name: "loanReferredBy",
+                value: e,
+              });
+            }}
+            options={ReferredBy()?.map((item) => ({
+              value: item.value,
+              label: item.label.toString(),
+            }))}
+            rendered={loanrendered}
+          />
           ) : (
             <></>
           )}
