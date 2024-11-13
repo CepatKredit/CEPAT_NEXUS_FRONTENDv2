@@ -38,10 +38,18 @@ import { useDirectLoan } from "@hooks/LoanApplicationHooks";
 
     const lc_ofwdetails =  !isValidOFWDetailsLc(getAppDetails);
 
+    console.log("SA ENDORSEMENT", getAppDetails)
+    React.useEffect(() => {
+        if (!getAppDetails.dataPrivacy) {
+          resetAppDetails();
+        }
+      }, [getAppDetails.dataPrivacy]);
+
+      console.log("AMMMOUNT", getAppDetails.ofwsalary)
+
     async function insertDirect() {
 
         directLoan(direct);
-    
 /*
         const data_lc = {
             LoanAppId: toUpperText(uuidv4()),

@@ -37,6 +37,7 @@ export const generateLoanDataLc = (getAppDetails) => {
         Address1: getAppDetails.ofwPresStreet,
         CountryId: '',
         Salary: getAppDetails.ofwsalary ? parseFloat(getAppDetails.ofwsalary.replace(',', '')) : 0,
+        RentAmount: getAppDetails.rentAmount ? parseFloat(getAppDetails.rentAmount.replaceAll(',', '')) : 0,
         Status: 25,
     };
 };
@@ -82,7 +83,7 @@ export const generateLoanDataDirect = (getAppDetails) => ({
     MunicipalityId: getAppDetails.ofwPresMunicipality,
     BarangyId: getAppDetails.ofwPresBarangay,
     Address1: getAppDetails.ofwPresStreet ? ChangeText(getAppDetails.ofwPresStreet) : '',
-    RentAmount: parseInt(getAppDetails.ofwresidences) === 3 ? parseInt(getAppDetails.rentAmount.replaceAll(',', '')) : 0,
+    RentAmount: getAppDetails.rentAmount ? parseFloat(getAppDetails.rentAmount.replaceAll(',', '')) : 0,
     IsCurrPerm: getAppDetails.ofwSameAdd ? 1 : 0,
 
     PerAddressType: '',

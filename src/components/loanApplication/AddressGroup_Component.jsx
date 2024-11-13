@@ -56,101 +56,101 @@ function AddressContainer({
   //   retryDelay: 1000,
   // });
 
-  // const getMunFromProvCode = useQuery({
-  //   queryKey: [
-  //     "getMunFromProvCode",
-  //     type === "present"
-  //       ? data.ofwPresProv
-  //       : type === "permanent"
-  //       ? data.ofwPermProv
-  //       : type === "beneficiary"
-  //       ? data.benpresprov
-  //       : type === "provincial"
-  //       ? data.ofwprovProv
-  //       : type === "coborrow"
-  //       ? data.coborrowProv
-  //       : null,
-  //   ],
-  //   queryFn: async () => {
-  //     const provCode =
-  //       type === "present"
-  //         ? data.ofwPresProv
-  //         : type === "permanent" && data.ofwSameAdd
-  //         ? data.ofwPresProv
-  //         : type === "permanent" && !data.ofwSameAdd
-  //         ? data.ofwPermProv
-  //         : type === "beneficiary" && data.bensameadd
-  //         ? data.ofwPresProv
-  //         : type === "beneficiary" && !data.bensameadd
-  //         ? data.benpresprov
-  //         : type === "provincial" && data.ofwProvSameAdd
-  //         ? data.ofwPresProv
-  //         : type === "provincial" && data.ofwProvSameAdd
-  //         ? data.ofwprovProv
-  //         : type === "coborrow" && data.coborrowSameAdd
-  //         ? data.ofwPresProv
-  //         : type === "coborrow" && !data.coborrowSameAdd
-  //         ? data.coborrowProv
-  //         : null;
+  const getMunFromProvCode = useQuery({
+    queryKey: [
+      "getMunFromProvCode",
+      type === "present"
+        ? data.ofwPresProv
+        : type === "permanent"
+        ? data.ofwPermProv
+        : type === "beneficiary"
+        ? data.benpresprov
+        : type === "provincial"
+        ? data.ofwprovProv
+        : type === "coborrow"
+        ? data.coborrowProv
+        : null,
+    ],
+    queryFn: async () => {
+      const provCode =
+        type === "present"
+          ? data.ofwPresProv
+          : type === "permanent" && data.ofwSameAdd
+          ? data.ofwPresProv
+          : type === "permanent" && !data.ofwSameAdd
+          ? data.ofwPermProv
+          : type === "beneficiary" && data.bensameadd
+          ? data.ofwPresProv
+          : type === "beneficiary" && !data.bensameadd
+          ? data.benpresprov
+          : type === "provincial" && data.ofwProvSameAdd
+          ? data.ofwPresProv
+          : type === "provincial" && data.ofwProvSameAdd
+          ? data.ofwprovProv
+          : type === "coborrow" && data.coborrowSameAdd
+          ? data.ofwPresProv
+          : type === "coborrow" && !data.coborrowSameAdd
+          ? data.coborrowProv
+          : null;
 
-  //     if (!provCode) return [];
-  //     const result = await axios.get(`/getMuniArea/${provCode}`);
-  //     return result.data.list;
-  //   },
-  //   refetchInterval: (data) => {
-  //     data?.length === 0 ? 500 : false;
-  //   },
-  //   enabled: true,
-  //   retryDelay: 1000,
-  // });
+      if (!provCode) return [];
+      const result = await axios.get(`/getMuniArea/${provCode}`);
+      return result.data.list;
+    },
+    refetchInterval: (data) => {
+      data?.length === 0 ? 500 : false;
+    },
+    enabled: true,
+    retryDelay: 1000,
+  });
 
 
-  // const getBarangayFromProvCode = useQuery({
-  //   queryKey: [
-  //     "getBarangayFromMunCode",
-  //     type === "present"
-  //       ? data.ofwPresMunicipality
-  //       : type === "permanent"
-  //       ? data.ofwPermMunicipality
-  //       : type === "beneficiary"
-  //       ? data.benpresmunicipality
-  //       : type === "provincial"
-  //       ? data.ofwprovMunicipality
-  //       : type === "coborrow"
-  //       ? data.coborrowMunicipality
-  //       : null,
-  //   ],
-  //   queryFn: async () => {
-  //     const munCode =
-  //       type === "present"
-  //         ? data.ofwPresMunicipality
-  //         : type === "permanent" && data.ofwSameAdd
-  //         ? data.ofwPresMunicipality
-  //         : type === "permanent" && !data.ofwSameAdd
-  //         ? data.ofwPermMunicipality
-  //         : type === "beneficiary" && data.bensameadd
-  //         ? data.ofwPresMunicipality
-  //         : type === "beneficiary" && !data.bensameadd
-  //         ? data.benpresmunicipality
-  //         : type === "provincial" && data.ofwProvSameAdd
-  //         ? data.ofwPresMunicipality
-  //         : type === "provincial" && data.ofwProvSameAdd
-  //         ? data.ofwprovMunicipality
-  //         : type === "coborrow" && data.coborrowSameAdd
-  //         ? data.ofwPresMunicipality
-  //         : type === "coborrow" && !data.coborrowSameAdd
-  //         ? data.coborrowMunicipality
-  //         : null;
-  //     if (!munCode) return [];
-  //     const result = await axios.get(`/getbarangaylist/${munCode}`);
-  //     return result.data.list;
-  //   },
-  //   refetchInterval: (data) => {
-  //     data?.length === 0 ? 500 : false;
-  //   },
-  //   enabled: true,
-  //   retryDelay: 1000,
-  // });
+  const getBarangayFromProvCode = useQuery({
+    queryKey: [
+      "getBarangayFromMunCode",
+      type === "present"
+        ? data.ofwPresMunicipality
+        : type === "permanent"
+        ? data.ofwPermMunicipality
+        : type === "beneficiary"
+        ? data.benpresmunicipality
+        : type === "provincial"
+        ? data.ofwprovMunicipality
+        : type === "coborrow"
+        ? data.coborrowMunicipality
+        : null,
+    ],
+    queryFn: async () => {
+      const munCode =
+        type === "present"
+          ? data.ofwPresMunicipality
+          : type === "permanent" && data.ofwSameAdd
+          ? data.ofwPresMunicipality
+          : type === "permanent" && !data.ofwSameAdd
+          ? data.ofwPermMunicipality
+          : type === "beneficiary" && data.bensameadd
+          ? data.ofwPresMunicipality
+          : type === "beneficiary" && !data.bensameadd
+          ? data.benpresmunicipality
+          : type === "provincial" && data.ofwProvSameAdd
+          ? data.ofwPresMunicipality
+          : type === "provincial" && data.ofwProvSameAdd
+          ? data.ofwprovMunicipality
+          : type === "coborrow" && data.coborrowSameAdd
+          ? data.ofwPresMunicipality
+          : type === "coborrow" && !data.coborrowSameAdd
+          ? data.coborrowMunicipality
+          : null;
+      if (!munCode) return [];
+      const result = await axios.get(`/getbarangaylist/${munCode}`);
+      return result.data.list;
+    },
+    refetchInterval: (data) => {
+      data?.length === 0 ? 500 : false;
+    },
+    enabled: true,
+    retryDelay: 1000,
+  });
 
 
 // const provinceList = ProvinceList() || [];
@@ -184,8 +184,8 @@ function AddressContainer({
 // console.log("MUNI", getMunFromProvCode)
 
 // console.log("BARANGAY", getBarangayFromProvCode)
-const municipalityList = MunicipalityList(type, data);
-const barangayList = BarangayList(type, data)
+// const municipalityList = MunicipalityList(type, data);
+// const barangayList = BarangayList(type, data)
 
   return (
     <>
@@ -485,7 +485,7 @@ const barangayList = BarangayList(type, data)
               value: e,
             }, type);
           }}
-          options={municipalityList.map((x) => ({
+          options={getMunFromProvCode.data?.map((x) => ({
             value: x.munCode,
             label: x.munDesc.toUpperCase(),
           }))}
@@ -562,7 +562,7 @@ const barangayList = BarangayList(type, data)
               value: e,
             }, type);
           }}
-          options={barangayList.map((x) => ({
+          options={getBarangayFromProvCode.data?.map((x) => ({
             value: x.code,
             label: x.description.toUpperCase(),
           }))}

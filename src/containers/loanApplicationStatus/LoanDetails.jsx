@@ -284,7 +284,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
   };
 
   const handleCancel = () => {
-    reset(); 
+    reset();  
     setEdit(false);
     queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'], exact: true });
   };

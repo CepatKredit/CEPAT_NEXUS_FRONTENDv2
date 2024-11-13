@@ -82,6 +82,8 @@ export function ComponentPreloads() {
     queryFn: async () => {
       const result = await GET_LIST("/OFWDetails/getIDtype");
       setValidId(result.list);
+      console.log("IIIIIIIIDDDDDDDDDDD", getValidId)
+      return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
     retryDelay: 1000,

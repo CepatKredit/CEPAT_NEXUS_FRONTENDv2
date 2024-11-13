@@ -13,7 +13,7 @@ function OtherInfo({ ofwrendered, data, receive }) {
     "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
   const className_label = "mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[200px]";
   const className_dsub = "w-full sm:w-[400px]";
-  const { getAppDetails } = React.useContext(LoanApplicationContext);
+  const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext);
   const { GET_VALID_ID_LIST, GET_COUNTRY_LIST } = useDataContainer();
 
   return (
@@ -23,7 +23,7 @@ function OtherInfo({ ofwrendered, data, receive }) {
       </h2>
       <p className="text-xs text-red-500 mb-[2%]">(Optional)</p>
       <div id="ID Details" className="mb-[2%]">
-        <LabeledSelect_ValidId
+        {/* <LabeledSelect_ValidId
                     className_dmain={classname_main}
                     className_label={className_label}
                     className_dsub={className_dsub}
@@ -41,8 +41,10 @@ function OtherInfo({ ofwrendered, data, receive }) {
                     required={false}
                     grendered= {ofwrendered}
                     showSearch
-                />
-        {/* <SelectOpt
+                    value: x.id,
+                    label: x.name,
+                /> */}
+        <SelectOpt
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
@@ -65,7 +67,7 @@ function OtherInfo({ ofwrendered, data, receive }) {
             value: item.id,
           }))}
           rendered={ofwrendered}
-        /> */}
+        />
         <LabeledInput
           className_dmain={classname_main}
           className_label={className_label}

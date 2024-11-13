@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 
 function hookValid(KeyName, date) {
-    if (KeyName === 'ofwDeptDate' || KeyName==='loanDateDep'){return checkDeployisValid(date)}
-    else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate') { return checkAgeisValid(date)}
+    if (KeyName === 'ofwDeptDate' || KeyName==='loanDateDep'){return !checkDeployisValid(date)}
+    else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate") { return !checkAgeisValid(date)}
 
     else {return CheckDateValid(date)}
 }
@@ -107,13 +107,18 @@ export function DateComponentHook(value, receive, rendered, KeyName) {
   
     const toggleDatePicker = () => setDatePickerOpen((prev) => !prev);
   
+    // if ((KeyName === 'ofwbdate' || KeyName === "benbdate") && !checkAgeisValid(date)) {
     useEffect(() => {
       const handler = setTimeout(() => {
         const date = dayjs(debouncedInput, 'MM-DD-YYYY');
         if (debouncedInput.length === 10 && date.isValid()) {
-          if ((KeyName === 'ofwbdate' || KeyName === "benbdate") && !checkAgeisValid(date)) {
+          if (hookValid(KeyName, date)) {
             setStatus('error');
+            if(KeyName === 'ofwbdate' || KeyName === "benbdate"){
             setValidationMessage('Age should be 20 to 65 years old only.');
+            } else {
+            setValidationMessage('Invalid Departure date.');
+            }
             receive();
           } else {
             setIconVisible(true);

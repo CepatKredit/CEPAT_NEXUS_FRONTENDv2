@@ -435,7 +435,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         }
         value={getAppDetails.ofwresidences}
         disabled={!getAppDetails.dataPrivacy}
-        placeHolder={"Marital Status"}
+        placeHolder={"Residence"}
         required={true}
         showSearch
         notValidMsg={"Residence is required."}

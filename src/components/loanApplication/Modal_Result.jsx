@@ -95,6 +95,7 @@ function Modal_Result({
         response,
         (data) => {
           setList(data.datalist);
+          resetAppDetails();
         }
         // showErrorNotification
       );
@@ -165,7 +166,7 @@ function Modal_Result({
           </p>
         )}
         <center>
-          {ClickLoan.isIdle && checkLoanMutation.isIdle ? (
+          {ClickLoan.isIdle || checkLoanMutation.isIdle ? (
             <>
               <ConfigProvider theme={{ token: { colorPrimary: "#6067AD" } }}>
                 <Button
@@ -180,15 +181,9 @@ function Modal_Result({
                 type="primary"
                 className="mt-[5%] ml-[2%] bg-[#6B73C1]"
                 onClick={handleCheckDuplication}
-                disabled={checkLoanMutation.isLoading || ClickLoan.isLoading}
+                loading={checkLoanMutation.isPending || ClickLoan.isLoading}
               >
-                {checkLoanMutation.isLoading || ClickLoan.isLoading ? (
-                  <Spin
-                    indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />}
-                  />
-                ) : (
-                  "Confirm"
-                )}
+                Confirm
               </Button>
             </ConfigProvider>
             </>
@@ -211,7 +206,6 @@ function Modal_Result({
                         getList["LoanDetails"]?.loanAppCode
                       }/loan-details`
                     );
-                    resetAppDetails();
                   }
                 }}
               >

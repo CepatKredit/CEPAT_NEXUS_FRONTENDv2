@@ -62,6 +62,12 @@ function LoanApplication() {
 
   const ben_details = !isValidBeneficiaryDetails(getAppDetails);
 
+  React.useEffect(() => {
+    if (!getAppDetails.dataPrivacy) {
+      resetAppDetails();
+    }
+  }, [getAppDetails.dataPrivacy]);
+
   const navigate = useNavigate();
 
   const steps = getLoanApplicationSteps({
