@@ -8,10 +8,10 @@ import LabeledSelectLoanPurpose from "@components/trackApplication/LabeledSelect
 import LabeledSelect_Branch from "@components/trackApplication/LabeledSelect_Branch";
 import DatePicker_Deployment from "@components/trackApplication/DatePicker_Deployment";
 import LabeledSelect from "@components/trackApplication/LabeledSelect";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GET_LIST, GetLoanPurpose, POST_DATA } from "@api/base-api/BaseApi";
 import dayjs from "dayjs";
-import { loanterm } from "@utils/FixedData";
+import { loanterm, LoanTerms } from "@utils/FixedData";
 import { UpdateLoanDetails } from "@utils/LoanDetails";
 import { mmddyy } from "@utils/Converter";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
@@ -215,61 +215,135 @@ function LoanDetails({ /*data*/ receive, loancases }) {
 
   const queryClient = useQueryClient();
 
-  async function updateData() {
-    if (!validateFields()) {
-      return;
-    }
+  const { mutate, isPending, reset } = useMutation({
+    mutationFn: async () => {
+      // Prepare data for each update call
+      const value1 = {
+        LoanAppId: getAppDetails.loanIdCode,
+        Tab: 1,
+        BorrowersCode: getAppDetails.borrowersCode,
+        Product: getAppDetails.loanProd,
+        DepartureDate: getAppDetails.loanDateDep ? mmddyy(getAppDetails.loanDateDep) : '',
+        Purpose: getAppDetails.loanPurpose,
+        BranchId: parseInt(getAppDetails.loanBranch),
+        Amount: getAppDetails.loanAmount
+          ? parseFloat(getAppDetails.loanAmount.toString().replaceAll(',', ''))
+          : 0,
+        Channel: getAppDetails.hckfi,
+        Terms: getAppDetails.loanTerms,
+        Consultant: getAppDetails.consultant,
+        ConsultantNo: getAppDetails.consultNumber,
+        ConsultantProfile: getAppDetails.consultProfile,
+        ModUser: getAppDetails.borrowersCode,
+      };
 
-    const value = {
-      LoanAppId: getAppDetails.loanIdCode,
-      Tab: 1,
-      BorrowersCode: getAppDetails.borrowersCode,
-      Product: getAppDetails.loanProd,
-      DepartureDate: getAppDetails.loanDateDep
-        ? mmddyy(getAppDetails.loanDateDep)
-        : "",
-      Purpose: getAppDetails.loanPurpose,
-      BranchId: parseInt(getAppDetails.loanBranch),
-      Amount: getAppDetails.loanAmount ? parseFloat(
-        getAppDetails.loanAmount.toString().replaceAll(",", "")
-      ): 0,
-      Channel: getAppDetails.hckfi,
-      Terms: getAppDetails.loanTerms,
-      Consultant: getAppDetails.consultant,
-      ConsultantNo: getAppDetails.consultNumber,
-      ConsultantProfile: getAppDetails.consultProfile,
-      ModUser: getAppDetails.borrowersCode,
-    };
-    const value2 = {
-      LoanAppId: getAppDetails.loanIdCode,
-      Tab: 2,
-      BorrowersCode: getAppDetails.borrowersCode,
-      JobTitle: getAppDetails.ofwjobtitle || "",
-    };
-    console.log("testtset", value);
-    const [resLoan, resOFW] = await Promise.all([
-      UpdateLoanDetails(value),
-      UpdateLoanDetails(value2),
-    ]);
-    if (resLoan.data.status === "success" && resOFW.data.status === "success") {
-      api[resLoan.data.status]({
-        message: resLoan.data.message,
-        description: resLoan.data.description,
-      });
-    } else {
-      api[resLoan.data.status]({
-        message: resLoan.data.message,
-        description: resLoan.data.description,
-      });
-    }
-    queryClient.invalidateQueries(
-      { queryKey: ["ClientDataQuery"] },
-      { exact: true }
-    );
-    setEdit(!isEdit);
+      const value2 = {
+        LoanAppId: getAppDetails.loanIdCode,
+        Tab: 2,
+        BorrowersCode: getAppDetails.borrowersCode,
+        JobTitle: getAppDetails.ofwjobtitle || "",
+      };
 
-    //queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
-  }
+      // Execute both updates simultaneously
+      const [resLoan, resOFW] = await Promise.all([
+        UpdateLoanDetails(value1),
+        UpdateLoanDetails(value2),
+      ]);
+
+      return { resLoan, resOFW };
+    },
+    onSuccess: ({ resLoan, resOFW }) => {
+      if (resLoan.data.status === 'success' && resOFW.data.status === 'success') {
+        api.success({
+          message: resLoan.data.message,
+          description: resLoan.data.description,
+        });
+      } else {
+        api.info({
+          message: resLoan.data.message,
+          description: resLoan.data.description,
+        });
+      }
+      // Invalidate queries to refresh updated data
+      queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'], exact: true });
+      setEdit(false); // Exit edit mode after successful save
+    },
+    onError: (error) => {
+      api.error({
+        message: 'Update Failed',
+        description: error.message || 'There was an error updating the loan details.',
+      });
+    },
+  });
+
+  const handleSave = () => {
+    if (!validateFields()) return;
+
+    mutate(); 
+    setEdit(!isEdit)
+  };
+
+  const handleCancel = () => {
+    reset(); 
+    setEdit(false);
+    queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'], exact: true });
+  };
+
+  // async function updateData() {
+  //   if (!validateFields()) {
+  //     return;
+  //   }
+
+  //   const value = {
+  //     LoanAppId: getAppDetails.loanIdCode,
+  //     Tab: 1,
+  //     BorrowersCode: getAppDetails.borrowersCode,
+  //     Product: getAppDetails.loanProd,
+  //     DepartureDate: getAppDetails.loanDateDep
+  //       ? mmddyy(getAppDetails.loanDateDep)
+  //       : "",
+  //     Purpose: getAppDetails.loanPurpose,
+  //     BranchId: parseInt(getAppDetails.loanBranch),
+  //     Amount: getAppDetails.loanAmount ? parseFloat(
+  //       getAppDetails.loanAmount.toString().replaceAll(",", "")
+  //     ): 0,
+  //     Channel: getAppDetails.hckfi,
+  //     Terms: getAppDetails.loanTerms,
+  //     Consultant: getAppDetails.consultant,
+  //     ConsultantNo: getAppDetails.consultNumber,
+  //     ConsultantProfile: getAppDetails.consultProfile,
+  //     ModUser: getAppDetails.borrowersCode,
+  //   };
+  //   const value2 = {
+  //     LoanAppId: getAppDetails.loanIdCode,
+  //     Tab: 2,
+  //     BorrowersCode: getAppDetails.borrowersCode,
+  //     JobTitle: getAppDetails.ofwjobtitle || "",
+  //   };
+  //   console.log("testtset", value);
+  //   const [resLoan, resOFW] = await Promise.all([
+  //     UpdateLoanDetails(value),
+  //     UpdateLoanDetails(value2),
+  //   ]);
+  //   if (resLoan.data.status === "success" && resOFW.data.status === "success") {
+  //     api[resLoan.data.status]({
+  //       message: resLoan.data.message,
+  //       description: resLoan.data.description,
+  //     });
+  //   } else {
+  //     api[resLoan.data.status]({
+  //       message: resLoan.data.message,
+  //       description: resLoan.data.description,
+  //     });
+  //   }
+  //   queryClient.invalidateQueries(
+  //     { queryKey: ["ClientDataQuery"] },
+  //     { exact: true }
+  //   );
+  //   setEdit(!isEdit);
+
+  //   //queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+  // }
 
   const toggleEditMode = () => {
     setEdit(!isEdit);
@@ -364,7 +438,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             label="Loan Term (in Months)"
             placeHolder="Select Loan Term"
             value={getAppDetails.loanTerms}
-            data={loanterm()}
+            data={LoanTerms(12)}
             fieldName="loanTerms"
             category="marketing"
           />
@@ -377,21 +451,22 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             <Button
               type="primary"
               icon={<SaveOutlined />}
-              onClick={() => {
-                updateData();
-              }}
+              onClick={handleSave}
+              loading={isPending}
             >
               Save
             </Button>
             <Button
               type="default"
-              onClick={() => {
-                queryClient.invalidateQueries(
-                  { queryKey: ["ClientDataQuery"] },
-                  { exact: true }
-                );
-                setEdit(false);
-              }}
+              // onClick={() => {
+              //   queryClient.invalidateQueries(
+              //     { queryKey: ["ClientDataQuery"] },
+              //     { exact: true }
+              //   );
+              //   setEdit(false);
+              // }}
+              onClick={handleCancel}
+              disabled={isLoading}
             >
               Cancel
             </Button>

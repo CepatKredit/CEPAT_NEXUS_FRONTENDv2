@@ -644,15 +644,15 @@ function LoanApplicationTracker({ data }) {
     <ConfigProvider
       theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}
     >
-      {ClientData.isPending && (
+      {ClientData.isFetching && (
         <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-white bg-opacity-50 z-50">
           <Spin
-            spinning={ClientData.isPending}
+            spinning={ClientData.isFetching}
             tip="Please wait..."
             className="text-green-500"
           />
         </div>
-      )}
+      )}  
       <Layout className="h-[100vh] bg-[#e8eee5] py-1">
         <Content className="w-full lg:w-[80vw] h-[120vh] mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
           <div className="mb-6">
