@@ -96,13 +96,13 @@ function UploadRecord({ data, ClientId, Uploader }) {
             width: '130px',
             ellipsis: true,
         },
-        {
+       /* {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
             width: '300px',
             editable: true,
-        },
+        },*/
         {
             title: 'Action',
             dataIndex: 'action',

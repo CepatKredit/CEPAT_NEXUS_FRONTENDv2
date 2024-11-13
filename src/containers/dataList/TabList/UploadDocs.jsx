@@ -120,7 +120,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     Others <span className='text-rose-500' />
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
-                    <FileLoader key={0} files={GetFile('Others', 'FILE')} />
+                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' />
                 </div>
             },
         ]
@@ -135,7 +135,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                             <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                         </span>,
                         children: <div className='h-[300px] overflow-y-auto'>
-                            <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                            <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
                                 Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
                         </div>
                     })
@@ -149,7 +149,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                                 <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                             </span>,
                             children: <div className='h-[300px] overflow-y-auto'>
-                                <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                                <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
                                     Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
                             </div>
                         })
@@ -163,7 +163,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                         Others <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                     </span>,
                     children: <div className='h-[300px] overflow-y-auto'>
-                        <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                        <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
                             Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
                     </div>
                 }
@@ -178,7 +178,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
                     <FileLoader key={data.length + 1} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
-                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} />
+                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} className='z-50' />
                 </div>
             }
         }

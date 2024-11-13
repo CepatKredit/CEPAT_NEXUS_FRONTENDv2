@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form } from 'antd';
 import { SaveOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import StatusRemarks from './StatusRemarks';
 import axios from 'axios';
 import SectionHeader from '@components/validation/SectionHeader';
@@ -36,7 +36,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     React.useEffect(() => { getCharacterRef.refetch() }, [getAppDetails.loanIdCode]);
 
     const getCharacterRef = useQuery({
-        queryKey: ['getCharacterRef',BorrowerId],
+        queryKey: ['getCharacterRef', BorrowerId],
         queryFn: async () => {
             try {
                 const result = await axios.get(`/getCharacterRef/${BorrowerId}`);
@@ -134,81 +134,32 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
 
     const [getAddStat, setAddStat] = React.useState(false)
 
-    async function onClickSave() {
-        // Validate the form fields
-        const row = await form.validateFields();
-        setStat(false); // Update state before saving data
 
-        // Prepare the data object
-        const data = {
-            BorrowersId: BorrowerId,
-            FullName: row.name, // Adjusted field name to match your data structure
-            Relationship: GetReshipId(), // Assuming GetReshipId() fetches the relationship ID
-            MobileNo: row.conNum,
-            Remarks: row.remarks || '',
-            ProvinceId: row.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
-            RecUser: Creator // Ensure Creator is properly defined
-        };
+    const onClickSaveData = useMutation({
+        mutationFn: async (row) => {
+            // Prepare the data object
+            const data = {
+                BorrowersId: BorrowerId,
+                FullName: row.name, // Adjusted field name to match your data structure
+                Relationship: GetReshipId(), // Assuming GetReshipId() fetches the relationship ID
+                MobileNo: row.conNum,
+                Remarks: row.remarks || '',
+                ProvinceId: row.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
+                RecUser: Creator // Ensure Creator is properly defined
+            };
 
-        try {
-            const result = await axios.post('/addCharacterRef', data);
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description,
-            });
-            if (result.data.status === 'success') {
-                queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
-                setStat(true);
-                setAddStat(false);
-                setEditingKey('');
-                setInfo({
-                    name: '',
-                    conNum: '',
-                    relShip: '',
-                    prov: '',
-                    remarks: '',
-                });
-            }
-        } catch (error) {
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message,
-            });
-        }
-    }
-
-
-    async function onClickEdit() {
-
-        const row = await form.validateFields();
-        getRelationshipList.refetch()
-        provinceList.refetch()
-
-        const data = {
-            CharacterRefId: editingKey,
-            FullName: row.name,
-            Relationship: GetReshipId(),
-            MobileNo: row.conNum,
-            Remarks: row.remarks || '',
-            ProvinceId: row.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
-            ModUser: Creator
-        };
-
-        console.log("Data being sent to /addCharacterRef:", data);
-        await axios.post('/editCharacterRef', data)
-            .then((result) => {
+            try {
+                const result = await axios.post('/addCharacterRef', data);
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description,
                 });
-
                 if (result.data.status === 'success') {
                     queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
                     setStat(true);
                     setAddStat(false);
                     setEditingKey('');
                     setInfo({
-                        key: '',
                         name: '',
                         conNum: '',
                         relShip: '',
@@ -216,30 +167,106 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                         remarks: '',
                     });
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 api['error']({
                     message: 'Something went wrong',
                     description: error.message,
                 });
-            })
-    }
+            }
+        }
+    })
 
-    async function onClickDelete(e) {
+    async function onClickSave() {
         try {
-            const result = await axios.post(`/delete/${e}`);
-            queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description
-            });
+            const row = await form.validateFields();
+            setStat(false);
+            onClickSaveData.mutate(row);
         } catch (error) {
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message
-            });
+            console.error('Validation failed:', error);
         }
     }
+
+
+    const onClickEditData = useMutation({
+        mutationFn: async (row) => {
+
+            const data = {
+                CharacterRefId: editingKey,
+                FullName: row.name,
+                Relationship: GetReshipId(),
+                MobileNo: row.conNum,
+                Remarks: row.remarks || '',
+                ProvinceId: row.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
+                ModUser: Creator
+            };
+
+
+            await axios.post('/editCharacterRef', data)
+                .then((result) => {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description,
+                    });
+
+                    if (result.data.status === 'success') {
+                        queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
+                        setStat(true);
+                        setAddStat(false);
+                        setEditingKey('');
+                        setInfo({
+                            key: '',
+                            name: '',
+                            conNum: '',
+                            relShip: '',
+                            prov: '',
+                            remarks: '',
+                        });
+                    }
+                })
+                .catch((error) => {
+                    api['error']({
+                        message: 'Something went wrong',
+                        description: error.message,
+                    });
+                })
+
+        }
+    })
+
+    async function onClickEdit() {
+        try {
+            const row = await form.validateFields();
+            onClickEditData.mutate(row);
+        } catch (error) {
+            console.error('Validation failed:', error);
+        }
+    }
+
+   
+    const onClickDeteleData = useMutation({
+        mutationFn: async (e) => {
+            try {
+                const result = await axios.post(`/delete/${e}`);
+                queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description
+                });
+            } catch (error) {
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message
+                });
+            }
+        }
+    })
+
+    async function onClickDelete(e) {
+        onClickDeteleData.mutate(e);
+    }
+
+
+
     const [form] = Form.useForm();
     const columns = [
         {
@@ -326,7 +353,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -347,7 +374,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -383,7 +410,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                                     }}
                                     okText="Yes"
                                     cancelText="Cancel"  >
-                                    <Button disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
+                                    <Button disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger loading={onClickDeteleData.isPending} />
 
                                 </Popconfirm>
                             </Tooltip>
@@ -550,7 +577,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             {User !== 'Credit' && User !== 'Lp' && (<StatusRemarks isEdit={!isEdit} User={User} data={data} />)}
             {contextHolder}
             <div className='mt-[9rem] w-full px-2'>
-            <div className={`${User === 'Credit' || User === 'Lp' ? 'mt-[-15rem]' : 'mt-[-4rem]'}`}>
+                <div className={`${User === 'Credit' || User === 'Lp' ? 'mt-[-15rem]' : 'mt-[-4rem]'}`}>
                     <center>
                         <SectionHeader title="List of Character Reference" />
                     </center>
@@ -583,8 +610,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                             components={{ body: { cell: EditableCell } }}
                             rowClassName='editable-row'
                             pagination={false}
-                            scroll={{ y: User === 'Credit' || User === 'Lp' ? 200 : 300 }} 
-                            />
+                            scroll={{ y: User === 'Credit' || User === 'Lp' ? 200 : 300 }}
+                        />
                     </Form>
                 </div>
             </div>

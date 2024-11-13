@@ -146,7 +146,7 @@ function ValidationOTP({ username, accessList }) {
                     </div>
                     <div className='pb-4'>
                         <span className='text-sm'>Enter the OTP sent to your&nbsp;
-                            <span className='font-bold'>{maskEmail(username)}</span>f
+                            <span className='font-bold'>{maskEmail(username)}</span>
                         </span>
                     </div>
                     <Input.OTP

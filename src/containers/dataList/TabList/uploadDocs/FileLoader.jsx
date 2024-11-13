@@ -9,7 +9,7 @@ import {
     ZoomOutOutlined,
     SaveOutlined
 } from '@ant-design/icons';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import { viewPDFView, viewModalDocxEdit, viewPDFViewer } from '@hooks/ModalController';
 import ZindexModal from '@components/uploadDocx/ZindexModal';
@@ -109,18 +109,22 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
     }, [getPointer])
     const token = localStorage.getItem('UTK');
     async function onClickSave() {
-        const dataContainer = {
-            DocsID: GetDocName(getValue.fileName, 'ID'),
-            DocsFileName: `${getValue.fileName} - ${randomNumber(100000, 999999)}`,
-            Remarks: getValue.remarks,
-            ModUser: jwtDecode(token).USRID,
-            DocStatus: parseInt(getValue.status),
-            LAI: getFileData?.loanAppId,
-            Id: getFileData?.id,
-            PRODID: 'FILE'
-        }
+        onClickSaveImg.mutate();
+    }
 
-        await axios.post('/updateFileStatus', dataContainer)
+    const onClickSaveImg = useMutation({
+        mutationFn: async () => {
+            const dataContainer = {
+                DocsID: GetDocName(getValue.fileName, 'ID'),
+                DocsFileName: `${getValue.fileName} - ${randomNumber(100000, 999999)}`,
+                Remarks: getValue.remarks,
+                ModUser: jwtDecode(token).USRID,
+                DocStatus: parseInt(getValue.status),
+                LAI: getFileData?.loanAppId,
+                Id: getFileData?.id,
+                PRODID: 'FILE'
+            }
+            await axios.post('/updateFileStatus', dataContainer)
             .then((result) => {
                 queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
                 queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
@@ -138,7 +142,8 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                     description: error.message
                 })
             })
-    }
+        }
+    })
 
     return (
         <div className='flex flex-wrap' key={key}>
@@ -147,7 +152,7 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
             <ViewPdf showModal={modalStatus} closeModal={() => { setStatus(false) }} />
             <ZindexModal showModal={getModalStatus} closeModal={() => { setModalStatus(false) }}
                 modalWidth={'400px'} modalTitle={'Edit Document'} contextHeight={isClient === 'USER' ? 'h-[320px]' : 'h-[200px]'} contextInside={(<>
-                    <EditImgInfo data={getFileData} FileListName={FileListName} Display={isClient} />
+                    <EditImgInfo data={getFileData} FileListName={FileListName} Display={isClient} className='z-50' />
                 </>)} />
             {
                 FileList('') === 'EMPTY'
@@ -175,7 +180,7 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                                                     },
                                                 }
                                             ) => (
-                                                <div className='flex flex-col p-4 rounded-lg bg-stone-100 shadow-2xl ring-2 ring-stone-600 ring-offset-0'>
+                                                <div className='flex flex-col p-4 rounded-lg bg-stone-100 shadow-2xl ring-2 ring-stone-600 ring-offset-0 z-50'>
                                                     <center>
                                                         <div className='invert text-base font-semibold pb-1'>{`${getPointer.toString()} / ${FileList('IMG').length.toString()}`}</div>
                                                         <Space size={20} className="toolbar-wrapper invert">
@@ -244,7 +249,7 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                                                     <center>
                                                         <ConfigProvider theme={{ token: { colorPrimary: '#166534' } }}>
                                                             <Button className='mt-2 bg-[#166534] w-[10rem]' type='primary'
-                                                                onClick={() => { onClickSave() }} icon={<SaveOutlined />}>Save</Button>
+                                                                onClick={() => { onClickSave() }} icon={<SaveOutlined />} loading={onClickSaveImg.isPending} >Save</Button>
                                                         </ConfigProvider>
                                                     </center>
                                                 </div>
