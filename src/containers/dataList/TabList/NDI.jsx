@@ -417,7 +417,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                 {!DISABLE_STATUS(localStorage.getItem('SP')) && (
                     <Button 
-                        size='large' className='-mt-5 ml-15 bg-[#3b0764]'  type='primary'  disabled={Counter >= 1}  onClick={SaveNdi} loading={onClickSaveNDI.isPending} >SAVE NDI
+                        size='large' className='-mt-5 ml-15 bg-[#2b972d]'  type='primary'  disabled={Counter >= 1}  onClick={SaveNdi} loading={onClickSaveNDI.isPending} >SAVE NDI
                     </Button>
                 )}                        
                 </ConfigProvider>
