@@ -410,25 +410,22 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     )
                 )}
 
-                <Form.Item
-                    label="Dependents"
-                    colon={false}
-                    //   labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                    className="w-[18.75rem] mt-4 font-bold"
-                >
-                    <Input
-                        value={data.ofwdependents || '0'}
-                        className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
-                        readOnly
-                        placeholder="No. of Dependents"
-                    />
-                </Form.Item>
-
-
-
-
-                {/*
+                {User !== 'LC' && (
+                    <Form.Item
+                        label="Dependents"
+                        colon={false}
+                        wrapperCol={{ span: 24 }}
+                        className="w-[18.75rem] mt-4 font-bold"
+                    >
+                        <Input
+                            value={data.ofwdependents || '0'}
+                            className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
+                            readOnly
+                            placeholder="No. of Dependents"
+                        />
+                    </Form.Item>
+                )}
+                {User === 'LC' && (
                     <LabeledInput
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
@@ -438,14 +435,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         receive={(e) => { receive({ name: 'ofwdependents', value: e }); }}
                         digits={2}
                         placeHolder={'No.of Dependents'}
-                        readOnly={true}
                         isEdit={isEdit}
                         rendered={rendered}
                         required={false}
-
                     />
-
-                */}
+                )}
                 {User !== 'LC' && (
                     <div className="w-full mt-[2rem] mx-auto">
                         <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} />

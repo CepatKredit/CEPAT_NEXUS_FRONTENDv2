@@ -254,7 +254,8 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
         {
             label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
             key: 'internal-checking',
-            children: <InternalChecking data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} ClientId={ClientId} FileType={FileType} Uploader={Uploader} />,
+            children: <InternalChecking classname={'h-[65vh] w-full mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} ClientId={ClientId} FileType={FileType} Uploader={Uploader}/>,
+
         },
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,

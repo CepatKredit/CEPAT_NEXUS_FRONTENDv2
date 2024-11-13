@@ -42,7 +42,7 @@ import { MdOutlineConfirmationNumber } from "react-icons/md";
 import { MdApproval } from "react-icons/md";
 import { AiOutlineSignature } from "react-icons/ai";
 import { TbArrowBackUpDouble } from "react-icons/tb";
-import { FcDataBackup } from "react-icons/fc";
+import { LuDatabaseBackup } from "react-icons/lu";
 
 
 function SideNavRoutes() {
@@ -96,7 +96,7 @@ function SideNavRoutes() {
         else if (x === '/ckfi/returned/credit-associate') { PageAccess.push({ key: x, label: 'Returned From Credit Associate', icon: <AiOutlineRollback  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/reassessed/credit-associate') { PageAccess.push({ key: x, label: 'Reassessed To Credit Associate', icon: <TbFileIsr style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/returned/credit-officer') { PageAccess.push({ key: x, label: 'Returned From Credit Officer', icon: <MdOutlineSevereCold style={{ fontSize: '18px' }} />, }) }
-        else if (x === '/ckfi/reassessed/credit-officer') { PageAccess.push({ key: x, label: 'Reassessed To Credit Officer', icon: <TbFileIsr style={{ fontSize: '18px' }} />, }) }
+        else if (x === '/ckfi/reassessed/credit-officer') { PageAccess.push({ key: x, label: 'Reassessed To Credit Officer', icon: <LuDatabaseBackup  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/for-approval') { PageAccess.push({ key: x, label: 'For Approval', icon: <MdApproval  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/on-waiver') { PageAccess.push({ key: x, label: 'On Waiver', icon: <AiOutlineSignature  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/approved') { PageAccess.push({ key: x, label: 'Approved (Trans-Out)', icon: <RxExit style={{ fontSize: '18px' }} />, }) }
@@ -108,7 +108,7 @@ function SideNavRoutes() {
         else if (x === '/ckfi/bank-generation') { PageAccess.push({ key: x, label: 'Bank Generation', icon: <BankOutlined style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/released') { PageAccess.push({ key: x, label: 'Released', icon: <LuFileBox style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/returned/credit-officer') { PageAccess.push({ key: x, label: 'Returned From Credit Officer', icon: <MdOutlineSevereCold style={{ fontSize: '18px' }} />, }) }
-        else if (x === '/ckfi/reassessed/credit-officer') { PageAccess.push({ key: x, label: 'Reassessed To Credit Officer', icon: <FcDataBackup style={{ fontSize: '18px' }} />, }) }
+        else if (x === '/ckfi/reassessed/credit-officer') { PageAccess.push({ key: x, label: 'Reassessed To Credit Officer', icon: <LuDatabaseBackup  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/on-waiver') { PageAccess.push({ key: x, label: 'On Waiver', icon: <AiOutlineSignature  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/undecided') { PageAccess.push({ key: x, label: 'Undecided', icon: <BsPersonFillExclamation style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/cancelled') { PageAccess.push({ key: x, label: 'Cancelled', icon: <MdCancel style={{ fontSize: '18px' }} />, }) }

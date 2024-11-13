@@ -90,11 +90,11 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             ) : (
                 <EditApprovalAmount data={data} receive={receive} User={User} />
             )}
-             {!isEdit && (
+             {/*!isEdit && (
                 <div className="w-[73rem] mb-[2rem] mt-[1rem] mx-auto">
                     <AmountTable data={data} receive={receive} User="Credit" creditisEdit={false} loading={false} />
                 </div>
-            )}
+            )*/}
             </div>
             {contextHolder}
             {/*(*/GetData('ROLE').toString() === '60' &&

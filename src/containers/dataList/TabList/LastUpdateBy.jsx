@@ -310,7 +310,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
             if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
                 || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
-                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application') {
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
                 console.log('MA')
                 return true
             }

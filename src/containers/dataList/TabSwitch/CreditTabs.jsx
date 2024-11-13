@@ -501,12 +501,26 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         fetchRelativesAndUpdateCount();
     }, [BorrowerId]);
 
-    const disabledStatuses = [
-        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
-        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
-        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'RELEASED'
-    ];
+    function DISABLE_STATUS(LOCATION) {
+         if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+    }
 
     const TabsItems = [
         {
@@ -642,7 +656,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         <div className='w-full'>
             {contextHolder}
             <Tabs defaultActiveKey={tabs} activeKey={activeKey} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
-            {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && (
+            {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
                 <ConfigProvider
                     theme={{
                         token: {

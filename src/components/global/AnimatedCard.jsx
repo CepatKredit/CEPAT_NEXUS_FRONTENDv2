@@ -39,7 +39,7 @@ import { MdOutlineConfirmationNumber } from "react-icons/md";
 import { MdApproval } from "react-icons/md";
 import { AiOutlineSignature } from "react-icons/ai";
 import { TbArrowBackUpDouble } from "react-icons/tb";
-import { FcDataBackup } from "react-icons/fc";
+import { LuDatabaseBackup } from "react-icons/lu";
 import { MdOutlineAssignmentReturn } from "react-icons/md";
 
 
@@ -51,7 +51,7 @@ function AnimatedCard({ path }) {
         '#8B4513', '#006d77', '#B8860B', '#b5179e',
         '#ff5400', '#003566', '#4a4e69', '#80b918','#3d5a80',
         '#7B68EE', '#2d6a4f', '#6d597a', '#720026','#ff0054',
-        '#20B2AA', '#2196f3', '#FFD700', '#E3B6B1','#32CD32',
+        '#20B2AA', '#2196f3', '#FFD700', '#d4af37','#32CD32',
         '#c77dff', '#cd5c5c', '#006400', '#FF7F50','#1c1c1c',
         '#FF0000', '#708090']
     let name = ''
@@ -220,7 +220,7 @@ function AnimatedCard({ path }) {
         else if (path === '/ckfi/reassessed/credit-officer') {
             name = 'REASSESSED TO CREDIT OFFICER'
             let value = {
-                icon: <FcDataBackup  style={{ fontSize: '80px', color: '#ffffff' }} />,
+                icon: <LuDatabaseBackup  style={{ fontSize: '80px', color: '#ffffff' }} />,
                 color: colorList[19]
             }
             return value

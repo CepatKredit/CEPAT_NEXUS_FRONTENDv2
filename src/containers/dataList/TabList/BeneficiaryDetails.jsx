@@ -10,6 +10,8 @@ import { mmddyy } from '@utils/Converter';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { GetData } from '@utils/UserData';
+
 
 function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading }) {
 
@@ -39,6 +41,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
         'benemail',
         'benmobile',
         'benmstatus',
+        'benrelationship',
         'benresidences',
         'benstayyears',
         'benstaymonths',
@@ -60,14 +63,17 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
         });
     };
 
-    const disabledStatuses = [
-        'DECLINED', 'CANCELLED', 'SCREENING AND INTERVIEW', 'REASSESSED TO CREDIT ASSOCIATE',
-        'FOR CALLBACK', 'FOR VERIFICATION', 'PRE-CHECK', 'FOR APPROVAL',
-        'RETURN TO CREDIT ASSOCIATE', 'RETURN TO CREDIT OFFICER', 'REASSESSED TO CREDIT OFFICER',
-        'APPROVED (TRANS-OUT)', 'RETURN TO LOANS PROCESSOR', 'FOR DOCUSIGN', 'OK FOR DOCUSIGN',
-        'TAGGED FOR RELEASE', 'FOR DISBURSEMENT', 'ON WAIVER', 'CONFIRMATION', 'CONFIRMED',
-        'UNDECIDED', 'RELEASED', 'FOR CREDIT ASSESSMENT', 'FOR RE-APPLICATION', 'PRE-APPROVAL'
-    ];
+    function DISABLE_STATUS(LOCATION) {
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
+                console.log('MA')
+                return true
+            }
+            else { return false }
+        }
+    }
 
     React.useEffect(() => {
         if (didMountRef.current) {
@@ -130,6 +136,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 BenCivilStatus: data.benmstatus || null,
                 BenSpouseName: data.benspouse || '',
                 BenSpouseBirthday: data.benspousebdate ? mmddyy(data.benspousebdate) : '',
+            BenRelationship: data.benrelationship || null,
 
                 BenOwnership: data.benresidences || null,
                 BenStayYears: data.benstayyears || 0,
@@ -186,7 +193,8 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 AcbFbProfile: data.coborrowfblink || '',
                 AcbSpouseName: data.coborrowspousename || '',
                 AcbSpouseBirthday: data.coborrowerspousebdate ? mmddyy(data.coborrowerspousebdate) : '',
-                AcbOwnership: data.coborrowresidences || 0,
+                AcbRelationship: data.AcbRelationship || null,
+            AcbOwnership: data.coborrowresidences || 0,
                 AcbAddress1: data.coborrowStreet || '',
                 AcbBarangayId: data.coborrowBarangay || '',
                 AcbMunicipalityId: data.coborrowMunicipality || '',
@@ -262,7 +270,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                         showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
                 )}
             </div>
-            {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
+            {User !== 'Credit' && User !== 'Lp' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
                 <ConfigProvider
                     theme={{
                         token: {
@@ -332,7 +340,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                                     onClick={toggleEditMode}
                                     size="large"
                                     className="-mt-5"
-                                    disabled={disabledStatuses.includes(GetStatus)}>EDIT
+                                    >EDIT
                                 </Button>
                             </ConfigProvider>
                         )}

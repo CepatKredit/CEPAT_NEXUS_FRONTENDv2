@@ -11,7 +11,7 @@ import dayjs from 'dayjs'
 import { useQueryClient } from '@tanstack/react-query'
 import StatusRemarks from './StatusRemarks'
 import { ApplicationStatus } from '@hooks/ApplicationStatusController'
-
+import { GetData } from '@utils/UserData';
 
 function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
     const [isEdit, setEdit] = React.useState(false);
@@ -25,12 +25,21 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
-    const disabledStatuses = [
-        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
-        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
-        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'RELEASED'
-    ];
+    function DISABLE_STATUS(LOCATION) {
+         if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
+    }
 
     const InitialOtherIncome = (key, getValue) => {
         setIncomeInitial((prevValues) => ({
@@ -399,9 +408,11 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
             </div>
             <center className="flex justify-center items-center ">
                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                    <Button size='large' className='-mt-5  ml-15 bg-[#3b0764]' type='primary' disabled={Counter >= 1 || disabledStatuses.includes(GetStatus)} onClick={SaveNdi}>
-                        SAVE NDI
+                {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                    <Button 
+                        size='large' className='-mt-5 ml-15 bg-[#3b0764]'  type='primary'  disabled={Counter >= 1}  onClick={SaveNdi} >SAVE NDI
                     </Button>
+                )}                        
                 </ConfigProvider>
 
             </center >

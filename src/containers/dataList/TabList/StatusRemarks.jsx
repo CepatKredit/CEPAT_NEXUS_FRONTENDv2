@@ -53,7 +53,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                 return 'bg-[#8B4513] text-white';
             case 'FOR CREDIT ASSESSMENT':
                 return 'bg-[#006d77] text-white';
-            case 'CREDIT ASSESSMENT SPECIAL LANE':
+            case 'SPECIAL LANE':
                 return 'bg-[#ff5400] text-white';
             case 'FOR VERIFICATION':
                 return 'bg-[#80b918] text-white';
@@ -64,7 +64,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
             case 'UNDER LOAN PROCESSOR':
                 return 'bg-[#ffd700] text-white';
             case 'FOR DOCUSIGN':
-                return 'bg-[#008080] text-white';
+                return 'bg-[#c77dff] text-white';
             case 'RETURNED FROM MARKETING':
                 return 'bg-[#7b68ee] text-white';
             case 'FOR DISBURSEMENT':
@@ -88,11 +88,11 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
             case 'RETURN TO LOANS PROCESSOR':
                 return 'bg-[#ff7f50] text-white';
             case 'OK FOR DOCUSIGN':
-                return 'bg-[#c77dff] text-white';
+                return 'bg-[#20B2AA] text-white';
             case 'ON WAIVER':
                 return 'bg-[#2196f3] text-white';
             case 'CONFIRMATION':
-                return 'bg-[#228b22] text-white';
+                return 'bg-[#d3ae37] text-white';
             case 'CONFIRMED':
                 return 'bg-[#32cd32] text-white';
             case 'UNDECIDED':

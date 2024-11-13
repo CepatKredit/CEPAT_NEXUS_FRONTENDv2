@@ -22,7 +22,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
     const { GetStatus } = ApplicationStatus();
     const token = localStorage.getItem('UTK')
     const disabledStatuses = [
-        'DECLINED', 'CANCELLED', 'SCREENING AND INTERVIEW', 'REASSESSED TO CREDIT ASSOCIATE',
+        'DECLINED', 'CANCELLED', 'SCREENING','INTERVIEW', 'REASSESSED TO CREDIT ASSOCIATE',
         'FOR CALLBACK', 'FOR VERIFICATION', 'PRE-CHECK', 'FOR APPROVAL',
         'RETURN TO CREDIT ASSOCIATE', 'RETURN TO CREDIT OFFICER', 'REASSESSED TO CREDIT OFFICER',
         'APPROVED (TRANS-OUT)', 'RETURN TO LOANS PROCESSOR', 'FOR DOCUSIGN', 'OK FOR DOCUSIGN',
