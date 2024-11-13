@@ -21,14 +21,21 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
     const token = localStorage.getItem('UTK')
-    const disabledStatuses = [
-        'DECLINED', 'CANCELLED', 'SCREENING','INTERVIEW', 'REASSESSED TO CREDIT ASSOCIATE',
-        'FOR CALLBACK', 'FOR VERIFICATION', 'PRE-CHECK', 'FOR APPROVAL',
-        'RETURN TO CREDIT ASSOCIATE', 'RETURN TO CREDIT OFFICER', 'REASSESSED TO CREDIT OFFICER',
-        'APPROVED (TRANS-OUT)', 'RETURN TO LOANS PROCESSOR', 'FOR DOCUSIGN', 'OK FOR DOCUSIGN',
-        'TAGGED FOR RELEASE', 'FOR DISBURSEMENT', 'ON WAIVER', 'CONFIRMATION', 'CONFIRMED',
-        'UNDECIDED', 'RELEASED', 'FOR CREDIT ASSESSMENT', 'FOR RE-APPLICATION', 'PRE-APPROVAL'
-    ];
+    function DISABLE_STATUS(LOCATION) {
+         if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
+    }
     const didMountRef = useRef(false);
     React.useEffect(() => {
         if (didMountRef.current) {
@@ -174,7 +181,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
                     <EditLoanDetails data={data} receive={receive} User={User} />
                 )}
             </div>
-            {User !== 'Credit' && User !== 'Lp' && !disabledStatuses.includes(GetStatus) && (
+            {User !== 'Credit' && User !== 'Lp' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
                 <ConfigProvider
                     theme={{
                         token: {
