@@ -9,6 +9,7 @@ import {
   Input,
   Spin,
   ConfigProvider,
+  Flex,
 } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +29,8 @@ import { useQuery } from "@tanstack/react-query";
 import { toDecrypt } from "@utils/Converter";
 import createInitialAppDetails from "@utils/IntialValues";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { LiaClipboardSolid } from "react-icons/lia";
+import { message } from "antd";
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -42,7 +45,8 @@ function LoanApplicationTracker({ data }) {
     resetAppDetails,
     setOldClientNameAndBDay,
     populateClientDetails,
-    getOldData
+    getOldData,
+    api
   } = React.useContext(LoanApplicationContext);
 
   React.useEffect(() => {
@@ -58,6 +62,22 @@ function LoanApplicationTracker({ data }) {
     ClientData.refetch();
     console.log("TEST", ClientData);
   }, [localStorage.getItem("CLID")]);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const handleCopyToClipboard = () => {
+    navigator.clipboard
+      .writeText(getAppDetails.loanAppCode)
+      .then(() => {
+        messageApi.open({
+          type:"info",
+          content:"Copied to clipboard!",
+          duration: 0.1,
+        });
+      })
+      .catch(() => {
+        messageApi.error("Failed to copy");
+      });
+  };
 
   // const [getOldData, setOldData] = React.useState({
   //   FirstName: "",
@@ -158,70 +178,70 @@ function LoanApplicationTracker({ data }) {
 
   function getStatusBackgroundColor(status) {
     switch (status) {
-      case 'RECEIVED':
-          return 'bg-[#29274c] text-white';
-      case 'COMPLIED-LACK OF DOCUMENTS':
-          return 'bg-[#ff8c00] text-white';
-      case 'FOR WALK-IN':
-          return 'bg-[#3bceac] text-white';
-      case 'FOR INITIAL INTERVIEW':
-          return 'bg-[#532b88] text-white';
-      case 'REASSESSED TO MARKETING':
-          return 'bg-[#DB7093] text-white';
-      case 'LACK OF DOCUMENTS':
-          return 'bg-[#8B4513] text-white';
-      case 'FOR CREDIT ASSESSMENT':
-          return 'bg-[#006d77] text-white';
-      case 'CREDIT ASSESSMENT SPECIAL LANE':
-          return 'bg-[#ff5400] text-white';
-      case 'FOR VERIFICATION':
-          return 'bg-[#80b918] text-white';
-      case 'FOR APPROVAL':
-          return 'bg-[#20b2aa] text-white';
-      case 'APPROVED (TRANS-OUT)':
-          return 'bg-[#b5179e] text-white';
-      case 'UNDER LOAN PROCESSOR':
-          return 'bg-[#ffd700] text-white';
-      case 'FOR DOCUSIGN':
-          return 'bg-[#008080] text-white';
-      case 'RETURNED FROM MARKETING':
-          return 'bg-[#7b68ee] text-white';
-      case 'FOR DISBURSEMENT':
-          return 'bg-[#cd5c5c] text-white';
-      case 'RELEASED':
-          return 'bg-[#006400] text-white';
-      case 'CANCELLED':
-          return 'bg-[#1c1c1c] text-white';
-      case 'DECLINED':
-          return 'bg-[#FF0000] text-white';
-      case 'FOR RE-APPLICATION':
-          return 'bg-[#708090] text-white';
-      case 'RETURN TO CREDIT OFFICER':
-          return 'bg-[#720026] text-white';
-      case 'RETURN TO CREDIT ASSOCIATE':
-          return 'bg-[#2d6a4f] text-white';
-      case 'REASSESSED TO CREDIT ASSOCIATE':
-          return 'bg-[#6d597a] text-white';
-      case 'REASSESSED TO CREDIT OFFICER':
-          return 'bg-[#ff0054] text-white';
-      case 'RETURN TO LOANS PROCESSOR':
-          return 'bg-[#ff7f50] text-white';
-      case 'OK FOR DOCUSIGN':
-          return 'bg-[#c77dff] text-white';
-      case 'ON WAIVER':
-          return 'bg-[#2196f3] text-white';
-      case 'CONFIRMATION':
-          return 'bg-[#228b22] text-white';
-      case 'CONFIRMED':
-          return 'bg-[#32cd32] text-white';
-      case 'UNDECIDED':
-          return 'bg-[#ff7f50] text-white';
-      case 'PRE-CHECK':
-          return 'bg-[#3d5a80] text-white';
+      case "RECEIVED":
+        return "bg-[#29274c] text-white";
+      case "COMPLIED-LACK OF DOCUMENTS":
+        return "bg-[#ff8c00] text-white";
+      case "FOR WALK-IN":
+        return "bg-[#3bceac] text-white";
+      case "FOR INITIAL INTERVIEW":
+        return "bg-[#532b88] text-white";
+      case "REASSESSED TO MARKETING":
+        return "bg-[#DB7093] text-white";
+      case "LACK OF DOCUMENTS":
+        return "bg-[#8B4513] text-white";
+      case "FOR CREDIT ASSESSMENT":
+        return "bg-[#006d77] text-white";
+      case "CREDIT ASSESSMENT SPECIAL LANE":
+        return "bg-[#ff5400] text-white";
+      case "FOR VERIFICATION":
+        return "bg-[#80b918] text-white";
+      case "FOR APPROVAL":
+        return "bg-[#20b2aa] text-white";
+      case "APPROVED (TRANS-OUT)":
+        return "bg-[#b5179e] text-white";
+      case "UNDER LOAN PROCESSOR":
+        return "bg-[#ffd700] text-white";
+      case "FOR DOCUSIGN":
+        return "bg-[#008080] text-white";
+      case "RETURNED FROM MARKETING":
+        return "bg-[#7b68ee] text-white";
+      case "FOR DISBURSEMENT":
+        return "bg-[#cd5c5c] text-white";
+      case "RELEASED":
+        return "bg-[#006400] text-white";
+      case "CANCELLED":
+        return "bg-[#1c1c1c] text-white";
+      case "DECLINED":
+        return "bg-[#FF0000] text-white";
+      case "FOR RE-APPLICATION":
+        return "bg-[#708090] text-white";
+      case "RETURN TO CREDIT OFFICER":
+        return "bg-[#720026] text-white";
+      case "RETURN TO CREDIT ASSOCIATE":
+        return "bg-[#2d6a4f] text-white";
+      case "REASSESSED TO CREDIT ASSOCIATE":
+        return "bg-[#6d597a] text-white";
+      case "REASSESSED TO CREDIT OFFICER":
+        return "bg-[#ff0054] text-white";
+      case "RETURN TO LOANS PROCESSOR":
+        return "bg-[#ff7f50] text-white";
+      case "OK FOR DOCUSIGN":
+        return "bg-[#c77dff] text-white";
+      case "ON WAIVER":
+        return "bg-[#2196f3] text-white";
+      case "CONFIRMATION":
+        return "bg-[#228b22] text-white";
+      case "CONFIRMED":
+        return "bg-[#32cd32] text-white";
+      case "UNDECIDED":
+        return "bg-[#ff7f50] text-white";
+      case "PRE-CHECK":
+        return "bg-[#3d5a80] text-white";
       default:
-          return 'bg-blue-500 text-white';
+        return "bg-blue-500 text-white";
+    }
   }
-}
 
   const items = [
     {
@@ -644,6 +664,7 @@ function LoanApplicationTracker({ data }) {
     <ConfigProvider
       theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}
     >
+      {contextHolder}
       {ClientData.isFetching && (
         <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-white bg-opacity-50 z-50">
           <Spin
@@ -652,7 +673,7 @@ function LoanApplicationTracker({ data }) {
             className="text-green-500"
           />
         </div>
-      )}  
+      )}
       <Layout className="h-[100vh] bg-[#e8eee5] py-1">
         <Content className="w-full lg:w-[80vw] h-[120vh] mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
           <div className="mb-6">
@@ -691,9 +712,15 @@ function LoanApplicationTracker({ data }) {
                 <Typography.Text type="secondary">
                   Loan Application ID
                 </Typography.Text>
-                <Title level={4} className="m-0" style={{ color: "#34b330" }}>
-                  {getAppDetails.loanAppCode}
-                </Title>
+                <Flex>
+                  <Title level={4} className="m-0" style={{ color: "#34b330" }}>
+                    {getAppDetails.loanAppCode}
+                  </Title>
+                  <LiaClipboardSolid
+                    className="ml-2 cursor-pointer text-lg text-gray-600 hover:text-gray-800"
+                    onClick={handleCopyToClipboard}
+                  />
+                </Flex>
               </div>
               <div className="flex flex-col w-full lg:w-auto mt-4 lg:mt-0 lg:ml-6">
                 <label className="font-bold mb-2">External Remarks</label>
