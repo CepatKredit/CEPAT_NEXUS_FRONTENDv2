@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Input } from 'antd';
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function LabeledCurrencyInput({
     placeHolder,
@@ -14,8 +15,10 @@ function LabeledCurrencyInput({
     className_label,
     className_dsub,
     getStep,
-    getMaxStep
+    getMaxStep,
+    fieldName
 }) {
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const [getStatus, setStatus] = React.useState('');
     const [getIcon, setIcon] = React.useState(false);
     const [getItem, setItem] = React.useState(value || '');
@@ -52,11 +55,11 @@ function LabeledCurrencyInput({
             if (!(parseFloat(plainNum) >= 30000)) {
                 setStatus('error');
                 setIcon(true);
-                receive()
+                updateAppDetails({ name: fieldName, value: null })
             } else {
                 setStatus('');
                 setIcon(true);
-                receive(formattedValue)
+                updateAppDetails({ name: fieldName, value: formattedValue })
             }
         }
         else {
@@ -67,7 +70,7 @@ function LabeledCurrencyInput({
             } else {
                 setStatus('');
                 setIcon(true);
-                receive(formattedValue)
+                updateAppDetails({ name: "loanAmount", value: formattedValue })
             }
         }
     }

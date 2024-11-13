@@ -1,181 +1,136 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Typography, Layout, Tabs, Card, Space, Input, Spin, ConfigProvider } from 'antd';
-import { LeftOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import LoanDetails from '@containers/loanApplicationStatus/LoanDetails';
-import OfwDetails from '@containers/loanApplicationStatus/OfwDetails';
-import BeneficiaryDetails from '@containers/loanApplicationStatus/BeneficiaryDetails';
-import { FileOutlined, UserOutlined, SolutionOutlined } from '@ant-design/icons';
-import UploadDocs from '@containers/dataList/TabList/UploadDocs';
-import CharacterReference from '@containers/dataList/TabList/CharacterReference';
-import SectionHeader from '@components/loanApplication/SectionHeader';
-import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
-import { toDecrypt } from '@utils/Converter';
-import createInitialAppDetails from '@utils/IntialValues';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Button,
+  Typography,
+  Layout,
+  Tabs,
+  Card,
+  Space,
+  Input,
+  Spin,
+  ConfigProvider,
+  Flex,
+} from "antd";
+import { LeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import LoanDetails from "@containers/loanApplicationStatus/LoanDetails";
+import OfwDetails from "@containers/loanApplicationStatus/OfwDetails";
+import BeneficiaryDetails from "@containers/loanApplicationStatus/BeneficiaryDetails";
+import {
+  FileOutlined,
+  UserOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
+import UploadDocs from "@containers/dataList/TabList/UploadDocs";
+import CharacterReference from "@containers/dataList/TabList/CharacterReference";
+import SectionHeader from "@components/loanApplication/SectionHeader";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { toDecrypt } from "@utils/Converter";
+import createInitialAppDetails from "@utils/IntialValues";
+import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { LiaClipboardSolid } from "react-icons/lia";
+import { message } from "antd";
 
 const { Title } = Typography;
 const { Content } = Layout;
 const { TextArea } = Input;
 function LoanApplicationTracker({ data }) {
   const navigate = useNavigate();
-  const skipRender = useRef(false)
-  const [getAppDetails, setAppDetails] = React.useState(createInitialAppDetails(false));
-  const [loading,setLoading] = React.useState(false)
-  // const {getAppDetails, setAppDetails, direct , resetAppDetails} = React.useContext(LoanApplicationContext)
-
+  const skipRender = useRef(false);
+  // const [getAppDetails, setAppDetails] = React.useState(createInitialAppDetails(false));
+  const {
+    getAppDetails,
+    setAppDetails,
+    resetAppDetails,
+    setOldClientNameAndBDay,
+    populateClientDetails,
+    getOldData,
+    api
+  } = React.useContext(LoanApplicationContext);
 
   React.useEffect(() => {
     function unloadCallBack(e) {
       e.preventDefault();
-      e.returnValue = ''
+      e.returnValue = "";
     }
-    window.addEventListener('beforeunload', unloadCallBack)
-    return () => window.removeEventListener('beforeunload', unloadCallBack)
-  }, [])
+    window.addEventListener("beforeunload", unloadCallBack);
+    return () => window.removeEventListener("beforeunload", unloadCallBack);
+  }, []);
 
   React.useEffect(() => {
-    ClientData.refetch()
-  }, [localStorage.getItem('CLID')])
+    ClientData.refetch();
+    console.log("TEST", ClientData);
+  }, [localStorage.getItem("CLID")]);
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const [getOldData, setOldData] = React.useState({
-    FirstName: '',
-    LastName: '',
-    Suffix: 1,
-    Birthday: '',
-  })
+  const handleCopyToClipboard = () => {
+    navigator.clipboard
+      .writeText(getAppDetails.loanAppCode)
+      .then(() => {
+        messageApi.open({
+          type:"info",
+          content:"Copied to clipboard!",
+          duration: 0.1,
+        });
+      })
+      .catch(() => {
+        messageApi.error("Failed to copy");
+      });
+  };
+
+  // const [getOldData, setOldData] = React.useState({
+  //   FirstName: "",
+  //   LastName: "",
+  //   Suffix: 1,
+  //   Birthday: "",
+  // });
 
   const ClientData = useQuery({
-    queryKey: ['ClientDataQuery'],
+    queryKey: ["ClientDataQuery"],
     queryFn: async () => {
-      const result = await axios.get(`/getClientDataList/${toDecrypt(localStorage.getItem('CLID'))}`);
-      setOldData({
-        ...getOldData,
-        FirstName: result.data.list.OfwDetails?.firstName,
-        LastName: result.data.list.OfwDetails?.lastName,
-        Suffix: parseInt(result.data.list.OfwDetails?.suffix,),
-        Birthday: result.data.list.OfwDetails?.birthdate,
-      })
-      setAppDetails({
-        ...getAppDetails,
-        loanAppCode: result.data.list.LoanDetails?.loanAppCode,
-        loanIdCode: result.data.list.LoanDetails?.loanAppId,
-        loanProd: result.data.list.LoanDetails?.productId,
-        loanDateDep: result.data.list.LoanDetails?.departureDate,
-        loanPurpose: result.data.list.LoanDetails?.purposeId,
-        loanAmount: result.data.list.LoanDetails?.amount.toString(),
-        ApprvAmount: result.data.list.LoanDetails?.approvedAmount,
-        loanTerms: result.data.list.LoanDetails?.terms,
-        ApprvTerms: result.data.list.LoanDetails?.approvedTerms,
-        loanBranchId: result.data.list.LoanDetails?.branchId,
-        loanBranch: result.data.list.LoanDetails?.branch,
-        loanStatus: result.data.list.LoanDetails?.status,
-        hckfi: result.data.list.LoanDetails?.channelId,
-        consultant: result.data.list.LoanDetails?.consultant,
-        consultNumber: result.data.list.LoanDetails?.consultantNo,
-        consultProfile: result.data.list.LoanDetails?.consultantProfile,
-        referredby: result.data.list.LoanDetails?.ReferredBy || '',
-
-        borrowersCode: result.data.list.OfwDetails?.borrowersCode,
-        ofwfname: result.data.list.OfwDetails?.firstName,
-        ofwmname: result.data.list.OfwDetails?.middleName,
-        ofwlname: result.data.list.OfwDetails?.lastName,
-        ofwsuffix: result.data.list.OfwDetails?.suffix,
-        ofwbdate: result.data.list.OfwDetails?.birthdate,
-        ofwgender: result.data.list.OfwDetails?.genderId,
-        ofwmstatus: result.data.list.OfwDetails?.civilStatusId,
-        ofwdependents: result.data.list.OfwDetails?.withDependent,
-        ofwemail: result.data.list.OfwDetails?.email,
-        ofwmobile: result.data.list.OfwDetails?.mobileNo,
-        ofwfblink: result.data.list.OfwDetails?.fbProfile,
-        ofwvalidid: result.data.list.OfwDetails?.validId,
-        ofwidnumber: result.data.list.OfwDetails?.validIdNo,
-
-        ofwcountry: result.data.list.OfwDetails?.country,
-        ofwjobtitle: result.data.list.OfwDetails?.jobTitle,
-        ofwcompany: result.data.list.OfwDetails?.employer,
-        ofwsalary: result.data.list.OfwDetails?.salary.toString(),
-
-        ofwresidences: result.data.list.OfwPresAddress?.ownershipId || '',
-        ofwPresProv: result.data.list.OfwPresAddress?.provinceId || '',
-        ofwPresProvname: result.data.list.OfwPresAddress?.province || '',
-        ofwPresMunicipality: result.data.list.OfwPresAddress?.municipalityId || '',
-        ofwPresMunicipalityname: result.data.list.OfwPresAddress?.municipality || '',
-        ofwPresBarangay: result.data.list.OfwPresAddress?.barangayId || '',
-        ofwPresBarangayname: result.data.list.OfwPresAddress?.barangay || '',
-        ofwPresStreet: result.data.list.OfwPresAddress?.address1 || '',
-
-        ofwrent: result.data.list.OfwPresAddress?.rentAmount.toString() || 0,
-
-        ofwSameAdd: (!result.data.list.OfwPresAddress?.ofwPresProv) && (result.data.list.OfwPermAddress?.address1 == result.data.list.OfwPresAddress?.address1) && (result.data.list.OfwPermAddress?.barangayId == result.data.list.OfwPresAddress?.barangayId) ? 1 : 0,
-        bensameadd: (!result.data.list.OfwPresAddress?.ofwPresProv) && (result.data.list.BeneficiaryPresAddress?.address1 == result.data.list.OfwPresAddress?.address1) && (result.data.list.BeneficiaryPresAddress?.barangayId == result.data.list.OfwPresAddress?.barangayId) ? 1 : 0,
-
-        ofwPermProv: result.data.list.OfwPermAddress?.provinceId || '',
-        ofwPermProvname: result.data.list.OfwPermAddress?.province || '',
-        ofwPermMunicipality: result.data.list.OfwPermAddress?.municipalityId || '',
-        ofwPermMunicipalityname: result.data.list.OfwPermAddress?.municipality || '',
-        ofwPermBarangay: result.data.list.OfwPermAddress?.barangayId || '',
-        ofwPermBarangayname: result.data.list.OfwPermAddress?.barangay || '',
-        ofwPermStreet: result.data.list.OfwPermAddress?.address1 || '',
-
-        benfname: result.data.list.BeneficiaryDetails?.firstName || '',
-        benmname: result.data.list.BeneficiaryDetails?.middleName || '',
-        benlname: result.data.list.BeneficiaryDetails?.lastName || '',
-        bensuffix: result.data.list.BeneficiaryDetails?.suffix || '',
-        benbdate: result.data.list.BeneficiaryDetails?.birthdate || '',
-        bengender: result.data.list.BeneficiaryDetails?.genderId || 0,
-        benmstatus: result.data.list.BeneficiaryDetails?.civilStatusId || 0,
-        benemail: result.data.list.BeneficiaryDetails?.email || '',
-        benmobile: result.data.list.BeneficiaryDetails?.mobileNo || '',
-        benFb: result.data.list.BeneficiaryDetails?.fbProfile || '',
-        benrelationship: result.data.list.BeneficiaryDetails?.relationshipID || 0,
-
-        benpresprov: result.data.list.BeneficiaryPresAddress?.provinceId || '',
-        benpresprovname: result.data.list.BeneficiaryPresAddress?.province || '',
-        benpresmunicipality: result.data.list.BeneficiaryPresAddress?.municipalityId || '',
-        benpresmunicipalityname: result.data.list.BeneficiaryPresAddress?.municipality || '',
-        benpresbarangay: result.data.list.BeneficiaryPresAddress?.barangayId || '',
-        benpresbarangayname: result.data.list.BeneficiaryPresAddress?.barangay || '',
-        benpresstreet: result.data.list.BeneficiaryPresAddress?.address1 || '',
-      })
-      console.log("LOANTRACKKK", result.data.list)
-      setLoading(false);
-      return result.data.list
+      const result = await axios.get(
+        `/getClientDataList/${toDecrypt(localStorage.getItem("CLID"))}`
+      );
+      setOldClientNameAndBDay(result);
+      populateClientDetails(result);
+      console.log("LOANTRACKKK", result.data.list);
+      return result.data.list;
     },
     enabled: true,
     retryDelay: 1000,
-  })
-
-
-
+  });
 
   const getRemarks = useQuery({
-    queryKey: ['getRemarks', getAppDetails.loanIdCode],
+    queryKey: ["getRemarks", getAppDetails.loanIdCode],
     queryFn: async () => {
       if (!getAppDetails.loanIdCode) {
-        return { remarksEx: '' };
+        return { remarksEx: "" };
       }
       try {
-        const result = await axios.get(`/getRemarks/${getAppDetails.loanIdCode}`);
-        return result?.data?.list?.[0] || { remarksEx: '' };
+        const result = await axios.get(
+          `/getRemarks/${getAppDetails.loanIdCode}`
+        );
+        return result?.data?.list?.[0] || { remarksEx: "" };
       } catch (error) {
-        console.error('Failed to fetch remarks:', error);
-        return { remarksEx: '' };
+        console.error("Failed to fetch remarks:", error);
+        return { remarksEx: "" };
       }
     },
     enabled: true,
     retryDelay: 1000,
   });
 
-
-
-
   const prevResidencesRef = useRef();
   useEffect(() => {
-    if (prevResidencesRef.current !== undefined && getAppDetails.ofwresidences === '' && getAppDetails.ofwresidences === 3) {
+    if (
+      prevResidencesRef.current !== undefined &&
+      getAppDetails.ofwresidences === "" &&
+      getAppDetails.ofwresidences === 3
+    ) {
       setAppDetails((prev) => ({
         ...prev,
-        ofwrent: '',
+        ofwrent: "",
       }));
     }
     prevResidencesRef.current = getAppDetails.ofwresidences;
@@ -186,16 +141,28 @@ function LoanApplicationTracker({ data }) {
       setAppDetails((prevDetails) => {
         let updatedFields = {};
         let clearDeployDate = {};
-        if (getAppDetails.loanProd == '"0303-WL' || getAppDetails.loanProd == '0303-VL' || getAppDetails.loanProd == '0303-DHW') {
+        if (
+          getAppDetails.loanProd == '"0303-WL' ||
+          getAppDetails.loanProd == "0303-VL" ||
+          getAppDetails.loanProd == "0303-DHW"
+        ) {
           clearDeployDate = {
             ...clearDeployDate,
-            loanDateDep: '',
+            loanDateDep: "",
           };
         }
-        if (getAppDetails.loanProd === '0303-DH' || getAppDetails.loanProd === '0303-DHW') {
+        if (
+          getAppDetails.loanProd === "0303-DH" ||
+          getAppDetails.loanProd === "0303-DHW"
+        ) {
           updatedFields = {
             ...updatedFields,
-            ofwjobtitle: 'DOMESTIC HELPER',
+            ofwjobtitle: "DOMESTIC HELPER",
+          };
+        } else {
+          updatedFields = {
+            ...updatedFields,
+            ofwjobtitle: "",
           };
         }
         return {
@@ -211,485 +178,569 @@ function LoanApplicationTracker({ data }) {
 
   function getStatusBackgroundColor(status) {
     switch (status) {
-      case 'RECEIVED':
-        return 'bg-[#29274c] text-white';
-      case 'COMPLIED-LACK OF DOCUMENTS':
-        return 'bg-[#FF8C00] text-white';
-      case 'FOR WALK-IN':
-        return 'bg-[#3bceac] text-white';
-      case 'FOR INITIAL INTERVIEW':
-        return 'bg-[#532b88] text-white';
-      case 'REASSESSED TO MARKETING':
-        return 'bg-[#DB7093] text-white';
-      case 'LACK OF DOCUMENTS':
-        return 'bg-[#8B4513] text-white';
-      case 'FOR CREDIT ASSESSEMENT':
-        return 'bg-[#008B8B] text-white';
-      case 'CREDIT ASSESSEMENT SPECIAL LANE':
-        return 'bg-[#B8860B] text-white';
-      case 'FOR VERIFICATION':
-        return 'bg-[#003566] text-white';
-      case 'FOR APPROVAL':
-        return 'bg-[#2d6a4f] text-white';
-      case 'APPROVED (TRANS-OUT)':
-        return 'bg-[#6d597a] text-white';
-      case 'UNDER LOAN PROCESSOR':
-        return 'bg-[#2f2f2f] text-white';
-      case 'FOR DOCUSIGN':
-        return 'bg-[#008080] text-white';
-      case 'TAGGED FOR RELEASE':
-        return 'bg-[#90EE90] text-white';
-      case 'FOR DISBURSEMENT':
-        return 'bg-[#2E8B57] text-white';
-      case 'RELEASED':
-        return 'bg-[#006400] text-white';
-      case 'CANCELLED':
-        return 'bg-[#1c1c1c] text-white';
-      case 'DECLINED':
-        return 'bg-[#FF0000] text-white';
-      case 'FOR RE-APPLICATION':
-        return 'bg-[#708090] text-white';
-      case 'RETURN TO CREDIT OFFICER':
-        return 'bg-[#3d5a80] text-white';
-      case 'RETURN TO CREDIT ASSOCIATE':
-        return 'bg-[#0f4c5c] text-white';
-      case 'REASSESSED TO CREDIT ASSOCIATE':
-        return 'bg-[#3d5a7f] text-white';
-      case 'REASSESSED TO CREDIT OFFICER':
-        return 'bg-[#7b68ee] text-white';
-      case 'RETURN TO LOANS PROCESSOR':
-        return 'bg-[#ff7f50] text-white';
-      case 'OK FOR DOCUSIGN':
-        return 'bg-[#20b2aa] text-white';
-      case 'ON WAIVER':
-        return 'bg-[#ffd700] text-white';
-      case 'CONFIRMATION':
-        return 'bg-[#228b22] text-white';
-      case 'CONFIRMED':
-        return 'bg-[#32cd32] text-white';
-      case 'UNDECIDED':
-        return 'bg-[#f08080] text-white';
-      case 'PRE-CHECK':
-        return 'bg-[#4a4e69] text-white';
-      case 'SCREENING AND INTERVIEW':
-        return 'bg-[#a502ab] text-white';
-      case 'FOR CALLBACK':
-        return 'bg-[#f61067] text-white';
-      case 'PRE-APPROVAL':
-        return 'bg-[#c6249a] text-white';
+      case "RECEIVED":
+        return "bg-[#29274c] text-white";
+      case "COMPLIED-LACK OF DOCUMENTS":
+        return "bg-[#ff8c00] text-white";
+      case "FOR WALK-IN":
+        return "bg-[#3bceac] text-white";
+      case "FOR INITIAL INTERVIEW":
+        return "bg-[#532b88] text-white";
+      case "REASSESSED TO MARKETING":
+        return "bg-[#DB7093] text-white";
+      case "LACK OF DOCUMENTS":
+        return "bg-[#8B4513] text-white";
+      case "FOR CREDIT ASSESSMENT":
+        return "bg-[#006d77] text-white";
+      case "CREDIT ASSESSMENT SPECIAL LANE":
+        return "bg-[#ff5400] text-white";
+      case "FOR VERIFICATION":
+        return "bg-[#80b918] text-white";
+      case "FOR APPROVAL":
+        return "bg-[#20b2aa] text-white";
+      case "APPROVED (TRANS-OUT)":
+        return "bg-[#b5179e] text-white";
+      case "UNDER LOAN PROCESSOR":
+        return "bg-[#ffd700] text-white";
+      case "FOR DOCUSIGN":
+        return "bg-[#008080] text-white";
+      case "RETURNED FROM MARKETING":
+        return "bg-[#7b68ee] text-white";
+      case "FOR DISBURSEMENT":
+        return "bg-[#cd5c5c] text-white";
+      case "RELEASED":
+        return "bg-[#006400] text-white";
+      case "CANCELLED":
+        return "bg-[#1c1c1c] text-white";
+      case "DECLINED":
+        return "bg-[#FF0000] text-white";
+      case "FOR RE-APPLICATION":
+        return "bg-[#708090] text-white";
+      case "RETURN TO CREDIT OFFICER":
+        return "bg-[#720026] text-white";
+      case "RETURN TO CREDIT ASSOCIATE":
+        return "bg-[#2d6a4f] text-white";
+      case "REASSESSED TO CREDIT ASSOCIATE":
+        return "bg-[#6d597a] text-white";
+      case "REASSESSED TO CREDIT OFFICER":
+        return "bg-[#ff0054] text-white";
+      case "RETURN TO LOANS PROCESSOR":
+        return "bg-[#ff7f50] text-white";
+      case "OK FOR DOCUSIGN":
+        return "bg-[#c77dff] text-white";
+      case "ON WAIVER":
+        return "bg-[#2196f3] text-white";
+      case "CONFIRMATION":
+        return "bg-[#228b22] text-white";
+      case "CONFIRMED":
+        return "bg-[#32cd32] text-white";
+      case "UNDECIDED":
+        return "bg-[#ff7f50] text-white";
+      case "PRE-CHECK":
+        return "bg-[#3d5a80] text-white";
       default:
-        return 'bg-blue-500 text-white';
+        return "bg-blue-500 text-white";
     }
   }
 
   const items = [
     {
-      key: 'Details',
-      label: (<span><SolutionOutlined style={{ marginRight: 8 }} />Details</span>),
+      key: "Details",
+      label: (
+        <span>
+          <SolutionOutlined style={{ marginRight: 8 }} />
+          Details
+        </span>
+      ),
       children: (
-        <div className="max-h-[calc(80vh-220px)] overflow-y-auto pr-2 sm:max-h-[calc(90vh-180px)] md:max-h-[calc(90vh-150px)] lg:max-h-[calc(90vh-120px)] xl:max-h-[calc(90vh-100px)]">
+        <div className="max-h-[calc(80vh-220px)] overflow-y-auto pr-2 sm:max-h-[calc(90vh-200px)] md:max-h-[calc(90vh-200px)] lg:max-h-[calc(90vh-220px)] xl:max-h-[calc(90vh-220px)]">
           <Card bordered={false}>
             <SectionHeader borrower="Loan Details" />
             <LoanDetails
-              data={getAppDetails}
-              receive={(e) => {
-                setAppDetails({
-                  ...getAppDetails,
-                  [e.name]: e.value
-                })
-              }}
-              loancases={(e) => {
-                setAppDetails((details) => {
-                  let updatedFields = {};
-                  switch (e.name) {
-                    case 'resetDepartureDate':
-                      updatedFields = {
-                        loanDateDep: ''
-                      }
-                      break;
-                    default:
-                      break;
-                  }
-                  return {
-                    ...details,
-                    [e.name]: e.value,
-                    ...updatedFields,
-                  }
-                })
-              }}
+            // data={getAppDetails}
+            // receive={(e) => {
+            //   setAppDetails({
+            //     ...getAppDetails,
+            //     [e.name]: e.value,
+            //   });
+            // }}
+            // loancases={(e) => {
+            //   setAppDetails((details) => {
+            //     let updatedFields = {};
+            //     switch (e.name) {
+            //       case "resetDepartureDate":
+            //         updatedFields = {
+            //           loanDateDep: "",
+            //         };
+            //         break;
+            //       default:
+            //         break;
+            //     }
+            //     return {
+            //       ...details,
+            //       [e.name]: e.value,
+            //       ...updatedFields,
+            //     };
+            //   });
+            // }}
             />
           </Card>
-          {
-            getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
-              ? (<>
-                <Card bordered={false}>
-                  <SectionHeader title="(OFW Details)" borrower='Principal Borrower' />
-                  <OfwDetails
-                    OldData={getOldData}
-                    data={getAppDetails}
-                    receive={(e) => {
-                      setAppDetails({
-                        ...getAppDetails,
-                        [e.name]: e.value
-                      })
-                    }}
-                    presaddress={(e) => {
-                      setAppDetails((prevDetails) => {
-                        let updatedFields = {};
-                        switch (e.name) {
-                          case 'ofwPresProv':
-                            updatedFields = {
-                              ofwPresMunicipality: '',
-                              ofwPresBarangay: '',
-                              ofwPresStreet: ''
-                            };
-                            break;
-                          case 'ofwPresMunicipality':
-                            updatedFields = {
-                              ofwPresBarangay: '',
-                              ofwPresStreet: ''
-                            };
-                            break;
-                          case 'ofwPresBarangay':
-                            updatedFields = {
-                              ofwPresStreet: ''
-                            };
-                            break;
-                          case 'ofwPermProv':
-                            updatedFields = {
-                              ofwPermMunicipality: '',
-                              ofwPermBarangay: '',
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'ofwPermMunicipality':
-                            updatedFields = {
-                              ofwPermBarangay: '',
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'ofwPermBarangay':
-                            updatedFields = {
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'ofwPerm':
-                            updatedFields = {
-                              ofwPermProv: getAppDetails.ofwPresProv,
-                              ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
-                              ofwPermBarangay: getAppDetails.ofwPresBarangay,
-                              ofwPermStreet: getAppDetails.ofwPresStreet,
-                            };
-                            break;
-                          case 'ofwSameAdd':
-                            updatedFields = {
-                              ofwPermProv: '',
-                              ofwPermMunicipality: '',
-                              ofwPermBarangay: '',
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'resetMiddleName':
-                            updatedFields = {
-                              ofwmname: '',
-                            };
-                            break;
-                          default:
-                            break;
-                        }
-                        return {
-                          ...prevDetails,
-                          [e.name]: e.value,
-                          ...updatedFields,
-                        };
-                      });
-                    }}
-                  />
-                </Card>
-                <Card bordered={false}>
-                  <SectionHeader title="(Beneficiary Details)" borrower='Co-Borrower' />
-                  <BeneficiaryDetails
-                    data={getAppDetails} receive={(e) => {
-                      setAppDetails({
-                        ...getAppDetails,
-                        [e.name]: e.value
-                      })
-                    }}
-                    presaddress={(e) => {
-                      setAppDetails((prevDetails) => {
-                        let updatedFields = {};
-                        switch (e.name) {
-                          case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
-                          case 'benpres':
-                            updatedFields = {
-                              benpresprov: getAppDetails.ofwPresProv,
-                              benpresmunicipality: getAppDetails.ofwPresMunicipality,
-                              benpresbarangay: getAppDetails.ofwPresBarangay,
-                              benpresstreet: getAppDetails.ofwPresStreet,
-                            };
-                            break;
-                          case 'bensameadd':
-                            updatedFields = {
-                              benpresprov: '',
-                              benpresmunicipality: '',
-                              benpresbarangay: '',
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'benpresprov':
-                            updatedFields = {
-                              benpresmunicipality: '',
-                              benpresbarangay: '',
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'benpresmunicipality':
-                            updatedFields = {
-                              benpresbarangay: '',
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'benpresbarangay':
-                            updatedFields = {
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'resetBenMiddleName':
-                            updatedFields = {
-                              benmname: ''
-                            };
-                            break;
-                          default: break;
-                        }
-                        return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
-                      });
-                    }}
-                  />
-                </Card>
-              </>)
-              :
-              (<>
-                <Card bordered={false}>
-                  <SectionHeader title="(Beneficiary Details)" borrower='Principal Borrower' />
-                  <BeneficiaryDetails
-                    data={getAppDetails} receive={(e) => {
-                      setAppDetails({
-                        ...getAppDetails,
-                        [e.name]: e.value
-                      })
-                    }}
-                    presaddress={(e) => {
-                      setAppDetails((prevDetails) => {
-                        let updatedFields = {};
-                        switch (e.name) {
-                          case 'resetMiddleName': updatedFields = { ofwmname: '', }; break;
-                          case 'benpres':
-                            updatedFields = {
-                              benpresprov: getAppDetails.ofwPresProv,
-                              benpresmunicipality: getAppDetails.ofwPresMunicipality,
-                              benpresbarangay: getAppDetails.ofwPresBarangay,
-                              benpresstreet: getAppDetails.ofwPresStreet,
-                            };
-                            break;
-                          case 'bensameadd':
-                            updatedFields = {
-                              benpresprov: '',
-                              benpresmunicipality: '',
-                              benpresbarangay: '',
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'benpresprov':
-                            updatedFields = {
-                              benpresmunicipality: '',
-                              benpresbarangay: '',
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'benpresmunicipality':
-                            updatedFields = {
-                              benpresbarangay: '',
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'benpresbarangay':
-                            updatedFields = {
-                              benpresstreet: ''
-                            };
-                            break;
-                          case 'resetBenMiddleName':
-                            updatedFields = {
-                              benmname: ''
-                            };
-                            break;
-                          default: break;
-                        }
-                        return { ...prevDetails, [e.name]: e.value, ...updatedFields, };
-                      });
-                    }}
-                  />
-                </Card>
-                <Card bordered={false}>
-                  <SectionHeader title="(OFW Details)" borrower='Co-Borrower' />
-                  <OfwDetails
-                    OldData={getOldData}
-                    data={getAppDetails}
-                    receive={(e) => {
-                      setAppDetails({
-                        ...getAppDetails,
-                        [e.name]: e.value
-                      })
-                    }}
-                    presaddress={(e) => {
-                      setAppDetails((prevDetails) => {
-                        let updatedFields = {};
-                        switch (e.name) {
-                          case 'ofwPresProv':
-                            updatedFields = {
-                              ofwPresMunicipality: '',
-                              ofwPresBarangay: '',
-                              ofwPresStreet: ''
-                            };
-                            break;
-                          case 'ofwPresMunicipality':
-                            updatedFields = {
-                              ofwPresBarangay: '',
-                              ofwPresStreet: ''
-                            };
-                            break;
-                          case 'ofwPresBarangay':
-                            updatedFields = {
-                              ofwPresStreet: ''
-                            };
-                            break;
-                          case 'ofwPermProv':
-                            updatedFields = {
-                              ofwPermMunicipality: '',
-                              ofwPermBarangay: '',
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'ofwPermMunicipality':
-                            updatedFields = {
-                              ofwPermBarangay: '',
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'ofwPermBarangay':
-                            updatedFields = {
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'ofwPerm':
-                            updatedFields = {
-                              ofwPermProv: getAppDetails.ofwPresProv,
-                              ofwPermMunicipality: getAppDetails.ofwPresMunicipality,
-                              ofwPermBarangay: getAppDetails.ofwPresBarangay,
-                              ofwPermStreet: getAppDetails.ofwPresStreet,
-                            };
-                            break;
-                          case 'ofwSameAdd':
-                            updatedFields = {
-                              ofwPermProv: '',
-                              ofwPermMunicipality: '',
-                              ofwPermBarangay: '',
-                              ofwPermStreet: ''
-                            };
-                            break;
-                          case 'resetMiddleName':
-                            updatedFields = {
-                              ofwmname: '',
-                            };
-                            break;
-                          default:
-                            break;
-                        }
-                        return {
-                          ...prevDetails,
-                          [e.name]: e.value,
-                          ...updatedFields,
-                        };
-                      });
-                    }}
-                  />
-                </Card>
-              </>)
-          }
+          {getAppDetails.loanProd === "0303-DHW" ||
+          getAppDetails.loanProd === "0303-VL" ||
+          getAppDetails.loanProd === "0303-WL" ? (
+            <>
+              <Card bordered={false}>
+                <SectionHeader
+                  title="(OFW Details)"
+                  borrower="Principal Borrower"
+                />
+                <OfwDetails
+                  data={getAppDetails}
+                  OldData={getOldData}
+                  // receive={(e) => {
+                  //   setAppDetails({
+                  //     ...getAppDetails,
+                  //     [e.name]: e.value,
+                  //   });
+                  // }}
+                  // presaddress={(e) => {
+                  //   setAppDetails((prevDetails) => {
+                  //     let updatedFields = {};
+                  //     switch (e.name) {
+                  //       case "ofwPresProv":
+                  //         updatedFields = {
+                  //           ofwPresMunicipality: "",
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresMunicipality":
+                  //         updatedFields = {
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresBarangay":
+                  //         updatedFields = {
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermProv":
+                  //         updatedFields = {
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermMunicipality":
+                  //         updatedFields = {
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermBarangay":
+                  //         updatedFields = {
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPerm":
+                  //         updatedFields = {
+                  //           ofwPermProv: getAppDetails.ofwPresProv,
+                  //           ofwPermMunicipality:
+                  //             getAppDetails.ofwPresMunicipality,
+                  //           ofwPermBarangay: getAppDetails.ofwPresBarangay,
+                  //           ofwPermStreet: getAppDetails.ofwPresStreet,
+                  //         };
+                  //         break;
+                  //       case "ofwSameAdd":
+                  //         updatedFields = {
+                  //           ofwPermProv: "",
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "resetMiddleName":
+                  //         updatedFields = {
+                  //           ofwmname: "",
+                  //         };
+                  //         break;
+                  //       default:
+                  //         break;
+                  //     }
+                  //     return {
+                  //       ...prevDetails,
+                  //       [e.name]: e.value,
+                  //       ...updatedFields,
+                  //     };
+                  //   });
+                  // }}
+                />
+              </Card>
+              <Card bordered={false}>
+                <SectionHeader
+                  title="(Beneficiary Details)"
+                  borrower="Co-Borrower"
+                />
+                <BeneficiaryDetails
+                  data={getAppDetails}
+                  receive={(e) => {
+                    setAppDetails({
+                      ...getAppDetails,
+                      [e.name]: e.value,
+                    });
+                  }}
+                  presaddress={(e) => {
+                    setAppDetails((prevDetails) => {
+                      let updatedFields = {};
+                      switch (e.name) {
+                        case "resetMiddleName":
+                          updatedFields = { ofwmname: "" };
+                          break;
+                        case "benpres":
+                          updatedFields = {
+                            benpresprov: getAppDetails.ofwPresProv,
+                            benpresmunicipality:
+                              getAppDetails.ofwPresMunicipality,
+                            benpresbarangay: getAppDetails.ofwPresBarangay,
+                            benpresstreet: getAppDetails.ofwPresStreet,
+                          };
+                          break;
+                        case "bensameadd":
+                          updatedFields = {
+                            benpresprov: "",
+                            benpresmunicipality: "",
+                            benpresbarangay: "",
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "benpresprov":
+                          updatedFields = {
+                            benpresmunicipality: "",
+                            benpresbarangay: "",
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "benpresmunicipality":
+                          updatedFields = {
+                            benpresbarangay: "",
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "benpresbarangay":
+                          updatedFields = {
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "resetBenMiddleName":
+                          updatedFields = {
+                            benmname: "",
+                          };
+                          break;
+                        default:
+                          break;
+                      }
+                      return {
+                        ...prevDetails,
+                        [e.name]: e.value,
+                        ...updatedFields,
+                      };
+                    });
+                  }}
+                />
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card bordered={false}>
+                <SectionHeader
+                  title="(Beneficiary Details)"
+                  borrower="Principal Borrower"
+                />
+                <BeneficiaryDetails
+                  data={getAppDetails}
+                  receive={(e) => {
+                    setAppDetails({
+                      ...getAppDetails,
+                      [e.name]: e.value,
+                    });
+                  }}
+                  presaddress={(e) => {
+                    setAppDetails((prevDetails) => {
+                      let updatedFields = {};
+                      switch (e.name) {
+                        case "resetMiddleName":
+                          updatedFields = { ofwmname: "" };
+                          break;
+                        case "benpres":
+                          updatedFields = {
+                            benpresprov: getAppDetails.ofwPresProv,
+                            benpresmunicipality:
+                              getAppDetails.ofwPresMunicipality,
+                            benpresbarangay: getAppDetails.ofwPresBarangay,
+                            benpresstreet: getAppDetails.ofwPresStreet,
+                          };
+                          break;
+                        case "bensameadd":
+                          updatedFields = {
+                            benpresprov: "",
+                            benpresmunicipality: "",
+                            benpresbarangay: "",
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "benpresprov":
+                          updatedFields = {
+                            benpresmunicipality: "",
+                            benpresbarangay: "",
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "benpresmunicipality":
+                          updatedFields = {
+                            benpresbarangay: "",
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "benpresbarangay":
+                          updatedFields = {
+                            benpresstreet: "",
+                          };
+                          break;
+                        case "resetBenMiddleName":
+                          updatedFields = {
+                            benmname: "",
+                          };
+                          break;
+                        default:
+                          break;
+                      }
+                      return {
+                        ...prevDetails,
+                        [e.name]: e.value,
+                        ...updatedFields,
+                      };
+                    });
+                  }}
+                />
+              </Card>
+              <Card bordered={false}>
+                <SectionHeader title="(OFW Details)" borrower="Co-Borrower" />
+                <OfwDetails
+                  // OldData={getOldData}
+                  data={getAppDetails}
+                  // receive={(e) => {
+                  //   setAppDetails({
+                  //     ...getAppDetails,
+                  //     [e.name]: e.value,
+                  //   });
+                  // }}
+                  // presaddress={(e) => {
+                  //   setAppDetails((prevDetails) => {
+                  //     let updatedFields = {};
+                  //     switch (e.name) {
+                  //       case "ofwPresProv":
+                  //         updatedFields = {
+                  //           ofwPresMunicipality: "",
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresMunicipality":
+                  //         updatedFields = {
+                  //           ofwPresBarangay: "",
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPresBarangay":
+                  //         updatedFields = {
+                  //           ofwPresStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermProv":
+                  //         updatedFields = {
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermMunicipality":
+                  //         updatedFields = {
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPermBarangay":
+                  //         updatedFields = {
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "ofwPerm":
+                  //         updatedFields = {
+                  //           ofwPermProv: getAppDetails.ofwPresProv,
+                  //           ofwPermMunicipality:
+                  //             getAppDetails.ofwPresMunicipality,
+                  //           ofwPermBarangay: getAppDetails.ofwPresBarangay,
+                  //           ofwPermStreet: getAppDetails.ofwPresStreet,
+                  //         };
+                  //         break;
+                  //       case "ofwSameAdd":
+                  //         updatedFields = {
+                  //           ofwPermProv: "",
+                  //           ofwPermMunicipality: "",
+                  //           ofwPermBarangay: "",
+                  //           ofwPermStreet: "",
+                  //         };
+                  //         break;
+                  //       case "resetMiddleName":
+                  //         updatedFields = {
+                  //           ofwmname: "",
+                  //         };
+                  //         break;
+                  //       default:
+                  //         break;
+                  //     }
+                  //     return {
+                  //       ...prevDetails,
+                  //       [e.name]: e.value,
+                  //       ...updatedFields,
+                  //     };
+                  //   });
+                  // }}
+                />
+              </Card>
+            </>
+          )}
         </div>
       ),
     },
     {
-      key: 'Documents',
-      label: (<span><FileOutlined style={{ marginRight: 8 }} />Documents</span>),
-      children: <UploadDocs
-        classname={'h-[50vh] mt-[.5rem] overflow-y-hidden hover:overflow-y-auto'}
-        ClientId={toDecrypt(localStorage.getItem('CLID'))}
-        FileType={getAppDetails.loanProd}
-        Uploader={getAppDetails.borrowersCode}
-        LoanStatus={getAppDetails.loanStatus}
-        isEdit={true} />,
+      key: "Documents",
+      label: (
+        <span>
+          <FileOutlined style={{ marginRight: 8 }} />
+          Documents
+        </span>
+      ),
+      children: (
+        <UploadDocs
+          classname={
+            "h-[50vh] mt-[.5rem] overflow-y-hidden hover:overflow-y-auto"
+          }
+          Display={""}
+          ClientId={toDecrypt(localStorage.getItem("CLID"))}
+          FileType={getAppDetails.loanProd}
+          Uploader={getAppDetails.borrowersCode}
+          LoanStatus={getAppDetails.loanStatus}
+          isEdit={true}
+        />
+      ),
     },
     {
-      key: 'Character Reference',
-      label: (<span> <UserOutlined style={{ marginRight: 8 }} /> Character Reference </span>),
-      children: <CharacterReference
-        BorrowerId={getAppDetails.borrowersCode} Creator={getAppDetails.borrowersCode} receive={(e) => {
-          setAppDetails({
-            ...getAppDetails,
-            [e.name]: e.value
-          })
-        }}
-        isEdit={true}
-        LoanStatus={getAppDetails.loanStatus} />,
+      key: "Character Reference",
+      label: (
+        <span>
+          {" "}
+          <UserOutlined style={{ marginRight: 8 }} /> Character Reference{" "}
+        </span>
+      ),
+      children: (
+        <CharacterReference
+          BorrowerId={getAppDetails.borrowersCode}
+          Creator={getAppDetails.borrowersCode}
+          receive={(e) => {
+            setAppDetails({
+              ...getAppDetails,
+              [e.name]: e.value,
+            });
+          }}
+          isEdit={true}
+          LoanStatus={getAppDetails.loanStatus}
+        />
+      ),
     },
   ];
   return (
-    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-      <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center min-h-screen backdrop-blur-sm">
-        <Layout className="h-[120vh] bg-[#e8eee5] p-6">
-          <Content className="w-full lg:w-[80vw] h-auto mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
-            <div className="mb-6">
-              <div className="flex flex-wrap justify-between items-center">
-                <div className="flex items-center space-x-3">
-                  <Button className='h-[2rem]' type="text" icon={<LeftOutlined />} onClick={() => {
-                    localStorage.removeItem('CLID');
-                    navigate('/');
-                  }} />
-                  <Title level={3} className="h-[1.5rem]">Loan Application Tracker</Title>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-full sm:w-auto mt-0 sm:mt-[-0.5rem] md:mt-[-1rem] ml-0 sm:ml-4 md:ml-6 lg:ml-10">
-                    <div className={`inline-flex font-bold items-center px-4 sm:px-5 md:px-7 py-1 sm:py-2 rounded-full ${getStatusBackgroundColor(getAppDetails.loanStatus)}`}>
-                      {getAppDetails.loanStatus}
-                    </div>
+    <ConfigProvider
+      theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}
+    >
+      {contextHolder}
+      {ClientData.isFetching && (
+        <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-white bg-opacity-50 z-50">
+          <Spin
+            spinning={ClientData.isFetching}
+            tip="Please wait..."
+            className="text-green-500"
+          />
+        </div>
+      )}
+      <Layout className="h-[100vh] bg-[#e8eee5] py-1">
+        <Content className="w-full lg:w-[80vw] h-[120vh] mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
+          <div className="mb-6">
+            <div className="flex flex-wrap justify-between items-center">
+              <div className="flex items-center space-x-3">
+                <Button
+                  className="h-[2rem]"
+                  type="text"
+                  icon={<LeftOutlined />}
+                  onClick={() => {
+                    // localStorage.removeItem('CLID');
+                    resetAppDetails();
+                    navigate("/");
+                  }}
+                />
+                <Title level={3} className="h-[1.5rem]">
+                  Loan Application Tracker
+                </Title>
+              </div>
+              <div className="flex items-center">
+                <div className="w-full sm:w-auto mt-0 sm:mt-[-0.5rem] md:mt-[-1rem] ml-0 sm:ml-4 md:ml-6 lg:ml-10">
+                  <div
+                    className={`inline-flex font-bold items-center px-4 sm:px-5 md:px-7 py-1 sm:py-2 rounded-full ${getStatusBackgroundColor(
+                      getAppDetails.loanStatus
+                    )}`}
+                  >
+                    {getAppDetails.loanStatus}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="mb-6">
-              <div className="flex flex-wrap justify-between items-start lg:items-center">
-                <div className="w-full lg:w-auto mb-4 lg:mb-0">
-                  <Typography.Text type="secondary">Loan Application ID</Typography.Text>
-                  <Title level={4} className="m-0" style={{ color: '#34b330' }}>{getAppDetails.loanAppCode}</Title>
-                </div>
-                <div className="flex flex-col w-full lg:w-auto mt-4 lg:mt-0 lg:ml-6">
-                  <label className="font-bold mb-2">External Remarks</label>
-                  <TextArea
-                    className="w-full lg:w-[20rem] h-[80px] p-2 border border-gray-300 rounded-md"
-                    style={{ resize: 'none' }}
-                    value={getRemarks.data?.remarksEx || 'No external remarks available'}
-                    readOnly
+          </div>
+          <div className="mb-6">
+            <div className="flex flex-wrap justify-between items-start lg:items-center">
+              <div className="w-full lg:w-auto mb-4 lg:mb-0">
+                <Typography.Text type="secondary">
+                  Loan Application ID
+                </Typography.Text>
+                <Flex>
+                  <Title level={4} className="m-0" style={{ color: "#34b330" }}>
+                    {getAppDetails.loanAppCode}
+                  </Title>
+                  <LiaClipboardSolid
+                    className="ml-2 cursor-pointer text-lg text-gray-600 hover:text-gray-800"
+                    onClick={handleCopyToClipboard}
                   />
-                </div>
+                </Flex>
+              </div>
+              <div className="flex flex-col w-full lg:w-auto mt-4 lg:mt-0 lg:ml-6">
+                <label className="font-bold mb-2">External Remarks</label>
+                <TextArea
+                  className="w-full lg:w-[20rem] h-[80px] p-2 border border-gray-300 rounded-md"
+                  style={{ resize: "none" }}
+                  value={
+                    getRemarks.data?.remarksEx ||
+                    "No external remarks available"
+                  }
+                  readOnly
+                />
               </div>
             </div>
-            <Tabs defaultActiveKey="Details" items={items} />
-          </Content>
-        </Layout>
-      </Spin>
-    </ConfigProvider >
-
+          </div>
+          <Tabs defaultActiveKey="Details" items={items} />
+        </Content>
+      </Layout>
+    </ConfigProvider>
   );
-};
+}
 
 export default LoanApplicationTracker;

@@ -14,11 +14,14 @@ import axios from 'axios';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { RequestTypeDropdown } from '@utils/FixedData';
-import { useDataContainer } from '@containers/PreLoad';
+import { STATUS_LIST } from '@api/lastUpdateBy/ChangeStatus';
+import { SET_PATH_LOCATION } from '@utils/Conditions';
+import { useDataContainer } from '@context/PreLoad';
 
 function LastUpdateBy({ isEdit, User, data }) {
     const queryClient = useQueryClient()
     const { GetStatus } = ApplicationStatus()
+    const { SET_REFRESH_TILE_COUNTER } = useDataContainer()
     const [api, contextHolder] = notification.useNotification();
     const [isDisabled, setIsDisabled] = React.useState(false);
     const [isDisableUpdateBtn, setDisableUpdateBtn] = React.useState(false);
@@ -34,7 +37,6 @@ function LastUpdateBy({ isEdit, User, data }) {
 
     const { id } = useParams();
     const navigate = useNavigate();
-    const { SET_PATH_LOCATION } = useDataContainer()
 
     const approvedMessage = `CONGRATULATIONS! YOUR LOAN APPLICATION HAS BEEN APPROVED. PLEASE WAIT FOR A CALL FROM OUR TEAM TO FINALIZE THE PROCESS AND DISCUSS HOW YOU WILL RECEIVE THE LOAN PROCEEDS.`;
     const declinedMessage = "AFTER CAREFUL EVALUATION, WE REGRET TO INFORM YOU THAT THE LOAN APPLICATION SUBMITTED TO US HAS NOT BEEN APPROVED AT THIS TIME. PLEASE RE-APPLY AGAIN IN A FEW MONTHS.";
@@ -123,7 +125,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const StatusList = useQuery({
         queryKey: ['StatusList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getStatusList/${jwtDecode(token).USRID}/${toDecrypt(localStorage.getItem('SIDC'))}`)
+            const result = await STATUS_LIST(jwtDecode(token).USRID, toDecrypt(localStorage.getItem('SIDC')));
             return result.list
         },
         refetchInterval: (data) => {
@@ -145,23 +147,20 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
     async function onClickUpdate() {
 
-        if (
-            (getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') &&
-            (
-                !ispreApproval ||
+        if ((getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') &&
+            (!ispreApproval ||
                 !isFFCCChecked ||
                 !isCRAFChecked ||
                 !isKaiserChecked ||
                 !isVideoCallChecked ||
                 !isShareLocationChecked ||
-                !isAgencyVerificationChecked
-            )
+                !isAgencyVerificationChecked)
         ) {
             api['info']({
                 message: 'Notification',
                 description: (
                     <span>
-                        Please ensure that <strong>FFCC</strong>, <strong>CRAF</strong>, <strong>KAISER</strong>, <strong>Video Call- LB/SB</strong>, <strong>Share Location</strong>, and <strong>Agency Verification</strong> are all checked before updating.
+                        All checkboxes are required to be checked before proceeding to "FOR APPROVAL."
                     </span>
                 ),
             });
@@ -180,106 +179,122 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             });
             return;
         }
-
-        if (getUpdate.Status === 'DECLINED') {
-            setUpdate({ ...getUpdate, RemarksEx: declinedMessage });
-        } else if (getUpdate.Status === 'APPROVED (TRANS-OUT)') {
-            setUpdate({ ...getUpdate, RemarksEx: approvedMessage });
-        } else if (getUpdate.Status === 'FOR DISBURSEMENT') {
-            setUpdate({ ...getUpdate, RemarksEx: disbursementMessage });
-        } else if (getUpdate.Status === 'RELEASED') {
-            setUpdate({ ...getUpdate, RemarksEx: releasedMessage });
-        }
-
-        const checkListData = {
-            loanAppId: toDecrypt(localStorage.getItem('SIDC')),
-            statusMasterlist: ispreApproval ? 1 : 0,
-            statusFfcc: isFFCCChecked ? 1 : 0,
-            statusCraf: isCRAFChecked ? 1 : 0,
-            statusKaiser: isKaiserChecked ? 1 : 0,
-            statusVideoCall: isVideoCallChecked ? 1 : 0,
-            statusShareLocation: isShareLocationChecked ? 1 : 0,
-            statusAgencyVerification: isAgencyVerificationChecked ? 1 : 0,
-            modUser: jwtDecode(token).USRID
-        };
-
-        await axios.post('/updateCheckListForApproval', checkListData);
-
-        const dataContainer = [
-            {
-                LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                LAN: id,
-                Status: GetStatusCode(),
-                RemarksIn: getUpdate.RemarksIn,
-                RemarksEx: getUpdate.RemarksEx,
-                ModUser: jwtDecode(token).USRID
-            },
-            {
-                LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                LAN: id,
-                Status: GetStatusCode(),
-                UrgentApp: getUpdate.UrgentApp,
-                RemarksIn: getUpdate.RemarksIn,
-                RemarksEx: getUpdate.RemarksEx,
-                ModUser: jwtDecode(token).USRID
-            },
-            {
-                LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                LAN: id,
-                Status: GetStatusCode(),
-                UrgentApp: getUpdate.UrgentApp,
-                RemarksIn: getUpdate.RemarksIn,
-                RemarksEx: getUpdate.RemarksEx,
-                SoaDate: yymmdd(getUpdate.SoaDate),
-                ModUser: jwtDecode(token).USRID
-            }
-        ];
-
-        if (getUpdate.UrgentApp === 2 && getUpdate.DepartureDate) {
-            const departureUpdateResponse = await axios.post('/updateDepartDate', {
-                LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                DepartureDate: dayjs(getUpdate.DepartureDate).format('MM-DD-YYYY')
-            });
-
-            if (departureUpdateResponse.data.status === 'error') {
-                api['error']({
-                    message: 'Error',
-                    description: 'Failed to update departure date. Please try again.'
-                });
-                return;
-            }
-        }
-        try {
-            const result = await axios.post('/updateApplicationStatus',
-                getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
-                    ? dataContainer[2]
-                    : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
-                        ? dataContainer[1]
-                        : dataContainer[0]
-            );
-            SET_PATH_LOCATION(getUpdate.Status)
-
-            StatusList.refetch();
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description
-            });
-            queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
-            navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
-            setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
-
-            if (deletePN) {
-                await onClickDeleteXTable();
-            }
-
-        } catch (error) {
-            console.log(error);
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message
-            });
-        }
+        onClickUpdateStatus.mutate();
+       
     }
+
+
+    const onClickUpdateStatus = useMutation({
+        mutationFn: async () => {
+            if (getUpdate.Status === 'DECLINED') {
+                setUpdate({ ...getUpdate, RemarksEx: declinedMessage });
+            } else if (getUpdate.Status === 'APPROVED (TRANS-OUT)') {
+                setUpdate({ ...getUpdate, RemarksEx: approvedMessage });
+            } else if (getUpdate.Status === 'FOR DISBURSEMENT') {
+                setUpdate({ ...getUpdate, RemarksEx: disbursementMessage });
+            } else if (getUpdate.Status === 'RELEASED') {
+                setUpdate({ ...getUpdate, RemarksEx: releasedMessage });
+            }
+    
+            const checkListData = {
+                loanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                statusMasterlist: ispreApproval ? 1 : 0,
+                statusFfcc: isFFCCChecked ? 1 : 0,
+                statusCraf: isCRAFChecked ? 1 : 0,
+                statusKaiser: isKaiserChecked ? 1 : 0,
+                statusVideoCall: isVideoCallChecked ? 1 : 0,
+                statusShareLocation: isShareLocationChecked ? 1 : 0,
+                statusAgencyVerification: isAgencyVerificationChecked ? 1 : 0,
+                modUser: jwtDecode(token).USRID
+            };
+    
+            await axios.post('/updateCheckListForApproval', checkListData);
+    
+            const dataContainer = [
+                {
+                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                    LAN: id,
+                    Status: GetStatusCode(),
+                    RemarksIn: getUpdate.RemarksIn,
+                    RemarksEx: getUpdate.RemarksEx,
+                    ModUser: jwtDecode(token).USRID
+                },
+                {
+                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                    LAN: id,
+                    Status: GetStatusCode(),
+                    UrgentApp: getUpdate.UrgentApp,
+                    RemarksIn: getUpdate.RemarksIn,
+                    RemarksEx: getUpdate.RemarksEx,
+                    ModUser: jwtDecode(token).USRID
+                },
+                {
+                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                    LAN: id,
+                    Status: GetStatusCode(),
+                    UrgentApp: getUpdate.UrgentApp,
+                    RemarksIn: getUpdate.RemarksIn,
+                    RemarksEx: getUpdate.RemarksEx,
+                    SoaDate: yymmdd(getUpdate.SoaDate),
+                    ModUser: jwtDecode(token).USRID
+                }
+            ];
+    
+            if (getUpdate.UrgentApp === 2 && getUpdate.DepartureDate) {
+                const departureUpdateResponse = await axios.post('/updateDepartDate', {
+                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                    DepartureDate: dayjs(getUpdate.DepartureDate).format('MM-DD-YYYY')
+                });
+    
+                if (departureUpdateResponse.data.status === 'error') {
+                    api['error']({
+                        message: 'Error',
+                        description: 'Failed to update departure date. Please try again.'
+                    });
+                    return;
+                }
+            }
+            try {
+                const result = await axios.post('/updateApplicationStatus',
+                    getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
+                        ? dataContainer[2]
+                        : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
+                            ? dataContainer[1]
+                            : dataContainer[0]
+                );
+                SET_PATH_LOCATION(getUpdate.Status)
+                SET_REFRESH_TILE_COUNTER(1)
+                StatusList.refetch();
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description
+                });
+                queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
+                navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
+                setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
+    
+                if (deletePN) {
+                    await onClickDeleteXTable();
+                }
+    
+            } catch (error) {
+                console.log(error);
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message
+                });
+            }
+        }
+    })
+
+
+
+
+
+
+
+
+
 
     React.useEffect(() => {
         if (['CANCELLED', 'REASSESSED TO CREDIT OFFICER', 'DECLINED', 'ON WAIVER'].includes(getUpdate.Status) && !getUpdate.RemarksIn) {
@@ -293,9 +308,9 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
     function DISABLE_STATUS(LOCATION) {
         if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
-            if (LOCATION === '/ckfi/credit-assessment-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
-                || LOCATION === '/ckfi/under-loan-processor' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
-                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/re-application') {
+            if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
                 console.log('MA')
                 return true
             }
@@ -303,9 +318,8 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         }
         else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
             {
-                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/reassessed/credit-officer' || LOCATION === '/ckfi/return/credit-officer'
-                    || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-loan-processor' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
-                    || LOCATION === '/ckfi/declined') {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
                     console.log('CRA')
                     return true
                 }
@@ -313,16 +327,23 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             }
         }
         else if (GetData('ROLE').toString() === '60') {
-            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-loan-processor'
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
                 || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
                 console.log('CRO')
                 return true
             }
             else { return false }
         }
-        else if (GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80') {
-            if (LOCATION === '/ckfi/reassessed/credit-officer' || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/released'
-                || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
             else { return false }
         }
         else { return false }
@@ -382,7 +403,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     return (
         <div>
             {contextHolder}
-            <div className='h-[65vh]'>
+            <div className='h-[55vh]'>
                 <div className="sticky top-0 z-10 bg-white">
                     <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={handleUrgentApp} />
                 </div>
@@ -390,7 +411,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                     <div className='pt-[1.5rem] font-bold text-2xl'>
                         Update Status
                     </div>
-                    <div className='h-[60vh] overflow-y-auto w-[70vw]'>
+                    <div className='h-[45vh]  w-[65vw]'>
                         <LabeledSelects
                             className={'mt-5 w-[46.5rem]'}
                             data={StatusList.data?.map((x) => ({
@@ -430,7 +451,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                                 )}
                         </Space>
 
-                        {['CANCELLED', 'REASSESSED TO CREDIT OFFICER', 'DECLINED'].includes(getUpdate.Status) && GetData('ROLE').toString() === '80' && (
+                        {['CONFIRMATION'].includes(getUpdate.Status) && GetData('ROLE').toString() === '80' && (
                             <div className='pt-4 flex justify-start ml-[10rem]'>
                                 <Checkbox
                                     className='font-bold'
@@ -442,8 +463,8 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             </div>
                         )}
 
-                        {((GetData('ROLE').toString() === '60' && ['PRE-CHECK', 'FOR APPROVAL', 'PRE-APPROVAL'].includes(data.loanAppStat)) ||
-                            (GetData('ROLE').toString() === '50' && data.loanAppStat === 'FOR CREDIT ASSESSEMENT')) && (
+                        {((GetData('ROLE').toString() === '60' && ['PRE-CHECK', 'FOR APPROVAL'].includes(data.loanAppStat)) ||
+                            (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55' && data.loanAppStat === 'FOR CREDIT ASSESSEMENT')) && (
                                 <div className="grid grid-cols-7 mt-8">
                                     <div className="flex items-center justify-center">
                                         <Checkbox
@@ -607,7 +628,9 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                                         onClick={() => { onClickUpdate() }}
                                         className='bg-[#3b0764] w-[8rem]'
                                         type='primary'
-                                        disabled={isDisabled || isDisableUpdateBtn} > Update
+                                        disabled={isDisabled || isDisableUpdateBtn} 
+                                        loading={onClickUpdateStatus.isPending}
+                                        > Update
                                     </Button>
                                 </ConfigProvider>
                             </div>

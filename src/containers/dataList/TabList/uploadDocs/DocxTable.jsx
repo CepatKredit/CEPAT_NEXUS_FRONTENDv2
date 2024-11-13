@@ -37,7 +37,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 description: `${file.name} is not allowed to upload in the system. 
                 Please contact the System Administrator.`
             });
-            
+
         }
         else {
             if (Display === 'USER') {
@@ -217,10 +217,11 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
         if (editable) {
             childNode = editing ?
                 (<Form.Item style={{ margin: 0 }} name={dataIndex}
-                    rules={[{ required: true, message: `${title} is required.`, },]}>
+                    rules={dataIndex === 'docxType' ? [{ required: true, message: `${title} is required.` }] : []}>
                     {dataIndex === 'docxType'
                         ? (<Select ref={inputRef} value={fileList[record.key].status} onKeyDown={(e) => { if (e.key.toUpperCase() === 'ENTER') { save() } }}
-                            onBlur={save} className='w-[100%]' options={docTypeList?.map((x) => ({ value: x.docsType, label: x.docsType, }))} />)
+                            onBlur={save} className='w-[100%]' options={docTypeList?.map((x) => ({ value: x.docsType, label: x.docsType, }))} showSearch
+                            filterOption={(input, option) => option?.label.toLowerCase().includes(input.toLowerCase())} />)
                         : (<Input ref={inputRef} value={fileList[record.key].remarks}
                             onKeyDown={(e) => { if (e.key.toUpperCase() === 'ENTER') { save() } }} onBlur={save} />)}
                 </Form.Item>)
@@ -245,13 +246,10 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
     const CheckList = useQuery({
         queryKey: ['CheckList'],
         queryFn: async () => {
-            let count = 0;
             let checker = false
-            fileList.map((x) => {
-                if (x.remarks.toUpperCase() === 'PLEASE INPUT REMARKS' ||
-                    x.remarks.toUpperCase() === 'PLEASE SELECT STATUS') { count += 1 }
+            fileList.forEach((x) => {
+                if (x.status.toUpperCase() === 'PLEASE SELECT STATUS') { checker = true; }
             })
-            if (count >= 1) { checker = true }
             return checker
         },
         refetchInterval: 500,
@@ -288,7 +286,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                     docStatus_list += ',' + x.docStatus
                 }
             })
-            
+
             formData.append('client', ClientId)
             formData.append('docsID_list', docsID_list)
             formData.append('status_list', status_list)
@@ -329,8 +327,9 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                             description: error.message
                         })
                     })
-
-                if (LoanStatus === 'LACK OF DOCUMENTS') { UpdateStatus(); console.log(LoanStatus) }
+                if (LoanStatus === 'LACK OF DOCUMENTS' && Display !== 'USER') {
+                    UpdateStatus()
+                }
             }
         }
     })

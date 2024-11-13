@@ -18,7 +18,7 @@ import { useDirectLoan } from "@hooks/LoanApplicationHooks";
 
     function Endorsement() {
     const direct = false // Control if it is direct / lc / marketing
-    const { getAppDetails } = React.useContext(LoanApplicationContext);
+    const { getAppDetails, resetAppDetails } = React.useContext(LoanApplicationContext);
     document.title = "Loan Application Form";
     const USRNAME = toDecrypt(localStorage.getItem("USRFN"));
     const token = localStorage.getItem("UTK");
@@ -38,10 +38,18 @@ import { useDirectLoan } from "@hooks/LoanApplicationHooks";
 
     const lc_ofwdetails =  !isValidOFWDetailsLc(getAppDetails);
 
+    console.log("SA ENDORSEMENT", getAppDetails)
+    React.useEffect(() => {
+        if (!getAppDetails.dataPrivacy) {
+          resetAppDetails();
+        }
+      }, [getAppDetails.dataPrivacy]);
+
+      console.log("AMMMOUNT", getAppDetails.ofwsalary)
+
     async function insertDirect() {
 
         directLoan(direct);
-    
 /*
         const data_lc = {
             LoanAppId: toUpperText(uuidv4()),
@@ -108,7 +116,7 @@ import { useDirectLoan } from "@hooks/LoanApplicationHooks";
             direct={direct}
             code={getDetails}
         />
-        <div className="h-[70vh] overflow-y-auto">
+        <div className="h-[67vh] overflow-y-auto">
             <div className="flex items-center justify-center mx-auto mt-[2%] ">
             <div className="flex flex-col items-center justify-center mx-auto mt-[2%]">
                 <div className="flex items-center justify-center w-[80vw] ">
