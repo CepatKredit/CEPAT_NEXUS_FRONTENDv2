@@ -353,7 +353,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} className='bg-[#2b972d]' />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -374,7 +374,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} className='bg-[#2b972d]' />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -577,7 +577,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             {User !== 'Credit' && User !== 'Lp' && (<StatusRemarks isEdit={!isEdit} User={User} data={data} />)}
             {contextHolder}
             <div className='mt-[9rem] w-full px-2'>
-                <div className={`${User === 'Credit' || User === 'Lp' ? 'mt-[-15rem]' : 'mt-[-4rem]'}`}>
+                <div>
                     <center>
                         <SectionHeader title="List of Character Reference" />
                     </center>

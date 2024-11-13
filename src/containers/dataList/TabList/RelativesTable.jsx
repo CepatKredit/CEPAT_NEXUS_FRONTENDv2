@@ -367,7 +367,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} className='bg-[#2b972d]'/>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -387,7 +387,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} className='bg-[#2b972d]'/>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -574,6 +574,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                                     filterOption={(input, option) =>
                                         option.label.toLowerCase().includes(input.toLowerCase())
                                     }
+                                    onFocus={(e) => e.target.click()}
                                 />
 
                             </>

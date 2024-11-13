@@ -201,11 +201,17 @@ export const LoanApplicationProvider = ({ children, direct }) => {
 
   const SET_LOADING_INTERNAL = (POINTER, STATUS) => { setLoading({ ...getLoading, [POINTER]: STATUS }) }
   const GET_LOADING_INTERNAL = () => {
-    const LOAD_DATA = Object.values(getLoading).some(value => value === true)
-    return LOAD_DATA
+    if (getLoading.Deduplication === true || getLoading.EmploymentHistoryTABLE === true || getLoading.LoanInfo === true || 
+      getLoading.NDIOFW === true || getLoading.KaiserOFW === true || getLoading.FinancialChecker === true || getLoading.UploadDocs === true || 
+      getLoading.BorrowerNDI === true || getLoading.ACBNDI === true || getLoading.StatusRemarks === true || getLoading.ReleaseFile === true || 
+      getLoading.CharRefTABLE === true || getLoading.CreditHistoryTABLE === true || getLoading.AssetTABLE === true || getLoading.PropertiesTABLE === true ||
+    getLoading.DependentsTABLE === true) { return true }
+    else { return false }
+    /* const LOAD_DATA = Object.values(getLoading).some(value => value === true)
+     return LOAD_DATA*/
   }
 
-  const {focus, setfocus} = FocusHook();
+  const { focus, setfocus } = FocusHook();
 
 
   return (

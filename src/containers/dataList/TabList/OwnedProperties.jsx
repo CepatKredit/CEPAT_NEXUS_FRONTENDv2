@@ -257,7 +257,7 @@ function OwnedProperties({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]'/>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -277,7 +277,7 @@ function OwnedProperties({ data, User }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]' />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -430,7 +430,7 @@ function OwnedProperties({ data, User }) {
         <div className='h-[500px] flex flex-col items-center'>
             {contextHolder}
             <div className='mt-[5rem] w-[100%] px-2'>
-            <div className="mt-[-15rem]">
+            <div>
             <center>
                         <SectionHeader title="Owned Properties of OFW / Seaman" />
                     </center>

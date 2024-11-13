@@ -8,7 +8,7 @@ import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import { mmddyy } from '@utils/Converter'
 import dayjs from 'dayjs'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import StatusRemarks from './StatusRemarks'
 import { ApplicationStatus } from '@hooks/ApplicationStatusController'
 import { GetData } from '@utils/UserData';
@@ -92,95 +92,102 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas
         return parts.join('.');
     }
-    async function SaveNdi() {
-        let dat = [];
-        let del_dat = [];
-        let lower = false;
-        console.clear();
-        const items = sepcoborrowfname ? 3 : 2;
-        for (let i = 1; i <= items; i++) { //Ofw,ben,add
-            NdiItemList(i).forEach((Listno, index) => {
-                if ([23, 44, 64].includes(Listno.listno)) {
-                    console.log('Checking...', i, getMisc[i])
-                }
-                if ((([23, 44, 64].includes(Listno.listno)) && !getMisc[i])) {
-                    console.log('EXEC...', i, getMisc[i], Listno.values.documented)
-                    dat.push({
-                        "BorrowersCode": data.ofwBorrowersCode,
-                        "Type": i,
-                        "ListNo": Listno.listno,
-                        "Documented": parseFloat('0.00').toFixed(2),
-                        "Declared": parseFloat('0.00').toFixed(2),
-                        "LoggedUser": jwtDecode(token).USRID,
-                        "LoggedDate": mmddyy(dayjs())
-                    });
-                } else if (!([23, 44, 64].includes(Listno.listno)) || (([23, 44, 64].includes(Listno.listno)) && getMisc[i])) { //Skip Miscellaneous if not check
-                    dat.push({
-                        "BorrowersCode": data.ofwBorrowersCode,
-                        "Type": i,
-                        "ListNo": Listno.listno,
-                        "Documented": parseFloat(Listno.values.documented.toString().replaceAll(',', '')).toFixed(2),
-                        "Declared": parseFloat(Listno.values.declared.toString().replaceAll(',', '')).toFixed(2),
-                        "LoggedUser": jwtDecode(token).USRID,
-                        "LoggedDate": mmddyy(dayjs())
-                    });
-                }
-            });
-            const processEntries = (entries, type) => {
-                entries.forEach(x => {
-                    dat.push({
-                        "BorrowersCode": data.ofwBorrowersCode,
-                        "Type": type,
-                        "ListNo": x.id,
-                        "Documented": parseFloat(x.documented.toString().replaceAll(',', '')).toFixed(2),
-                        "Declared": parseFloat(x.declared.toString().replaceAll(',', '')).toFixed(2),
-                        "LoggedUser": jwtDecode(token).USRID,
-                        "LoggedDate": mmddyy(dayjs())
-                    });
-                });
-            };
-            [income[i], expenses[i]].forEach((entries, index) => {
-                entries.forEach((subEntries, subIndex) => {
-                    if (!(['documented', 'declared'].some(key => parseFloat((subEntries[key] || '0').replaceAll(',', '')) >= 100))) {
-                        api['warning']({
-                            message: 'The update has been cancelled',
-                            description: 'Other Expense/Income must not be lower than 100.00',
-                        });
-                        lower = true;
-                        return;
+
+    const onClickSaveNDI = useMutation({
+        mutationFn: async () => {
+            let dat = [];
+            let del_dat = [];
+            let lower = false;
+            console.clear();
+            const items = sepcoborrowfname ? 3 : 2;
+            for (let i = 1; i <= items; i++) { //Ofw,ben,add
+                NdiItemList(i).forEach((Listno, index) => {
+                    if ([23, 44, 64].includes(Listno.listno)) {
+                        console.log('Checking...', i, getMisc[i])
                     }
-                })
-                const haveAnArray = deleteNotInList(i, entries, (index === 0 ? incomeInitial[i] : expenseInitial[i]))
-                if (haveAnArray != null) del_dat = [...del_dat, ...haveAnArray];
-                processEntries(entries, i);
-            });
-            if (lower) return;
-        }
-        if (lower) return;
-        console.log("Rows to Update", dat)
-        console.log("Rows to Delete", del_dat)
-        try {
-            const [updateRNdi, deleteRNdi] = await Promise.all([
-                axios.post('/updateNDI', dat),
-                axios.post('/deleteNDI', del_dat),
-            ]);
-            if (updateRNdi.data.status !== 'success' || (Object.keys(del_dat).length !== 0 && deleteRNdi.data.status !== 'success')) {
-                api['warning']({
-                    message: 'Failed to Update',
-                    description: 'The record was not update.',
+                    if ((([23, 44, 64].includes(Listno.listno)) && !getMisc[i])) {
+                        console.log('EXEC...', i, getMisc[i], Listno.values.documented)
+                        dat.push({
+                            "BorrowersCode": data.ofwBorrowersCode,
+                            "Type": i,
+                            "ListNo": Listno.listno,
+                            "Documented": parseFloat('0.00').toFixed(2),
+                            "Declared": parseFloat('0.00').toFixed(2),
+                            "LoggedUser": jwtDecode(token).USRID,
+                            "LoggedDate": mmddyy(dayjs())
+                        });
+                    } else if (!([23, 44, 64].includes(Listno.listno)) || (([23, 44, 64].includes(Listno.listno)) && getMisc[i])) { //Skip Miscellaneous if not check
+                        dat.push({
+                            "BorrowersCode": data.ofwBorrowersCode,
+                            "Type": i,
+                            "ListNo": Listno.listno,
+                            "Documented": parseFloat(Listno.values.documented.toString().replaceAll(',', '')).toFixed(2),
+                            "Declared": parseFloat(Listno.values.declared.toString().replaceAll(',', '')).toFixed(2),
+                            "LoggedUser": jwtDecode(token).USRID,
+                            "LoggedDate": mmddyy(dayjs())
+                        });
+                    }
                 });
-            } else {
-                api['success']({
-                    message: 'Successfully Updated',
-                    description: 'The record has been updated.',
+                const processEntries = (entries, type) => {
+                    entries.forEach(x => {
+                        dat.push({
+                            "BorrowersCode": data.ofwBorrowersCode,
+                            "Type": type,
+                            "ListNo": x.id,
+                            "Documented": parseFloat(x.documented.toString().replaceAll(',', '')).toFixed(2),
+                            "Declared": parseFloat(x.declared.toString().replaceAll(',', '')).toFixed(2),
+                            "LoggedUser": jwtDecode(token).USRID,
+                            "LoggedDate": mmddyy(dayjs())
+                        });
+                    });
+                };
+                [income[i], expenses[i]].forEach((entries, index) => {
+                    entries.forEach((subEntries, subIndex) => {
+                        if (!(['documented', 'declared'].some(key => parseFloat((subEntries[key] || '0').replaceAll(',', '')) >= 100))) {
+                            api['warning']({
+                                message: 'The update has been cancelled',
+                                description: 'Other Expense/Income must not be lower than 100.00',
+                            });
+                            lower = true;
+                            return;
+                        }
+                    })
+                    const haveAnArray = deleteNotInList(i, entries, (index === 0 ? incomeInitial[i] : expenseInitial[i]))
+                    if (haveAnArray != null) del_dat = [...del_dat, ...haveAnArray];
+                    processEntries(entries, i);
                 });
+                if (lower) return;
             }
-        } catch (Error) {
-            console.log(Error);
+            if (lower) return;
+            console.log("Rows to Update", dat)
+            console.log("Rows to Delete", del_dat)
+            try {
+                const [updateRNdi, deleteRNdi] = await Promise.all([
+                    axios.post('/updateNDI', dat),
+                    axios.post('/deleteNDI', del_dat),
+                ]);
+                if (updateRNdi.data.status !== 'success' || (Object.keys(del_dat).length !== 0 && deleteRNdi.data.status !== 'success')) {
+                    api['warning']({
+                        message: 'Failed to Update',
+                        description: 'The record was not update.',
+                    });
+                } else {
+                    api['success']({
+                        message: 'Successfully Updated',
+                        description: 'The record has been updated.',
+                    });
+                }
+            } catch (Error) {
+                console.log(Error);
+            }
+            queryClient.invalidateQueries({ queryKey: ['NdiDataQueryOfw'] }, { exact: true })
+            queryClient.invalidateQueries({ queryKey: ['NdiDataQueryAcb'] }, { exact: true })
+            queryClient.invalidateQueries({ queryKey: ['NdiDataQueryBorrower'] }, { exact: true })
         }
-        queryClient.invalidateQueries({ queryKey: ['NdiDataQueryOfw'] }, { exact: true })
-        queryClient.invalidateQueries({ queryKey: ['NdiDataQueryAcb'] }, { exact: true })
-        queryClient.invalidateQueries({ queryKey: ['NdiDataQueryBorrower'] }, { exact: true })
+    })
+
+    async function SaveNdi() {
+        onClickSaveNDI.mutate();
 
     }
     function deleteNotInList(i, compare, remove = []) {
@@ -410,7 +417,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                 {!DISABLE_STATUS(localStorage.getItem('SP')) && (
                     <Button 
-                        size='large' className='-mt-5 ml-15 bg-[#3b0764]'  type='primary'  disabled={Counter >= 1}  onClick={SaveNdi} >SAVE NDI
+                        size='large' className='-mt-5 ml-15 bg-[#3b0764]'  type='primary'  disabled={Counter >= 1}  onClick={SaveNdi} loading={onClickSaveNDI.isPending} >SAVE NDI
                     </Button>
                 )}                        
                 </ConfigProvider>

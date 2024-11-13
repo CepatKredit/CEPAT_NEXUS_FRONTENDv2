@@ -287,7 +287,7 @@ function EmploymentHistory({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]'/>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -308,7 +308,7 @@ function EmploymentHistory({ data, User }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} />
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]'/>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -506,7 +506,7 @@ function EmploymentHistory({ data, User }) {
         <div className='h-[500px] flex flex-col items-center mt-[10rem]'>
             {contextHolder}
             <div className='mt-[5rem] w-full px-2'>
-                <div className="mt-[-15rem]">
+                <div>
                     <center>
                         <SectionHeader title="Employment History of OFW / Seaman" />
                     </center>

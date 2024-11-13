@@ -118,7 +118,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                             onConfirm={() => { save(record.key) }}
                             okText="Yes"
                             cancelText="Cancel">
-                            <Button icon={<SaveOutlined />} type='primary' />
+                            <Button icon={<SaveOutlined />} type='primary' className='bg-[#2b972d]'/>
                         </Popconfirm>
                     </Tooltip>
                     <Tooltip title="Cancel">
