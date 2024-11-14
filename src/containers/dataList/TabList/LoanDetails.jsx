@@ -226,7 +226,11 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
                                     <Button
                                         type="primary"
                                         icon={<CloseOutlined />}
-                                        onClick={() => setEdit(false)}
+                                        onClick={() => {
+                                            queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+                                            setEdit(false)
+                                        }}
+                                        disabled={onClickSaveData.isPending}
                                         size="large"
                                         className="-mt-5"
                                     >

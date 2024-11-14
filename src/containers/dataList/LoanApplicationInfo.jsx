@@ -319,7 +319,7 @@ function LoanApplicationInfo() {
     return (
         <div className="px-7 mt-[2%] h-[500px] w-full">
             <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(7, 175, 4)' } } }}>
-                <Spin spinning={getLoading} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center mt-[8%]" size='large'>
+                <Spin spinning={ClientDataListQuery.isFetching} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center mt-[8%]" size='large'>
                     {contextHolder}
                     <div className="h-[100%] mt-[1%]">
                         {

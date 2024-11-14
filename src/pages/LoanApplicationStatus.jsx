@@ -71,7 +71,7 @@ function LoanApplicationTracker({ data }) {
         messageApi.open({
           type:"info",
           content:"Copied to clipboard!",
-          duration: 0.1,
+          duration: 0.6,
         });
       })
       .catch(() => {
@@ -716,10 +716,14 @@ function LoanApplicationTracker({ data }) {
                   <Title level={4} className="m-0" style={{ color: "#34b330" }}>
                     {getAppDetails.loanAppCode}
                   </Title>
-                  <LiaClipboardSolid
-                    className="ml-2 cursor-pointer text-lg text-gray-600 hover:text-gray-800"
-                    onClick={handleCopyToClipboard}
-                  />
+                  <Button
+                  className="ml-2 cursor-pointer text-lg text-gray-600 hover:text-gray-800"
+                  type="text"
+                  size="small"
+                  onClick={handleCopyToClipboard}
+                  >
+                  <LiaClipboardSolid />
+                  </Button>
                 </Flex>
               </div>
               <div className="flex flex-col w-full lg:w-auto mt-4 lg:mt-0 lg:ml-6">

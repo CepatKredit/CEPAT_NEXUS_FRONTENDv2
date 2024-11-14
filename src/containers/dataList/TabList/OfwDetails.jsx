@@ -323,9 +323,13 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                                         <Button
                                             type="primary"
                                             icon={<CloseOutlined />}
-                                            onClick={() => setEdit(false)}
+                                            onClick={() => {
+                                                queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+                                                setEdit(false)
+                                            }}
                                             size="large"
                                             className="-mt-5"
+                                            disabled={onClickSaveData.isPending}
                                         >
                                             CANCEL
                                         </Button>

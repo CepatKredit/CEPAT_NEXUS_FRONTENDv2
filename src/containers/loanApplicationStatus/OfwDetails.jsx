@@ -16,7 +16,7 @@ import LabeledCurrencyInput from "@components/trackApplication/LabeledCurrencyIn
 import { Suffix, MaritalStatus, Residences, Gender } from "@utils/FixedData";
 import LabeledInput_Email from "@components/trackApplication/LabeledInput_Email";
 import { Descriptions, Button, notification } from "antd";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   GET_LIST,
   GetBranchCode,
@@ -35,7 +35,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
     LoanApplicationContext
   );
   const [isEdit, setEdit] = React.useState(false);
-//   const [api, contextHolder] = notification.useNotification();
+  //   const [api, contextHolder] = notification.useNotification();
 
   const { data: suffixOption } = useQuery({
     queryKey: ["getSuffix"],
@@ -151,7 +151,8 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
         </span>
       ),
       children:
-        Gender().find((gender) => gender.value === getAppDetails.ofwgender)?.label || "",
+        Gender().find((gender) => gender.value === getAppDetails.ofwgender)
+          ?.label || "",
     },
     {
       key: "7",
@@ -188,8 +189,9 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
         </span>
       ),
       children:
-        MaritalStatus().find((status) => status.value === getAppDetails.ofwmstatus)
-          ?.label || "",
+        MaritalStatus().find(
+          (status) => status.value === getAppDetails.ofwmstatus
+        )?.label || "",
     },
     {
       key: "11",
@@ -200,7 +202,9 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
       ),
       children:
         validIdDisplay.data?.find(
-          (x) => x.id === getAppDetails.ofwvalidid || x.name === getAppDetails.ofwvalidid
+          (x) =>
+            x.id === getAppDetails.ofwvalidid ||
+            x.name === getAppDetails.ofwvalidid
         )?.name || "",
     },
     {
@@ -220,8 +224,9 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
         </span>
       ),
       children:
-        Residences().find((residence) => residence.value === getAppDetails.ofwresidences)
-          ?.label || "",
+        Residences().find(
+          (residence) => residence.value === getAppDetails.ofwresidences
+        )?.label || "",
     },
     ...(getAppDetails.ofwresidences === 3
       ? [
@@ -376,45 +381,17 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
         </span>
       ),
       children: getAppDetails.ofwsalary
-        ? formatNumberWithCommas(formatToTwoDecimalPlaces(getAppDetails.ofwsalary))
+        ? formatNumberWithCommas(
+            formatToTwoDecimalPlaces(getAppDetails.ofwsalary)
+          )
         : "",
     },
   ];
 
   const queryClient = useQueryClient();
-  async function updateData() {
-    let update = 0;
-    if (
-      getOldData.FirstName !== getAppDetails.ofwfname ||
-      getOldData.LastName !== getAppDetails.ofwlname ||
-      parseInt(getOldData.Suffix) !== parseInt(getAppDetails.ofwsuffix) ||
-      getOldData.Birthday !== getAppDetails.ofwbdate
-    ) {
-      update = 1;
-    } else {
-      update = 0;
-    }
 
-    if (update === 1) {
-      const checkLoan = {
-        LoanAppId: getAppDetails.loanIdCode,
-        FirstName: getAppDetails.ofwfname,
-        LastName: getAppDetails.ofwlname,
-        // Suffix: parseInt(getAppDetails.ofwsuffix),
-        Birthday: getAppDetails.ofwbdate,
-      };
-
-      console.log("DITOOO",checkLoan)
-
-      var result = await POST_DATA("/checkLoan", checkLoan);
-      if (result.list.length === 0) {
-        update = 0;
-      } else {
-        update = 2;
-      }
-    }
-
-    if (update === 0) {
+  const { mutate, isPending, reset } = useMutation({
+    mutationFn: async () => {
       const value = {
         LoanAppId: getAppDetails.loanIdCode,
         Tab: 2,
@@ -430,7 +407,9 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
         Consultant: getAppDetails.consultant,
         ConsultantNo: getAppDetails.consultNumber,
         ConsultantProfile: getAppDetails.consultProfile,
-        ReferredBy: getAppDetails.referredby ? parseInt(getAppDetails.referredby) : 0,
+        ReferredBy: getAppDetails.referredby
+          ? parseInt(getAppDetails.referredby)
+          : 0,
         FirstName: getAppDetails.ofwfname,
         MiddleName: getAppDetails.ofwmname,
         LastName: getAppDetails.ofwlname,
@@ -461,33 +440,152 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
         Salary: parseFloat(getAppDetails.ofwsalary.replaceAll(",", "")),
         ModUser: getAppDetails.borrowersCode,
       };
-      console.log("Update Data Payload:", value);
-      console.log("Update Data Payload NAME:",getAppDetails.ofwfname);
-      let result = await UpdateLoanDetails(value);
-      if (result.data.status === "success") {
-        api[result.data.status]({
-          message: result.data.message,
-          description: result.data.description,
+
+      // Execute both updates simultaneously
+      const response = await UpdateLoanDetails(value);
+
+      if (response.data.status === "info") {
+        api.info({
+          message: "Duplicate Loan Detected",
+          description: response.data.description,
         });
         queryClient.invalidateQueries(
           { queryKey: ["ClientDataQuery"] },
-          { exact: true }
-        );
-        setEdit(!isEdit);
-      } else {
-        api["warning"]({
-          message: "Error: Failed to Update",
-          description: "Fail Connection",
-        });
+          { exact: true })
+        throw new Error("Duplicate loan detected, update canceled.");
       }
-    } else {
-      api["info"]({
-        message: "Loan Already Exists",
-        description: `Please be advised that you have an ongoing application with Cepat Kredit ${result.list[0].branch} branch with Loan Application No. 
-                ${result.list[0].loanAppCode}. For further concerns, please email our Customer Service Department at customerservice@cepatkredit.com. Thank you!`,
+  
+      return response;
+    },
+    onSuccess: (response) => {
+      api.success({
+        message: response.data.message,
+        description: response.data.description,
       });
-    }
+    },
+    onError: (error) => {
+      if (error.message === "Duplicate loan detected, update canceled.") {
+       
+        return;
+      }
+      api.error({
+        message: "Update Failed",
+        description:
+          error.message || "There was an error updating the loan details.",
+      });
+    },
+  });
+
+  const handleSave = () => {
+    mutate();
+    setEdit(!isEdit)
   }
+  // async function updateData() {
+  //   let update = 0;
+  //   if (
+  //     getOldData.FirstName !== getAppDetails.ofwfname ||
+  //     getOldData.LastName !== getAppDetails.ofwlname ||
+  //     parseInt(getOldData.Suffix) !== parseInt(getAppDetails.ofwsuffix) ||
+  //     getOldData.Birthday !== getAppDetails.ofwbdate
+  //   ) {
+  //     update = 1;
+  //   } else {
+  //     update = 0;
+  //   }
+
+  //   if (update === 1) {
+  //     const checkLoan = {
+  //       LoanAppId: getAppDetails.loanIdCode,
+  //       FirstName: getAppDetails.ofwfname,
+  //       LastName: getAppDetails.ofwlname,
+  //       // Suffix: parseInt(getAppDetails.ofwsuffix),
+  //       Birthday: getAppDetails.ofwbdate,
+  //     };
+
+  //     console.log("DITOOO",checkLoan)
+
+  //     var result = await POST_DATA("/checkLoan", checkLoan);
+  //     if (result.list.length === 0) {
+  //       update = 0;
+  //     } else {
+  //       update = 2;
+  //     }
+  //   }
+
+  //   if (update === 0) {
+  //     const value = {
+  //       LoanAppId: getAppDetails.loanIdCode,
+  //       Tab: 2,
+  //       BorrowersCode: getAppDetails.borrowersCode,
+  //       Product: getAppDetails.loanProd,
+  //       BranchId: parseInt(getAppDetails.loanBranch),
+  //       DepartureDate: mmddyy(getAppDetails.loanDateDep),
+  //       Purpose: getAppDetails.loanPurpose,
+  //       //LoanType: 1,
+  //       Amount: parseFloat(getAppDetails.loanAmount.replaceAll(",", "")),
+  //       Terms: getAppDetails.loanTerms,
+  //       Channel: getAppDetails.hckfi,
+  //       Consultant: getAppDetails.consultant,
+  //       ConsultantNo: getAppDetails.consultNumber,
+  //       ConsultantProfile: getAppDetails.consultProfile,
+  //       ReferredBy: getAppDetails.referredby ? parseInt(getAppDetails.referredby) : 0,
+  //       FirstName: getAppDetails.ofwfname,
+  //       MiddleName: getAppDetails.ofwmname,
+  //       LastName: getAppDetails.ofwlname,
+  //       Suffix: getAppDetails.ofwsuffix,
+  //       BirthDay: getAppDetails.ofwbdate,
+  //       Gender: getAppDetails.ofwgender,
+  //       CivilStatus: getAppDetails.ofwmstatus,
+  //       Dependent: getAppDetails.ofwdependents,
+  //       Email: getAppDetails.ofwemail,
+  //       MobileNo: getAppDetails.ofwmobile,
+  //       FBProfile: getAppDetails.ofwfblink,
+  //       Ownership: getAppDetails.ofwresidences,
+  //       RentAmount: parseFloat(getAppDetails.ofwrent.replaceAll(",", "")),
+  //       IsCurrPerm: getAppDetails.ofwsameAddress,
+  //       ProvinceId: getAppDetails.ofwPresProv,
+  //       MunicipalityId: getAppDetails.ofwPresMunicipality,
+  //       BarangayId: getAppDetails.ofwPresBarangay,
+  //       Address1: getAppDetails.ofwPresStreet,
+  //       PerProvinceId: getAppDetails.ofwPermProv,
+  //       PerMunicipalityId: getAppDetails.ofwPermMunicipality,
+  //       PerBarangayId: getAppDetails.ofwPermBarangay,
+  //       PerAddress1: getAppDetails.ofwPermStreet,
+  //       ValidId: getAppDetails.ofwvalidid,
+  //       ValidIdNo: getAppDetails.ofwidnumber,
+  //       Country: getAppDetails.ofwcountry,
+  //       JobTitle: getAppDetails.ofwjobtitle,
+  //       Employer: getAppDetails.ofwcompany,
+  //       Salary: parseFloat(getAppDetails.ofwsalary.replaceAll(",", "")),
+  //       ModUser: getAppDetails.borrowersCode,
+  //     };
+  //     console.log("Update Data Payload:", value);
+  //     console.log("Update Data Payload NAME:",getAppDetails.ofwfname);
+  //     let result = await UpdateLoanDetails(value);
+  //     if (result.data.status === "success") {
+  //       api[result.data.status]({
+  //         message: result.data.message,
+  //         description: result.data.description,
+  //       });
+  //       queryClient.invalidateQueries(
+  //         { queryKey: ["ClientDataQuery"] },
+  //         { exact: true }
+  //       );
+  //       setEdit(!isEdit);
+  //     } else {
+  //       api["warning"]({
+  //         message: "Error: Failed to Update",
+  //         description: "Fail Connection",
+  //       });
+  //     }
+  //   } else {
+  //     api["info"]({
+  //       message: "Loan Already Exists",
+  //       description: `Please be advised that you have an ongoing application with Cepat Kredit ${result.list[0].branch} branch with Loan Application No.
+  //               ${result.list[0].loanAppCode}. For further concerns, please email our Customer Service Department at customerservice@cepatkredit.com. Thank you!`,
+  //     });
+  //   }
+  // }
 
   return (
     <>
@@ -611,7 +709,8 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
                 data={Residences()}
                 category={"marketing"}
               />
-              {getAppDetails.ofwresidences === 3 || getAppDetails.ofwresidences === 2 ? (
+              {getAppDetails.ofwresidences === 3 ||
+              getAppDetails.ofwresidences === 2 ? (
                 <LabeledCurrencyInput
                   className_dmain={"mt-5 w-[300px] h-[62px]"}
                   className_label={"font-bold"}
@@ -622,9 +721,9 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
                   }
                   value={getAppDetails.ofwrent}
                   fieldName="ofwrent"
-                //   receive={(e) => {
-                //     receive({ name: "ofwrent", value: e });
-                //   }}
+                  //   receive={(e) => {
+                  //     receive({ name: "ofwrent", value: e });
+                  //   }}
                   category={"marketing"}
                   placeHolder={
                     getAppDetails.ofwresidences === 3
@@ -772,9 +871,8 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
               <Button
                 type="primary"
                 icon={<SaveOutlined />}
-                onClick={() => {
-                  updateData();
-                }}
+                onClick={handleSave}
+                loading={isPending}
               >
                 Save
               </Button>
@@ -782,8 +880,13 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
               <Button
                 type="default"
                 onClick={() => {
+                  queryClient.invalidateQueries(
+                    { queryKey: ["ClientDataQuery"] },
+                    { exact: true }
+                  );
                   setEdit(!isEdit);
                 }}
+                disabled={isPending}
               >
                 Cancel
               </Button>

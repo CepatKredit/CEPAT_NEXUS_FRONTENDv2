@@ -317,7 +317,10 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                                     <Button
                                         type="primary"
                                         icon={<CloseOutlined />}
-                                        onClick={() => setEdit(false)}
+                                        onClick={() => {
+                                            queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
+                                            setEdit(false)}}
+                                        disabled={onClickSaveData.isPending}
                                         size="large"
                                         className="-mt-5"
                                     >

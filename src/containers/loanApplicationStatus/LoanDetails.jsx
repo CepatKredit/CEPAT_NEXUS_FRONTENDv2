@@ -466,7 +466,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
               //   setEdit(false);
               // }}
               onClick={handleCancel}
-              disabled={isLoading}
+              disabled={isPending}
             >
               Cancel
             </Button>

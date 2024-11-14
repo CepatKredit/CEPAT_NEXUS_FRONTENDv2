@@ -95,7 +95,7 @@ function Modal_Result({
         response,
         (data) => {
           setList(data.datalist);
-          resetAppDetails();
+          // resetAppDetails();
         }
         // showErrorNotification
       );
