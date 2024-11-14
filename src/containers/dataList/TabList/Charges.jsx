@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { Space, Input, Radio, Select } from 'antd'
+import { Space, Input, Radio, Select, Row, Col } from 'antd'
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import StatusRemarks from './StatusRemarks';
+import SectionHeader from '@components/validation/SectionHeader';
 
 function Charges({ data, User }) {
     const [isEdit, setEdit] = React.useState(false);
@@ -203,21 +204,24 @@ function Charges({ data, User }) {
                 <StatusRemarks isEdit={!isEdit} User={User} data={data} />
             </div>
             <div className='h-[58vh] overflow-y-auto'>
-                <div className='w-[80vw]'>
-                    <div className='flex justify-center items-center pt-[4rem]'>
-
-                        <div className='flex flex-col justify-center items-center w-[60vw]'>
-                            <div className='font-semibold text-xl pb-4'>Other Charges</div>
-
-
-                            <Space>
+                <div className='w-[80vw] mx-auto pt-4 ml-[6rem] mt-[-3rem]'>
+                    <div className='ml-[-8rem]'>
+                <SectionHeader title="Charges"/>
+                </div>
+                    <Row gutter={16} className='font-bold text-xl pb-4'>
+                        <Col span={12} className='text-center ml-[-4rem]'>Other Charges</Col>
+                        <Col span={12} className='text-center'>Loan Charges</Col>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Space className="w-full mb-2">
                                 <div className="w-[10rem]">Loan Product</div>
                                 <div className="w-[15rem]">
                                     <Input readOnly value={LoanProdDescription()} />
                                 </div>
                             </Space>
 
-                            <Space className='pt-2'>
+                            <Space className="w-full mb-2">
                                 <div className='w-[10rem]'>Processing Fee Rate</div>
                                 <div className='w-[15rem]'>
                                     <Input
@@ -235,7 +239,7 @@ function Charges({ data, User }) {
 
                                 </div>
                             </Space>
-                            <Space className='pt-2'>
+                            <Space className="w-full mb-2">
                                 <div className='w-[10rem]'>Interest Rate</div>
                                 <div className='w-[15rem]'>
                                     <Input
@@ -252,7 +256,7 @@ function Charges({ data, User }) {
                                     />
                                 </div>
                             </Space>
-                            <Space className='pt-2'>
+                            <Space className="w-full mb-2">
                                 <div className='w-[10rem]'>Credit Risk Fee Rate</div>
                                 <div className='w-[15rem]'>
                                     <Input
@@ -269,7 +273,7 @@ function Charges({ data, User }) {
                                     />
                                 </div>
                             </Space>
-                            <Space className='pt-2'>
+                            <Space className="w-full mb-2">
                                 <div className='w-[10rem]'>Terms</div>
                                 <div className='w-[15rem]'>
                                     <Select
@@ -282,7 +286,7 @@ function Charges({ data, User }) {
                                     </Select>
                                 </div>
                             </Space>
-                            <Space className='pt-2'>
+                            <Space className="w-full mb-2">
                                 <div className='w-[10rem]'>Grace Period</div>
                                 <div className='w-[15rem]'>
                                     <Radio.Group
@@ -295,7 +299,7 @@ function Charges({ data, User }) {
                                     </Radio.Group>
                                 </div>
                             </Space>
-                            <Space className='pt-2'>
+                            <Space className="w-full mb-2">
                                 <div className='w-[10rem]'>Approved Amount</div>
                                 <div className='w-[15rem]'>
                                     <Input
@@ -312,9 +316,12 @@ function Charges({ data, User }) {
                                     />
                                 </div>
                             </Space>
-                            <div className='font-semibold text-xl pb-4 pt-4'>Loan Charges</div>
+                        </Col>
 
-                            <Space className='pt-2'>
+                        {/*column 2*/}
+
+                        <Col span={12}>
+                            <Space className="w-full mb-2">
                                 <div className='w-[10rem]'>Charges Type</div>
                                 <div className='w-[15rem]'>
                                     <Radio.Group
@@ -436,10 +443,10 @@ function Charges({ data, User }) {
                                     <Input readOnly value={getCharges.MonthlyAmortization} />
                                 </div>
                             </Space>
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
                 </div>
-            </div>
+            </div >
         </>
     )
 }

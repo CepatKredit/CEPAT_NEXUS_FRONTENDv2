@@ -80,7 +80,7 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
     }
     function GetDocName(data, command) {
         let display = { id: '', docsType: '' }
-        FileListName.map((x) => {
+        FileListName?.map((x) => {
             if (x.id === data || x.docsType === data) { display = { id: x.id, docsType: x.docsType } }
         })
         switch (command) {
