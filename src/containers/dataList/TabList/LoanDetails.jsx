@@ -22,9 +22,48 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
     const { GetStatus } = ApplicationStatus();
     const token = localStorage.getItem('UTK')
     function DISABLE_STATUS(LOCATION) {
-         if (GetData('ROLE').toString() === '70') {
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
+                console.log('MA')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '20') {
+            {
+                if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/for-approval' 
+                    || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-re-application'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('LC')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '70') {
             console.log('LPA')
             if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/returned/credit-associate'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
             else { return false }
         }

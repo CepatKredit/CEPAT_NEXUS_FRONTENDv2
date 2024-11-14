@@ -252,7 +252,7 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
         {
             label: <div className='flex flex-rows'><MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>,
             key: 'NDI',
-            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} data={value} isEdit={true} isReadOnly={['70', '80'].includes(GetData('ROLE').toString())} />,
+            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} data={value} isEdit={true} activeKey={activeKey} isReadOnly={['70', '80'].includes(GetData('ROLE').toString())} />,
         },
         {
             label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,

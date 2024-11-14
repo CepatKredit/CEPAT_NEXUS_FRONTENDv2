@@ -73,8 +73,6 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         return age;
     }
 
-
-
     const items = [
         { key: '1', label: <span className={`font-semibold ${data.ofwfname ? 'text-black' : 'text-red-600'}`}>First Name</span>, children: data.ofwfname || '' },
         { key: '2', label: <span className="font-semibold text-black">Middle Name</span>, children: data.ofwmname || '' },
@@ -190,7 +188,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         (User === 'Credit' || User === 'Lp') && { key: '63', label: <span className={`font-semibold ${data.VesselType ? 'text-black' : 'text-red-600'}`}>Type of Vessel</span>, children: data.VesselType || '' },
         (User === 'Credit' || User === 'Lp') && { key: '64', label: <span className="font-semibold text-black">Exact Location</span>, children: data.ExactLocation || '' },
         (User === 'Credit' || User === 'Lp') && { key: '66', label: <span className={`font-semibold ${data.VesselIMO ? 'text-black' : 'text-red-600'}`}>IMO Vessel</span>, children: data.VesselIMO || '' },
-        (User === 'Credit' || User === 'Lp') && { key: '67', label: <span className="font-semibold text-black">Information of the Vessel</span>, children: data.VesselInfo || '' },
+        (User === 'Credit' || User === 'Lp') && data.VesselIMO && { key: '67', label: <span className="font-semibold text-black">Information of the Vessel</span>, children: data.VesselInfo || '' },
 
     ];
 

@@ -163,21 +163,21 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                 });
 
                 if (result.data.status === 'success') {
-                   // setTimeout(() => {
-                        queryClient.invalidateQueries({ queryKey: ['getRelatives'] }, { exact: true });
-                        setStat(true);
-                        setAddStat(false);
-                        setEditingKey('');
-                        setInfo({
-                            FullName: '',
+                    // setTimeout(() => {
+                    queryClient.invalidateQueries({ queryKey: ['getRelatives'] }, { exact: true });
+                    setStat(true);
+                    setAddStat(false);
+                    setEditingKey('');
+                    setInfo({
+                        FullName: '',
 
-                            Suffix: '',
-                            ContactNo: '',
-                            Birthdate: '',
-                            WorkEducStatus: '',
-                            Relationship: '',
-                        });
-                   // }, 5000);
+                        Suffix: '',
+                        ContactNo: '',
+                        Birthdate: '',
+                        WorkEducStatus: '',
+                        Relationship: '',
+                    });
+                    // }, 5000);
                 }
             } catch (error) {
                 api['error']({
@@ -198,7 +198,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
 
 
 
-    const onClickEditData = useMutation ({
+    const onClickEditData = useMutation({
         mutationFn: async (row) => {
             try {
                 const data = {
@@ -217,7 +217,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     message: result.data.message,
                     description: result.data.description,
                 });
-    
+
                 if (result.data.status === 'success') {
                     queryClient.invalidateQueries({ queryKey: ['getRelatives'] }, { exact: true });
                     setStat(true);
@@ -249,7 +249,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         getRelationshipList.refetch(row);
         onClickEditData.mutate(row);
 
-     
+
     }
 
 
@@ -273,37 +273,81 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
     async function onClickDelete(e) {
         onClickDeleteData.mutate(e);
     }
-    const disabledStatuses = [
-        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
-        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
-        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'RELEASED'
-    ];
+    function DISABLE_STATUS(LOCATION) {
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
+                console.log('MA')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/returned/credit-associate'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
+    }
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
     const [form] = Form.useForm();
     const columns = [
         {
-            title: (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                <Tooltip title='Add'>
-                    <Button className='bg-[#3b0764]' type='primary' disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
-                        icon={<PlusOutlined style={{ fontSize: '15px' }} />}
-                        onClick={() => {
-                            const record = { key: 0, fullName: '', suffix: '', contactNo: '', birthdate: '', workEducStatus: '', relationship: '' };
-                            edit(record);
-                            setStat(false);
-                            setEditingKey(0);
-                            setAddStat(!getAddStat);
-                            setInfo({
-                                ...getInfo,
-                                FullName: '',
-                                Suffix: '',
-                                ContactNo: '',
-                                Birthdate: '',
-                                WorkEducStatus: '',
-                                Relationship: '',
-                            });
-                        }} />
-                </Tooltip>
-            </ConfigProvider>),
+            title: (<div className="flex items-center">
+                {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                    <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                        <Tooltip title='Add'>
+                            <Button className='bg-[#3b0764]' type='primary'
+                                icon={<PlusOutlined style={{ fontSize: '15px' }} />}
+                                onClick={() => {
+                                    const record = { key: 0, fullName: '', suffix: '', contactNo: '', birthdate: '', workEducStatus: '', relationship: '' };
+                                    edit(record);
+                                    setStat(false);
+                                    setEditingKey(0);
+                                    setAddStat(!getAddStat);
+                                    setInfo({
+                                        ...getInfo,
+                                        FullName: '',
+                                        Suffix: '',
+                                        ContactNo: '',
+                                        Birthdate: '',
+                                        WorkEducStatus: '',
+                                        Relationship: '',
+                                    });
+                                }} />
+                        </Tooltip>
+                    </ConfigProvider>
+                )}
+            </div>
+            ),
             dataIndex: 'no',
             key: 'no',
             width: '5%',
@@ -356,6 +400,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
             editable: true,
         },
         {
+            hidden: DISABLE_STATUS(localStorage.getItem('SP')),
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
@@ -367,7 +412,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} className='bg-[#2b972d]'/>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} className='bg-[#2b972d]' />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -387,7 +432,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} className='bg-[#2b972d]'/>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} className='bg-[#2b972d]' />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -406,7 +451,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                         <Space>
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
-                                    <Button className='bg-[#3b0764]' disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
+                                    <Button className='bg-[#3b0764]' disabled={editingKey !== ''} onClick={() => {
                                         edit(record);
                                         setAddStat(!getAddStat);
                                     }}
@@ -420,7 +465,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                                     okText="Yes"
                                     cancelText="Cancel"
                                 >
-                                    <Button disabled={GetData('ROLE').toString() === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger loading={onClickDeleteData.isPending} />
+                                    <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger loading={onClickDeleteData.isPending} />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>
@@ -429,8 +474,6 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
             }
         }
     ];
-
-
 
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {

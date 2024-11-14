@@ -184,7 +184,27 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
         }
         return data
     }
-
+    function DISABLE_STATUS(LOCATION, LoanStatus) {
+        if (!GetData('ROLE')) {
+            return !(LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
+        }
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '20') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/for-re-application', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            return ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '60') {
+            return ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '70') {
+            return ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '80') {
+            return ['/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        }
+        return false;
+    }
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
     return (
         <div>
             <StatusRemarks isEdit={!isEdit} User={User} data={getAppDetails} />
@@ -193,19 +213,24 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 setModalStatus(false)
                 clearFileList()
             }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} />
-            <div className='space-x-[1.5rem]'>
+            <div className="space-x-[1.5rem]">
                 {
-                    GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
-                        || GetStatus === 'TAGGED FOR RELEASE' || GetStatus === 'ON WAIVER' || GetStatus === 'CONFIRMATION' || GetStatus === 'CONFIRMED' || GetStatus === 'UNDECIDED' ||
-                        GetStatus === 'FOR DISBURSEMENT' || GetStatus === 'RELEASED' || GetStatus === 'RETURN TO LOANS PROCESSOR' || GetStatus === 'APPROVED (TRANS-OUT)' ||
-                        LoanStatus === 'COMPLIED - LACK OF DOCUMENTS'
-                        ? (<></>)
-                        : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                            <Button size='large' className='ml-6 mb-2 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
-                        </ConfigProvider>)
+                    !DISABLE_STATUS(localStorage.getItem('SP'), GetStatus) ? (
+                        <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                            <Button
+                                size="large"
+                                className="ml-6 mb-2 bg-[#3b0764]"
+                                type="primary"
+                                onClick={() => setModalStatus(true)}
+                                disabled={User === 'Lp'}
+                            >
+                                Upload Document
+                            </Button>
+                        </ConfigProvider>
+                    ) : null
                 }
                 <div className={classname}>
-                    <div className='mr-[.5rem]'>
+                    <div className="mr-[.5rem]">
                         <Collapse items={CollapseList()} />
                     </div>
                 </div>

@@ -399,7 +399,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         rendered={rendered}
                     />
                 )}
-                {User === 'Credit' && (
+                {/*User === 'Credit' && (
                     <LabeledInput
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
@@ -411,7 +411,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         readOnly={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
-                    />)}
+                    />)*/}
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledSelect_Relationship
@@ -631,7 +631,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'First Name'}
+                            label={<>First Name <span className="text-red-500">*</span></>}
                             value={data.coborrowfname}
                             placeHolder='First Name'
                             receive={(e) => { receive({ name: 'coborrowfname', value: e }) }}
@@ -655,7 +655,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'Last Name'}
+                            label={<>Last Name <span className="text-red-500">*</span></>}
                             value={data.coborrowlname}
                             placeHolder='Last Name'
                             receive={(e) => { receive({ name: 'coborrowlname', value: e }) }}
@@ -666,7 +666,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         <LabeledSelect_Suffix
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label="font-bold"
-                            label="Suffix"
+                            label={<>Suffix <span className="text-red-500">*</span></>}
                             placeHolder='Suffix'
                             value={data.coborrowsuffix}
                             receive={(e) => receive({ name: 'coborrowsuffix', value: e })}
@@ -700,7 +700,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             <LabeledInput
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
-                                label={'Age'}
+                                label={<>Age <span className="text-red-500">*</span></>}
                                 value={calculateAge(data.coborrowbdate)}
                                 readOnly={true}
                                 placeHolder={'Age'}
@@ -710,7 +710,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'Gender'}
+                            label={<>Gender <span className="text-red-500">*</span></>}
                             placeHolder='Gender'
                             disabled={isEdit}
                             value={data.coborrowgender}
@@ -724,7 +724,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'Email Address'}
+                            label={<>Email Address <span className="text-red-500">*</span></>}
                             placeHolder='Email Address'
                             readOnly={isEdit}
                             value={data.coborrowemail}
@@ -737,7 +737,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'Mobile Number'}
+                            label={<>Mobile Number <span className="text-red-500">*</span></>}
                             placeHolder='Mobile Number'
                             readOnly={isEdit}
                             value={data.coborrowmobile}
@@ -763,7 +763,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label="Dependents"
+                            label={<>Dependents <span className="text-red-500">*</span></>}
                             readOnly={isEdit}
                             value={data.coborrowdependents}
                             receive={(e) => { receive({ name: 'coborrowdependents', value: e }) }}
@@ -776,7 +776,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'Marital Status'}
+                            label={<>Marital Status <span className="text-red-500">*</span></>}
                             placeHolder='Marital Status'
                             disabled={isEdit}
                             value={data.coborrowmstatus}
@@ -792,7 +792,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 <LabeledInput_Fullname
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label={'font-bold'}
-                                    label='Spouse Name'
+                                    label={<>Spouse Name <span className="text-red-500">*</span></>}
                                     placeHolder='Spouse Name'
                                     readOnly={isEdit}
                                     category={'marketing'}
@@ -823,7 +823,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     <LabeledSelect
                                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                         className_label={'font-bold'}
-                                        label={'Spouse Source of Income'}
+                                        label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
                                         placeHolder='Spouse Source of Income'
                                         disabled={isEdit}
                                         value={data.AcbSpSrcIncome}
@@ -835,7 +835,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     <LabeledInput_Salary
                                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                         className_label={'font-bold'}
-                                        label={'Spouse Income'}
+                                        label={<>Spouse Income <span className="text-red-500">*</span></>}
                                         placeHolder='Spouse Income'
                                         readOnly={isEdit}
                                         value={data.AcbSpIncome}
@@ -847,7 +847,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         ) : null}
                         {User === 'Credit' ? (
                             <div className="mt-5 w-[18.75rem] h-[3.875rem">
-                                <label className="font-bold">Facebook Name / Profile</label>
+                                <label className="font-bold">Facebook Name / Profile <span className="text-red-500">*</span>
+                            </label>
                                 <input
                                     type="text"
                                     className={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.coborrowfblink && data.coborrowfblink.startsWith('https://')
@@ -881,7 +882,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             <LabeledInput
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
-                                label={'Facebook Name / Profile'}
+                                label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                                 placeHolder='Facebook Name / Profile'
                                 readOnly={isEdit}
                                 value={data.coborrowfblink || ''}
@@ -893,7 +894,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 rendered={rendered}
                             />
                         )}
-                        {User === 'Credit' && (
+                        {/*User === 'Credit' && (
                             <LabeledInput
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
@@ -905,13 +906,13 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 readOnly={isEdit}
                                 isEdit={isEdit}
                                 rendered={rendered}
-                            />)}
+                            />)*/}
                         {User === 'LC'
                             ? (<></>)
                             : (<LabeledSelect_Relationship
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
-                                label={'Relationship to the OFW'}
+                                label={<>Relationship to the OFW <span className="text-red-500">*</span></>}
                                 placeHolder='Relationship to the OFW'
                                 value={data.AcbRelationship}
                                 receive={(e) => receive({ name: 'AcbRelationship', value: e })}
@@ -924,7 +925,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             <LabeledSelect
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label='font-bold'
-                                label='Source of Income'
+                                label={<>Source of Income <span className="text-red-500">*</span></>}
                                 placeHolder='Please select'
                                 data={SpouseSourceIncome()}
                                 value={data.AcbSrcIncome}
@@ -936,7 +937,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             <LabeledSelect
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label='font-bold'
-                                label='Religion'
+                                label={<>Religion <span className="text-red-500">*</span></>}
                                 placeHolder='Please select'
                                 data={Religion()}
                                 value={data.AcbReligion}
@@ -950,7 +951,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 <LabeledSelect
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label='font-bold'
-                                    label='Former OFW (Overseas Filipino Worker)'
+                                    label={<>Former OFW (Overseas Filipino Worker) <span className="text-red-500">*</span></>}
                                     placeHolder='Please select'
                                     data={Overseas()}
                                     value={data.AcbFormerOFW}
@@ -967,7 +968,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     <LabeledInput
                                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                         className_label={'font-bold'}
-                                        label={'When was your last return home?'}
+                                        label={<>When was your last return home? <span className="text-red-500">*</span></>}
                                         placeHolder='When was your last return home'
                                         value={data.AcbLastReturn}
                                         receive={(e) => receive({ name: 'AcbLastReturn', value: e })}
@@ -981,7 +982,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 <LabeledSelect
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label='font-bold'
-                                    label='Plans to Abroad'
+                                    label={<>Plans to Abroad <span className="text-red-500">*</span></>}
                                     placeHolder='Please select'
                                     data={Overseas()}
                                     value={data.AcbPlanAbroad}
@@ -1010,7 +1011,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
                                 data={Overseas()}
-                                label={'PEP'}
+                                label={<>PEP <span className="text-red-500">*</span></>}
                                 placeHolder='PEP'
                                 readOnly={isEdit}
                                 value={data.AcbPEP}
@@ -1040,7 +1041,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'Type of Residences'}
+                            label={<>Type of Residences <span className="text-red-500">*</span></>}
                             placeHolder='Type Of Residences'
                             disabled={isEdit}
                             receive={(e) => { receive({ name: 'coborrowresidences', value: e }) }}
@@ -1054,7 +1055,10 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             <LabeledCurrencyInput
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
-                                label={data.coborrowresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
+                                label={<>
+                            {`${data.coborrowresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'} `}
+                            <span className="text-red-500">*</span>
+                        </>}
                                 value={data.AcbRentAmount}
                                 receive={(e) => { receive({ name: 'AcbRentAmount', value: e }) }}
                                 category={'direct'}
@@ -1066,7 +1070,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         <LabeledInput_LengthStay
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label="font-bold"
-                            label="Length of Stay"
+                            label={<>Length of Stay <span className="text-red-500">*</span></>}
                             value_month={data.AcbStayMonths}
                             value_year={data.AcbStayYears}
                             receiveM={(e) => receive({ name: 'AcbStayMonths', value: e })}
@@ -1081,7 +1085,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 <LabeledInput_UpperCase
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label={'font-bold'}
-                                    label={'Landmark'}
+                                    label={<>Landmark <span className="text-red-500">*</span></>}
                                     placeHolder='Landmark'
                                     readOnly={isEdit}
                                     value={data.AcbLandMark}
@@ -1091,7 +1095,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 <LabeledInput_UpperCase
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label={'font-bold'}
-                                    label={'Proof of Billing Remarks'}
+                                    label={<>Proof of Billing Remarks <span className="text-red-500">*</span></>}
                                     placeHolder='Remarks'
                                     readOnly={isEdit}
                                     value={data.AcbPoBRemarks}

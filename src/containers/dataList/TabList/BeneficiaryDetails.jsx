@@ -73,6 +73,38 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
             }
             else { return false }
         }
+        else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/returned/credit-associate'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
     }
 
     React.useEffect(() => {

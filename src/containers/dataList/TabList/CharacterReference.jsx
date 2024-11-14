@@ -242,7 +242,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         }
     }
 
-   
+
     const onClickDeteleData = useMutation({
         mutationFn: async (e) => {
             try {
@@ -265,41 +265,67 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         onClickDeteleData.mutate(e);
     }
 
+    function DISABLE_STATUS(LOCATION, LoanStatus) {
+        if (!GetData('ROLE')) {
+            return !(LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
+        }
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '20') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/for-re-application', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            return ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '60') {
+            return ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '70') {
+            return ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '80') {
+            return ['/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        }
+        return false;
+    }
 
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
 
     const [form] = Form.useForm();
     const columns = [
         {
-            title: GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
-                || GetStatus === 'TAGGED FOR RELEASE' || GetStatus === 'ON WAIVER' || GetStatus === 'CONFIRMATION' || GetStatus === 'CONFIRMED' || GetStatus === 'UNDECIDED' ||
-                GetStatus === 'FOR DISBURSEMENT' || GetStatus === 'RELEASED' || GetStatus === 'RETURN TO LOANS PROCESSOR' || GetStatus === 'APPROVED (TRANS-OUT)' || GetStatus === 'RETURN TO CREDIT OFFICER' || GetStatus === 'RELEASED'
-                ? (<></>)
-                : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                    <Tooltip title='Add'>
-                        <Button className='bg-[#3b0764]' type='primary' disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || getAddStat}
-                            icon={<PlusOutlined style={{ fontSize: '15px' }} />}
-                            onClick={() => {
-                                const record = { key: 0, name: '', conNum: '', relShip: '', prov: '', remarks: '', }
-                                edit(record)
-                                setStat(false)
-                                setEditingKey(0);
-                                setAddStat(!getAddStat)
-                                setInfo({
-                                    ...getInfo,
-                                    name: '',
-                                    conNum: '',
-                                    relShip: '',
-                                    prov: '',
-                                    remarks: '',
-                                })
-                            }} />
-                    </Tooltip>
-                </ConfigProvider>),
+            title: (
+                <div className="flex items-center">
+                    {!DISABLE_STATUS(localStorage.getItem('SP'), getAppDetails.loanStatus) && (
+                        <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                            <Tooltip title="Add">
+                                <Button
+                                    className="ml-2 bg-[#3b0764]"
+                                    type="primary"
+                                    icon={<PlusOutlined style={{ fontSize: '15px' }} />}
+                                    onClick={() => {
+                                        const record = { key: 0, name: '', conNum: '', relShip: '', prov: '', remarks: '' };
+                                        edit(record);
+                                        setStat(false);
+                                        setEditingKey(0);
+                                        setAddStat(!getAddStat);
+                                        setInfo({
+                                            ...getInfo,
+                                            name: '',
+                                            conNum: '',
+                                            relShip: '',
+                                            prov: '',
+                                            remarks: '',
+                                        });
+                                    }}
+                                />
+                            </Tooltip>
+                        </ConfigProvider>
+                    )}
+                </div>
+            ),
             dataIndex: 'no',
             key: 'no',
             width: '5%',
             fixed: 'left',
-            align: 'center'
+            align: 'center',
         },
         {
             title: 'Name',
@@ -337,10 +363,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             editable: true,
         },
         {
-            hidden: GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
-                || GetStatus === 'TAGGED FOR RELEASE' || GetStatus === 'ON WAIVER' || GetStatus === 'CONFIRMATION' || GetStatus === 'CONFIRMED' || GetStatus === 'UNDECIDED' ||
-                GetStatus === 'FOR DISBURSEMENT' || GetStatus === 'RELEASED' || GetStatus === 'RETURN TO LOANS PROCESSOR'
-                ? true : false,
+            hidden: DISABLE_STATUS(localStorage.getItem('SP'), getAppDetails.loanStatus),
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
@@ -353,12 +376,18 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} loading={onClickSaveData.isPending} className='bg-[#2b972d]' />
+                                <Button
+                                    icon={<SaveOutlined />}
+                                    type="primary"
+                                    onClick={onClickSave}
+                                    loading={onClickSaveData.isPending}
+                                    className="bg-[#2b972d]"
+                                />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
                                     icon={<CloseOutlined />}
-                                    type='primary'
+                                    type="primary"
                                     danger
                                     onClick={() => {
                                         setStat(true);
@@ -368,18 +397,23 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                                 />
                             </Tooltip>
                         </Space>
-                    )
-                }
-                else {
+                    );
+                } else {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} loading={onClickEditData.isPending} className='bg-[#2b972d]' />
+                                <Button
+                                    icon={<SaveOutlined />}
+                                    type="primary"
+                                    onClick={onClickEdit}
+                                    loading={onClickEditData.isPending}
+                                    className="bg-[#2b972d]"
+                                />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
                                     icon={<CloseOutlined />}
-                                    type='primary'
+                                    type="primary"
                                     danger
                                     onClick={() => {
                                         setStat(true);
@@ -392,36 +426,41 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     ) : (
                         <Space>
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                                <Tooltip title='Edit'>
-                                    <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || editingKey !== ''} onClick={() => {
-
-                                        edit(record)
-                                        setAddStat(!getAddStat)
-
-                                    }}
-                                        type='primary' icon={<MdEditSquare />} />
+                                <Tooltip title="Edit">
+                                    <Button
+                                        className="bg-[#3b0764]"
+                                        onClick={() => {
+                                            edit(record);
+                                            setAddStat(!getAddStat);
+                                        }}
+                                        type="primary"
+                                        icon={<MdEditSquare />}
+                                        disabled={editingKey !== ''}
+                                    />
                                 </Tooltip>
                             </ConfigProvider>
                             <Tooltip title="Delete">
                                 <Popconfirm
                                     title="Are you sure you want to delete this record?"
-                                    onConfirm={() => {
-                                        onClickDelete(record.key)
-                                    }}
+                                    onConfirm={() => onClickDelete(record.key)}
                                     okText="Yes"
-                                    cancelText="Cancel"  >
-                                    <Button disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger loading={onClickDeteleData.isPending} />
-
+                                    cancelText="Cancel"
+                                >
+                                    <Button
+                                        icon={<DeleteOutlined />}
+                                        type="primary"
+                                        danger
+                                        loading={onClickDeteleData.isPending}
+                                        disabled={editingKey !== ''}
+                                    />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>
-                    )
+                    );
                 }
-            }
+            },
         },
     ];
-
-
 
     const [editingKey, setEditingKey] = React.useState('');
     const isEditing = (record) => record.key === editingKey;
@@ -481,6 +520,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             form.setFieldsValue({ 'remarks': toUpperText(e) });
         }
     }
+    console.log("Relationship List Data:", getRelationshipList.data);
 
 
 
@@ -511,7 +551,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                 <Select
                     className='w-[10rem]'
                     onChange={(value) => { onChangeRelationship(value); }}
-                    placeholder='Relationship'
+                    placeholder={'Relationship'}
                     options={getRelationshipList.data?.map(x => ({ value: x.code, label: x.description }))}
                     showSearch
                     filterOption={(input, option) =>
@@ -576,8 +616,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         <div className={classname}>
             {User !== 'Credit' && User !== 'Lp' && (<StatusRemarks isEdit={!isEdit} User={User} data={data} />)}
             {contextHolder}
-            <div className={`${(User === 'Credit' || User === 'Lp') ? 'mt-[5rem] ' : ''} w-full px-2`}>
-            <div>
+            <div className='w-full px-2'>
+                <div>
                     <center>
                         <SectionHeader title="List of Character Reference" />
                     </center>

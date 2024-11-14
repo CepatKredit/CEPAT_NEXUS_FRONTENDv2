@@ -234,12 +234,6 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
         return getId
     }
 
-
-
-    async function updateData() {
-
-     
-    }
     function DISABLE_STATUS(LOCATION) {
         if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
             if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
@@ -250,6 +244,49 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
             }
             else { return false }
         }
+        else if (GetData('ROLE').toString() === '20') {
+            {
+                if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/for-approval' 
+                    || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-re-application'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('LC')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/returned/credit-associate'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
     }
 
     return (
@@ -262,9 +299,9 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     <div className={`w-full mt-4 ${
                     (User === 'MARKETING' || User === 'LC') ? 
                         (isEdit ? 
-                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[54vh] 3xl:h-[61vh] overflow-y-auto' 
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[55vh] 3xl:h-[61vh] overflow-y-auto' 
                             : 
-                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[44vh] 3xl:h-[53vh] overflow-y-auto'
+                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[53vh] overflow-y-auto'
                         )  : ''}`}>      
                 {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                     <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
@@ -289,7 +326,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                             },
                         }}
                     >
-                        <div className=" w-full  pt-14 flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
+                        <div className=" w-full  pt-10 flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
                             {isEdit ? (
                                 <>
                                     <ConfigProvider

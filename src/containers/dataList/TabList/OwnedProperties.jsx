@@ -32,12 +32,6 @@ function OwnedProperties({ data, User }) {
         Remarks: '',
 
     });
-    const disabledStatuses = [
-        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
-        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
-        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'RELEASED'
-    ];
     const [getStat, setStat] = React.useState(true);
     const role = GetData('ROLE').toString();
 
@@ -192,29 +186,90 @@ function OwnedProperties({ data, User }) {
             });
         }
     }
+    function DISABLE_STATUS(LOCATION) {
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
+                console.log('MA')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '20') {
+            {
+                if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/for-approval'
+                    || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-re-application'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('LC')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/returned/credit-associate'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
+    }
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
     const [form] = Form.useForm();
     const columns = [
         {
-            title: (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                <Tooltip title='Add'>
-                    <Button className='bg-[#3b0764]' type='primary' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
-                        icon={<PlusOutlined style={{ fontSize: '15px' }} />}
-                        onClick={() => {
-                            const record = { key: 0, properties: '', location: '', remarks: '' }
-                            edit(record)
-                            setStat(false)
-                            setEditingKey(0);
-                            setAddStat(!getAddStat)
-                            setInfo({
-                                ...getInfo,
-                                Properties: '',
-                                Location: '',
-                                Remarks: '',
-                            })
-                        }} />
+            title: (<div className="flex items-center">
+                {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                    <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                        <Tooltip title='Add'>
+                            <Button className='bg-[#3b0764]' type='primary'
+                                icon={<PlusOutlined style={{ fontSize: '15px' }} />}
+                                onClick={() => {
+                                    const record = { key: 0, properties: '', location: '', remarks: '' }
+                                    edit(record)
+                                    setStat(false)
+                                    setEditingKey(0);
+                                    setAddStat(!getAddStat)
+                                    setInfo({
+                                        ...getInfo,
+                                        Properties: '',
+                                        Location: '',
+                                        Remarks: '',
+                                    })
+                                }} />
 
-                </Tooltip>
-            </ConfigProvider>),
+                        </Tooltip>
+                    </ConfigProvider>
+                )}
+            </div>
+            ),
             dataIndex: 'no',
             key: 'no',
             width: '6%',
@@ -242,6 +297,7 @@ function OwnedProperties({ data, User }) {
             editable: true,
         },
         {
+            hidden: DISABLE_STATUS(localStorage.getItem('SP')),
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
@@ -257,7 +313,7 @@ function OwnedProperties({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]'/>
+                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -296,7 +352,7 @@ function OwnedProperties({ data, User }) {
                         <Space>
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
-                                    <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
+                                    <Button className='bg-[#3b0764]' disabled={editingKey !== ''} onClick={() => {
 
                                         edit(record);
                                         setAddStat(!getAddStat);
@@ -311,7 +367,7 @@ function OwnedProperties({ data, User }) {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
+                                    <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>
@@ -430,8 +486,8 @@ function OwnedProperties({ data, User }) {
         <div className='flex flex-col items-center'>
             {contextHolder}
             <div className='w-full px-2'>
-            <div>
-            <center>
+                <div>
+                    <center>
                         <SectionHeader title="Owned Properties of OFW / Seaman" />
                     </center>
                 </div>

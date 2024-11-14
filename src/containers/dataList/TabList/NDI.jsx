@@ -43,13 +43,17 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
         else if (GetData('ROLE').toString() === '70') {
             console.log('LPA')
             if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
-                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/confirmation' || LOCATION === '/ckfi/confirmed' || LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/returned/credit-officer'
+                || LOCATION === '/ckfi/reassessed/credit-officer'  || LOCATION === '/ckfi/undecided') { return true }
             else { return false }
         }
         else if (GetData('ROLE').toString() === '80') {
             console.log('LPO')
             if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
-                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/confirmation' || LOCATION === '/ckfi/confirmed' || LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/returned/credit-officer'
+                || LOCATION === '/ckfi/reassessed/credit-officer'  || LOCATION === '/ckfi/undecided') { return true }
             else { return false }
         }
         else { return false }
