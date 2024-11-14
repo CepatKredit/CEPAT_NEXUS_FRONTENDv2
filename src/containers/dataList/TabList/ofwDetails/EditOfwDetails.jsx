@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, notification, Checkbox, Input, Form } from 'antd';
+import { Flex, notification, Checkbox, Input, Form, ConfigProvider } from 'antd';
 import LabeledInput from '@components/marketing/LabeledInput';
 import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
 import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
@@ -918,6 +918,30 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             category={'direct'}
                             rendered={rendered}
                         />
+                        {data.VesselIMO && (
+                            <div className="mt-8">
+                                <label className="font-bold block">Information of the Vessel</label>
+                                <ConfigProvider
+                                    theme={{
+                                        components: {
+                                            Input: {
+                                                controlHeight: 100,
+                                            },
+                                        },
+                                    }}
+                                >
+                                    <TextArea
+                                        className="w-[920px] h-[70vh] p-1 border border-gray-300 rounded-md resize-none"
+                                        value={data.VesselInfo}
+                                        onChange={(e) => receive({ name: 'VesselInfo', value: e.target.value })}
+                                        style={{
+                                            resize: 'none',
+                                        }}
+                                        // readOnly={!isEdit}
+                                    />
+                                </ConfigProvider>
+                            </div>
+                        )}
                         <LabeledInput
                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
@@ -929,20 +953,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             category={'direct'}
                             rendered={rendered}
                         />
-                        {data.VesselName && data.VesselIMO && data.VesselType && (
-                            <div className="mt-8">
-                                <label className="font-bold block ">Information of the Vessel</label>
-                                <TextArea
-                                    className="w-[920px] h-[62px] p-1 border border-gray-300 rounded-md resize-none "
-                                    value={data.VesselInfo}
-                                    onChange={(e) => receive({ name: 'VesselInfo', value: e.target.value })}
-                                    style={{
-                                        resize: 'none',
-                                    }}
-                                //readOnly={!isEdit}
-                                />
-                            </div>
-                        )}
 
                     </>
                 )}

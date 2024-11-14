@@ -576,13 +576,13 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         <div className={classname}>
             {User !== 'Credit' && User !== 'Lp' && (<StatusRemarks isEdit={!isEdit} User={User} data={data} />)}
             {contextHolder}
-            <div className='mt-[9rem] w-full px-2'>
-                <div>
+            <div className={`${(User === 'Credit' || User === 'Lp') ? 'mt-[5rem] ' : ''} w-full px-2`}>
+            <div>
                     <center>
                         <SectionHeader title="List of Character Reference" />
                     </center>
                 </div>
-                <div className='mt-[2rem]'>
+                <div className='mt-[0rem]'>
                     <Form form={form} component={false}>
                         <Table
                             columns={mergedColumns}

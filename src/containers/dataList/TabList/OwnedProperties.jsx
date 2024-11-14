@@ -238,7 +238,7 @@ function OwnedProperties({ data, User }) {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '45%',
+            width: '25%',
             editable: true,
         },
         {
@@ -390,7 +390,7 @@ function OwnedProperties({ data, User }) {
                 ? (
                     <>
                         <Input
-                            className='w-[13rem]'
+                            className='w-[17rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'location'); }}
                             placeholder='Location' />
                     </>
@@ -399,7 +399,7 @@ function OwnedProperties({ data, User }) {
                     ? (
                         <>
                             <Input
-                                className='w-[13rem]'
+                                className='w-[17rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'remarks'); }}
                                 placeholder='Remarks' />
                         </>
@@ -427,9 +427,9 @@ function OwnedProperties({ data, User }) {
         : [];
 
     return (
-        <div className='h-[500px] flex flex-col items-center'>
+        <div className='flex flex-col items-center'>
             {contextHolder}
-            <div className='mt-[5rem] w-[100%] px-2'>
+            <div className='w-full px-2'>
             <div>
             <center>
                         <SectionHeader title="Owned Properties of OFW / Seaman" />

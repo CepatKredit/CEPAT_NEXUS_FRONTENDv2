@@ -140,7 +140,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         });
     };
 
-    const {focus } = React.useContext(LoanApplicationContext)
+    const { focus } = React.useContext(LoanApplicationContext)
 
 
     const toggleEditMode = async () => {
@@ -502,7 +502,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
     }, [BorrowerId]);
 
     function DISABLE_STATUS(LOCATION) {
-         if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+        if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
             {
                 if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
                     || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
@@ -529,101 +529,75 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             children: <Deduplication data={value} />,
         },
         {
-            label: <div className='flex flex-row'><TbFileDescription style={{ fontSize: '20px', marginRight: 5 }} /><span>CRAM</span></div>,
+            label: (
+                <div className='flex flex-row'>
+                    <TbFileDescription style={{ fontSize: '20px', marginRight: 5 }} />
+                    <span>CRAM</span>
+                </div>
+            ),
             key: 'CRAM',
             children: (
-                <div className='w-full flex flex-row'>
-                    <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-9 overflow-y-auto">
-                        <div className="sticky top-0 z-[1000] bg-white">
-                            <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
+                <div className='w-full flex flex-col'>
+                    <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
+                    <div className='flex flex-row'>
+                        <div
+                            id="scrollable-container" 
+                            className="h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh] w-full overflow-y-auto mx-2 mb-9"
+                        >
+                            <div id='Loan-Details'>
+                                <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} creditisEdit={isEdit} User={'Credit'} />
+                            </div>
+                            <div id='OFW-Details'>
+                                <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
+                            </div>
+                            <div id="Employment-History" className="w-full">
+                                <EmploymentHistoryTable data={value} isEdit={isEdit} />
+                            </div>
+                            <div id='Credit-History' className="w-full ">
+                                <CreditHistory data={value} receive={receive} isEdit={isEdit} />
+                            </div>
+                            <div id='Owned-Assets' className="w-full">
+                                <AssetTable data={value} receive={receive} isEdit={isEdit} />
+                            </div>
+                            <div id='Owned-Properties' className="w-full">
+                                <OwnedProperties data={value} receive={receive} isEdit={isEdit} />
+                            </div>
+                            <div id='Character-Reference' className="w-full">
+                                <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
+                            </div>
+                            <div id='Beneficiary-Details'>
+                                <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
+                            </div>
                         </div>
-                        <div id='Loan-Details'>
-                            <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} creditisEdit={isEdit} User={'Credit'} />
+        
+                        <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]">
+                            <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+                                <Anchor
+                                    replace
+                                    affix={false}
+                                    targetOffset={50}
+                                    getContainer={() => document.getElementById('scrollable-container')} 
+                                    items={[
+                                        { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                                        { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                                        { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                                        { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                                        { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                                        { key: 'Owned-Properties', href: '#Owned-Properties', title: 'Owned Properties' },
+                                        { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+                                        { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+                                    ]}
+                                />
+                            </ConfigProvider>
                         </div>
-                       <div id='OFW-Details'>
-                            <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto '} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
-                        </div>
-                        <div id="Employment-History" className="w-full">
-                            <EmploymentHistoryTable data={value} isEdit={isEdit} />
-                        </div>
-                        <div id='Credit-History' className="w-full ">
-                            <CreditHistory data={value} receive={receive} isEdit={isEdit} />
-                        </div>
-                        <div id='Owned-Assets' className="w-full">
-                            <AssetTable data={value} receive={receive} isEdit={isEdit} />
-                        </div>
-                        <div id='Owned-Properties' className="w-full">
-                            <OwnedProperties data={value} receive={receive} isEdit={isEdit} />
-                        </div>
-                        <div id='Character-Reference' className="w-full">
-                            <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
-                        </div>
-                        <div id='Beneficiary-Details'>
-                            <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
-                        </div>
-                    </div>
-                    <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[58vh] sm:h-[50vh] md:h-[55vh] lg:h-[58vh] xl:h-[60vh] 2xl:h-[58vh] 3xl:h-[63vh]">
-                        <ConfigProvider
-                            theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
-                            <Anchor
-                                replace
-                                affix={false}
-                                items={[
-                                    { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
-                                    { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
-                                    { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
-                                    { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
-                                    { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
-                                    { key: 'Owned-Properties', href: '#Owned-Properties', title: 'Owned Properties' },
-                                    { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
-                                    { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
-                                ]}
-                            />
-                        </ConfigProvider>
                     </div>
                 </div>
             ),
         },
         {
-            label: (
-                <div className='flex flex-row'>
-                    <MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} />
-                    <span>NDI</span>
-                </div>
-            ),
+            label: (<div className='flex flex-row'> <MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div> ),
             key: 'NDI',
-            children: (
-                <div className='w-full flex flex-row'>
-                    <div className="h-[58vh] xs:h-[50vh] sm:h-[50vh] md:h-[55vh] lg:h-[55vh] xl:h-[56vh] 2xl:h-[58vh] 3xl:h-[63vh] w-full mb-10">
-                        <div id='OFW-NDI'>
-                            <NDI
-                                valueAmount={valueAmount}
-                                event={(e) => { event(e) }}
-                                isEdit={true}
-                                data={value}
-                                isReadOnly={true}
-                                activeKey={activeKey}
-                                sepcoborrowfname={sepcoborrowfname}
-                            />
-                        </div>
-                    </div>
-                    <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[58vh] sm:h-[50vh] md:h-[55vh] lg:h-[58vh] xl:h-[60vh] 2xl:h-[57vh] 3xl:h-[64vh]">
-                        <ConfigProvider
-                            theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}
-                        >
-                            <Anchor
-                                replace
-                                affix={false}
-                                items={[
-                                    { key: 'OFW-NDI', href: '#OFW-NDI', title: 'NDI OFW' },
-                                    { key: 'BORROWER-NDI', href: '#BORROWER-NDI', title: 'NDI Beneficiary' },
-                                    { key: 'ACB-NDI', href: '#ACB-NDI', title: 'NDI ACB' },
-                                ]}
-                            />
-                        </ConfigProvider>
-                    </div>
-                </div>
-            ),
+            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={true} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />
         },
         {
             label: <div className='flex flex-row'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
@@ -653,76 +627,92 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
     ].filter(Boolean);
 
     return (
-        <div className='w-full'>
+        <div>
             {contextHolder}
-            <Tabs defaultActiveKey={tabs} activeKey={activeKey} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
-            {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
-                <ConfigProvider
-                    theme={{
-                        token: {
-                            fontSize: 14,
-                            borderRadius: 8,
-                            fontWeightStrong: 600,
-                            colorText: '#ffffff',
-                        },
-                    }}
-                >
-                    <div className="flex justify-center items-center mr-40 mb-2 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 3xl:mb-16 4xl:mb-20
-         space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
-                        {isEdit ? (
-                            <>
+            <div className="w-full">
+                <Tabs
+                    defaultActiveKey={tabs}
+                    activeKey={activeKey}
+                    type="card"
+                    size="middle"
+                    onChange={onChangeTab}
+                    items={TabsItems}
+                />
+                {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
+                    <ConfigProvider
+                        theme={{
+                            token: {
+                                fontSize: 14,
+                                borderRadius: 8,
+                                fontWeightStrong: 600,
+                                colorText: '#ffffff',
+                            },
+                        }}
+                    >
+                        <div className="flex justify-center items-center mr-40 mb-2 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 3xl:mb-16 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
+                            {isEdit ? (
+                                <>
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#2b972d',
+                                                colorPrimaryHover: '#34b330',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<SaveOutlined />}
+                                            onClick={toggleEditMode}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            SAVE
+                                        </Button>
+                                    </ConfigProvider>
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#dc3545',
+                                                colorPrimaryHover: '#f0aab1',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<CloseOutlined />}
+                                            onClick={() => setEdit(false)}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            CANCEL
+                                        </Button>
+                                    </ConfigProvider>
+                                </>
+                            ) : (
                                 <ConfigProvider
                                     theme={{
                                         token: {
-                                            colorPrimary: '#2b972d',
-                                            colorPrimaryHover: '#34b330',
+                                            colorPrimary: '#3b0764', // Purple color for EDIT button
+                                            colorPrimaryHover: '#6b21a8', // Darker purple on hover
                                         },
-                                    }}>
+                                    }}
+                                >
                                     <Button
                                         type="primary"
-                                        icon={<SaveOutlined />}
+                                        icon={<EditOutlined />}
                                         onClick={toggleEditMode}
                                         size="large"
-                                        className="-mt-5">SAVE
+                                        className="-mt-5"
+                                    >
+                                        EDIT
                                     </Button>
                                 </ConfigProvider>
-                                <ConfigProvider
-                                    theme={{
-                                        token: {
-                                            colorPrimary: '#dc3545',
-                                            colorPrimaryHover: '#f0aab1',
-                                        },
-                                    }}>
-                                    <Button
-                                        type="primary"
-                                        icon={<CloseOutlined />}
-                                        onClick={() => setEdit(false)}
-                                        size="large"
-                                        className="-mt-5">CANCEL
-                                    </Button>
-                                </ConfigProvider>
-                            </>
-                        ) : (
-                            <ConfigProvider
-                                theme={{
-                                    token: {
-                                        colorPrimary: '#3b0764', // Purple color for EDIT button
-                                        colorPrimaryHover: '#6b21a8', // Darker purple on hover
-                                    },
-                                }}>
-                                <Button
-                                    type="primary"
-                                    icon={<EditOutlined />}
-                                    onClick={toggleEditMode}
-                                    size="large"
-                                    className="-mt-5"
-                                    > EDIT
-                                </Button>
-                            </ConfigProvider>
-                        )}
-                    </div>
-                </ConfigProvider>
-            )}
+                            )}
+                        </div>
+                    </ConfigProvider>
+                )}
+            </div>
         </div>
     );
 }

@@ -54,16 +54,16 @@ function ViewApprovalAmount({ data, loading, receive = () => {} }) {
     }, [modUser]);*/}
 
     const items = [
-        { key: '1', label: <span className={`font-semibold ${data.ApprvAmount ? 'text-black' : 'text-orange-500'}`}>Approved Amount</span>, children: data.ApprvAmount ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(data.ApprvAmount).replaceAll(',', ''))) : '' },
-        { key: '2', label: <span className={`font-semibold ${data.ApprvInterestRate ? 'text-black' : 'text-orange-500'}`}>Approved Interest Rate (%)</span>, children: data.ApprvInterestRate || '' },
-        { key: '3', label: <span className={`font-semibold ${data.ApprvTerms ? 'text-black' : 'text-orange-500'}`}>Approved Terms (Months)</span>, children: data.ApprvTerms || '' },
-        { key: '4', label: <span className={`font-semibold ${getMAmort ? 'text-black' : 'text-orange-500'}`}>Monthly Amort</span>, children: getMAmort ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getMAmort))) : ''},
+        { key: '1', label: <span className={`font-semibold ${data.ApprvAmount ? 'text-black' : 'text-red-600'}`}>Approved Amount</span>, children: data.ApprvAmount ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(data.ApprvAmount).replaceAll(',', ''))) : '' },
+        { key: '2', label: <span className={`font-semibold ${data.ApprvInterestRate ? 'text-black' : 'text-red-600'}`}>Approved Interest Rate (%)</span>, children: data.ApprvInterestRate || '' },
+        { key: '3', label: <span className={`font-semibold ${data.ApprvTerms ? 'text-black' : 'text-red-600'}`}>Approved Terms (Months)</span>, children: data.ApprvTerms || '' },
+        { key: '4', label: <span className={`font-semibold ${getMAmort ? 'text-black' : 'text-red-600'}`}>Monthly Amort</span>, children: getMAmort ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getMAmort))) : ''},
         { key: '5', label: <span className="font-semibold text-black">Other Exposure</span>, children: (data.OtherExposure !== undefined && data.OtherExposure !== null && data.OtherExposure !== '')
                 ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(data.OtherExposure).replaceAll(',', '')))
                 : '0.00'},        
-        { key: '6', label: <span className={`font-semibold ${getTExposure ? 'text-black' : 'text-orange-500'}`}>Total Exposure</span>, children: getTExposure ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getTExposure).replaceAll(',', ''))) : '' },
+        { key: '6', label: <span className={`font-semibold ${getTExposure ? 'text-black' : 'text-red-600'}`}>Total Exposure</span>, children: getTExposure ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getTExposure).replaceAll(',', ''))) : '' },
         { key: '7', label: <span className="font-semibold text-black">Remarks</span>, children: data.CRORemarks || '' },
-        { /*key: '8', label: <span className={`font-semibold ${data.ModUser || modUser ? 'text-black' : 'text-orange-500'}`}>Approved By</span>, children: data.ModUser || modUser || '' */},
+        { /*key: '8', label: <span className={`font-semibold ${data.ModUser || modUser ? 'text-black' : 'text-red-600'}`}>Approved By</span>, children: data.ModUser || modUser || '' */},
 
     ];
 

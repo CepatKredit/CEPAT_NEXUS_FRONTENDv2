@@ -53,7 +53,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.loanAppCode ? "text-black" : "text-orange-500"
+            data.loanAppCode ? "text-black" : "text-red-600"
           }`}
         >
           Loan Application ID
@@ -66,7 +66,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.loanCreated ? "text-black" : "text-orange-500"
+            data.loanCreated ? "text-black" : "text-red-600"
           }`}
         >
           Date of Application
@@ -81,7 +81,7 @@ function ViewLoanDetails({ data, User }) {
           className={`font-semibold ${
             loanProducts.data?.find((option) => option.code === data.loanProd)
               ? "text-black"
-              : "text-orange-500"
+              : "text-red-600"
           }`}
         >
           Loan Product
@@ -96,7 +96,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.ofwDeptDate ? "text-black" : "text-orange-500"
+            data.ofwDeptDate ? "text-black" : "text-red-600"
           }`}
         >
           OFW Departure Date
@@ -109,7 +109,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.loanBranch ? "text-black" : "text-orange-500"
+            data.loanBranch ? "text-black" : "text-red-600"
           }`}
         >
           Assigned Branch
@@ -124,7 +124,7 @@ function ViewLoanDetails({ data, User }) {
           className={`font-semibold ${
             loanTypeOptions.find((option) => option.value === data.loanType)
               ? "text-black"
-              : "text-orange-500"
+              : "text-red-600"
           }`}
         >
           Loan Application Type
@@ -140,7 +140,7 @@ function ViewLoanDetails({ data, User }) {
         label: (
           <span
             className={`font-semibold ${
-              data.PrevAmount ? "text-black" : "text-orange-500"
+              data.PrevAmount ? "text-black" : "text-red-600"
             }`}
           >
             Previous Approved Amount{" "}
@@ -161,7 +161,7 @@ function ViewLoanDetails({ data, User }) {
           className={`font-semibold ${
             loanPurpose.data?.find((purpose) => purpose.id === data.loanPurpose)
               ? "text-black"
-              : "text-orange-500"
+              : "text-red-600"
           }`}
         >
           Loan Purpose
@@ -176,7 +176,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.loanAmount ? "text-black" : "text-orange-500"
+            data.loanAmount ? "text-black" : "text-red-600"
           }`}
         >
           {User === "Credit" || User === "Lp"
@@ -197,7 +197,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.loanTerms ? "text-black" : "text-orange-500"
+            data.loanTerms ? "text-black" : "text-red-600"
           }`}
         >
           {User === "Credit" || User === "Lp"
@@ -212,7 +212,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.CRAApprvRec ? "text-black" : "text-orange-500"
+            data.CRAApprvRec ? "text-black" : "text-red-600"
           } w-[7rem]`}
         >
           CRA Recommendation
@@ -232,7 +232,7 @@ function ViewLoanDetails({ data, User }) {
         label: (
           <span
             className={`font-semibold ${
-              data.consultName ? "text-black" : "text-orange-500"
+              data.consultName ? "text-black" : "text-red-600"
             }`}
           >
             Loan Consultant
@@ -247,7 +247,7 @@ function ViewLoanDetails({ data, User }) {
         label: (
           <span
             className={`font-semibold ${
-              data.consultNumber ? "text-black" : "text-orange-500"
+              data.consultNumber ? "text-black" : "text-red-600"
             }`}
           >
             Loan Consultant Number
@@ -261,7 +261,7 @@ function ViewLoanDetails({ data, User }) {
         label: (
           <span
             className={`font-semibold ${
-              data.consultantfblink ? "text-black" : "text-orange-500"
+              data.consultantfblink ? "text-black" : "text-red-600"
             } w-[10rem]`}
           >
             Consultant Facebook Name / Profile
@@ -274,7 +274,7 @@ function ViewLoanDetails({ data, User }) {
       label: (
         <span
           className={`font-semibold ${
-            data.channel ? "text-black" : "text-orange-500"
+            data.channel ? "text-black" : "text-red-600"
           } w-[12rem]`}
         >
           How did you know about Cepat Kredit Financing?

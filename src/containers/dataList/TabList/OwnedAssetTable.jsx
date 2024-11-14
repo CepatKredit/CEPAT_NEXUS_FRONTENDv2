@@ -240,21 +240,21 @@ function OwnedAsset({ data, User }) {
             title: 'Make',
             dataIndex: 'make',
             key: 'make',
-            width: '20%',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Year Model',
             dataIndex: 'yearModel',
             key: 'yearModel',
-            width: '20%',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Remarks',
             dataIndex: 'plateNo',
             key: 'plateNo',
-            width: '30%',
+            width: '25%',
             editable: true,
         },
         {
@@ -410,7 +410,7 @@ function OwnedAsset({ data, User }) {
                     <>
 
                         <Input
-                            className='w-[13rem]'
+                            className='w-[10rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'make'); }}
                             placeholder='Make' />
                     </>
@@ -420,7 +420,7 @@ function OwnedAsset({ data, User }) {
                         <>
 
                             <Input
-                                className='w-[13rem]'
+                                className='w-[10rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'yearModel'); }}
                                 placeholder='Year Model' />
                         </>
@@ -430,7 +430,7 @@ function OwnedAsset({ data, User }) {
                             <>
 
                                 <Input
-                                    className='w-[13rem]'
+                                    className='w-[17rem]'
                                     onChange={(e) => { onChangeToUpper(e.target.value, 'plateNo'); }}
                                     placeholder='Remarks' />
 
@@ -455,9 +455,9 @@ function OwnedAsset({ data, User }) {
         : [];
 
     return (
-        <div className='h-[500px] flex flex-col items-center'>
+        <div className='flex flex-col items-center'>
             {contextHolder}
-            <div className='mt-[5rem] w-[100%] px-2'>
+            <div className=' w-full px-2'>
                 <div>
                     <center>
                         <SectionHeader title="Owned Assets of OFW / Seaman" />

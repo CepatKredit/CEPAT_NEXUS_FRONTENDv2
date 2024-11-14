@@ -227,7 +227,7 @@ function OtherLoanHistory({ data, User }) {
             title: 'Other Loans',
             dataIndex: 'loan',
             key: 'loan',
-            width: '15%',
+            width: '20%',
             editable: true,
         },
         {
@@ -248,7 +248,7 @@ function OtherLoanHistory({ data, User }) {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '30%',
+            width: '25%',
             editable: true,
         },
         {
@@ -396,7 +396,7 @@ function OtherLoanHistory({ data, User }) {
             ? (
                 <>
                     <Input
-                        className='w-[10rem]'
+                        className='w-[13.5rem]'
                         onChange={(e) => { onChangeToUpper(e.target.value, 'loan'); }}
                         placeholder='Other Loans' />
                 </>
@@ -424,7 +424,7 @@ function OtherLoanHistory({ data, User }) {
                         ? (
                             <>
                                 <Input
-                                    className='w-[18rem]'
+                                    className='w-[17.5rem]'
                                     onChange={(e) => { onChangeToUpper(e.target.value, 'remarks') }}
                                     placeholder='Remarks' />
                             </>
@@ -449,9 +449,9 @@ function OtherLoanHistory({ data, User }) {
         ? getOtherLoanHistory.data.filter(x => x.key !== 0)
         : [];
     return (
-        <div className='h-[500px] flex flex-col items-center'>
+        <div className='flex flex-col items-center'>
             {contextHolder}
-            <div className='mt-[5rem] w-full px-2'>
+            <div className='w-full px-2'>
                 <div>
                     <center>
                         <SectionHeader title="Credit History of OFW / Seaman" />

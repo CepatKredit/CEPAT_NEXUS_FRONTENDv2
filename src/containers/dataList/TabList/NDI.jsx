@@ -14,6 +14,10 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController'
 import { GetData } from '@utils/UserData';
 
 function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
+    const [loading, setLoading] = React.useState(true);
+    const onLoadingChange = (value) => {
+        setLoading(value);
+    }
     const [isEdit, setEdit] = React.useState(false);
     const [childValues, setChildValues] = React.useState({});
     const [getMisc, setMisc] = React.useState({});
@@ -26,7 +30,17 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
     function DISABLE_STATUS(LOCATION) {
-         if (GetData('ROLE').toString() === '70') {
+        if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '70') {
             console.log('LPA')
             if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
@@ -367,64 +381,153 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                     : null;
     }
 
+
+
     return (
         <>
             {contextHolder}
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-            <div className='w-full flex flex-row'>
-                <div className="h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh] w-full mb-10 overflow-y-auto">
-                    <div className='w-full'>
-                        {data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ?
-                            (<>
-                                <OFW setMiscellanious={handleMisc} principal={'Principal Borrower'} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                <Borrower setMiscellanious={handleMisc} principal={'Co-Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                            </>)
-                            : (<>
-                                <Borrower setMiscellanious={handleMisc} principal={'Principal Borrower'} key={2} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                                <OFW setMiscellanious={handleMisc} principal={'Co-Borrower'} key={1} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                            </>)
-                        }
-                        {!!sepcoborrowfname && (
-                            <ACB setMiscellanious={handleMisc} activeKey={activeKey} key={3} onValueChange={handleValueChange} onOtherIncome={handleIncomeChange} onOtherExpense={handleExpenseChange} data={data} InitialOtherIncome={InitialOtherIncome} InitialOtherExpense={ExpenseOtherIncome} />
-                        )}
-                        <div className='flex justify-center items-center pt-[1rem]'>
-                            <div className='flex flex-col justify-center items-center w-full'>
-                                <Space>
-                                    <div className='w-[15rem] font-bold'>Grand Total</div>
-                                    <div className='w-[15rem]'>
-                                        <Input className={(parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)) < 0
-                                            ? 'w-full text-red-500 font-bold'
-                                            : 'w-full text-emerald-500 font-bold'}
-                                            placeholder='0.00'
-                                            value={formatNumberWithCommas((parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)).toFixed(2))}
-                                            disabled={isReadOnly} />
+            <div className="w-full flex flex-col">
+                <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+                <div className="flex flex-row mt-4">
+                    <div
+                        id="scrollable-container"
+                        className="h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh] w-full mb-8 overflow-y-auto px-4 mx-2"
+                    >
+                        <div className="w-full">
+                            {data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ? (
+                                <>
+                                    <div id="OFW-NDI">
+                                        <OFW
+                                            principal="Principal Borrower"
+                                            onLoadingChange={onLoadingChange}
+                                            key={1}
+                                            onValueChange={handleValueChange}
+                                            onOtherIncome={handleIncomeChange}
+                                            onOtherExpense={handleExpenseChange}
+                                            data={data}
+                                            InitialOtherIncome={InitialOtherIncome}
+                                            InitialOtherExpense={ExpenseOtherIncome}
+                                        />
                                     </div>
-                                    <div className='w-[15rem]'>
-                                        <Input className={(parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)) < 0
-                                            ? 'w-full text-red-500 font-bold'
-                                            : 'w-full text-emerald-500 font-bold'}
-                                            placeholder='0.00'
-                                            value={formatNumberWithCommas((parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)).toFixed(2))}
-                                            disabled={isReadOnly} />
+                                    <div id="BORROWER-NDI">
+                                        <Borrower
+                                            principal="Co-Borrower"
+                                            key={2}
+                                            onValueChange={handleValueChange}
+                                            onOtherIncome={handleIncomeChange}
+                                            onOtherExpense={handleExpenseChange}
+                                            data={data}
+                                            InitialOtherIncome={InitialOtherIncome}
+                                            InitialOtherExpense={ExpenseOtherIncome}
+                                        />
                                     </div>
-                                </Space>
+                                </>
+                            ) : (
+                                <>
+                                    <div id="OFW-NDI">
+                                        <Borrower
+                                            principal="Principal Borrower"
+                                            key={2}
+                                            onValueChange={handleValueChange}
+                                            onOtherIncome={handleIncomeChange}
+                                            onOtherExpense={handleExpenseChange}
+                                            data={data}
+                                            InitialOtherIncome={InitialOtherIncome}
+                                            InitialOtherExpense={ExpenseOtherIncome}
+                                        />
+                                    </div>
+                                    <div id="BORROWER-NDI">
+                                        <OFW
+                                            principal="Co-Borrower"
+                                            key={1}
+                                            onValueChange={handleValueChange}
+                                            onOtherIncome={handleIncomeChange}
+                                            onOtherExpense={handleExpenseChange}
+                                            data={data}
+                                            InitialOtherIncome={InitialOtherIncome}
+                                            InitialOtherExpense={ExpenseOtherIncome}
+                                        />
+                                    </div>
+                                </>
+                            )}
+                            {!!sepcoborrowfname && (
+                                <div id="ACB-NDI" className="w-full">
+                                    <ACB
+                                        activeKey={activeKey}
+                                        key={3}
+                                        onValueChange={handleValueChange}
+                                        onOtherIncome={handleIncomeChange}
+                                        onOtherExpense={handleExpenseChange}
+                                        data={data}
+                                        InitialOtherIncome={InitialOtherIncome}
+                                        InitialOtherExpense={ExpenseOtherIncome}
+                                    />
+                                </div>
+                            )}
+                            <div className="flex justify-center items-center pt-4">
+                                <div className="flex flex-col justify-center items-center w-[60vw]">
+                                    <Space>
+                                        <div className="w-[15rem] font-bold">Grand Total</div>
+                                        <div className="w-[15rem]">
+                                            <Input
+                                                className={(parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)) < 0 ? 'w-full text-red-500 font-bold' : 'w-full text-emerald-500 font-bold'}
+                                                placeholder="0.00"
+                                                value={formatNumberWithCommas((parseFloat(OFWValueDOC) + parseFloat(BENEValueDOC) + parseFloat(ACBValueDOC)).toFixed(2))}
+                                                disabled={isReadOnly}
+                                            />
+                                        </div>
+                                        <div className="w-[15rem]">
+                                            <Input
+                                                className={(parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)) < 0 ? 'w-full text-red-500 font-bold' : 'w-full text-emerald-500 font-bold'}
+                                                placeholder="0.00"
+                                                value={formatNumberWithCommas((parseFloat(OFWValue) + parseFloat(BENEValue) + parseFloat(ACBValue)).toFixed(2))}
+                                                disabled={isReadOnly}
+                                            />
+                                        </div>
+                                    </Space>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    
+                    {/* Navigation Anchor Section */}
+                    <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]">
+                        <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+                            <Anchor
+                                replace
+                                affix={false}
+                                targetOffset={50}
+                                getContainer={() => document.getElementById('scrollable-container')}
+                                items={[
+                                    { key: 'OFW-NDI', href: '#OFW-NDI', title: data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ? 'NDI OFW' : 'NDI Beneficiary' },
+                                    { key: 'BORROWER-NDI', href: '#BORROWER-NDI', title: data.loanProd !== '0303-DHW' && data.loanProd !== '0303-VL' && data.loanProd !== '0303-WL' ? 'NDI OFW' : 'NDI Beneficiary' },
+                                    ...(!!sepcoborrowfname ? [{ key: 'ACB-NDI', href: '#ACB-NDI', title: 'NDI ACB' }] : []),
+                                ]}
+                            />
+                        </ConfigProvider>
+                    </div>
                 </div>
+                
+                {/* Save Button Section */}
+                <center className="flex justify-center items-center ">
+                    <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                        {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                            <Button
+                                size="large"
+                                className="-mt-6 mr-40 bg-[#2b972d]"
+                                type="primary"
+                                disabled={Counter >= 1}
+                                onClick={SaveNdi}
+                                loading={onClickSaveNDI.isPending}
+                            >
+                                SAVE NDI
+                            </Button>
+                        )}
+                    </ConfigProvider>
+                </center>
             </div>
-            <center className="flex justify-center items-center ">
-                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                {!DISABLE_STATUS(localStorage.getItem('SP')) && (
-                    <Button 
-                        size='large' className='-mt-5 ml-15 bg-[#2b972d]'  type='primary'  disabled={Counter >= 1}  onClick={SaveNdi} loading={onClickSaveNDI.isPending} >SAVE NDI
-                    </Button>
-                )}                        
-                </ConfigProvider>
-
-            </center >
         </>
-    )
+    );
 }
 
-export default NDI
+export default NDI;

@@ -423,7 +423,7 @@ function EmploymentHistory({ data, User }) {
             ? (
                 <>
                     <Input
-                        className='w-[16rem]'
+                        className='w-[19.5rem]'
                         onChange={(e) => { onChangeToUpper(e.target.value, 'agency') }}
                         placeholder={
                             data.loanProd === '0303-DH' ||
@@ -441,7 +441,7 @@ function EmploymentHistory({ data, User }) {
                 ? (
                     <>
                         <Input
-                            className='w-[16rem]'
+                            className='w-[16.5rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'position') }}
                             placeholder='Position'
                         />
@@ -503,9 +503,9 @@ function EmploymentHistory({ data, User }) {
 
 
     return (
-        <div className='h-[500px] flex flex-col items-center mt-[10rem]'>
+        <div className='flex flex-col items-center '>
             {contextHolder}
-            <div className='mt-[5rem] w-full px-2'>
+            <div className='w-full px-2'>
                 <div>
                     <center>
                         <SectionHeader title="Employment History of OFW / Seaman" />
