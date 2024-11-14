@@ -402,28 +402,34 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                 <div>
                     <div className='w-[12rem]'>Company Code</div>
                     <div className='w-[12rem]'>
-                        <Input disabled={FileName} className='w-full' value={getBatchInfo.CC} onChange={(e) => { setBatchInfo({ ...getBatchInfo, CC: e.target.value }) }} />
+                        {/* <Input disabled={FileName} className='w-full' value={getBatchInfo.CC} onChange={(e) => { setBatchInfo({ ...getBatchInfo, CC: e.target.value }) }} /> */}
+                        <h1><strong>CEPAT</strong></h1>
                     </div>
                 </div>
                 <div>
                     <div className='w-[12rem]'>Company Name</div>
                     <div className='w-[12rem]'>
-                        <Input disabled={FileName} className='w-full' value={Data?.CN} readOnly />
+                        {/* <Input disabled={FileName} className='w-full' value={Data?.CN} readOnly /> */}
+                        <h1><strong>CEPAT KREDIT FINANCING INC</strong></h1>
                     </div>
                 </div>
                 <div>
-                    <div className='w-[20rem]'>Funding Account Number</div>
-                    <div className='w-[20rem]'>
-                        <Input disabled={FileName} className='w-full' value={getBatchInfo?.FAN} onChange={(e) => { setBatchInfo({ ...getBatchInfo, FAN: e.target.value }) }} />
+                    <div className='w-[12rem]'>Funding Account Number</div>
+                    <div className='w-[12rem]'>
+                        {/* <Input disabled={FileName} className='w-full' value={getBatchInfo?.FAN} onChange={(e) => { setBatchInfo({ ...getBatchInfo, FAN: e.target.value }) }} /> */}
+                        <h1><strong>0000-057309-503</strong></h1>
                     </div>
                 </div>
-                <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => { updateBatch(); LoadData() }}>Update</Button>
+                {/*UPDATE BUTTON */}
+                {/* <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => { updateBatch(); LoadData() }}>Update</Button> */}
+                <div>
                 <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => {
                     LoadData()
                     SetTotalAmount(parseFloat(getTotal.Amount))
                     SetTotalCount(parseInt(getTotal.Count))
                     setStatus(true)
                 }}>Add Disburse</Button>
+                </div>
             </div>
             <Table
                 dataSource={getDisbursementList.data?.map((x) => ({

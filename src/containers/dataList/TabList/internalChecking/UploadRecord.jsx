@@ -409,7 +409,10 @@ function UploadRecord({ data, ClientId, Uploader }) {
             options={DocListICQuery.data?.map((x) => ({ value: x.docsType, label: x.docsType, }))} />
             : inputType === 'name'
                 ? <Select ref={inputRef} value={getData.name} className='w-[100%]' options={NameList(getData.fc)?.map((x) => ({
-                    value: x.name, label: x.name, emoji: x.emoji, desc: x.desc
+                    value: x.name, 
+                    label: x.name, 
+                    emoji: x.emoji, 
+                    desc: x.desc
                 }))} onChange={(e) => { setData({ ...getData, name: e }) }}
                     optionRender={(option) => (
                         <Space>

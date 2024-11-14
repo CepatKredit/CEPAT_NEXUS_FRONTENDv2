@@ -194,7 +194,6 @@ function BatchList() {
                 expandable={{
                     expandedRowRender: (data, num) =>
                     (<div className='h-[350px] px-5 overflow-y-auto'>
-                        console.log(data.key)
                         <BatchedDisbursement BID={data.key} Data={data} FileName={data.FN} />
                     </div>)
                 }}
