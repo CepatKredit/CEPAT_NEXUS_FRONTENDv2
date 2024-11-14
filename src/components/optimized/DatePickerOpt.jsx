@@ -32,7 +32,7 @@ function DatePickerOpt({
     setDatePickerOpen,
     validationMessage,
     handleBlur,
-  } = DateComponentHook(value, receive, rendered, KeyName);
+  } = DateComponentHook(value, receive, rendered, KeyName, notValidMsg);
 
   const inputRef = useRef(null);
   const { setfocus } = useContext(LoanApplicationContext)

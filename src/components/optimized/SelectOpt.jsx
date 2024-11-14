@@ -25,19 +25,21 @@ function SelectOpt({
     rendered,
 }) {
     const [search, setSearchInput] = useState('');
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const inputRef = useRef(null);
-    const { setfocus } = useContext(LoanApplicationContext)
+    const { setfocus } = useContext(LoanApplicationContext);
+
     useEffect(() => {
         setfocus(KeyName, inputRef.current);
-    }, [KeyName, setfocus])
+    }, [KeyName, setfocus]);
 
     const {
         status,
         filteredOptions,
         handleSelectChange,
         handleKeyDown
-    } = SelectComponentHooks( search, receive, options, setSearchInput,keyName||KeyName, rendered, value );
+    } = SelectComponentHooks(search, receive, options, setSearchInput, keyName || KeyName, rendered, value);
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),
@@ -48,9 +50,14 @@ function SelectOpt({
         debouncedSearch(value);
     };
 
+    const handleFocus = () => {
+        setDropdownOpen(true);
+    };
+
     const handleBlur = () => {
+        setDropdownOpen(false);
         if (required && !value) {
-            handleSelectChange('')
+            handleSelectChange('');
         }
     };
 
@@ -75,11 +82,13 @@ function SelectOpt({
                         placeholder={placeHolder}
                         onChange={handleSelectChange}
                         onBlur={handleBlur}
+                        onFocus={handleFocus}
                         showSearch={showSearch}
                         filterOption={false}
                         onSearch={handleSearch}
                         onKeyDown={handleKeyDown}
                         readOnly={readOnly}
+                        open={dropdownOpen}
                         status={!disabled && (required || required === undefined) ? status : false}
                         style={{ width: '100%' }}
                         suffixIcon={
@@ -87,7 +96,7 @@ function SelectOpt({
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
                             ) : status === 'success' ? (
                                 <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
-                            ): null
+                            ) : null
                         }
                     />
                     {!disabled && (required || required === undefined) && status === 'error' && (

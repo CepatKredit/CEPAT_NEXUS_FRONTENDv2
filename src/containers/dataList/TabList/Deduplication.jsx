@@ -50,23 +50,23 @@ function Deduplication({ classname, data }) {
     const getDuplicateLoan = useQuery({
         queryKey: ['getDuplicateLoan'],
         queryFn: async () => {
-            try{
-            var result = await axios.get(`/getDuplicateLoans/${data?.ofwfname}/${data?.ofwlname}/${data?.loanIdCode}`)
-            setList(result.data.list);
-            SET_LOADING_INTERNAL('Deduplication', false)
-            return result.data.list;
-        } catch (error) {
-            console.error('Error fetching duplicate loans:', error);
-            SET_LOADING_INTERNAL('Deduplication', false);
-            return [];
-        }
+            try {
+                var result = await axios.get(`/getDuplicateLoans/${data?.ofwfname}/${data?.ofwlname}/${data?.loanIdCode}`)
+                setList(result.data.list);
+                SET_LOADING_INTERNAL('Deduplication', false)
+                return result.data.list;
+            } catch (error) {
+                console.error('Error fetching duplicate loans:', error);
+                SET_LOADING_INTERNAL('Deduplication', false);
+                return [];
+            }
         },
         enabled: true,
         retryDelay: 1000,
     });
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
+        if (data.loanIdCode !== '') {
             SET_LOADING_INTERNAL('Deduplication', true)
             getDuplicateLoan.refetch();
         }

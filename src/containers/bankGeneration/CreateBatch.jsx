@@ -14,14 +14,14 @@ function CreateBatch() {
     const queryClient = useQueryClient()
     const [api, contextHolder] = notification.useNotification();
     const [getInfo, setInfo] = React.useState({
-        CODE: '',
-        FN: '',
+        CODE: 'CEPAT',
+        FN: '0000-057309-503',
         TYPE: 'ALL',
         SELECT: ''
     })
 
     const { modalStatus, setStatus } = BatchModal()
-    React.useEffect(() => { if (modalStatus === true) { setInfo({ CODE: '', FN: '', TYPE: '', SELECT: '' }) } }, [modalStatus])
+    //React.useEffect(() => { if (modalStatus === true) { setInfo({ CODE: '', FN: '', TYPE: '', SELECT: '' }) } }, [modalStatus])
 
     const [getData, setData] = React.useState([])
     const GetDisbursementListQuery = useQuery({
@@ -147,6 +147,7 @@ function CreateBatch() {
                         })
                 }
             })
+            setInfo({ CODE: '', FN: '', TYPE: '', SELECT: '' })
             queryClient.invalidateQueries({ queryKey: ['GetBatchListQuery', jwtDecode(token).USRID] }, { exact: true })
             setStatus(false)
         }

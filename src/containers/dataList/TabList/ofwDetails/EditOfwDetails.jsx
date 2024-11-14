@@ -367,6 +367,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 disabled={User === 'Credit' && data.MarriedPBCB}
 
                             />
+
                             <DatePickerOpt
                                 className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
@@ -379,7 +380,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 disabled={User === 'Credit' && data.MarriedPBCB}
                                 notValidMsg={'Spouse Birthdate Required'}
                                 KeyName={'ofwspousebdate'}
-
+                                category={'marketing'}
                             />
                             {User === 'Credit' && (
                                 <LabeledSelect
