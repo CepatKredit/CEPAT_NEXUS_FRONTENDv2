@@ -168,17 +168,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             return;
         }
 
-        /* if (getUpdate.Status === 'PRE-APPROVAL' && (!ispreApproval)) {
-             api['info']({
-                 message: 'Notification',
-                 description: (
-                     <span>
-                         Please ensure that <strong>Masterlist- Name</strong> checked before updating.
-                     </span>
-                 ),
-             });
-             return;
-         }*/
         onClickUpdateStatus.mutate();
 
     }
@@ -196,7 +185,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 setUpdate({ ...getUpdate, RemarksEx: releasedMessage });
             }
 
-            // ito ang update checkboxes
             if (getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') {
                 console.log('ito ang checkboxes update update', getUpdate.Status)
                 const checkListData = {
@@ -230,11 +218,10 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         message: 'Error',
                         description: 'Failed to update checkboxes. Please try again.',
                     });
-                    return; // Exit the function if the checkboxes update fails
+                    return; 
                 }
             } else {
-                console.log('ito ang normal update', getUpdate.Status)
-                //ito naman ang update application
+             
                 const dataContainer = [
                     {
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
@@ -313,18 +300,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             }
         }
     })
-
-
-    /*  React.useEffect(() => {
-          console.log("User ROLE:", GetData('ROLE'));
-      }, [data])*/
-
-
-    React.useEffect(() => {
-        console.log("User ROLEssssssssssssssss:", data.loanAppStat);
-    }, [data])
-
-
 
 
     React.useEffect(() => {
@@ -495,7 +470,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         )}
 
 
-                        {((data.loanAppStat === 'FOR CREDIT ASSESSMENT' &&
+                        {((
                             (getUpdate.Status === 'FOR APPROVAL' || getUpdate.Status === 'PRE-CHECK') &&
                             (['50', '55'].includes(GetData('ROLE').toString()))) ||
 
@@ -588,7 +563,8 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
 
 
-                        {getUpdate.Status === 'FOR CREDIT ASSESSEMENT' && (
+                        {getUpdate.Status === 'FOR CREDIT ASSESSMENT' 
+                        ?(
                             <div className='pt-2'>
                                 <Space>
                                     <div className='w-[23.5rem]'>
@@ -657,7 +633,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                                     </div>
                                 )}
                             </div>
-                        )}
+                        ):(<></>)}
                         <center>
                             <div className='pt-[2rem]'>
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>

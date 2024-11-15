@@ -1,11 +1,14 @@
 import * as React from 'react'
-import { Space, Input, Radio, Select, Row, Col } from 'antd'
+import { Space, Input, Radio, Select, Row, Col, notification } from 'antd'
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import StatusRemarks from './StatusRemarks';
 import SectionHeader from '@components/validation/SectionHeader';
+import axios from 'axios';
+import { toDecrypt } from '@utils/Converter';
 
-function Charges({ data, User }) {
+function Charges({ LoanAppId, data, User }) {
+    const [api, contextHolder] = notification.useNotification();
     const [isEdit, setEdit] = React.useState(false);
     const loanProducts = useQuery({
         queryKey: ['getProductSelect'],
@@ -17,6 +20,15 @@ function Charges({ data, User }) {
         enabled: true,
         retryDelay: 1000,
     });
+
+    /*React.useEffect(() => {
+        console.log('hahaahahahahah',LoanAppId);
+    },[User])*/
+
+
+
+
+
 
     function LoanProdDescription() {
         if (!loanProducts.data) {
@@ -50,10 +62,32 @@ function Charges({ data, User }) {
         PNValue: '',
         NetProceeds: '',
         MonthlyAmortization: ''
-    })
+    });
+
+
+    const getChargesQuery = useQuery({
+        queryKey: ['getChargesQuery'],
+        queryFn: async () => {
+            try {
+                //console.log('LOanappid ito..', LoanAppId)
+                const result = await GET_LIST(`/getChargesLPA/${LoanAppId}`)
+                console.log('chargesssss', result);
+                return result.list;
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        enabled: true,
+        retryDelay: 1000,
+        staleTime: 5 * 1000
+    });
+    
+    React.useEffect(() => {
+        getChargesQuery.refetch();
+    }, [LoanAppId])
+
 
     React.useEffect(() => {
-        //console.log('Loan Typeeeeeee:', data.loanTerms );
         setCharges({ ...getCharges, ProductLoan: data.loanProd })
     }, [data]);
 
@@ -206,8 +240,8 @@ function Charges({ data, User }) {
             <div className='h-[58vh] overflow-y-auto'>
                 <div className='w-[80vw] mx-auto pt-4 ml-[6rem] mt-[-3rem]'>
                     <div className='ml-[-8rem]'>
-                <SectionHeader title="Charges"/>
-                </div>
+                        <SectionHeader title="Charges" />
+                    </div>
                     <Row gutter={16} className='font-bold text-xl pb-4'>
                         <Col span={12} className='text-center ml-[-4rem]'>Other Charges</Col>
                         <Col span={12} className='text-center'>Loan Charges</Col>

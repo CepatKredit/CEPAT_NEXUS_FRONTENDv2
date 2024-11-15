@@ -278,7 +278,7 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
         {
             label: <div className='flex flex-rows'><LuCalculator style={{ fontSize: '20px', marginRight: 5 }} /><span>Charges</span></div>,
             key: 'charges',
-            children: <Charges data={value} />,
+            children: <Charges LoanAppId={ClientId} data={value} />,
         },
         {
             label: <div className='flex flex-rows'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
