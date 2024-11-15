@@ -42,11 +42,11 @@ function DatePickerOpt({
 
 
   const icon =
-  (required || required === undefined) && status === 'error' ? (
-      <ExclamationCircleFilled style={{ color: "#ff6767", fontSize: "12px" }} />
-    ) : (required || required === undefined) && status === '' ? (
-      <CheckCircleFilled style={{ color: "#00cc00", fontSize: "12px" }} />
-    ) : null;
+  status === "error" ? (
+    <ExclamationCircleFilled style={{ color: "#ff6767", fontSize: "12px" }} />
+  ) : status === "success" ? (
+    <CheckCircleFilled style={{ color: "#00cc00", fontSize: "12px" }} />
+  ) : null;
 
   const suffix = (
     <>
@@ -76,7 +76,7 @@ function DatePickerOpt({
             onBlur={handleBlur}
             disabled={disabled}
             readOnly={readOnly}
-            status={(required || required === undefined) && status === 'error'}
+            status={status}
             maxLength={10}
             suffix={suffix}
             ref={inputRef}
@@ -94,7 +94,7 @@ function DatePickerOpt({
             disabled={disabled}
             inputReadOnly
             disabledDate={disabledate}
-            status={(required || required === undefined) && status === 'error'}
+            status={status}
             suffix={iconVisible && icon}
           />
         )}

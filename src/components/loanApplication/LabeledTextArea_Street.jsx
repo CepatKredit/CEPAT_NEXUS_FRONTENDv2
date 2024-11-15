@@ -75,6 +75,7 @@ function LabeledTextArea_Street({
       <label className={className_label}>{label}</label>
       <div className={className_dsub} style={{ position: "relative" }}>
           <Input.TextArea
+          autoComplete="new-password"
             showCount
             placeholder={placeHolder}
             maxLength={250}
@@ -86,7 +87,7 @@ function LabeledTextArea_Street({
               onChangeSelect(e);
             }}
             onBlur={onBlur}
-            autoComplete="off"
+            // autoComplete="off"
             disabled={
               (type === "permanent"
                 ? data.ofwSameAdd

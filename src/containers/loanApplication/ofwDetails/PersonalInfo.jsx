@@ -175,29 +175,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         }))}
         rendered={ofwrendered}
       />
-      {/* <DatePicker_BDate
-        className_dmain={classname_main}
-        className_label={className_label}
-        className_dsub={className_dsub}
-        fieldName="ofwbdate"
-        label={
-          <>
-            Birth Date <span className="text-red-500">*</span>
-          </>
-        }
-        // receive={(e) => {
-        //     receive({
-        //         name: 'ofwbdate',
-        //         value: dayjs(e, 'MM-DD-YYYY')
-        //     })
-        // }}
-        // value={getAppDetails.ofwbdate}
-
-        category={"direct"}
-        placeHolder={"MM-DD-YYYY"}
-        disabled={!direct && !getAppDetails.dataPrivacy}
-        rendered={ofwrendered}
-      /> */}
       <DatePickerOpt
         className_dmain={classname_main}
         className_label={className_label}
@@ -222,23 +199,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         rendered={ofwrendered}
         // disabledate={disableDate_deployment}
       />
-      {/* <div className={classname_main}>
-                <label className={className_label}>Gender<span className="text-red-500"> *</span></label>
-                <div className={className_dsub} >
-                    <Radio.Group 
-                    onChange={(e) => {
-                        updateAppDetails({
-                            name: 'ofwgender',
-                            value: e.target.value
-                        });
-                    }} value={getAppDetails.ofwgender}
-                        disabled={!direct && !getAppDetails.dataPrivacy}
-                    >
-                        <Radio value={1}>Male</Radio>
-                        <Radio value={2}>Female</Radio>
-                    </Radio.Group>
-                </div>
-            </div> */}
       <GenderRadioGroup
         classname_main={classname_main}
         className_label={className_label}
@@ -248,34 +208,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         rendered={ofwrendered}
         disabled={!direct && !getAppDetails.dataPrivacy}
       />
-
-      {/* <LabeledSelect
-        className_dmain={classname_main}
-        className_label={className_label}
-        className_dsub={className_dsub}
-        label={
-          <>
-            Marital Status <span className="text-red-500">*</span>
-          </>
-        }
-        // value={getAppDetails.ofwmstatus}
-        fieldName="ofwmstatus"
-        data={MaritalStatus()}
-        // receive={(e) => {
-        //     receive({
-        //         name: 'ofwmstatus',
-        //         value: e
-        //     })
-        // }}
-        disabled={!direct && !getAppDetails.dataPrivacy}
-        category={"direct"}
-        placeHolder={"Marital Status"}
-        rendered={ofwrendered}
-        showSearch
-        filterOption={(input, option) =>
-          option.label.toLowerCase().includes(input.toLowerCase())
-        }
-      /> */}
       <SelectOpt
         className_dmain={classname_main}
         className_label={className_label}
@@ -396,33 +328,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         category={"direct"}
         rendered={ofwrendered}
       />
-      {/* <LabeledSelect
-        className_dmain={classname_main}
-        className_label={className_label}
-        className_dsub={className_dsub}
-        label={
-          <>
-            Type of Residences <span className="text-red-500">*</span>
-          </>
-        }
-        fieldName="ofwresidences"
-        // receive={(e) => {
-        //     receive({
-        //         name: 'ofwresidences',
-        //         value: e
-        //     })
-        // }}
-        disabled={!direct && !getAppDetails.dataPrivacy}
-        data={Residences()}
-        category={"direct"}
-        // value={getAppDetails.ofwresidences}
-        placeHolder={"Type of Residences"}
-        rendered={ofwrendered}
-        showSearch
-        filterOption={(input, option) =>
-          option.label.toLowerCase().includes(input.toLowerCase())
-        }
-      /> */}
 
       <SelectOpt
         className_dmain={classname_main}

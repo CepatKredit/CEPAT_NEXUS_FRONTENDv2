@@ -1,8 +1,9 @@
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
 import { DateFormat } from '@utils/Formatting';
 import { checkAgeisValid, CheckDateValid, checkDeployisValid } from '@utils/Validations';
 import dayjs from 'dayjs';
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'react';
 
 function hookValid(KeyName, date) {
   if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') { return !checkDeployisValid(date) }
@@ -12,6 +13,7 @@ function hookValid(KeyName, date) {
 }
 
 export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value) {
+  const { getAppDetails } = useContext(LoanApplicationContext)
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -21,6 +23,10 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
       option.label.toLowerCase().includes(search ? search.toLowerCase() : '')
     );
   }, [search, options]);
+
+  useEffect(() => {
+    setStatus("")
+  }, [!getAppDetails.dataPrivacy])
 
   useEffect(() => {
     setHighlightedIndex(0);
@@ -68,13 +74,19 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
 }
 
 export function DateComponentHook(value, receive, rendered, KeyName, notValidMsg) {
-  const [status, setStatus] = useState('none');
+  const { getAppDetails} = useContext(LoanApplicationContext)
+  const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const [inputValue, setInputValue] = useState(value ? dayjs(value).format('MM-DD-YYYY') : '');
   const [isDatePickerOpen, setDatePickerOpen] = useState(false);
   const [datePickerValue, setDatePickerValue] = useState(value ? dayjs(value, 'MM-DD-YYYY') : '');
   const [debouncedInput, setDebouncedInput] = useState(inputValue);
   const [validationMessage, setValidationMessage] = useState('');
+
+  useEffect(() => {
+    setStatus("");
+    setIconVisible(false)
+  }, [!getAppDetails.dataPrivacy])
 
   const debounceChange = useCallback((formattedValue) => {
     setDebouncedInput(formattedValue);
@@ -121,11 +133,18 @@ export function DateComponentHook(value, receive, rendered, KeyName, notValidMsg
         } else {
           setIconVisible(true);
           setValidationMessage('');
-          setStatus('');
+          setStatus('success');
           receive(mmddyy(date));
         }
-      } else {
+      } else if(debouncedInput.length === 0 && (rendered === false || rendered === undefined)){
+        setStatus('');
+        receive();
+      }else if(rendered === true && debouncedInput.length === 0){
         setStatus('error');
+        setValidationMessage('Date is required.'); 
+      }else{
+        setStatus('error');
+        setValidationMessage('Invalid date.'); 
         receive();
       }
     }, 200);
@@ -139,19 +158,40 @@ export function DateComponentHook(value, receive, rendered, KeyName, notValidMsg
       if (hookValid(KeyName, value)) {
         setStatus('error');
       } else {
-        setStatus('');
+        setStatus('success');
       }
     }
   }, []);
 
 
   const handleBlur = () => {
-    console.log(KeyName,inputValue)
-    if (hookValid(KeyName, inputValue)) {
+    if (debouncedInput.length === 10 && date.isValid()) {
+      if (hookValid(KeyName, date)) {
+        setStatus('error');
+        if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" ||  KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate" ) {
+          setValidationMessage('Age should be 20 to 65 years old only.');
+        } else{
+          setValidationMessage('Invalid Departure date.');
+        }
+        receive();
+      } else {
+        setIconVisible(true);
+        setValidationMessage('');
+        setStatus('success');
+        receive(mmddyy(date));
+      }
+    } else if(debouncedInput.length === 0){
       setStatus('error');
-      setValidationMessage(notValidMsg || 'This field is required.');
+      setValidationMessage('Date is required.');
+      // receive();
+    }else {
+      setStatus('error');
+      setValidationMessage('Invalid date.');
+      // receive();
     }
   };
+
+  console.log("RENDER", rendered)
 
   return {
     status,

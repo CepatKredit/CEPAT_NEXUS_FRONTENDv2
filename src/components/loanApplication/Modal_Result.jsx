@@ -1,12 +1,13 @@
 import * as React from "react";
 import { LoadingOutlined } from "@ant-design/icons";
-import { Button, ConfigProvider, Modal, Spin, notification } from "antd";
+import { Button, ConfigProvider, Flex, Modal, Spin, message, notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { toEncrypt } from "@utils/Converter";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { POST_DATA } from "@api/base-api/BaseApi";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { LiaClipboardSolid } from "react-icons/lia";
 
 const handleApiResponse = (response, onSuccess, onError) => {
   if (response.data.status === "success") {
@@ -33,9 +34,22 @@ function Modal_Result({
   const { resetAppDetails, api } = React.useContext(LoanApplicationContext);
   const navigate = useNavigate();
   const [getList, setList] = React.useState([]);
+  const textAreaRef = React.useRef(null);
+  const [messageApi, contextHolder] = message.useMessage();
+  const handleCopyToClipboard = (e) => {
+    textAreaRef.current.select();
+    document.execCommand("copy");
+    e.target.focus();
 
+    messageApi.open({
+      type: "info",
+      content: "Copied to clipboard!",
+      duration: 0.6,
+    });
+  };
 
-  // async function CheckDuplication() { 
+  //Old function for reference in case there an incorrect implementation
+  // async function CheckDuplication() {
   //   const checkLoan = {
   //     LoanAppId: code.LoanAppId,
   //     FirstName: code.FirstName,
@@ -48,7 +62,7 @@ function Modal_Result({
   //   } else {
   //     api["info"]({
   //       message: "Loan Already Exists",
-  //       description: `Please be advised that you have an ongoing application with Cepat Kredit ${result.list[0].branch} branch with Loan Application No. 
+  //       description: `Please be advised that you have an ongoing application with Cepat Kredit ${result.list[0].branch} branch with Loan Application No.
   //               ${result.list[0].loanAppCode}. For further concerns, please email our Customer Service Department at customerservice@cepatkredit.com. Thank you!`,
   //     });
   //   }
@@ -80,10 +94,10 @@ function Modal_Result({
       // Handle any additional error handling here if needed
     },
   });
-  
+
   const handleCheckDuplication = () => {
     checkLoanMutation.mutate();
-  };  
+  };
 
   const ClickLoan = useMutation({
     mutationFn: async () => {
@@ -115,6 +129,7 @@ function Modal_Result({
       maskClosable={false}
       footer={false}
     >
+      {contextHolder}
       <div
         className={contextHeight}
         style={{ padding: "20px", textAlign: "center" }}
@@ -146,9 +161,25 @@ function Modal_Result({
               </span>
             </div>
             <div className="pt-[1rem]">
+            <textarea
+                  ref={textAreaRef}
+                  value={getList["LoanDetails"]?.loanAppCode}
+                  readOnly
+                  className="absolute opacity-0 pointer-events-none"
+                />
+              <Flex className="justify-center items-center">
               <span className="font-bold text-3xl">
                 {getList["LoanDetails"]?.loanAppCode}
               </span>
+                <Button
+                  className="ml-2 cursor-pointer text-lg text-gray-600 hover:text-gray-800"
+                  type="text"
+                  size="small"
+                  onClick={handleCopyToClipboard}
+                >
+                  <LiaClipboardSolid />
+                </Button>
+              </Flex>
             </div>
             <div className="pt-[1rem]">
               <p>
@@ -177,15 +208,15 @@ function Modal_Result({
                 </Button>
               </ConfigProvider>
               <ConfigProvider theme={{ token: { colorPrimary: "#898FCD" } }}>
-              <Button
-                type="primary"
-                className="mt-[5%] ml-[2%] bg-[#6B73C1]"
-                onClick={handleCheckDuplication}
-                loading={checkLoanMutation.isPending || ClickLoan.isLoading}
-              >
-                Confirm
-              </Button>
-            </ConfigProvider>
+                <Button
+                  type="primary"
+                  className="mt-[5%] ml-[2%] bg-[#6B73C1]"
+                  onClick={handleCheckDuplication}
+                  loading={checkLoanMutation.isPending || ClickLoan.isLoading}
+                >
+                  Confirm
+                </Button>
+              </ConfigProvider>
             </>
           ) : ClickLoan.isLoading ? null : ClickLoan.isSuccess ? (
             <ConfigProvider theme={{ token: { colorPrimary: "#898FCD" } }}>
@@ -230,4 +261,3 @@ function Modal_Result({
 }
 
 export default Modal_Result;
-

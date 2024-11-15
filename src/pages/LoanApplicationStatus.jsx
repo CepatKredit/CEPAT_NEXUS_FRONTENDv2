@@ -69,7 +69,7 @@ function LoanApplicationTracker({ data }) {
     textAreaRef.current.select();
     document.execCommand("copy");
     e.target.focus();
-    // .writeText(getAppDetails.loanAppCode)
+  
     messageApi.open({
       type: "info",
       content: "Copied to clipboard!",

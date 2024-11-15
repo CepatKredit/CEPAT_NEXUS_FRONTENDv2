@@ -47,7 +47,7 @@ function LoanApplication() {
   const [loadings, setLoadings] = React.useState(false);
   const [getDetails, setDetails] = React.useState();
   const { directLoan } = useDirectLoan(setDetails, setLoadings, setIsModalOpen)
-  console.log("HII", getAppDetails)
+  const stepperView = React.useRef()
   const lc_loandetails =
     !getAppDetails.dataPrivacy || !isValidLoanDetails(getAppDetails);
 
@@ -70,6 +70,16 @@ function LoanApplication() {
 
   const navigate = useNavigate();
 
+  const onClickNext = (e) => {
+    e.preventDefault();
+
+    if (stepperView.current) {
+      stepperView.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    setStep((prevStep) => prevStep + 1);
+  };
+
   const steps = getLoanApplicationSteps({
     loanrendered,
     setloanrendered,
@@ -78,17 +88,11 @@ function LoanApplication() {
     benrendered,
     setbenrendered,
     api,
+    stepperView
   });
 
   useAppDetailsEffects(getAppDetails, setAppDetails);
 
-  const onClickNext = () => {
-    setStep(getStep + 1);
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
 
   const onClickBack = () => {
     if (getStep == 2) {
