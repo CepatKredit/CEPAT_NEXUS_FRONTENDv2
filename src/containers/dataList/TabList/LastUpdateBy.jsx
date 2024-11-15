@@ -373,7 +373,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         }
         else if (GetData('ROLE').toString() === '80') {
             console.log('LPO')
-            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+            if (LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
             else { return false }
         }
