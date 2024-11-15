@@ -47,11 +47,11 @@ function LabeledInput_UpperCase({
     if (rendered) {
       setIcon(false);
       if (getAppDetails[fieldName]) {
-        setStatus(""); // Set checkmark icon when input is valid
-        setIcon(true); // Automatically close tooltip when input is valid
+        setStatus(""); 
+        setIcon(true);
       } else {
-        setStatus("error"); // Set error status when input is empty
-        setIcon(true); // Keep tooltip visible when input is empty
+        setStatus("error");
+        setIcon(true); 
       }
     }
   }, []);

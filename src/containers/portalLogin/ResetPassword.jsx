@@ -156,7 +156,7 @@ function ResetPassword() {
                         name='password'
                         size='large'
                         allowClear
-                        maxLength={15}
+                        maxLength={8}
                         showCount
                         value={getData.password}
                         onChange={handleChange}
@@ -181,7 +181,7 @@ function ResetPassword() {
                         name='rePassword'
                         size='large'
                         allowClear
-                        maxLength={15}
+                        maxLength={8}
                         showCount
                         value={getData.rePassword}
                         onChange={handleChange}
