@@ -209,14 +209,14 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 try {
                     await axios.post('/updateCheckListForApproval', checkListData);
                     api['success']({
-                        message: 'Success',
-                        description: 'Checkboxes updated successfully.',
+                        message: 'Application Status',
+                        description: 'Status updated',
                     });
                 } catch (error) {
-                    console.error('Failed to update checkboxes:', error);
+                    console.error('Something Wrong', error);
                     api['error']({
                         message: 'Error',
-                        description: 'Failed to update checkboxes. Please try again.',
+                        description: 'Failed to update Please try again.',
                     });
                     return; 
                 }
