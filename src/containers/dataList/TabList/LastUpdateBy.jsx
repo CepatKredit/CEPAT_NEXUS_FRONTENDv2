@@ -8,7 +8,7 @@ import StatusRemarks from './StatusRemarks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import { mmddyy, toDecrypt, yymmdd } from '@utils/Converter';
-import { GET_LIST } from '@api/base-api/BaseApi';
+import { GET_DATA, GET_LIST } from '@api/base-api/BaseApi';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { GetData } from '@utils/UserData';
@@ -168,19 +168,19 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             return;
         }
 
-        if (getUpdate.Status === 'PRE-APPROVAL' && (!ispreApproval)) {
-            api['info']({
-                message: 'Notification',
-                description: (
-                    <span>
-                        Please ensure that <strong>Masterlist- Name</strong> checked before updating.
-                    </span>
-                ),
-            });
-            return;
-        }
+        /* if (getUpdate.Status === 'PRE-APPROVAL' && (!ispreApproval)) {
+             api['info']({
+                 message: 'Notification',
+                 description: (
+                     <span>
+                         Please ensure that <strong>Masterlist- Name</strong> checked before updating.
+                     </span>
+                 ),
+             });
+             return;
+         }*/
         onClickUpdateStatus.mutate();
-       
+
     }
 
 
@@ -195,103 +195,134 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             } else if (getUpdate.Status === 'RELEASED') {
                 setUpdate({ ...getUpdate, RemarksEx: releasedMessage });
             }
-    
-            const checkListData = {
-                loanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                statusMasterlist: ispreApproval ? 1 : 0,
-                statusFfcc: isFFCCChecked ? 1 : 0,
-                statusCraf: isCRAFChecked ? 1 : 0,
-                statusKaiser: isKaiserChecked ? 1 : 0,
-                statusVideoCall: isVideoCallChecked ? 1 : 0,
-                statusShareLocation: isShareLocationChecked ? 1 : 0,
-                statusAgencyVerification: isAgencyVerificationChecked ? 1 : 0,
-                modUser: jwtDecode(token).USRID
-            };
-    
-            await axios.post('/updateCheckListForApproval', checkListData);
-    
-            const dataContainer = [
-                {
-                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+
+            // ito ang update checkboxes
+            if (getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') {
+                console.log('ito ang checkboxes update update', getUpdate.Status)
+                const checkListData = {
+                    loanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                    status: getUpdate.Status === 'PRE-CHECK' ? 21 : 7,
+                    statusMasterlist: ispreApproval ? 1 : 0,
+                    statusFfcc: isFFCCChecked ? 1 : 0,
+                    statusCraf: isCRAFChecked ? 1 : 0,
+                    statusKaiser: isKaiserChecked ? 1 : 0,
+                    statusVideoCall: isVideoCallChecked ? 1 : 0,
+                    statusShareLocation: isShareLocationChecked ? 1 : 0,
+                    statusAgencyVerification: isAgencyVerificationChecked ? 1 : 0,
+                    modUser: jwtDecode(token).USRID,
+
                     LAN: id,
-                    Status: GetStatusCode(),
-                    RemarksIn: getUpdate.RemarksIn,
-                    RemarksEx: getUpdate.RemarksEx,
-                    ModUser: jwtDecode(token).USRID
-                },
-                {
-                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                    LAN: id,
-                    Status: GetStatusCode(),
-                    UrgentApp: getUpdate.UrgentApp,
-                    RemarksIn: getUpdate.RemarksIn,
-                    RemarksEx: getUpdate.RemarksEx,
-                    ModUser: jwtDecode(token).USRID
-                },
-                {
-                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                    LAN: id,
-                    Status: GetStatusCode(),
                     UrgentApp: getUpdate.UrgentApp,
                     RemarksIn: getUpdate.RemarksIn,
                     RemarksEx: getUpdate.RemarksEx,
                     SoaDate: yymmdd(getUpdate.SoaDate),
-                    ModUser: jwtDecode(token).USRID
-                }
-            ];
-    
-            if (getUpdate.UrgentApp === 2 && getUpdate.DepartureDate) {
-                const departureUpdateResponse = await axios.post('/updateDepartDate', {
-                    LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-                    DepartureDate: dayjs(getUpdate.DepartureDate).format('MM-DD-YYYY')
-                });
-    
-                if (departureUpdateResponse.data.status === 'error') {
+                };
+
+                try {
+                    await axios.post('/updateCheckListForApproval', checkListData);
+                    api['success']({
+                        message: 'Success',
+                        description: 'Checkboxes updated successfully.',
+                    });
+                } catch (error) {
+                    console.error('Failed to update checkboxes:', error);
                     api['error']({
                         message: 'Error',
-                        description: 'Failed to update departure date. Please try again.'
+                        description: 'Failed to update checkboxes. Please try again.',
                     });
-                    return;
+                    return; // Exit the function if the checkboxes update fails
                 }
-            }
-            try {
-                const result = await axios.post('/updateApplicationStatus',
-                    getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
-                        ? dataContainer[2]
-                        : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
-                            ? dataContainer[1]
-                            : dataContainer[0]
-                );
-                SET_PATH_LOCATION(getUpdate.Status)
-                SET_REFRESH_TILE_COUNTER(1)
-                StatusList.refetch();
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description
-                });
-                queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
-                navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
-                setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
-    
-                if (deletePN) {
-                    await onClickDeleteXTable();
+            } else {
+                console.log('ito ang normal update', getUpdate.Status)
+                //ito naman ang update application
+                const dataContainer = [
+                    {
+                        LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                        LAN: id,
+                        Status: GetStatusCode(),
+                        RemarksIn: getUpdate.RemarksIn,
+                        RemarksEx: getUpdate.RemarksEx,
+                        ModUser: jwtDecode(token).USRID
+                    },
+                    {
+                        LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                        LAN: id,
+                        Status: GetStatusCode(),
+                        UrgentApp: getUpdate.UrgentApp,
+                        RemarksIn: getUpdate.RemarksIn,
+                        RemarksEx: getUpdate.RemarksEx,
+                        ModUser: jwtDecode(token).USRID
+                    },
+                    {
+                        LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                        LAN: id,
+                        Status: GetStatusCode(),
+                        UrgentApp: getUpdate.UrgentApp,
+                        RemarksIn: getUpdate.RemarksIn,
+                        RemarksEx: getUpdate.RemarksEx,
+                        SoaDate: yymmdd(getUpdate.SoaDate),
+                        ModUser: jwtDecode(token).USRID
+                    }
+                ];
+
+                if (getUpdate.UrgentApp === 2 && getUpdate.DepartureDate) {
+                    const departureUpdateResponse = await axios.post('/updateDepartDate', {
+                        LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                        DepartureDate: dayjs(getUpdate.DepartureDate).format('MM-DD-YYYY')
+                    });
+
+                    if (departureUpdateResponse.data.status === 'error') {
+                        api['error']({
+                            message: 'Error',
+                            description: 'Failed to update departure date. Please try again.'
+                        });
+                        return;
+                    }
                 }
-    
-            } catch (error) {
-                console.log(error);
-                api['error']({
-                    message: 'Something went wrong',
-                    description: error.message
-                });
+                try {
+                    const result = await axios.post('/updateApplicationStatus',
+                        getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
+                            ? dataContainer[2]
+                            : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
+                                ? dataContainer[1]
+                                : dataContainer[0]
+                    );
+                    SET_PATH_LOCATION(getUpdate.Status)
+                    SET_REFRESH_TILE_COUNTER(1)
+                    StatusList.refetch();
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
+                    navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
+                    setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
+
+                    if (deletePN) {
+                        await onClickDeleteXTable();
+                    }
+
+                }
+                catch (error) {
+                    console.log(error);
+                    api['error']({
+                        message: 'Something went wrong',
+                        description: error.message
+                    });
+                }
             }
         }
     })
 
 
+    /*  React.useEffect(() => {
+          console.log("User ROLE:", GetData('ROLE'));
+      }, [data])*/
 
 
-
-
+    React.useEffect(() => {
+        console.log("User ROLEssssssssssssssss:", data.loanAppStat);
+    }, [data])
 
 
 
@@ -398,7 +429,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             if (data[key] === 1) setter(true);
         });
     }, [data.statusCraf, data.loanAppStat]);
-    const shouldDisplayRequestType = data.loanAppStat === 'ON WAIVER' || getUpdate.Status === 'ON WAIVER';
+    const shouldDisplayRequestType = data.loanAppStat === 'ON WAIVER' || getUpdate.Status === 'ON WAIVER'
 
     return (
         <div>
@@ -420,7 +451,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             }))}
                             value={getUpdate.Status}
                             label={'Select Loan Status'}
-                            receive={(e) => { setUpdate({ ...getUpdate, Status: e }) }}
+                            receive={(e) => { setUpdate({ ...getUpdate, Status: e }); }}
                             disabled={isDisabled}
                         />
                         <Space>
@@ -463,8 +494,14 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             </div>
                         )}
 
-                        {((GetData('ROLE').toString() === '60' && ['PRE-CHECK', 'FOR APPROVAL'].includes(data.loanAppStat)) ||
-                            (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55' && data.loanAppStat === 'FOR CREDIT ASSESSEMENT')) && (
+
+                        {((data.loanAppStat === 'FOR CREDIT ASSESSMENT' &&
+                            (getUpdate.Status === 'FOR APPROVAL' || getUpdate.Status === 'PRE-CHECK') &&
+                            (['50', '55'].includes(GetData('ROLE').toString()))) ||
+
+                            ((data.loanAppStat === 'FOR APPROVAL' || data.loanAppStat === 'PRE-CHECK') &&
+                                GetData('ROLE').toString() === '60')) && (
+
                                 <div className="grid grid-cols-7 mt-8">
                                     <div className="flex items-center justify-center">
                                         <Checkbox
@@ -628,9 +665,9 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                                         onClick={() => { onClickUpdate() }}
                                         className='bg-[#3b0764] w-[8rem]'
                                         type='primary'
-                                        disabled={isDisabled || isDisableUpdateBtn} 
+                                        disabled={isDisabled || isDisableUpdateBtn}
                                         loading={onClickUpdateStatus.isPending}
-                                        > Update
+                                    > Update
                                     </Button>
                                 </ConfigProvider>
                             </div>
