@@ -8,7 +8,6 @@ export function ProvinceList() {
     queryKey: ["ProvinceListQuery"],
     queryFn: async () => {
       const result = await GET_LIST('/getProvinceList')
-      console.log("Province API", result.list);
       setProvinceList(result.list);
     },
     refetchInterval: (data) => (data && data.length === 0 ? 500 : false),

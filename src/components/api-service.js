@@ -21,7 +21,6 @@ export function ComponentPreloads() {
     queryKey: ["CountryList"],
     queryFn: async () => {
       const result = await GET_LIST("/OFWDetails/getCountry");
-      //console.log(result.list)
       setCountryList(result.list);
       return result.list;
     },
@@ -34,7 +33,6 @@ export function ComponentPreloads() {
     queryKey: ["ProvinceList"],
     queryFn: async () => {
       const result = await GET_LIST("/getProvinceList");
-      //console.log(result.list)
       setProvinceList(result.list);
       return result.list;
     },
@@ -118,6 +116,19 @@ export function ComponentPreloads() {
     retryDelay: 1000,
 });
 
+const [getCollectionArea, setCollectionArea] = React.useState([])
+const collectionArea = useQuery({
+  queryKey: ['collectionArea'],
+  queryFn: async () => {
+      const result = await GET_LIST('OFWDetails/getCollectionArea');
+      setCollectionArea(result.list)
+      return result.list;
+  },
+  refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+  enabled: true,
+  retryDelay: 1000,
+});
+
   //////////////////////////////////
   //const { getAppDetails } = useContext(LoanApplicationContext)
   // const data = getAppDetails
@@ -158,6 +169,7 @@ export function ComponentPreloads() {
     GET_VALID_ID_LIST: getValidId,
     GET_RELATIONSHIP_LIST: getRelationship,
     GET_CURRENCY_LIST: getCurrency,
+    GET_COLLECTION_AREA_LIST: getCollectionArea
     //     GET_MUNICIPALITY: getMunicipalityList,
   };
 }

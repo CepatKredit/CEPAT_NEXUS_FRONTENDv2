@@ -31,7 +31,7 @@ function Modal_Result({
   code,
   direct,
 }) {
-  const { resetAppDetails, api } = React.useContext(LoanApplicationContext);
+  const { resetAppDetails, api, getAppDetails } = React.useContext(LoanApplicationContext);
   const navigate = useNavigate();
   const [getList, setList] = React.useState([]);
   const textAreaRef = React.useRef(null);
@@ -109,7 +109,7 @@ function Modal_Result({
         response,
         (data) => {
           setList(data.datalist);
-          // resetAppDetails();
+          resetAppDetails();
         }
         // showErrorNotification
       );
@@ -119,6 +119,8 @@ function Modal_Result({
       console.error(error);
     },
   });
+
+  console.log("MODAL", getAppDetails)
 
   return (
     <Modal

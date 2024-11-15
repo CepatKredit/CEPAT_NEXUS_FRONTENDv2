@@ -59,6 +59,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
         }
     }, [getAppDetails]);
 
+    console.log("STATUS", GetStatus)
+
     function GetFile(id, command) {
         let count = 0;
         let file_list = []
@@ -216,6 +218,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             <div className="space-x-[1.5rem]">
                 {
                     !DISABLE_STATUS(localStorage.getItem('SP'), GetStatus) ? (
+                        (GetStatus === "LACK OF DOCUMENTS"  || GetStatus === "RECEIVED") && (
                         <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                             <Button
                                 size="large"
@@ -227,6 +230,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                                 Upload Document
                             </Button>
                         </ConfigProvider>
+                        )
                     ) : null
                 }
                 <div className={classname}>

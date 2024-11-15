@@ -22,7 +22,6 @@ export const MunicipalityList = (type, data) => {
           if (!provCode) return [];
           const result = await GET_LIST(`/getMuniArea/${provCode}`);
           setMunicipalityList(result.list);
-          console.log("AHHHH", municipalityList)
           return result.list;
       },
       refetchInterval: (data) => (data?.length === 0 ? 500 : false),

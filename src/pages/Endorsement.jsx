@@ -16,7 +16,7 @@ import { isValidLoanDetails, isValidLoanDetailsLc, isValidOFWDetails, isValidOFW
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { useDirectLoan } from "@hooks/LoanApplicationHooks";
 
-    function Endorsement() {
+function Endorsement() {
     const direct = false // Control if it is direct / lc / marketing
     const { getAppDetails, resetAppDetails } = React.useContext(LoanApplicationContext);
     document.title = "Loan Application Form";

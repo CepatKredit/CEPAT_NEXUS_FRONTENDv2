@@ -25,6 +25,12 @@ function LabeledCurrencyInput({
   const [getIcon, setIcon] = React.useState(false);
   const [getItem, setItem] = React.useState(getAppDetails[fieldName] || "");
 
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+    setItem("")
+  }, [!getAppDetails.dataPrivacy])
+
   const minAmount =
     fieldName === "ofwsalary"
       ? 25000

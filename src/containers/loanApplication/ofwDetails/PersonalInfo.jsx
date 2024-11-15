@@ -123,30 +123,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
       />
-      {/* <LabeledSelect_Suffix
-        className_dmain={classname_main}
-        className_label={className_label}
-        className_dsub={className_dsub}
-        label={
-          <>
-            Suffix <span className="text-red-500">*</span>
-          </>
-        }
-        fieldName="ofwsuffix"
-        // value={getAppDetails.ofwsuffix}
-        // receive={(e) => {
-        //     receive({
-        //         name: 'ofwsuffix',
-        //         value: e
-        //     })
-        // }}
-
-        category={"direct"}
-        placeHolder={"Suffix"}
-        disabled={!direct && !getAppDetails.dataPrivacy}
-        rendered={ofwrendered}
-        showSearch
-      /> */}
       <SelectOpt
         className_dmain={classname_main}
         className_label={className_label}

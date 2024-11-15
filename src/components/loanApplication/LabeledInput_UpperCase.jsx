@@ -29,6 +29,11 @@ function LabeledInput_UpperCase({
   const [getStatus, setStatus] = React.useState("");
   const [getIcon, setIcon] = React.useState(false);
 
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+  }, [!getAppDetails.dataPrivacy])
+
   function onChange(e) {
     const newValue = e.target.value.replace(/[^a-zA-Z\s]/g, "").slice(0, 80);
     const upperValue = newValue.toUpperCase();

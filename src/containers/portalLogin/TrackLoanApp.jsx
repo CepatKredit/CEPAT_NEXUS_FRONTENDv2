@@ -79,8 +79,7 @@ function TrackLoanApp() {
     }
   }
 
-  console.log("NUMMM", getAppDetails.loanIdCode)
-  console.log("DATE", getAppDetails.ofwbdate)
+
   return (
     <div className="flex flex-col justify-center items-center">
       {/* {contextHolder} */}

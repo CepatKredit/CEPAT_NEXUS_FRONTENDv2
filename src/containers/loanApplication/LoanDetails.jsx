@@ -157,21 +157,6 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
               KeyName={"loanDateDep"}
               disabledate={disableDate_deployment}
             />
-            {/* <DatePicker_Deployment
-              className_dmain={classname_main}
-              className_label={className_label}
-              className_dsub={className_dsub}
-              label={
-                <>
-                  OFW Departure Date <span className="text-red-500">*</span>
-                </>
-              }
-              disabled={false || !getAppDetails.dataPrivacy}
-              category={"direct"}
-              placeHolder={"MM-DD-YYYY"}
-              disabledate={disableDate_deployment}
-              rendered={loanrendered}
-            /> */}
           </>
         ) : (
           <></>

@@ -19,6 +19,12 @@ function GenderRadioGroup({
   const [getItem, setItem ] = React.useState(getAppDetails[fieldName])
 
   React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+    setItem("")
+  }, [!getAppDetails.dataPrivacy])
+
+  React.useEffect(() => {
     if (rendered) {
       setIcon(false);
       if (getAppDetails[fieldName]) {

@@ -24,6 +24,13 @@ function LabeledInput_Numeric({
   const [getStatus, setStatus] = React.useState("");
   const [getIconType, setIconType] = React.useState(false);
   const [getItem, setItem] = React.useState(getAppDetails[fieldName] || "");
+
+  React.useEffect(() => {
+    setStatus(null)
+    setIconType(false)
+    setItem("")
+  }, [!getAppDetails.dataPrivacy])
+
   function onChangeValue(e) {
     const inputValue = e.target.value;
 

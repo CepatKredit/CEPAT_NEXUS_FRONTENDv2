@@ -29,7 +29,12 @@ function LabeledInput_OfwContact({
   const [getItem, setItem] = React.useState(
     typeof getAppDetails[fieldName] === "string" ? getAppDetails[fieldName].split("/")[1] : ""
   );
-
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+    setItem("")
+  }, [!getAppDetails.dataPrivacy])
+  
   function onPrefChange(value) {
     setPref(value);
     if (value) {

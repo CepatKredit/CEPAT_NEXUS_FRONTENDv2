@@ -638,7 +638,6 @@ function LoanApplicationTracker({ data }) {
       key: "Character Reference",
       label: (
         <span>
-          {" "}
           <UserOutlined style={{ marginRight: 8 }} /> Character Reference{" "}
         </span>
       ),
@@ -658,6 +657,8 @@ function LoanApplicationTracker({ data }) {
       ),
     },
   ];
+
+  console.log()
   return (
     <ConfigProvider
       theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}

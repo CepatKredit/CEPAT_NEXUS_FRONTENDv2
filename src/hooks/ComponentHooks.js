@@ -86,6 +86,8 @@ export function DateComponentHook(value, receive, rendered, KeyName, notValidMsg
   useEffect(() => {
     setStatus("");
     setIconVisible(false)
+    setInputValue('')
+    setDebouncedInput('')
   }, [!getAppDetails.dataPrivacy])
 
   const debounceChange = useCallback((formattedValue) => {
@@ -190,8 +192,6 @@ export function DateComponentHook(value, receive, rendered, KeyName, notValidMsg
       // receive();
     }
   };
-
-  console.log("RENDER", rendered)
 
   return {
     status,

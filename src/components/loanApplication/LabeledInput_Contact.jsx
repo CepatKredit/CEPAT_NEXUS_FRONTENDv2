@@ -78,6 +78,12 @@ function LabeledInput_Contact({
     }
   }, [])
 
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+    setItem("09")
+  }, [!getAppDetails.dataPrivacy])
+
   return (
     <div className={className_dmain}>
       {category === "marketing" ? (
