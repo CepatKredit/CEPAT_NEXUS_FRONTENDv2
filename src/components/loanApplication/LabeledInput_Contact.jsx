@@ -90,13 +90,14 @@ function LabeledInput_Contact({
 
       <div className={className_dsub}>
         <Input
+        autoComplete="new-password"
           disabled={disabled}
           readOnly={readOnly}
           value={getItem}
           onChange={onChangeValue}
           size="large"
           placeholder={placeHolder} 
-          autoComplete="off"
+          // autoComplete="off"
           style={{ width: "100%" }}
           // onBlur={onBlur}
           status={required || required === undefined ? getStatus : false}

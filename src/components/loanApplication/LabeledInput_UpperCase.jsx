@@ -69,6 +69,7 @@ function LabeledInput_UpperCase({
       <div className={className_dsub}>
         <Input
           style={{ width: "100%" }}
+          autoComplete="new-password"
           size="large"
           value={
             fieldName === "consultName" && GetData("ROLE")?.toString() === "20"

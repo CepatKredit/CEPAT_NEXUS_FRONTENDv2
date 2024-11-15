@@ -19,7 +19,7 @@ function LoanApplicationInfo() {
     const [api, contextHolder] = notification.useNotification();
     const [sepcoborrowfname, setCoborrowfname] = React.useState('');
     const [sepBenfname, setBenfname] = React.useState('');
-    const { getAppDetails, setAppDetails } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, setAppDetails, populateClientDetails } = React.useContext(LoanApplicationContext)
 
 
     React.useEffect(() => {
@@ -248,28 +248,28 @@ function LoanApplicationInfo() {
                     ExactLocation: data?.OfwEmploymentDetails?.exactLocation || '',
                     PossVacation: data?.OfwEmploymentDetails?.possibleVacation || '',
                     // Co-Borrower/Beneficiary Table
-                    BenMarriedPBCB: data?.BeneficiaryDetails?.isPbCbMarried || '',//
-                    BenSpSrcIncome: data?.BeneficiaryDetails?.spouseSourceIncome || '',//
-                    BenSpIncome: data?.BeneficiaryDetails?.spouseIncome || '',//
+                    BenMarriedPBCB: data?.BeneficiaryDetails?.isPbCbMarried || '',
+                    BenSpSrcIncome: data?.BeneficiaryDetails?.spouseSourceIncome || '',
+                    BenSpIncome: data?.BeneficiaryDetails?.spouseIncome || '',
                     BenGrpChat: data?.BeneficiaryDetails?.groupChat || '',
-                    BenSrcIncome: data?.BeneficiaryDetails?.cbAcbIncomeSource || '',//
+                    BenSrcIncome: data?.BeneficiaryDetails?.cbAcbIncomeSource || '',
                     BenReligion: data?.BeneficiaryDetails?.religion || '',
                     BenPEP: data?.BeneficiaryDetails?.isPeP || '',
                     BenPlanAbroad: data?.BeneficiaryDetails?.plantoAbroad || '',
-                    BenFormerOFW: data?.BeneficiaryDetails?.isFormerOfw || '',//
-                    BenLastReturn: data?.BeneficiaryDetails?.lastReturnHome || '',//
-                    BenRemarks: data?.BeneficiaryDetails?.remarks || '',//
+                    BenFormerOFW: data?.BeneficiaryDetails?.isFormerOfw || '',
+                    BenLastReturn: data?.BeneficiaryDetails?.lastReturnHome || '',
+                    BenRemarks: data?.BeneficiaryDetails?.remarks || '',
                     // Additional Co-Borrower Table
-                    AcbSpSrcIncome: data?.CoborrowDetails?.spouseSourceIncome || '',//
-                    AcbSpIncome: data.CoborrowDetails?.spouseIncome || '',//
+                    AcbSpSrcIncome: data?.CoborrowDetails?.spouseSourceIncome || '',
+                    AcbSpIncome: data.CoborrowDetails?.spouseIncome || '',
                     AcbGrpChat: data?.CoborrowDetails?.groupchat || '',
-                    AcbSrcIncome: data?.CoborrowDetails?.cbAcbIncomeSource || '',//
+                    AcbSrcIncome: data?.CoborrowDetails?.cbAcbIncomeSource || '',
                     AcbReligion: data?.CoborrowDetails?.religion || '',
                     AcbFormerOFW: data?.CoborrowDetails?.isFormerOfw || '',
-                    AcbLastReturn: data?.CoborrowDetails?.lastReturnHome || '',//
-                    AcbPlanAbroad: data?.CoborrowDetails?.plantoAbroad || '',//
-                    AcbPEP: data?.CoborrowDetails?.isPeP || '',//
-                    AcbRemarks: data?.CoborrowDetails?.remarks || '',//
+                    AcbLastReturn: data?.CoborrowDetails?.lastReturnHome || '',
+                    AcbPlanAbroad: data?.CoborrowDetails?.plantoAbroad || '',
+                    AcbPEP: data?.CoborrowDetails?.isPeP || '',
+                    AcbRemarks: data?.CoborrowDetails?.remarks || '',
                     AcbRelationship: data?.CoborrowDetails?.relationshipID || '',
                     AcbRelationshipName: data?.CoborrowDetails?.relationship || '',
 
@@ -293,6 +293,9 @@ function LoanApplicationInfo() {
         },
         enabled: true,
     });
+
+    console.log("LOAN INFO API", ClientDataListQuery.data)
+    console.log("LOAN INFO API PERO", getAppDetails)
 
     const [getCRDValue, setCRDValue] = React.useState({
         TotalSalary: 0,

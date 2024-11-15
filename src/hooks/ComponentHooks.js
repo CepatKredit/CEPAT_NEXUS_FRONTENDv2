@@ -14,6 +14,7 @@ function hookValid(KeyName, date) {
 export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value) {
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   const filteredOptions = useMemo(() => {
     return options.filter(option =>
@@ -26,6 +27,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
   }, [search]);
 
   const handleSelectChange = useCallback((selectedValue) => {
+    setDropdownOpen(false)
     setStatus(selectedValue ? 'success' : 'error');
     receive(selectedValue || undefined);
   }, [receive]);
@@ -59,7 +61,9 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     highlightedIndex,
     filteredOptions,
     handleSelectChange,
-    handleKeyDown
+    handleKeyDown,
+    dropdownOpen, 
+    setDropdownOpen,
   };
 }
 
@@ -110,7 +114,7 @@ export function DateComponentHook(value, receive, rendered, KeyName, notValidMsg
           setStatus('error');
           if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" ||  KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate" ) {
             setValidationMessage('Age should be 20 to 65 years old only.');
-          } else {
+          } else{
             setValidationMessage('Invalid Departure date.');
           }
           receive();

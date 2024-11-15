@@ -25,7 +25,6 @@ function SelectOpt({
     rendered,
 }) {
     const [search, setSearchInput] = useState('');
-    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const inputRef = useRef(null);
     const { setfocus } = useContext(LoanApplicationContext);
@@ -38,8 +37,10 @@ function SelectOpt({
         status,
         filteredOptions,
         handleSelectChange,
-        handleKeyDown
-    } = SelectComponentHooks(search, receive, options, setSearchInput, keyName || KeyName, rendered, value);
+        handleKeyDown,
+        dropdownOpen, 
+        setDropdownOpen,
+    } = SelectComponentHooks(search, receive, options, setSearchInput, keyName || KeyName, rendered, value,);
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),

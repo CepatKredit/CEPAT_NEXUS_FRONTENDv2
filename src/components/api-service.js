@@ -48,6 +48,7 @@ export function ComponentPreloads() {
     queryFn: async () => {
       const result = await GET_LIST("/getLoanPurpose");
       setLoanPurpose(result.list);
+      return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
     retryDelay: 1000,
@@ -60,6 +61,7 @@ export function ComponentPreloads() {
       const result = await GET_LIST("/getBranchList");
       console.log("BRANCH API", result.list);
       setBranchList(result.list);
+      return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
     retryDelay: 1000,
@@ -71,6 +73,7 @@ export function ComponentPreloads() {
     queryFn: async () => {
       const result = await GET_LIST("/OFWDetails/GetSuffix");
       setSuffix(result.list);
+      return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
     retryDelay: 1000,
@@ -82,7 +85,6 @@ export function ComponentPreloads() {
     queryFn: async () => {
       const result = await GET_LIST("/OFWDetails/getIDtype");
       setValidId(result.list);
-      console.log("IIIIIIIIDDDDDDDDDDD", getValidId)
       return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -95,6 +97,7 @@ export function ComponentPreloads() {
     queryFn: async () => {
       const result = await GET_LIST("/getListRelationship");
       setRelationship(result.list)
+      return result.list;
     },
     refetchInterval: (data) => {
       data?.length === 0 ? 500 : false;

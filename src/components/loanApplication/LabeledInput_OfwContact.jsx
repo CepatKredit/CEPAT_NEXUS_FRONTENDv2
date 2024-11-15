@@ -130,6 +130,7 @@ function LabeledInput_OfwContact({
 
       <div className={className_dsub}>
         <Input
+        autoComplete="new-password"
           addonBefore={prefix}
           disabled={disabled}
           readOnly={readOnly}
@@ -138,7 +139,7 @@ function LabeledInput_OfwContact({
           size="large"
           placeholder={placeHolder}
           maxLength={20}
-          autoComplete="off"
+          // autoComplete="off"
           style={{ width: "100%" }}
           onBlur={onBlur}
           status={required || required == undefined ? getStatus : false}

@@ -120,6 +120,7 @@ function LabeledCurrencyInput({
 
       <div className={className_dsub}>
         <Input
+        autoComplete="new-password"
           value={getItem}
           disabled={disabled}
           size="large"

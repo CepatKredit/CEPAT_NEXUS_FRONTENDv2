@@ -46,7 +46,7 @@ function LoanApplicationTracker({ data }) {
     setOldClientNameAndBDay,
     populateClientDetails,
     getOldData,
-    api
+    api,
   } = React.useContext(LoanApplicationContext);
 
   React.useEffect(() => {
@@ -63,20 +63,18 @@ function LoanApplicationTracker({ data }) {
     console.log("TEST", ClientData);
   }, [localStorage.getItem("CLID")]);
   const [messageApi, contextHolder] = message.useMessage();
+  const textAreaRef = React.useRef(null);
 
-  const handleCopyToClipboard = () => {
-    navigator.clipboard
-      .writeText(getAppDetails.loanAppCode)
-      .then(() => {
-        messageApi.open({
-          type:"info",
-          content:"Copied to clipboard!",
-          duration: 0.6,
-        });
-      })
-      .catch(() => {
-        messageApi.error("Failed to copy");
-      });
+  const handleCopyToClipboard = (e) => {
+    textAreaRef.current.select();
+    document.execCommand("copy");
+    e.target.focus();
+    // .writeText(getAppDetails.loanAppCode)
+    messageApi.open({
+      type: "info",
+      content: "Copied to clipboard!",
+      duration: 0.6,
+    });
   };
 
   // const [getOldData, setOldData] = React.useState({
@@ -712,17 +710,24 @@ function LoanApplicationTracker({ data }) {
                 <Typography.Text type="secondary">
                   Loan Application ID
                 </Typography.Text>
+
+                <textarea
+                  ref={textAreaRef}
+                  value={getAppDetails.loanAppCode}
+                  readOnly
+                  className="absolute -left-full"
+                />
                 <Flex>
                   <Title level={4} className="m-0" style={{ color: "#34b330" }}>
                     {getAppDetails.loanAppCode}
                   </Title>
                   <Button
-                  className="ml-2 cursor-pointer text-lg text-gray-600 hover:text-gray-800"
-                  type="text"
-                  size="small"
-                  onClick={handleCopyToClipboard}
+                    className="ml-2 cursor-pointer text-lg text-gray-600 hover:text-gray-800"
+                    type="text"
+                    size="small"
+                    onClick={handleCopyToClipboard}
                   >
-                  <LiaClipboardSolid />
+                    <LiaClipboardSolid />
                   </Button>
                 </Flex>
               </div>

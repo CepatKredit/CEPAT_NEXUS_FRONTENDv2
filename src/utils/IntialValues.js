@@ -96,6 +96,8 @@ const createInitialAppDetails = (direct) => {
     benresidences: "",
     benstaymonths: "",
     benstayyears: "",
+    bendependents:"",
+    benrelationship: "",
 
     // Co-Borrower Details
     coborrowfname: "",
@@ -123,6 +125,7 @@ const createInitialAppDetails = (direct) => {
     coborrowProvname: "",
     coborrowMunicipalityname: "",
     coborrowBarangayname: "",
+    sepcoborrowfname: "",
 
     // CRAM Data
     PrevAmount: "",
@@ -231,6 +234,19 @@ const createInitialAppDetails = (direct) => {
     benpresprovname: "",
     benpresmunicipalityname: "",
     benpresbarangayname: "",
+
+    //getClientData Extras
+    // statusMasterlist:"",
+    // statusFfcc:"",
+    // statusCraf:"",
+    // statusVideoCall:"",
+    // statusShareLocation:"",
+    // statusAgencyVerification:"",
+    // groupChat:"",
+    // relationship: "",
+    // relationshipID: "",
+
+
   };
 };
 

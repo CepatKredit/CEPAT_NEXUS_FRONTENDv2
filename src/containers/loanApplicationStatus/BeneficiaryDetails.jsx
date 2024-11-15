@@ -115,6 +115,7 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
         },
     ];
 
+    
     const queryClient = useQueryClient()
     async function updateData() {
         const value = {

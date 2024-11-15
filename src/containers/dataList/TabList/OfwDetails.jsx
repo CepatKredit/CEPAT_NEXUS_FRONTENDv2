@@ -141,7 +141,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                 }
             }
             else {
-                const value = {
+                const value = { 
                     LoanAppId: data.loanIdCode,
                     Tab: 2,
                     BorrowersCode: data.ofwBorrowersCode,
@@ -149,7 +149,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     MiddleName: data.ofwmname || '',
                     LastName: data.ofwlname || '',
                     Suffix: data.ofwsuffix || null,
-                    Birthday: data.ofwbdate ? mmddyy(data.ofwbdate) : '',
+                    BirthDay: data.ofwbdate ? mmddyy(data.ofwbdate) : '',
                     Gender: data.ofwgender || null,
                     MobileNo: data.ofwmobile || '',
                     MobileNo2: data.ofwothermobile || '',

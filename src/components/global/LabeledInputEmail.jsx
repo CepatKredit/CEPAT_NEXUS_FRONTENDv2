@@ -33,6 +33,7 @@ function LabeledInputEmail({ className, label, placeHolder, value, receive, disa
                         placeholder={placeHolder}
                         onChange={onChange}
                         allowClear
+                        autoComplete="new-password"
                         disabled={disabled}
                         readOnly={readOnly}
                     />
