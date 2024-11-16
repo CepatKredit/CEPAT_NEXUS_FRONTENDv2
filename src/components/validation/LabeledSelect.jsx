@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { Select, Form } from 'antd';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function LabeledSelect({ className, label, data, value, receive, disabled, readOnly }) {
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const [showHelpText, setShowHelpText] = React.useState(false);
     const [validateStatus, setValidateStatus] = React.useState('');
+
+    console.log("Status", getAppDetails.loanStatus)
 
     function onChangeSelect(e) {
         receive(e);

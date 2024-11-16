@@ -23,6 +23,7 @@ export const getLoanApplicationSteps = (props) => {
     benrendered,
     setbenrendered,
     api,
+    stepperView
   } = props;
 
   const { direct, getAppDetails, setAppDetails } = useContext(
@@ -40,8 +41,6 @@ export const getLoanApplicationSteps = (props) => {
           loanrendered={loanrendered}
           setloanrendered={setloanrendered}
           direct={direct}
-          // receive={(e) => updateAppDetails(e, setAppDetails, getAppDetails)}
-          // loanDatailCases={(e) => handleLoanDetailCases(e, setAppDetails)}
         />
       ),
     },
@@ -53,13 +52,7 @@ export const getLoanApplicationSteps = (props) => {
           ofwrendered={ofwrendered}
           setofwrendered={setofwrendered}
           direct={direct}
-          // api={api}
-          // direct={direct}
-          // data={getAppDetails}
-          // receive={(e) => updateAppDetails(e, setAppDetails, getAppDetails)}
-          // presaddress={(e) =>
-          //   handlePresAddressCases(e, setAppDetails, getAppDetails)
-          // }
+          stepperView={stepperView}
         />
       ),
     },
@@ -76,7 +69,7 @@ export const getLoanApplicationSteps = (props) => {
           api={api}
           data={getAppDetails}
           direct={direct}
-          receive={(e) => updateAppDetails(e, setAppDetails, getAppDetails)}
+          stepperView={stepperView}
         />
       ),
     });
@@ -84,11 +77,3 @@ export const getLoanApplicationSteps = (props) => {
 
   return steps;
 };
-
-const updateAppDetails = (e, setAppDetails, getAppDetails) => {
-  setAppDetails({
-    ...getAppDetails,
-    [e.name]: e.value,
-  });
-};
-

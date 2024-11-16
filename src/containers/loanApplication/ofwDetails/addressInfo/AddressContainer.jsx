@@ -241,6 +241,7 @@ function AddressContainer({ data, receive, title, type, category, isEdit, presad
                     <label className='mt-[7px] w-[200px]'>Block / Unit / Street</label>
                     <div className='mx-[2%] w-[400px]'>
                         <Input.TextArea
+                            autoComplete='new-password'
                             showCount
                             maxLength={250}
                             style={{

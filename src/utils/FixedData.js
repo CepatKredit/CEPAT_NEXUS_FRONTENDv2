@@ -331,12 +331,17 @@ export const Hckfi = () => {
             value: 14,
             label: "Asialink Finance Referral",
         },
-        
+            {
+                value: 17,
+                label: "Others",
+            },
        
-        
     ]
+    dataList.sort((a, b) => a.label.localeCompare(b.label));
+
     return dataList;
 }
+
 export const ReferredBy = () => {
     const dataList = [
         {
