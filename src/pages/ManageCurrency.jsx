@@ -184,8 +184,7 @@ function ManageCurrency() {
                                             icon={<EditFilled style={{ fontSize: '18px' }} />}
                                         />
                                     </Tooltip>
-
-                                    <Popconfirm
+                                {/* <Popconfirm
                                         title="Are you sure you want to delete?"
                                         onConfirm={() => {
                                             remove(x.id)
@@ -201,6 +200,8 @@ function ManageCurrency() {
                                             />
                                         </Tooltip>
                                     </Popconfirm>
+                                    */}
+                                    
                                 </Space>)
                             }))}  // Add the sample rows here
                     />
