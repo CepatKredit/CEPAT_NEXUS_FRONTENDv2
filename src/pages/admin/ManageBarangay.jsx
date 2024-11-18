@@ -81,7 +81,7 @@ function ManageBarangay() {
     const BarangayListQuery = useQuery({
         queryKey: ['BarangayListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST('/getBarangay')
+            const result = await GET_LIST('/GroupGet/G5B')
             return result.list
         },
         enabled: true,

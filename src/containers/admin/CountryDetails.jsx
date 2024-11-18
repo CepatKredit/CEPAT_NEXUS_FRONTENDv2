@@ -56,7 +56,7 @@ function CountryDetails({ option }) {
     const IntSubGroupListQuery = useQuery({
         queryKey: ['IntSubGroupList'],
         queryFn: async () => {
-            const result = await GET_LIST('/getInternationalSubGroup')
+            const result = await GET_LIST('/GroupGet/G14ISG')
             return result.list.result
         },
         refetchInterval: (data) => {
@@ -70,7 +70,7 @@ function CountryDetails({ option }) {
 
     async function SelectedSub(e) {
         const dataHolder = { Code: e }
-        var data = await POST_DATA('/getInternationalGroup', dataHolder)
+        var data = await POST_DATA('/GroupPost/P63GIG', dataHolder)
         setData({
             ...getData,
             IntrntionlSubGrp: e,
@@ -128,7 +128,7 @@ function CountryDetails({ option }) {
             IsNegative: getData.IsNegative === 'POSITIVE' ? 0 : 1
         }
 
-        await axios.post('/editCountry', data)
+        await axios.post('/GroupPost/P65UC', data)
             .then(result => {
                 api[result.data.status]({
                     message: result.data.message,

@@ -10,8 +10,10 @@ import { toUpperText } from '@utils/Converter'
 import StatusRemarks from './StatusRemarks';
 import moment from 'moment'
 import { jwtDecode } from 'jwt-decode';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function ReleaseDocuments({  ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
+function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     React.useEffect(() => { console.log(ClientId + 'ReleaseDocuments') }, [ClientId])
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
@@ -21,11 +23,11 @@ function ReleaseDocuments({  ClientId, FileType, Uploader, User, data, isEdit, L
         queryKey: ['ReleaseDocListQuery'],
         queryFn: async () => {
             let container = []
-            const LPACCDDT = await GET_LIST(`/getFileType/${'LPACCDDT'}`)
+            const LPACCDDT = await GET_LIST(`/GroupGet/G16FT/${'LPACCDDT'}`)
             LPACCDDT.list?.map((x) => {
                 container.push({ id: x.id, name: 'LPACCDDT', docsType: x.docsType })
             })
-            const LPACCREL = await GET_LIST(`/getFileType/${'LPACCREL'}`)
+            const LPACCREL = await GET_LIST(`/GroupGet/G16FT/${'LPACCREL'}`)
             LPACCREL.list?.map((x) => {
                 container.push({ id: x.id, name: 'LPACCREL', docsType: x.docsType })
             })
@@ -40,17 +42,32 @@ function ReleaseDocuments({  ClientId, FileType, Uploader, User, data, isEdit, L
     const FileListQuery = useQuery({
         queryKey: ['ReleaseFileListQuery'],
         queryFn: async () => {
-            let container = []
-            const LPACCDDT = await GET_LIST(`/getFileList/${ClientId}/${'LPACCDDT'}/${jwtDecode(token).USRID}`)
-            LPACCDDT.list?.map((x) => { container.push(x) })
-            const LPACCREL = await GET_LIST(`/getFileList/${ClientId}/${'LPACCREL'}/${jwtDecode(token).USRID}`)
-            LPACCREL.list?.map((x) => { container.push(x) })
-            return container
+            try {
+                let container = []
+                const LPACCDDT = await GET_LIST(`/getFileList/${ClientId}/${'LPACCDDT'}/${jwtDecode(token).USRID}`)
+                LPACCDDT.list?.map((x) => { container.push(x) })
+                const LPACCREL = await GET_LIST(`/getFileList/${ClientId}/${'LPACCREL'}/${jwtDecode(token).USRID}`)
+                LPACCREL.list?.map((x) => { container.push(x) })
+                SET_LOADING_INTERNAL('ReleaseFile', false);
+                return container
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('ReleaseFile', false);
+                return [];
+            }
         },
         enabled: true,
         retryDelay: 1000,
         staleTime: 5 * 1000
     })
+
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('ReleaseFile', true)
+            FileListQuery.refetch();
+        }
+    }, [data]);
+
 
     function GetFile(id, command) {
         let count = 0;
@@ -152,7 +169,7 @@ function ReleaseDocuments({  ClientId, FileType, Uploader, User, data, isEdit, L
             }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={LoanStatus} />
             <div className='space-x-[1.5rem]'>
                 {
-                    LoanStatus === 'CANCELLED' || LoanStatus === 'DECLINED' || LoanStatus === 'APPROVED (TRANS-OUT)' 
+                    LoanStatus === 'CANCELLED' || LoanStatus === 'DECLINED' || LoanStatus === 'APPROVED (TRANS-OUT)'
                         || LoanStatus === 'ON WAIVER' || LoanStatus === 'CONFIRMATION' || LoanStatus === 'CONFIRMED' || LoanStatus === 'UNDECIDED'
                         || LoanStatus === 'RETURN TO LOANS PROCESSOR' || LoanStatus === 'FOR DISBURSEMENT'
                         ? (<></>)
