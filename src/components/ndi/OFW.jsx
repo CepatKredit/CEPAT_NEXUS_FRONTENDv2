@@ -81,7 +81,7 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
             const user = jwtDecode(token).USRID;
             const date = mmddyy(dayjs());
             try {
-                const result = await axios.get(`/getNDIData/${loanApp}/${borrow}/${type}/${user}/${date}`);
+                const result = await axios.get(`/GroupGet/G109ND/${loanApp}/${borrow}/${type}/${user}/${date}`);
                 console.log(result.data.list)
                 let incomeData = [];
                 let expenseData = [];

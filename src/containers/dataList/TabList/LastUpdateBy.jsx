@@ -76,7 +76,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {
-            const result = await GET_LIST('/OFWDetails/GetSuffix');
+            const result = await GET_LIST('/GroupGet/G28S');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -96,7 +96,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const getRemarks = useQuery({
         queryKey: ['getRemarks'],
         queryFn: async () => {
-            const result = await axios.get(`/getRemarks/${data?.loanIdCode}`);
+            const result = await axios.get(`/GroupGet/G37R/${data?.loanIdCode}`);
             return result.data.list[0];
         },
         enabled: true,
@@ -169,7 +169,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         }
 
         onClickUpdateStatus.mutate();
-
     }
 
 
@@ -207,7 +206,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 };
 
                 try {
-                    await axios.post('/updateCheckListForApproval', checkListData);
+                    await axios.post('/GroupPost/P139UCA', checkListData);
                     api['success']({
                         message: 'Application Status',
                         description: 'Status updated',
@@ -218,10 +217,10 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         message: 'Error',
                         description: 'Failed to update Please try again.',
                     });
-                    return; 
+                    return;
                 }
             } else {
-             
+
                 const dataContainer = [
                     {
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
@@ -253,7 +252,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 ];
 
                 if (getUpdate.UrgentApp === 2 && getUpdate.DepartureDate) {
-                    const departureUpdateResponse = await axios.post('/updateDepartDate', {
+                    const departureUpdateResponse = await axios.post('/GroupPost/P140UD', {
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
                         DepartureDate: dayjs(getUpdate.DepartureDate).format('MM-DD-YYYY')
                     });
@@ -266,36 +265,52 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         return;
                     }
                 }
-                try {
-                    const result = await axios.post('/updateApplicationStatus',
-                        getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
-                            ? dataContainer[2]
-                            : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
-                                ? dataContainer[1]
-                                : dataContainer[0]
-                    );
-                    SET_PATH_LOCATION(getUpdate.Status)
-                    SET_REFRESH_TILE_COUNTER(1)
-                    StatusList.refetch();
-                    api[result.data.status]({
-                        message: result.data.message,
-                        description: result.data.description
-                    });
-                    queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
-                    navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
-                    setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
 
-                    if (deletePN) {
-                        await onClickDeleteXTable();
-                    }
-
+                let checkpn = 0;
+                if (getUpdate.Status === 'FOR DISBURSEMENT') {
+                    await axios.post('/GroupPost/P141UD', dataContainer[0])
+                        .then((result) => { checkpn = result.data.status; })
+                        .catch((error) => { console.log(error); })
                 }
-                catch (error) {
-                    console.log(error);
-                    api['error']({
-                        message: 'Something went wrong',
-                        description: error.message
+
+                if (checkpn !== undefined) {
+                    api['info']({
+                        message: 'No PN from SOFIA',
+                        description: 'Unable to disburse with no PN Number from SOFIA.'
                     });
+                }
+                else {
+                    try {
+                        const result = await axios.post('/GroupPost/P81UAS',
+                            getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
+                                ? dataContainer[2]
+                                : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
+                                    ? dataContainer[1]
+                                    : dataContainer[0]
+                        );
+                        SET_PATH_LOCATION(getUpdate.Status)
+                        SET_REFRESH_TILE_COUNTER(1)
+                        StatusList.refetch();
+                        api[result.data.status]({
+                            message: result.data.message,
+                            description: result.data.description
+                        });
+                        queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
+                        navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
+                        setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
+
+                        if (deletePN) {
+                            await onClickDeleteXTable();
+                        }
+
+                    }
+                    catch (error) {
+                        console.log(error);
+                        api['error']({
+                            message: 'Something went wrong',
+                            description: error.message
+                        });
+                    }
                 }
             }
         }
@@ -563,77 +578,77 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
 
 
-                        {getUpdate.Status === 'FOR CREDIT ASSESSMENT' 
-                        ?(
-                            <div className='pt-2'>
-                                <Space>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>Principal Borrower Full Name</label>
-                                        </div>
-                                        <div>
-                                            <Input readOnly className="w-full" size="large" value={getFullName(data.ofwfname, data.ofwmname, data.ofwlname, data.ofwsuffix)} />
-                                        </div>
-                                    </div>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>Co-Borrower Full Name</label>
-                                        </div>
-                                        <div>
-                                            <Input readOnly className='w-full' size='large' value={getFullName(data.benfname, data.benmname, data.benlname, data.bensuffix)} />
-                                        </div>
-                                    </div>
-                                </Space>
-                                <Space>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>Additional Co-Borrower Full Name</label>
-                                        </div>
-                                        <div>
-                                            <Input readOnly className='w-full' size='large' value={getFullName(data.coborrowfname, data.coborrowmname, data.coborrowlname, data.coborrowsuffix)} />
-                                        </div>
-                                    </div>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>For Urgent Application, Please select Reason</label>
-                                        </div>
-                                        <div>
-                                            <Select
-                                                className='w-full'
-                                                size='large'
-                                                allowClear
-                                                options={RequestTypeDropdown(data.loanProd).MArequestType}
-                                                value={getUpdate.UrgentApp}
-                                                onChange={(e) => { setUpdate({ ...getUpdate, UrgentApp: e }) }}
-                                                disabled={isDisabled}
-                                            />
-                                        </div>
-                                    </div>
-                                </Space>
-                                {getUpdate.UrgentApp === 2 && (
-                                    <div className='pt-2'>
+                        {getUpdate.Status === 'FOR CREDIT ASSESSMENT'
+                            ? (
+                                <div className='pt-2'>
+                                    <Space>
                                         <div className='w-[23.5rem]'>
                                             <div>
-                                                <label className='font-bold'>Departure Date</label>
+                                                <label className='font-bold'>Principal Borrower Full Name</label>
                                             </div>
                                             <div>
-                                                <DatePicker
+                                                <Input readOnly className="w-full" size="large" value={getFullName(data.ofwfname, data.ofwmname, data.ofwlname, data.ofwsuffix)} />
+                                            </div>
+                                        </div>
+                                        <div className='w-[23.5rem]'>
+                                            <div>
+                                                <label className='font-bold'>Co-Borrower Full Name</label>
+                                            </div>
+                                            <div>
+                                                <Input readOnly className='w-full' size='large' value={getFullName(data.benfname, data.benmname, data.benlname, data.bensuffix)} />
+                                            </div>
+                                        </div>
+                                    </Space>
+                                    <Space>
+                                        <div className='w-[23.5rem]'>
+                                            <div>
+                                                <label className='font-bold'>Additional Co-Borrower Full Name</label>
+                                            </div>
+                                            <div>
+                                                <Input readOnly className='w-full' size='large' value={getFullName(data.coborrowfname, data.coborrowmname, data.coborrowlname, data.coborrowsuffix)} />
+                                            </div>
+                                        </div>
+                                        <div className='w-[23.5rem]'>
+                                            <div>
+                                                <label className='font-bold'>For Urgent Application, Please select Reason</label>
+                                            </div>
+                                            <div>
+                                                <Select
                                                     className='w-full'
-                                                    format={'MM-DD-YYYY'}
-                                                    allowClear
-                                                    value={isDateTimeValid(data.ofwDeptDate) ? dayjs(data.ofwDeptDate) : undefined}
                                                     size='large'
-                                                    onChange={(date) => {
-                                                    }}
-                                                    disabled={true}
-                                                    disabledDate={(current) => current && current < dayjs().startOf('day')}
+                                                    allowClear
+                                                    options={RequestTypeDropdown(data.loanProd).MArequestType}
+                                                    value={getUpdate.UrgentApp}
+                                                    onChange={(e) => { setUpdate({ ...getUpdate, UrgentApp: e }) }}
+                                                    disabled={isDisabled}
                                                 />
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
-                        ):(<></>)}
+                                    </Space>
+                                    {getUpdate.UrgentApp === 2 && (
+                                        <div className='pt-2'>
+                                            <div className='w-[23.5rem]'>
+                                                <div>
+                                                    <label className='font-bold'>Departure Date</label>
+                                                </div>
+                                                <div>
+                                                    <DatePicker
+                                                        className='w-full'
+                                                        format={'MM-DD-YYYY'}
+                                                        allowClear
+                                                        value={isDateTimeValid(data.ofwDeptDate) ? dayjs(data.ofwDeptDate) : undefined}
+                                                        size='large'
+                                                        onChange={(date) => {
+                                                        }}
+                                                        disabled={true}
+                                                        disabledDate={(current) => current && current < dayjs().startOf('day')}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (<></>)}
                         <center>
                             <div className='pt-[2rem]'>
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
