@@ -33,13 +33,19 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     }));
   };
 
-  const updateAppDetails = (e) => {
+  const updateAppDetails = React.useCallback((e) => {
     if (!e || !e.name) return;
-    setAppDetails((prevDetails) => ({
-      ...prevDetails,
-      [e.name]: e.value,
-    }));
-  };
+    setAppDetails((prevDetails) => {
+      const newValue = e.value;
+      if (prevDetails[e.name] === newValue) {
+        return prevDetails;
+      }
+      return {
+        ...prevDetails,
+        [e.name]: newValue,
+      };
+    });
+  }, []);
 
   const handleLoanDetailCases = (e) => {
     setAppDetails((prevDetails) => ({

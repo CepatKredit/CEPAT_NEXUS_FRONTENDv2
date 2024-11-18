@@ -39,7 +39,7 @@ function LoanApplicationInfo() {
             try {
                 const result = await GET_LIST(`/getClientDataList/${toDecrypt(localStorage.getItem('SIDC'))}`);
                 const data = result.list;
-                console.log(data)
+                console.log('Get From API Data ',data)
                 setDetails({
                     ClientId: data?.LoanDetails?.loanAppId,
                     FileType: data?.LoanDetails?.productId,
@@ -313,7 +313,7 @@ function LoanApplicationInfo() {
     const token = localStorage.getItem('UTK');
 
     //Manipulate Fields on trigger
-    TriggerFields({ getAppDetails, setAppDetails });
+   // TriggerFields({ getAppDetails, setAppDetails });
 
     const [getLoading, setLoading] = React.useState(false)
     React.useEffect(() => { setLoading(GET_LOADING_INTERNAL) }, [GET_LOADING_INTERNAL])

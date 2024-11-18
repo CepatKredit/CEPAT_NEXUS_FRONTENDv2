@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Flex, notification, Checkbox, Input, Form, ConfigProvider } from 'antd';
 import LabeledInput from '@components/marketing/LabeledInput';
 import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
@@ -33,6 +33,7 @@ import { useStore } from 'zustand';
 import DatePickerOpt from '@components/optimized/DatePickerOpt';
 import { useDataContainer } from '@context/PreLoad';
 import SelectOpt from '@components/optimized/SelectOpt';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, BorrowerId, addCoborrower }) {
@@ -73,6 +74,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
     const { GET_COUNTRY_LIST } = useDataContainer();
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+    const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
 
     return (
         <div>
@@ -88,7 +90,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={<>First Name <span className="text-red-500">*</span></>}
                     value={data.ofwfname}
                     placeHolder='First Name'
-                    receive={(e) => receive({ name: 'ofwfname', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwfname', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
@@ -100,7 +102,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={'Middle Name'}
                     value={data.ofwmname}
                     placeHolder='Middle Name'
-                    receive={(e) => receive({ name: 'ofwmname', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwmname', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
@@ -111,7 +113,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={<>Last Name <span className="text-red-500">*</span></>}
                     value={data.ofwlname}
                     placeHolder='Last Name'
-                    receive={(e) => receive({ name: 'ofwlname', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwlname', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
@@ -123,7 +125,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={<>Suffix <span className="text-red-500">*</span></>}
                     placeHolder='Suffix'
                     value={data.ofwsuffix}
-                    receive={(e) => receive({ name: 'ofwsuffix', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwsuffix', value: e })}
                     disabled={isEdit}
                     showSearch
                     isEdit={isEdit}
@@ -135,7 +137,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={<>Birthdate <span className="text-red-500">*</span></>}
                     placeHolder='Enter Birthdate'
                     receive={(e) => {
-                        receive({ name: 'ofwbdate', value: e });
+                        updateAppDetails({ name: 'ofwbdate', value: e });
                         setAge(e)
                         //receive({ name: 'age', value: calculateAge(e) });
                     }}
@@ -164,7 +166,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     placeHolder='Gender'
                     value={data.ofwgender}
                     data={Gender()}
-                    receive={(e) => receive({ name: 'ofwgender', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwgender', value: e })}
                     category={'marketing'}
                     disabled={isEdit}
                     isEdit={isEdit}
@@ -177,7 +179,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     placeHolder='Mobile Number'
                     data={data}
                     value={data.ofwmobile}
-                    receive={(e) => receive({ name: 'ofwmobile', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwmobile', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
@@ -192,7 +194,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Other Mobile Number'
                         data={data}
                         value={data.ofwothermobile}
-                        receive={(e) => receive({ name: 'ofwothermobile', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwothermobile', value: e })}
                         category={'marketing'}
                         type='contact'
                         readOnly={isEdit}
@@ -206,7 +208,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={<>Email Address <span className="text-red-500">*</span></>}
                     placeHolder='Email Address'
                     value={data.ofwemail}
-                    receive={(e) => receive({ name: 'ofwemail', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwemail', value: e })}
                     category={'marketing'}
                     isEdit={isEdit}
                     rendered={rendered}
@@ -238,7 +240,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     const formattedValue = inputValue.startsWith('https://')
                                         ? inputValue
                                         : `https://www.facebook.com/${inputValue}`;
-                                    receive({ name: 'ofwfblink', value: formattedValue });
+                                        updateAppDetails({ name: 'ofwfblink', value: formattedValue });
                                 }
                             }}
                         />
@@ -253,7 +255,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.ofwfblink || ''}
                         receive={(e) => {
                             const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
-                            receive({ name: 'ofwfblink', value: formattedValue });
+                            updateAppDetails({ name: 'ofwfblink', value: formattedValue });
                         }}
                         isEdit={isEdit}
                         rendered={rendered}
@@ -267,7 +269,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
                         placeHolder='Group Chat'
                         value={data.ofwgroupchat}
-                        receive={(e) => receive({ name: 'ofwgroupchat', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwgroupchat', value: e })}
                         category={'marketing'}
                         readOnly={isEdit}
                         isEdit={isEdit}
@@ -280,7 +282,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
                         placeHolder='Relationship to the Beneficiary'
                         value={data.RelationshipBen}
-                        receive={(e) => receive({ name: 'RelationshipBen', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
@@ -294,7 +296,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Relationship to Additional <span className="text-red-500">*</span></>}
                         placeHolder='Relationship to Additional'
                         value={data.RelationshipAdd}
-                        receive={(e) => receive({ name: 'RelationshipAdd', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'RelationshipAdd', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
@@ -309,7 +311,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Religion'
                         data={Religion()}
                         value={data.Religion}
-                        receive={(e) => receive({ name: 'Religion', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'Religion', value: e })}
                         disabled={isEdit}
                         showSearch
                         rendered={rendered}
@@ -323,7 +325,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='PEP'
                         readOnly={isEdit}
                         value={data.PEP}
-                        receive={(e) => receive({ name: 'PEP', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'PEP', value: e })}
                         disabled={isEdit}
                         rendered={rendered}
                     />)}
@@ -335,7 +337,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     disabled={isEdit}
                     value={data.ofwmstatus}
                     data={MaritalStatus()}
-                    receive={(e) => receive({ name: 'ofwmstatus', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
                 {User === 'Credit' && (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
@@ -343,7 +345,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         <Checkbox
                             checked={data.MarriedPBCB}
                             onClick={() => {
-                                receive({ name: 'MarriedPBCB', value: !data.MarriedPBCB });
+                                updateAppDetails({ name: 'MarriedPBCB', value: !data.MarriedPBCB });
                             }}
                             disabled={isEdit}
                         >
@@ -360,7 +362,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 label={<>Spouse Name <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Name'
                                 readOnly={isEdit}
-                                receive={(e) => receive({ name: 'ofwspouse', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'ofwspouse', value: e })}
                                 value={data.ofwspouse}
                                 isEdit={isEdit}
                                 rendered={rendered}
@@ -373,7 +375,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 className_label={'font-bold'}
                                 label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Birthdate'
-                                receive={(e) => receive({ name: 'ofwspousebdate', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'ofwspousebdate', value: e })}
                                 value={data.ofwspousebdate}
                                 isEdit={isEdit}
                                 rendered={rendered}
@@ -391,7 +393,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     disabled={isEdit}
                                     value={data.SpSrcIncome}
                                     data={SpouseSourceIncome()}
-                                    receive={(e) => receive({ name: 'SpSrcIncome', value: e })}
+                                    receive={(e) => updateAppDetails({ name: 'SpSrcIncome', value: e })}
                                     rendered={rendered}
                                 />)}
                             {User === 'Credit' && (
@@ -402,7 +404,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     placeHolder='Spouse Income'
                                     readOnly={isEdit}
                                     value={data.SpIncome}
-                                    receive={(e) => receive({ name: 'SpIncome', value: e })}
+                                    receive={(e) => updateAppDetails({ name: 'SpIncome', value: e })}
                                     category={'direct'}
                                     rendered={rendered}
                                     triggered={data.MarriedPBCB}
@@ -433,7 +435,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_dsub={''}
                         label={"Dependents"}
                         value={data.ofwdependents || '0'}
-                        receive={(e) => { receive({ name: 'ofwdependents', value: e }); }}
+                        receive={(e) => { updateAppDetails({ name: 'ofwdependents', value: e }); }}
                         digits={2}
                         placeHolder={'No.of Dependents'}
                         isEdit={isEdit}
@@ -456,7 +458,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 <AddressGroup_Component
                     api={api}
                     data={data}
-                    receive={(e) => receive(e)}
+                    receive={(e) => updateAppDetails(e)}
                     presaddress={(e) => presaddress(e)}
                     type={"present"}
                     disabled={isEdit}
@@ -474,7 +476,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={<>Type of Residences <span className="text-red-500">*</span></>}
                     placeHolder='Type of Residences'
                     disabled={isEdit}
-                    receive={(e) => receive({ name: 'ofwresidences', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwresidences', value: e })}
                     data={Residences()}
                     category={'marketing'}
                     value={data.ofwresidences}
@@ -486,7 +488,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={<>{data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
                         value={data.ofwrent}
-                        receive={(e) => { receive({ name: 'ofwrent', value: e }) }}
+                        receive={(e) => { updateAppDetails({ name: 'ofwrent', value: e }) }}
                         category={'direct'}
                         placeHolder={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         rendered={rendered}
@@ -504,7 +506,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         readOnly={isEdit}
                         value={data.landmark}
                         rendered={rendered}
-                        receive={(e) => receive({ name: 'landmark', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'landmark', value: e })}
                     />)}
                 {User === 'Credit' && (
                     <LabeledInput_Fullname
@@ -517,7 +519,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         readOnly={isEdit}
                         rendered={rendered}
                         value={data.OfwPoBRemarks}
-                        receive={(e) => receive({ name: 'OfwPoBRemarks', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'OfwPoBRemarks', value: e })}
                     />)}
                 {User === 'LC'
                     ? (<></>)
@@ -529,8 +531,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         value_year={data.ofwlosYear}
                         value_month={data.ofwlosMonth}
-                        receiveY={(e) => receive({ name: 'ofwlosYear', value: e })}
-                        receiveM={(e) => receive({ name: 'ofwlosMonth', value: e })}
+                        receiveY={(e) => updateAppDetails({ name: 'ofwlosYear', value: e })}
+                        receiveM={(e) => updateAppDetails({ name: 'ofwlosMonth', value: e })}
                         rendered={rendered}
                     />)}
                 {User === 'LC'
@@ -547,7 +549,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value_mun={data.ofwPresMunicipality}
                         value={data.collectionarea}
                         get_presprov={data.ofwPresProv}
-                        receive={(e) => receive({ name: 'collectionarea', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'collectionarea', value: e })}
                         rendered={rendered}
                         disabled={true}
                     />)}
@@ -561,7 +563,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     : (<AddressGroup_Component
                         api={api}
                         data={data}
-                        receive={(e) => receive(e)}
+                        receive={(e) => updateAppDetails(e)}
                         presaddress={(e) => presaddress(e)}
                         type={"permanent"}
                         disabled={isEdit}
@@ -584,7 +586,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     : (<AddressGroup_Component
                         api={api}
                         data={data}
-                        receive={(e) => receive(e)}
+                        receive={(e) => updateAppDetails(e)}
                         presaddress={(e) => presaddress(e)}
                         type={"provincial"}
                         disabled={isEdit}
@@ -609,7 +611,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={'Valid ID Type'}
                         placeHolder='Valid ID Type'
                         disabled={isEdit}
-                        receive={(e) => receive({ name: 'ofwvalidid', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwvalidid', value: e })}
                         category={'marketing'}
                         value={data.ofwvalidid}
                         rendered={rendered}
@@ -624,7 +626,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={'ID Number'}
                         placeHolder='ID type Number'
                         readOnly={isEdit}
-                        receive={(e) => receive({ name: 'ofwidnumber', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwidnumber', value: e })}
                         value={data.ofwidnumber}
                         isEdit={isEdit}
                         rendered={rendered}
@@ -643,7 +645,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         disabled={isEdit}
                         category={'marketing'}
                         value={data.ofwcountry}
-                        receive={(e) => receive({ name: 'ofwcountry', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwcountry', value: e })}
                         //rendered={rendered}
                         showSearch
                         options={get_country_list}
@@ -661,7 +663,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             placeHolder='Job Category'
                             data={JobCategory()}
                             value={data.JobCategory}
-                            receive={(e) => receive({ name: 'JobCategory', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'JobCategory', value: e })}
                             disabled={isEdit}
                             rendered={rendered}
                         />
@@ -674,7 +676,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             category={'marketing'}
                             value={data.ofwjobtitle}
                             placeHolder='Job/Position'
-                            receive={(e) => receive({ name: 'ofwjobtitle', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
                             rendered={rendered}
                         />))}
                 {User === 'Credit' && (
@@ -685,7 +687,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Position'
                         data={JobTitle(data.JobCategory)}
                         value={data.ofwjobtitle}
-                        receive={(e) => receive({ name: 'ofwjobtitle', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
                         disabled={isEdit}
                         rendered={rendered}
                     />)}
@@ -697,7 +699,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Employment Status'
                         data={EmploymentStatus()}
                         value={data.EmpStatus}
-                        receive={(e) => receive({ name: 'EmpStatus', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'EmpStatus', value: e })}
                         disabled={isEdit}
                         showSearch
                         rendered={rendered}
@@ -710,7 +712,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Principal Employer'
                         readOnly={isEdit}
                         value={data.PEmployer}
-                        receive={(e) => receive({ name: 'PEmployer', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'PEmployer', value: e })}
                         rendered={rendered}
                     />)}
                 {(User !== 'Credit' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL'))) && (
@@ -727,7 +729,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             disabled={isEdit}
                             readOnly={User === 'Credit' ? isEdit : false}
                             value={data.ofwcompany}
-                            receive={(e) => receive({ name: 'ofwcompany', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'ofwcompany', value: e })}
                             rendered={rendered}
                         />))}
                 {User === 'Credit' && (
@@ -737,10 +739,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Salary in Foreign Currency <span className="text-red-500">*</span></>}
                         placeHolder='Foreign Salary'
                         data={data}
-                        receive={(e) => receive({ name: 'FCurrency', value: e })}
-                        receiveForeign={(e) => receive({ name: 'FSalary', value: e })}
-                        receiveConvert={(e) => receive({ name: 'PSalary', value: e })}
-                        receiveFCurValue={(e) => receive({ name: 'FCurValue', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'FCurrency', value: e })}
+                        receiveForeign={(e) => updateAppDetails({ name: 'FSalary', value: e })}
+                        receiveConvert={(e) => updateAppDetails({ name: 'PSalary', value: e })}
+                        receiveFCurValue={(e) => updateAppDetails({ name: 'FCurValue', value: e })}
                         category={'marketing'}
                         readOnly={isEdit}
                         isEdit={isEdit}
@@ -753,7 +755,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     placeHolder='Salary'
                     readOnly={isEdit}
                     value={data.ofwsalary}
-                    receive={(e) => receive({ name: 'ofwsalary', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwsalary', value: e })}
                     category={'direct'}
                     rendered={rendered}
                 />)}
@@ -813,7 +815,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={<>Contract Date <span className="text-red-500">*</span></>}
                         placeHolder='Contract Date'
-                        receive={(e) => receive({ name: 'ContractDate', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ContractDate', value: e })}
                         value={data.ContractDate}
                         category={'marketing'}
                         disabled={isEdit}
@@ -829,7 +831,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={<>Contract Duration <span className="text-red-500">*</span></>}
                         rendered={rendered}
-                        receive={(e) => receive({ name: 'ContractDuration', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ContractDuration', value: e })}
                         value={data.ContractDuration}
                         placeHolder={'No. of Months'}
                         category={'marketing'}
@@ -855,7 +857,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             disabled={isEdit}
                             checked={data.UnliContract}
                             onChange={() => {
-                                receive({
+                                updateAppDetails({
                                     name: 'UnliContract',
                                     value: !data.UnliContract,
                                 });
@@ -872,7 +874,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={<>OFW Departure Date <span className="text-red-500">*</span></>}
                         value={data.ofwDeptDate}
-                        receive={(e) => { receive({ name: 'ofwDeptDate', value: e }) }}
+                        receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
                         //disabled={!isEdit && !(getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')}
                         placeHolder="Departure Date"
                         disabledate={disableDate_deployment}
@@ -888,7 +890,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         disabled={isEdit}
                         category={'marketing'}
                         value={data.YrsOfwSeafarer}
-                        receive={(e) => receive({ name: 'YrsOfwSeafarer', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'YrsOfwSeafarer', value: e })}
                         showSearch={true}
                         optionFilterProp="children"
                         filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -904,7 +906,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             placeHolder='Name of Vessel'
                             readOnly={isEdit}
                             value={data.VesselName}
-                            receive={(e) => receive({ name: 'VesselName', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'VesselName', value: e })}
                             category={'direct'}
                             rendered={rendered}
                         />
@@ -915,7 +917,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             placeHolder='IMO Vessel'
                             readOnly={isEdit}
                             value={data.VesselIMO}
-                            receive={(e) => receive({ name: 'VesselIMO', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'VesselIMO', value: e })}
                             category={'direct'}
                             rendered={rendered}
                         />
@@ -934,7 +936,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     <TextArea
                                         className="w-[920px] h-[70vh] p-1 border border-gray-300 rounded-md resize-none"
                                         value={data.VesselInfo}
-                                        onChange={(e) => receive({ name: 'VesselInfo', value: e.target.value })}
+                                        onChange={(e) => updateAppDetails({ name: 'VesselInfo', value: e.target.value })}
                                         style={{
                                             resize: 'none',
                                         }}
@@ -950,7 +952,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             placeHolder='Type of Vessel'
                             readOnly={isEdit}
                             value={data.VesselType}
-                            receive={(e) => receive({ name: 'VesselType', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'VesselType', value: e })}
                             category={'direct'}
                             rendered={rendered}
                         />
@@ -965,7 +967,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Exact Location'
                         readOnly={isEdit}
                         value={data.ExactLocation}
-                        receive={(e) => receive({ name: 'ExactLocation', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ExactLocation', value: e })}
                         category={'marketing'}
                     />)}
                 {User === 'Credit' && data.loanProd === '0303-WA' && (
@@ -976,7 +978,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Possible Vacation'
                         readOnly={isEdit}
                         value={data.PossVacation}
-                        receive={(e) => receive({ name: 'PossVacation', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'PossVacation', value: e })}
                         category={'marketing'}
                     />)}
                 {User === 'Credit' && (
@@ -987,7 +989,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Allotment Name'
                         readOnly={isEdit}
                         value={data.AllotName}
-                        receive={(e) => receive({ name: 'AllotName', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'AllotName', value: e })}
                         category={'direct'}
                         rendered={rendered}
                     />)}
@@ -1009,7 +1011,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label="font-bold"
                         value={data.AllotAmount}
-                        receive={(e) => receive({ name: 'AllotAmount', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'AllotAmount', value: e })}
                         label={<>Remittance or Allotment Amount <span className="text-red-500">*</span></>}
                         placeHolder={'Amount'}
                         category={'marketing'}
@@ -1035,7 +1037,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Allotment Channel'
                         data={AllotChannel()}
                         value={data.AllotChannel}
-                        receive={(e) => receive({ name: 'AllotChannel', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'AllotChannel', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
@@ -1056,7 +1058,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             disabled={isEdit}
                             data={EducationalAttainment()}
                             value={data.ofwHighestEdu}
-                            receive={(e) => receive({ name: 'ofwHighestEdu', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'ofwHighestEdu', value: e })}
                             rendered={rendered}
                             showSearch={!isEdit}
                         />
@@ -1067,7 +1069,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             placeHolder='Course'
                             disabled={isEdit}
                             value={data.ofwcourse}
-                            receive={(e) => { receive({ name: 'ofwcourse', value: e }); }}
+                            receive={(e) => { updateAppDetails({ name: 'ofwcourse', value: e }); }}
                             readOnly={isEdit}
                         /> </>)}
                 {User === 'LC'
@@ -1079,7 +1081,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='School'
                         readOnly={isEdit}
                         value={data.ofwschool}
-                        receive={(e) => receive({ name: 'ofwschool', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwschool', value: e })}
                         category={'marketing'}
                     />)}
             </Flex>

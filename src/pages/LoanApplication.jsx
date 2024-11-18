@@ -22,17 +22,16 @@ import { useAppDetailsEffects, useDirectLoan } from "@hooks/LoanApplicationHooks
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 
 function LoanApplication() {
-    React.useEffect(() => {
-      const unloadCallBack = (e) => {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-      window.addEventListener("beforeunload", unloadCallBack);
-      return () => window.removeEventListener("beforeunload", unloadCallBack);
-    }, []);
+  React.useEffect(() => {
+    const unloadCallBack = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+    window.addEventListener("beforeunload", unloadCallBack);
+    return () => window.removeEventListener("beforeunload", unloadCallBack);
+  }, []);
 
   document.title = "Loan Application Form";
-
   const [loanrendered, setloanrendered] = React.useState(false);
   const [ofwrendered, setofwrendered] = React.useState(false);
   const [benrendered, setbenrendered] = React.useState(false);
@@ -42,7 +41,7 @@ function LoanApplication() {
   const [getStep, setStep] = React.useState(0);
   const [confirm, setconfirm] = React.useState(true);
 
-  const {getAppDetails, setAppDetails, direct, resetAppDetails, api } = React.useContext(LoanApplicationContext)
+  const { getAppDetails, setAppDetails, direct, resetAppDetails, api } = React.useContext(LoanApplicationContext)
 
   const [loadings, setLoadings] = React.useState(false);
   const [getDetails, setDetails] = React.useState();
@@ -54,8 +53,8 @@ function LoanApplication() {
   const lc_ofwdetails = !isValidOFWDetails(getAppDetails);
 
   const loandetails =
-    !getAppDetails.dataPrivacy || 
-    !isValidLoanDetails(getAppDetails) || 
+    !getAppDetails.dataPrivacy ||
+    !isValidLoanDetails(getAppDetails) ||
     ([15, 6].includes(getAppDetails.hckfi) && !getAppDetails.loanBranch);
 
   const ofwdetails = !isValidOFWDetails(getAppDetails);
@@ -103,7 +102,7 @@ function LoanApplication() {
 
   const applyDirectLoan = () => {
     directLoan(direct)
-   // resetAppDetails();
+    // resetAppDetails();
   };
 
   const cancelModal = () => {
@@ -113,6 +112,10 @@ function LoanApplication() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  React.useState(() => {
+    console.log(getStep)
+  }, [getStep])
 
   return (
     <div className="flex flex-col bg-[#e8eee5] h-[100vh] w-[100vw] justify-center items-center">
@@ -182,7 +185,7 @@ function LoanApplication() {
                     onClick={onClickNext}
                     className="bg-[#6B73C1]"
                     type="primary"
-                    disabled={direct ? loandetails  : lc_loandetails}
+                    disabled={direct ? loandetails : lc_loandetails}
                   >
                     Next
                   </Button>
@@ -220,7 +223,7 @@ function LoanApplication() {
                     >
                       <Button
                         size="large"
-                        onClick={ applyDirectLoan }
+                        onClick={applyDirectLoan}
                         className="bg-[#31b235]"
                         type="primary"
                         disabled={direct ? ben_details : lc_ofwdetails}
@@ -248,7 +251,7 @@ function LoanApplication() {
                   >
                     <Button
                       size="large"
-                      onClick={ applyDirectLoan }
+                      onClick={applyDirectLoan}
                       className="bg-[#31b235]"
                       type="primary"
                       disabled={ben_details}

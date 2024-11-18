@@ -30,8 +30,6 @@ export const getLoanApplicationSteps = (props) => {
     LoanApplicationContext
   );
 
-  console.log("Sa Stepper>>>", direct);
-
   const steps = [
     {
       key: 0,
