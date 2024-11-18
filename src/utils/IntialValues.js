@@ -253,6 +253,30 @@ const createInitialAppDetails = (direct) => {
     // relationshipID: "",
 
 
+
+    //Charges
+    PFR: "",
+    InterestRate: "",
+    CFRF: "",
+    Terms: "",
+    GracePeriod: "",
+    ChargeType: "",
+    ProcessingFee: "",
+    CRF: "",
+    Notatial: "",
+    PNDST: "",
+    ServiceFee: "",
+    DocuSign: "",
+    IBFTFee: "",
+    Others: "",
+    TotalCharges: "",
+    PNValue: "",
+    NetProceeds: "",
+    MonthlyAmortization: "",
+
+
+
+
   };
 };
 
