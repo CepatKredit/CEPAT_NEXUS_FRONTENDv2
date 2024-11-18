@@ -23,6 +23,8 @@ import { toDecrypt } from '@utils/Converter';
 import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
 import DatePickerOpt from '@components/optimized/DatePickerOpt';
 import { Age } from '@utils/Calculations';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+
 
 function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcoborrowfname, showCoBorrower, setShowCoBorrower, sepBenfname, User }) {
     const [isEdit, setEdit] = useState(false);
@@ -32,6 +34,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
     const [api, contextHolder] = notification.useNotification();
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
+
     useEffect(() => {
         if (Sepcoborrowfname) {
             setShowSaveButton(false);
@@ -157,7 +161,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     label={<>First Name <span className="text-red-500">*</span></>}
                     value={data.benfname}
                     placeHolder='First Name'
-                    receive={(e) => receive({ name: 'benfname', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'benfname', value: e })}
                     readOnly={isEdit}
                     rendered={rendered}
                 />
@@ -167,7 +171,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     label='Middle Name'
                     value={data.benmname}
                     placeHolder='Middle Name'
-                    receive={(e) => receive({ name: 'benmname', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'benmname', value: e })}
                     readOnly={isEdit}
                     rendered={rendered}
                 />
@@ -177,7 +181,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     label={<>Last Name <span className="text-red-500">*</span></>}
                     value={data.benlname}
                     placeHolder='Last Name'
-                    receive={(e) => receive({ name: 'benlname', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'benlname', value: e })}
                     readOnly={isEdit}
                     rendered={rendered}
                 />
@@ -187,7 +191,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     label={<>Suffix <span className="text-red-500">*</span></>}
                     placeHolder='Suffix'
                     value={data.bensuffix}
-                    receive={(e) => receive({ name: 'bensuffix', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'bensuffix', value: e })}
                     disabled={isEdit}
                     rendered={rendered}
                     showSearch
@@ -198,7 +202,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     label={<>Birthdate <span className="text-red-500">*</span></>}
                     placeHolder='Enter Birthdate'
                     receive={(e) => {
-                        receive({ name: 'benbdate', value: e });
+                        updateAppDetails({ name: 'benbdate', value: e });
                     }}
                     value={data.benbdate}
                     isEdit={isEdit}
@@ -226,7 +230,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     placeHolder='Please select'
                     data={Gender()}
                     value={data.bengender}
-                    receive={(e) => receive({ name: 'bengender', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'bengender', value: e })}
                     disabled={isEdit}
                     rendered={rendered}
                 />
@@ -238,7 +242,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     placeHolder='Email Address'
                     readOnly={isEdit}
                     value={data.benemail}
-                    receive={(e) => { receive({ name: 'benemail', value: e }) }}
+                    receive={(e) => { updateAppDetails({ name: 'benemail', value: e }) }}
                     category={'marketing'}
                     rendered={rendered}
                 />
@@ -250,7 +254,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     placeHolder='Mobile Number'
                     readOnly={isEdit}
                     value={data.benmobile}
-                    receive={(e) => { receive({ name: 'benmobile', value: e }) }}
+                    receive={(e) => { updateAppDetails({ name: 'benmobile', value: e }) }}
                     category={'marketing'}
                     rendered={rendered}
                 />
@@ -262,7 +266,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     placeHolder='Other Mobile Number'
                     readOnly={isEdit}
                     value={data.benothermobile}
-                    receive={(e) => { receive({ name: 'benothermobile', value: e }) }}
+                    receive={(e) => { updateAppDetails({ name: 'benothermobile', value: e }) }}
                     category={'marketing'}
                     rendered={rendered}
                     required={false}
@@ -274,7 +278,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     digits={2}
                     placeHolder='No. of Dependents'
                     value={data.bendependents}
-                    receive={(e) => receive({ name: 'bendependents', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'bendependents', value: e })}
                     readOnly={isEdit}
                     rendered={rendered}
                 />
@@ -288,7 +292,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     //value={data.benmstatus}
                     value={data.benmstatus}
                     data={MaritalStatus()}
-                    receive={(e) => { receive({ name: 'benmstatus', value: e }) }}
+                    receive={(e) => { updateAppDetails({ name: 'benmstatus', value: e }) }}
                     category={'marketing'}
                     showSearch
                     rendered={rendered}
@@ -302,7 +306,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             placeHolder='Spouse Name'
                             readOnly={isEdit}
                             category={'marketing'}
-                            receive={(e) => receive({ name: 'benspouse', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'benspouse', value: e })}
                             value={data.benspouse}
                             rendered={rendered}
                             disabled={User === 'Credit' && data.MarriedPBCB}
@@ -313,7 +317,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dsub={''}
                             label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                             placeHolder='Enter Birthdate'
-                            receive={(e) => { receive({ name: 'benspousebdate', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'benspousebdate', value: e }) }}
 
                             value={data.benspousebdate}
                             isEdit={isEdit}
@@ -334,7 +338,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 disabled={isEdit}
                                 value={data.BenSpSrcIncome}
                                 data={SpouseSourceIncome()}
-                                receive={(e) => receive({ name: 'BenSpSrcIncome', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'BenSpSrcIncome', value: e })}
                                 rendered={rendered}
                             />)}
                         {User === 'Credit' && (
@@ -345,7 +349,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 placeHolder='Spouse Income'
                                 readOnly={isEdit}
                                 value={data.BenSpIncome}
-                                receive={(e) => receive({ name: 'BenSpIncome', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'BenSpIncome', value: e })}
                                 category={'direct'}
                                 rendered={rendered}
                             />)}
@@ -378,7 +382,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     const formattedValue = inputValue.startsWith('https://')
                                         ? inputValue
                                         : `https://www.facebook.com/${inputValue}`;
-                                    receive({ name: 'benfblink', value: formattedValue });
+                                    updateAppDetails({ name: 'benfblink', value: formattedValue });
                                 }
                             }}
                         />
@@ -393,7 +397,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         value={data.benfblink || ''}
                         receive={(e) => {
                             const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
-                            receive({ name: 'benfblink', value: formattedValue });
+                            updateAppDetails({ name: 'benfblink', value: formattedValue });
                         }}
                         isEdit={isEdit}
                         rendered={rendered}
@@ -406,7 +410,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
                         placeHolder='Group Chat'
                         value={data.BenGrpChat}
-                        receive={(e) => receive({ name: 'BenGrpChat', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'BenGrpChat', value: e })}
                         category={'marketing'}
                         readOnly={isEdit}
                         isEdit={isEdit}
@@ -420,7 +424,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         label={<>Relationship to the OFW <span className="text-red-500">*</span></>}
                         placeHolder='Relationship to the OFW'
                         value={data.benrelationship}
-                        receive={(e) => receive({ name: 'benrelationship', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'benrelationship', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
@@ -435,7 +439,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         placeHolder='Please select'
                         data={SpouseSourceIncome()}
                         value={data.BenSrcIncome}
-                        receive={(e) => receive({ name: 'BenSrcIncome', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'BenSrcIncome', value: e })}
                         disabled={isEdit}
                         rendered={rendered}
                     />)}
@@ -447,7 +451,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         placeHolder='Please select'
                         data={Religion()}
                         value={data.BenReligion}
-                        receive={(e) => receive({ name: 'BenReligion', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'BenReligion', value: e })}
                         showSearch
                         disabled={isEdit}
                         rendered={rendered}
@@ -462,9 +466,9 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             data={Overseas()}
                             value={data.BenFormerOFW}
                             receive={(e) => {
-                                receive({ name: 'BenFormerOFW', value: e });
+                                updateAppDetails({ name: 'BenFormerOFW', value: e });
                                 if (e === 1) {
-                                    receive({ name: 'BenLastReturn', value: '' });
+                                    updateAppDetails({ name: 'BenLastReturn', value: '' });
                                 }
                             }}
                             disabled={isEdit}
@@ -477,7 +481,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 label={<>When was your last return home? <span className="text-red-500">*</span></>}
                                 placeHolder='When was your last return home'
                                 value={data.BenLastReturn}
-                                receive={(e) => receive({ name: 'BenLastReturn', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'BenLastReturn', value: e })}
                                 category={'marketing'}
                                 readOnly={isEdit}
                                 isEdit={isEdit}
@@ -488,12 +492,12 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         <LabeledSelect
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label='font-bold'
-                            label={<>Plans to Abroad <span className="text-red-500">*</span></>}
+                            label={<>Plans to go Abroad <span className="text-red-500">*</span></>}
                             placeHolder='Please select'
                             data={Overseas()}
                             value={data.BenPlanAbroad}
                             receive={(e) => {
-                                receive({ name: 'BenPlanAbroad', value: e });
+                                updateAppDetails({ name: 'BenPlanAbroad', value: e });
                             }}
                             disabled={isEdit}
                             rendered={rendered}
@@ -506,7 +510,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 placeHolder='Remarks'
                                 readOnly={isEdit}
                                 value={data.BenRemarks}
-                                receive={(e) => receive({ name: 'BenRemarks', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'BenRemarks', value: e })}
                             />)}</>)}
                 {User === 'Credit' && (
                     <LabeledSelect
@@ -517,7 +521,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         placeHolder='PEP'
                         readOnly={isEdit}
                         value={data.BenPEP}
-                        receive={(e) => receive({ name: 'BenPEP', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'BenPEP', value: e })}
                         disabled={isEdit}
                         rendered={rendered}
                     />)}
@@ -526,7 +530,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
             <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
                 <AddressGroup_Component
                     data={data}
-                    receive={(e) => { receive(e) }}
+                    receive={(e) => { updateAppDetails(e) }}
                     presaddress={(e) => { presaddress(e) }}
                     type={"beneficiary"}
                     category={"marketing"}
@@ -545,7 +549,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     label={<>Type of Residences <span className="text-red-500">*</span></>}
                     placeHolder='Type Of Residences'
                     disabled={isEdit}
-                    receive={(e) => { receive({ name: 'benresidences', value: e }) }}
+                    receive={(e) => { updateAppDetails({ name: 'benresidences', value: e }) }}
                     data={Residences()}
                     category={'marketing'}
                     value={data.benresidences}
@@ -557,7 +561,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         className_label={'font-bold'}
                         label={<>{data.benresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span> </>}
                         value={data.BenRentAmount}
-                        receive={(e) => { receive({ name: 'BenRentAmount', value: e }) }}
+                        receive={(e) => { updateAppDetails({ name: 'BenRentAmount', value: e }) }}
                         category={'direct'}
                         placeHolder={data.benresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         rendered={rendered}
@@ -569,8 +573,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     label={<>Length of Stay <span className="text-red-500">*</span></>}
                     value_month={data.benstaymonths}
                     value_year={data.benstayyears}
-                    receiveM={(e) => receive({ name: 'benstaymonths', value: e })}
-                    receiveY={(e) => receive({ name: 'benstayyears', value: e })}
+                    receiveM={(e) => updateAppDetails({ name: 'benstaymonths', value: e })}
+                    receiveY={(e) => updateAppDetails({ name: 'benstayyears', value: e })}
                     disabled={isEdit}
                     category="marketing"
                     rendered={rendered}
@@ -584,7 +588,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             placeHolder='Landmark'
                             readOnly={isEdit}
                             value={data.BenLandMark}
-                            receive={(e) => receive({ name: 'BenLandMark', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'BenLandMark', value: e })}
                             rendered={rendered}
                         />
                         <LabeledInput_UpperCase
@@ -595,7 +599,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             readOnly={isEdit}
                             rendered={rendered}
                             value={data.BenPoBRemarks}
-                            receive={(e) => receive({ name: 'BenPoBRemarks', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'BenPoBRemarks', value: e })}
                         />
                     </>
                 )}
@@ -634,7 +638,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>First Name <span className="text-red-500">*</span></>}
                             value={data.coborrowfname}
                             placeHolder='First Name'
-                            receive={(e) => { receive({ name: 'coborrowfname', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowfname', value: e }) }}
                             readOnly={isEdit}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
@@ -646,7 +650,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={'Middle Name'}
                             value={data.coborrowmname}
                             placeHolder='Middle Name'
-                            receive={(e) => { receive({ name: 'coborrowmname', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowmname', value: e }) }}
                             readOnly={isEdit}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
@@ -658,7 +662,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Last Name <span className="text-red-500">*</span></>}
                             value={data.coborrowlname}
                             placeHolder='Last Name'
-                            receive={(e) => { receive({ name: 'coborrowlname', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowlname', value: e }) }}
                             readOnly={isEdit}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
@@ -669,7 +673,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Suffix <span className="text-red-500">*</span></>}
                             placeHolder='Suffix'
                             value={data.coborrowsuffix}
-                            receive={(e) => receive({ name: 'coborrowsuffix', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'coborrowsuffix', value: e })}
                             disabled={isEdit}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
@@ -715,7 +719,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             disabled={isEdit}
                             value={data.coborrowgender}
                             data={Gender()}
-                            receive={(e) => { receive({ name: 'coborrowgender', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowgender', value: e }) }}
                             category={'marketing'}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
@@ -728,7 +732,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             placeHolder='Email Address'
                             readOnly={isEdit}
                             value={data.coborrowemail}
-                            receive={(e) => { receive({ name: 'coborrowemail', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowemail', value: e }) }}
                             category={'marketing'}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
@@ -741,7 +745,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             placeHolder='Mobile Number'
                             readOnly={isEdit}
                             value={data.coborrowmobile}
-                            receive={(e) => { receive({ name: 'coborrowmobile', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowmobile', value: e }) }}
                             category={'marketing'}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
@@ -754,7 +758,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             placeHolder='Other Mobile Number'
                             readOnly={isEdit}
                             value={data.coborrowothermobile}
-                            receive={(e) => { receive({ name: 'coborrowothermobile', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowothermobile', value: e }) }}
                             category={'marketing'}
                             triggerValidation={triggerValidation}
                             required={false}
@@ -766,7 +770,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Dependents <span className="text-red-500">*</span></>}
                             readOnly={isEdit}
                             value={data.coborrowdependents}
-                            receive={(e) => { receive({ name: 'coborrowdependents', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowdependents', value: e }) }}
                             digits={2}
                             placeHolder={'No. of Dependents'}
                             triggerValidation={triggerValidation}
@@ -781,7 +785,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             disabled={isEdit}
                             value={data.coborrowmstatus}
                             data={MaritalStatus()}
-                            receive={(e) => { receive({ name: 'coborrowmstatus', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowmstatus', value: e }) }}
                             category={'marketing'}
                             triggerValidation={triggerValidation}
                             showSearch
@@ -796,7 +800,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     placeHolder='Spouse Name'
                                     readOnly={isEdit}
                                     category={'marketing'}
-                                    receive={(e) => receive({ name: 'coborrowspousename', value: e })}
+                                    receive={(e) => updateAppDetails({ name: 'coborrowspousename', value: e })}
                                     value={data.coborrowspousename}
                                     triggerValidation={triggerValidation}
                                     rendered={rendered}
@@ -808,7 +812,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     className_dsub={''}
                                     label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                                     placeHolder='Birthdate'
-                                    receive={(e) => { receive({ name: 'coborrowerspousebdate', value: e }) }}
+                                    receive={(e) => { updateAppDetails({ name: 'coborrowerspousebdate', value: e }) }}
 
                                     value={data.coborrowerspousebdate}
                                     isEdit={isEdit}
@@ -828,7 +832,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                         disabled={isEdit}
                                         value={data.AcbSpSrcIncome}
                                         data={SpouseSourceIncome()}
-                                        receive={(e) => receive({ name: 'AcbSpSrcIncome', value: e })}
+                                        receive={(e) => updateAppDetails({ name: 'AcbSpSrcIncome', value: e })}
                                         rendered={rendered}
                                     />)}
                                 {User === 'Credit' && (
@@ -839,7 +843,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                         placeHolder='Spouse Income'
                                         readOnly={isEdit}
                                         value={data.AcbSpIncome}
-                                        receive={(e) => receive({ name: 'AcbSpIncome', value: e })}
+                                        receive={(e) => updateAppDetails({ name: 'AcbSpIncome', value: e })}
                                         category={'direct'}
                                         rendered={rendered}
                                     />)}
@@ -873,7 +877,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                             const formattedValue = inputValue.startsWith('https://')
                                                 ? inputValue
                                                 : `https://www.facebook.com/${inputValue}`;
-                                            receive({ name: 'coborrowfblink', value: formattedValue });
+                                                updateAppDetails({ name: 'coborrowfblink', value: formattedValue });
                                         }
                                     }}
                                 />
@@ -888,7 +892,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 value={data.coborrowfblink || ''}
                                 receive={(e) => {
                                     const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
-                                    receive({ name: 'coborrowfblink', value: formattedValue });
+                                    updateAppDetails({ name: 'coborrowfblink', value: formattedValue });
                                 }}
                                 isEdit={isEdit}
                                 rendered={rendered}
@@ -901,7 +905,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 label={'Group Chat (Name or URL)'}
                                 placeHolder='Group Chat'
                                 value={data.AcbGrpChat}
-                                receive={(e) => receive({ name: 'AcbGrpChat', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'AcbGrpChat', value: e })}
                                 category={'marketing'}
                                 readOnly={isEdit}
                                 isEdit={isEdit}
@@ -915,7 +919,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 label={<>Relationship to the OFW <span className="text-red-500">*</span></>}
                                 placeHolder='Relationship to the OFW'
                                 value={data.AcbRelationship}
-                                receive={(e) => receive({ name: 'AcbRelationship', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'AcbRelationship', value: e })}
                                 category={'marketing'}
                                 disabled={isEdit}
                                 isEdit={isEdit}
@@ -929,7 +933,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 placeHolder='Please select'
                                 data={SpouseSourceIncome()}
                                 value={data.AcbSrcIncome}
-                                receive={(e) => receive({ name: 'AcbSrcIncome', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'AcbSrcIncome', value: e })}
                                 disabled={isEdit}
                                 rendered={rendered}
                             />)}
@@ -941,7 +945,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 placeHolder='Please select'
                                 data={Religion()}
                                 value={data.AcbReligion}
-                                receive={(e) => receive({ name: 'AcbReligion', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'AcbReligion', value: e })}
                                 disabled={isEdit}
                                 showSearch
                                 rendered={rendered}
@@ -956,9 +960,9 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     data={Overseas()}
                                     value={data.AcbFormerOFW}
                                     receive={(e) => {
-                                        receive({ name: 'AcbFormerOFW', value: e });
+                                        updateAppDetails({ name: 'AcbFormerOFW', value: e });
                                         if (e === 1) {
-                                            receive({ name: 'AcbLastReturn', value: '' });
+                                            updateAppDetails({ name: 'AcbLastReturn', value: '' });
                                         }
                                     }}
                                     disabled={isEdit}
@@ -971,7 +975,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                         label={<>When was your last return home? <span className="text-red-500">*</span></>}
                                         placeHolder='When was your last return home'
                                         value={data.AcbLastReturn}
-                                        receive={(e) => receive({ name: 'AcbLastReturn', value: e })}
+                                        receive={(e) => updateAppDetails({ name: 'AcbLastReturn', value: e })}
                                         category={'marketing'}
                                         readOnly={isEdit}
                                         isEdit={isEdit}
@@ -982,14 +986,14 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 <LabeledSelect
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label='font-bold'
-                                    label={<>Plans to Abroad <span className="text-red-500">*</span></>}
+                                    label={<>Plans to go Abroad <span className="text-red-500">*</span></>}
                                     placeHolder='Please select'
                                     data={Overseas()}
                                     value={data.AcbPlanAbroad}
                                     receive={(e) => {
-                                        receive({ name: 'AcbPlanAbroad', value: e });
+                                        updateAppDetails({ name: 'AcbPlanAbroad', value: e });
                                         if (e === 1) {
-                                            receive({ name: 'AcbRemarks', value: '' });
+                                            updateAppDetails({ name: 'AcbRemarks', value: '' });
                                         }
                                     }}
                                     disabled={isEdit}
@@ -1003,7 +1007,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                         placeHolder='Remarks'
                                         readOnly={isEdit}
                                         value={data.AcbRemarks}
-                                        receive={(e) => receive({ name: 'AcbRemarks', value: e })}
+                                        receive={(e) => updateAppDetails({ name: 'AcbRemarks', value: e })}
 
                                     />)}</>)}
                         {User === 'Credit' && (
@@ -1015,7 +1019,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 placeHolder='PEP'
                                 readOnly={isEdit}
                                 value={data.AcbPEP}
-                                receive={(e) => receive({ name: 'AcbPEP', value: e })}
+                                receive={(e) => updateAppDetails({ name: 'AcbPEP', value: e })}
                                 rendered={rendered}
 
                             />)}
@@ -1024,7 +1028,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     <Flex className='w-full' justify='center' gap='small' wrap>
                         <AddressGroup_Component
                             data={data}
-                            receive={(e) => { receive(e) }}
+                            receive={(e) => { updateAppDetails(e) }}
                             presaddress={(e) => { presaddress(e) }}
                             type={"coborrow"}
                             category={"marketing"}
@@ -1044,7 +1048,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Type of Residences <span className="text-red-500">*</span></>}
                             placeHolder='Type Of Residences'
                             disabled={isEdit}
-                            receive={(e) => { receive({ name: 'coborrowresidences', value: e }) }}
+                            receive={(e) => { updateAppDetails({ name: 'coborrowresidences', value: e }) }}
                             data={Residences()}
                             category={'marketing'}
                             value={data.coborrowresidences}
@@ -1060,7 +1064,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             <span className="text-red-500">*</span>
                         </>}
                                 value={data.AcbRentAmount}
-                                receive={(e) => { receive({ name: 'AcbRentAmount', value: e }) }}
+                                receive={(e) => { updateAppDetails({ name: 'AcbRentAmount', value: e }) }}
                                 category={'direct'}
                                 placeHolder={data.coborrowresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                                 rendered={rendered}
@@ -1073,8 +1077,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Length of Stay <span className="text-red-500">*</span></>}
                             value_month={data.AcbStayMonths}
                             value_year={data.AcbStayYears}
-                            receiveM={(e) => receive({ name: 'AcbStayMonths', value: e })}
-                            receiveY={(e) => receive({ name: 'AcbStayYears', value: e })}
+                            receiveM={(e) => updateAppDetails({ name: 'AcbStayMonths', value: e })}
+                            receiveY={(e) => updateAppDetails({ name: 'AcbStayYears', value: e })}
                             disabled={isEdit}
                             category="marketing"
                             triggerValidation={triggerValidation}
@@ -1089,7 +1093,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     placeHolder='Landmark'
                                     readOnly={isEdit}
                                     value={data.AcbLandMark}
-                                    receive={(e) => receive({ name: 'AcbLandMark', value: e })}
+                                    receive={(e) => updateAppDetails({ name: 'AcbLandMark', value: e })}
                                     rendered={rendered}
                                 />
                                 <LabeledInput_UpperCase
@@ -1099,7 +1103,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     placeHolder='Remarks'
                                     readOnly={isEdit}
                                     value={data.AcbPoBRemarks}
-                                    receive={(e) => receive({ name: 'AcbPoBRemarks', value: e })}
+                                    receive={(e) => updateAppDetails({ name: 'AcbPoBRemarks', value: e })}
                                     rendered={rendered}
                                 />
                             </>

@@ -9,10 +9,12 @@ import LoanDetails from '../TabList/LoanDetails';
 import OfwDetails from '../TabList/OfwDetails';
 import UploadDocs from '../TabList/UploadDocs';
 import CharacterReference from '../TabList/CharacterReference';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, presaddress, LoanStatus}) {
+function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, LoanStatus}) {
     const { id, tabs } = useParams();
     const navigate = useNavigate();
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const [isEdit, setEdit] = React.useState(true);
     const getStatusBackgroundColor = status => {
         const colors = {
@@ -59,7 +61,7 @@ function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, pres
                 <span>Loan Details</span>
             </div>,
             key: 'loan-details',
-            children: <LoanDetails classname={'h-[12rem]'} data={value} receive={(e) => { receive(e); }} isEdit={isEdit} User={'LC'}  />,
+            children: <LoanDetails classname={'h-[12rem]'} data={value} receive={(e) => { updateAppDetails(e); }} isEdit={isEdit} User={'LC'}  />,
         },
         {
             label: <div className='flex flex-rows'>
@@ -67,7 +69,7 @@ function LcTabs({ value, receive, ClientId, FileType, Uploader, BorrowerId, pres
                 <span>OFW Details</span>
             </div>,
             key: 'ofw-details',
-            children: <OfwDetails classname={'h-[12rem]'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'LC'}  />,
+            children: <OfwDetails classname={'h-[12rem]'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'LC'}  />,
         },
         {
             label: <div className='flex flex-rows'>

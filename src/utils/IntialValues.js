@@ -138,6 +138,12 @@ const createInitialAppDetails = (direct) => {
     TotalExposure: "",
     ApprvTerms: "",
     CRORemarks: "",
+    // Approve Data
+    RecBy: "",
+    RecDate: "",
+    CremanBy: "",
+    CremanDate: "",
+
 
     // Present Address Tables
     OfwPoBRemarks: "",

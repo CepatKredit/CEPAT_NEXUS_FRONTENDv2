@@ -56,7 +56,8 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             OtherExposure: data.OtherExposure ? parseFloat(data.OtherExposure.toString().replaceAll(',', '')) : 0.00,
             TotalExposure: data.TotalExposure ? parseFloat(data.TotalExposure.toString().replaceAll(',', '')) : 0.00,
             CRORemarks: data.CRORemarks,
-            ModUser: jwtDecode(token).USRID
+            ModUser: jwtDecode(token).USRID,
+            RecBy: jwtDecode(token).USRID
         }
         console.log('TEST_APPRV_AMOUNT', value)
         let result = await UpdateLoanDetails(value);

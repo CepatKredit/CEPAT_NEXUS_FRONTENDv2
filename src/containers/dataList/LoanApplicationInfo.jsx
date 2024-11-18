@@ -211,6 +211,8 @@ function LoanApplicationInfo() {
                     OtherExposure: data?.LoanDetails?.otherExposure || '',
                     TotalExposure: data?.LoanDetails?.totalExposure || '',
                     CRORemarks: data?.LoanDetails?.croRemarks || '',
+                    RecBy: data?.LoanDetails?.recBy || '',
+                    CremanBy: data?.LoanDetails?.cremanBy || '',
                     // Present Address Tables
                     OfwPoBRemarks: data?.OfwPresAddress?.billingRemarks || '',
                     BenPoBRemarks: data?.BeneficiaryPresAddress?.billingRemarks || '',
@@ -293,9 +295,6 @@ function LoanApplicationInfo() {
         },
         enabled: true,
     });
-
-    console.log("LOAN INFO API", ClientDataListQuery.data)
-    console.log("LOAN INFO API PERO", getAppDetails)
 
     const [getCRDValue, setCRDValue] = React.useState({
         TotalSalary: 0,
@@ -535,7 +534,7 @@ function LoanApplicationInfo() {
                                             });
                                         }}
                                         ClientId={getDetails.ClientId} FileType={getDetails.FileType} Uploader={jwtDecode(token).USRID} BorrowerId={getDetails.BorrowerId} LoanStatus={getAppDetails?.loanAppStat} />)
-                                    : GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '60'
+                                    : GetData('ROLE').toString() === '50' ||GetData('ROLE').toString() === '55' || GetData('ROLE').toString() === '60'
                                         ? (<CreditTabs
                                             value={getAppDetails} receive={(e) => setAppDetails(prevDetails => ({ ...prevDetails, [e.name]: e.value }))}
                                             valueAmount={getCRDValue} event={(e) => { setCRDValue({ ...getCRDValue, [e.name]: e.value }) }}
