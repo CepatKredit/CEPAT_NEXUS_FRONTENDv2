@@ -29,7 +29,7 @@ function LabeledSelec_ValidId({
   const getValidIdSelect = useQuery({
     queryKey: ["getValidIdSelect"],
     queryFn: async () => {
-      const result = await axios.get("/GroupGet/G27IT");
+      const result = await axios.get("/v1/GET/G27IT");
       return result.data.list;
     },
     refetchInterval: (data) => {

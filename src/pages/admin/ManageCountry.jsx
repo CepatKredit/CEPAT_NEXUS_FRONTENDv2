@@ -88,7 +88,7 @@ function ManageCountry() {
     const CountryListQuery = useQuery({
         queryKey: ['CountryListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G15CL')
+            const result = await GET_LIST('/v1/GET/G15CL')
             return result.list
         },
         enabled: true,

@@ -19,7 +19,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
     const { data: relationshipOptions } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G33RR');
+            const result = await GET_LIST('/v1/GET/G33RR');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -30,7 +30,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G28S');
+            const result = await GET_LIST('/v1/GET/G28S');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -41,7 +41,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
     const { data: IDtypeOption } = useQuery({
         queryKey: ['getValidIdSelect'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G27IT');
+            const result = await GET_LIST('/v1/GET/G27IT');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),

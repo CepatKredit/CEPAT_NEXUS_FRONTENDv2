@@ -52,7 +52,7 @@ function LabeledSelect_Suffix({
   const getSuffix = useQuery({
     queryKey: ["getSuffix"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G28S");
+      const result = await GET_LIST("/v1/GET/G28S");
       return result.list;
     },
     refetchInterval: (data) => {

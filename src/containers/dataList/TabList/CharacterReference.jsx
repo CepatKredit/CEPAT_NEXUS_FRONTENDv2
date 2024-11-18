@@ -39,7 +39,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         queryKey: ['getCharacterRef', BorrowerId],
         queryFn: async () => {
             try {
-                const result = await axios.get(`/GroupGet/G13CR/${BorrowerId}`);
+                const result = await axios.get(`/v1/GET/G13CR/${BorrowerId}`);
                 let dataList = [{
                     key: 0,
                     no: '',
@@ -86,7 +86,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     const getRelationshipList = useQuery({
         queryKey: ['getRelationshipList'],
         queryFn: async () => {
-            const result = await axios.get('/GroupGet/G12R');
+            const result = await axios.get('/v1/GET/G12R');
             return result.data.list;
         },
         refetchInterval: (data) => {
@@ -110,7 +110,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     const provinceList = useQuery({
         queryKey: ['getProvinceSelect'],
         queryFn: async () => {
-            const result = await axios.get('/GroupGet/G8P');
+            const result = await axios.get('/v1/GET/G8P');
             // console.log(result.data.list)
             return result.data.list;
         },
@@ -149,7 +149,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             };
 
             try {
-                const result = await axios.post('/GroupPost/P60ACR', data);
+                const result = await axios.post('/v1/POST/P60ACR', data);
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description,
@@ -201,7 +201,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             };
 
 
-            await axios.post('/GroupPost/P61UCR', data)
+            await axios.post('/v1/POST/P61UCR', data)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,
@@ -246,7 +246,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     const onClickDeteleData = useMutation({
         mutationFn: async (e) => {
             try {
-                const result = await axios.post(`/GroupPost/P62DCR/${e}`);
+                const result = await axios.post(`/v1/POST/P62DCR/${e}`);
                 queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
                 api[result.data.status]({
                     message: result.data.message,

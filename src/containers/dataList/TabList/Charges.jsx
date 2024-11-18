@@ -13,7 +13,7 @@ function Charges({ LoanAppId, data, User }) {
     const loanProducts = useQuery({
         queryKey: ['getProductSelect'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G19LLP');
+            const result = await GET_LIST('/v1/GET/G19LLP');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -70,7 +70,7 @@ function Charges({ LoanAppId, data, User }) {
         queryFn: async () => {
             try {
                 //console.log('LOanappid ito..', LoanAppId)
-                const result = await GET_LIST(`/GroupGet/G114CL/${LoanAppId}`)
+                const result = await GET_LIST(`/v1/GET/G114CL/${LoanAppId}`)
                 console.log('chargesssss', result);
                 return result.list;
             } catch (error) {

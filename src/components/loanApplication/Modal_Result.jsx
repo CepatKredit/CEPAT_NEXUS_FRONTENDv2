@@ -56,7 +56,7 @@ function Modal_Result({
   //     LastName: code.LastName,
   //     Birthday: code.Birthday,
   //   };
-  //   const result = await POST_DATA("/GroupPost/P47CL", checkLoan);
+  //   const result = await POST_DATA("/v1/POST/P47CL", checkLoan);
   //   if (result.list.length === 0) {
   //       ClickLoan.mutate();
   //   } else {
@@ -76,7 +76,7 @@ function Modal_Result({
         LastName: code.LastName,
         Birthday: code.Birthday,
       };
-      return await POST_DATA("/GroupPost/P47CL", checkLoan);
+      return await POST_DATA("/v1/POST/P47CL", checkLoan);
     },
     onSuccess: (result) => {
       if (result.list.length === 0) {
@@ -101,7 +101,7 @@ function Modal_Result({
 
   const ClickLoan = useMutation({
     mutationFn: async () => {
-      const endpoint = direct ? "/GroupPost/P52ADC" : "/GroupPost/P51ALCC";
+      const endpoint = direct ? "/v1/POST/P52ADC" : "/v1/POST/P51ALCC";
       return axios.post(endpoint, code);
     },
     onSuccess: (response) => {

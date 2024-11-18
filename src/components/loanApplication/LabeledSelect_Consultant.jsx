@@ -39,7 +39,7 @@ function LabeledSelect_Consultant({
   const { data: consultantData } = useQuery({
     queryKey: ["getLoanConsultant"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G21LC");
+      const result = await GET_LIST("/v1/GET/G21LC");
       return result.list;
     },
     refetchInterval: 30 * 1000,

@@ -54,7 +54,7 @@ function ChangePassword() {
                 Stat: 5,
             }
 
-            await axios.post('/GroupPost/P95URP', resetPasword)
+            await axios.post('/v1/POST/P95URP', resetPasword)
                 .then(result => {
                     if (result.data.status === 'success') {
                         queryClient.invalidateQueries({ queryKey: ['UserListQuery'] }, { exact: true })

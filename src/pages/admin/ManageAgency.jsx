@@ -131,7 +131,7 @@ function ManageAgency() {
     const AgencyListQuery = useQuery({
         queryKey: ['AgencyListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G1A');
+            const result = await GET_LIST('/v1/GET/G1A');
             return result.list;
         },
         enabled: true,

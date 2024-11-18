@@ -31,7 +31,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
         queryFn: async () => {
             let container = 0
             let counter = 0
-            const result = await GET_LIST(`/GroupGet/G103BD/${BID}`)
+            const result = await GET_LIST(`/v1/GET/G103BD/${BID}`)
             result.list?.map((x) => { container += parseFloat(x.amount); counter += 1; })
             LoadData()
             setTotal({ ...getTotal, Amount: container, Count: counter })
@@ -45,7 +45,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
     const GetDisbursementListQuery = useQuery({
         queryKey: ["GetAvailabletListQuery"],
         queryFn: async () => {
-            const result = await GET_LIST(`/GroupGet/G102AL`)
+            const result = await GET_LIST(`/v1/GET/G102AL`)
             let container = []
             result.list?.map((x) => {
                 container.push({
@@ -134,7 +134,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
             AMT: parseFloat(getTotal.Amount) - parseFloat(removeCommas(data.amount)),
             USR: jwtDecode(token).USRID
         }
-        await axios.post('/GroupPost/P144DBL', container)
+        await axios.post('/v1/POST/P144DBL', container)
             .then((result) => {
                 getDisbursementList.refetch()
                 queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
@@ -159,8 +159,8 @@ function BatchedDisbursement({ BID, Data, FileName }) {
     async function UpdateStatus(id, status, lan) {
         if (!status) return setEditingKey('');
 
-        //console.log(`/GroupPost/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
-        await axios.post(`/GroupPost/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
+        //console.log(`/v1/POST/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
+        await axios.post(`/v1/POST/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -173,7 +173,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                 console.log(error)
             })
 /*
-        await axios.post(`/GroupGet/G106DL/${lan}/NP`)
+        await axios.post(`/v1/GET/G106DL/${lan}/NP`)
             .then((result) => {
                 result.data?.every((x) => x.status === "POSTED")
                 api[result.data.status]({
@@ -197,7 +197,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                 SoaDate: '',
                 ModUser: jwtDecode(token).USRID,
             }
-            await axios.post(`/GroupPost/P81UAS`,data)
+            await axios.post(`/v1/POST/P81UAS`,data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,

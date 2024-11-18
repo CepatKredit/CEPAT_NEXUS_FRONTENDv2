@@ -89,7 +89,7 @@ function PortalLogin() {
                 })
             }
             else {
-                await axios.post('/GroupPost/P85L', getAccount)
+                await axios.post('/v1/POST/P85L', getAccount)
                     .then(result => {
                         console.log((decode(result.data.userData.password) === getAccount.Password))
                         console.log("Received response:", result.data);
@@ -125,7 +125,7 @@ function PortalLogin() {
 
     const PasswordMatch = useMutation({
         mutationFn: async () => {
-            await axios.post('/GroupPost/P87VA', getAccount)
+            await axios.post('/v1/POST/P87VA', getAccount)
                 .then((result) => {
                     if (result.data.status === 'warning') {
                         api[result.data.status]({
@@ -191,7 +191,7 @@ function PortalLogin() {
 
     const PasswordNotMatch = useMutation({
         mutationFn: async () => {
-            await axios.post('/GroupPost/P86PA', getAccount)
+            await axios.post('/v1/POST/P86PA', getAccount)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,
@@ -209,7 +209,7 @@ function PortalLogin() {
 
     async function onClickCancelOTP() {
 
-        await axios.post(`/GroupPost/P89CO/${getAccount.Username}`)
+        await axios.post(`/v1/POST/P89CO/${getAccount.Username}`)
             .then((result) => {
                 setOTPStatus(false)
             })

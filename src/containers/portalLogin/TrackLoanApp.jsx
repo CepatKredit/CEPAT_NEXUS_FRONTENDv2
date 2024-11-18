@@ -35,7 +35,7 @@ function TrackLoanApp() {
       setloading(true);
       let guid = "";
       await axios
-        .post("/GroupPost/P46TL", {
+        .post("/v1/POST/P46TL", {
           LoanId: getAppDetails.loanIdCode,
           BirthDate: getAppDetails.ofwbdate,
         })

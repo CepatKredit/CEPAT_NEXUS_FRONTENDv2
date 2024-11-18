@@ -88,7 +88,7 @@ function LoanApplicationTracker({ data }) {
     queryKey: ["ClientDataQuery"],
     queryFn: async () => {
       const result = await axios.get(
-        `/GroupGet/G3CD/${toDecrypt(localStorage.getItem("CLID"))}`
+        `/v1/GET/G3CD/${toDecrypt(localStorage.getItem("CLID"))}`
       );
       setOldClientNameAndBDay(result);
       populateClientDetails(result);
@@ -107,7 +107,7 @@ function LoanApplicationTracker({ data }) {
       }
       try {
         const result = await axios.get(
-          `/GroupGet/G37R/${getAppDetails.loanIdCode}`
+          `/v1/GET/G37R/${getAppDetails.loanIdCode}`
         );
         return result?.data?.list?.[0] || { remarksEx: "" };
       } catch (error) {

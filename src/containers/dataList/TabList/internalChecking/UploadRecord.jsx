@@ -27,7 +27,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
         queryKey: ['DocListICQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/GroupGet/G16FT/${'IC'}`)
+                const result = await GET_LIST(`/v1/GET/G16FT/${'IC'}`)
                 SET_LOADING_INTERNAL('FinancialChecker', false);
                 return result.list
             } catch (error) {
@@ -197,7 +197,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
     // const DocListICQuery = useQuery({
     //     queryKey: ['DocListICQuery'],
     //     queryFn: async () => {
-    //         const result = await GET_LIST(`/GroupGet/G16FT/${'IC'}`)
+    //         const result = await GET_LIST(`/v1/GET/G16FT/${'IC'}`)
     //         return result.list
     //     },
     //     enabled: true,
@@ -359,7 +359,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
             PROID: 'IC'
         }
 
-        await axios.post('/GroupPost/P68FS', dataContainer)
+        await axios.post('/v1/POST/P68FS', dataContainer)
             .then((result) => {
                 FileListQuery.refetch()
                 cancel()
@@ -464,7 +464,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
             PRODID: 'IC'
         }
 
-        await axios.post('/GroupPost/P68FS', dataContainer)
+        await axios.post('/v1/POST/P68FS', dataContainer)
             .then((result) => {
                 FileListQuery.refetch()
                 cancel()

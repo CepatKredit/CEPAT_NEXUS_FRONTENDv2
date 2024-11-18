@@ -104,7 +104,7 @@ function AgencyDetails({ option }) {
         };
 
         console.log(data);
-        await axios.post('/GroupPost/P44AA', data)
+        await axios.post('/v1/POST/P44AA', data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -158,7 +158,7 @@ function AgencyDetails({ option }) {
         };
 
         try {
-            const result = await axios.post('/GroupPost/P45UA', data);
+            const result = await axios.post('/v1/POST/P45UA', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description

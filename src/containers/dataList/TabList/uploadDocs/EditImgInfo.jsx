@@ -67,7 +67,7 @@ function EditImgInfo({ data, FileListName, Display  }) {
             PRODID: 'FILE'
         }
 
-        await axios.post('/GroupPost/P68FS', dataContainer)
+        await axios.post('/v1/POST/P68FS', dataContainer)
             .then((result) => {
                 setModalStatus(false)
                 queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })

@@ -26,7 +26,7 @@ function BankGeneration() {
         queryKey: ["AppDataListQuery"],
         queryFn: async () => {
             const result = await GET_LIST(
-                `/GroupGet/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem("SP"))}`
+                `/v1/GET/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem("SP"))}`
             );
             return result.list;
         },

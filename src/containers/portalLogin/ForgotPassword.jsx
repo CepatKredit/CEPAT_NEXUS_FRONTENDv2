@@ -11,7 +11,7 @@ function ForgotPassword() {
     const setForgotStatus = viewForgotPasswordModal((state) => state.setStatus)
     const onClickForgot = useMutation({
         mutationFn: async () => {
-            await axios.post(`/GroupPost/P91FP/${getUsername}`)
+            await axios.post(`/v1/POST/P91FP/${getUsername}`)
                 .then((result) => {
                     setUsername('')
                     setForgotStatus(false)
