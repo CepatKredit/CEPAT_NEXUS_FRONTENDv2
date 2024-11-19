@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import Logo from "@assets/images/logo.png";
 
 import Modal_Result from "@components/loanApplication/Modal_Result";
-import createInitialAppDetails from "@utils/IntialValues";
 import {
   isValidLoanDetails,
   isValidOFWDetails,
@@ -21,7 +20,6 @@ import {
 import { getLoanApplicationSteps } from "@components/loanApplication/LoanApplicationSteps";
 import { useAppDetailsEffects, useDirectLoan } from "@hooks/LoanApplicationHooks";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
-
 
 function LoanApplication() {
     React.useEffect(() => {
@@ -33,28 +31,25 @@ function LoanApplication() {
       return () => window.removeEventListener("beforeunload", unloadCallBack);
     }, []);
 
-  // Control if it is direct / lc / marketing
-  // let direct = true;
   document.title = "Loan Application Form";
 
   const [loanrendered, setloanrendered] = React.useState(false);
   const [ofwrendered, setofwrendered] = React.useState(false);
   const [benrendered, setbenrendered] = React.useState(false);
 
-  const [api, contextHolder] = notification.useNotification();
   const [getLoanDetail, setLoanDetail] = React.useState();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [getStep, setStep] = React.useState(0);
   const [confirm, setconfirm] = React.useState(true);
 
-  const {getAppDetails, setAppDetails, direct, resetAppDetails } = React.useContext(LoanApplicationContext)
+  const {getAppDetails, setAppDetails, direct, resetAppDetails, api } = React.useContext(LoanApplicationContext)
 
   const [loadings, setLoadings] = React.useState(false);
   const [getDetails, setDetails] = React.useState();
   const { directLoan } = useDirectLoan(setDetails, setLoadings, setIsModalOpen)
-
+  const stepperView = React.useRef()
   const lc_loandetails =
-    !getAppDetails.dataPrivacy || parseInt(getAppDetails.loanAmount) < 30000 || !isValidLoanDetails(getAppDetails);
+    !getAppDetails.dataPrivacy || !isValidLoanDetails(getAppDetails);
 
   const lc_ofwdetails = !isValidOFWDetails(getAppDetails);
 
@@ -67,7 +62,23 @@ function LoanApplication() {
 
   const ben_details = !isValidBeneficiaryDetails(getAppDetails);
 
+  React.useEffect(() => {
+    if (!getAppDetails.dataPrivacy) {
+      resetAppDetails();
+    }
+  }, [getAppDetails.dataPrivacy]);
+
   const navigate = useNavigate();
+
+  const onClickNext = (e) => {
+    e.preventDefault();
+
+    if (stepperView.current) {
+      stepperView.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    setStep((prevStep) => prevStep + 1);
+  };
 
   const steps = getLoanApplicationSteps({
     loanrendered,
@@ -77,13 +88,11 @@ function LoanApplication() {
     benrendered,
     setbenrendered,
     api,
+    stepperView
   });
 
   useAppDetailsEffects(getAppDetails, setAppDetails);
 
-  const onClickNext = () => {
-    setStep(getStep + 1);
-  };
 
   const onClickBack = () => {
     if (getStep == 2) {
@@ -94,7 +103,7 @@ function LoanApplication() {
 
   const applyDirectLoan = () => {
     directLoan(direct)
-    resetAppDetails();
+   // resetAppDetails();
   };
 
   const cancelModal = () => {

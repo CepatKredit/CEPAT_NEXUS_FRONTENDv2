@@ -25,6 +25,7 @@ import { useMutation } from '@tanstack/react-query';
 import UnlockAccount from '@containers/portalLogin/UnlockAccount';
 import { decode } from '@utils/Secure';
 import { toEncrypt } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function PortalLogin() {
 
@@ -33,6 +34,7 @@ function PortalLogin() {
     const [passwordVisible, setPasswordVisible] = React.useState(false);
     const navigate = useNavigate()
     const { state } = useLocation()
+    const { resetAppDetails } = React.useContext(LoanApplicationContext)
 
     React.useEffect(() => {
         if (state && state.status) {
@@ -87,7 +89,7 @@ function PortalLogin() {
                 })
             }
             else {
-                await axios.post('/login', getAccount)
+                await axios.post('/GroupPost/P85L', getAccount)
                     .then(result => {
                         console.log((decode(result.data.userData.password) === getAccount.Password))
                         console.log("Received response:", result.data);
@@ -104,6 +106,7 @@ function PortalLogin() {
                         else {
                             if (decode(result.data.userData.password) === getAccount.Password) {
                                 PasswordMatch.mutate()
+                                resetAppDetails(); 
                             }
                             else {
                                 PasswordNotMatch.mutate()
@@ -122,7 +125,7 @@ function PortalLogin() {
 
     const PasswordMatch = useMutation({
         mutationFn: async () => {
-            await axios.post('/verifiedAccount', getAccount)
+            await axios.post('/GroupPost/P87VA', getAccount)
                 .then((result) => {
                     if (result.data.status === 'warning') {
                         api[result.data.status]({
@@ -188,7 +191,7 @@ function PortalLogin() {
 
     const PasswordNotMatch = useMutation({
         mutationFn: async () => {
-            await axios.post('/passwordAttempt', getAccount)
+            await axios.post('/GroupPost/P86PA', getAccount)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,
@@ -206,7 +209,7 @@ function PortalLogin() {
 
     async function onClickCancelOTP() {
 
-        await axios.post(`/cancelOtp/${getAccount.Username}`)
+        await axios.post(`/GroupPost/P89CO/${getAccount.Username}`)
             .then((result) => {
                 setOTPStatus(false)
             })
@@ -259,7 +262,7 @@ function PortalLogin() {
                     <div>
                         <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', borderRadius: 100, borderRadiusLG: 100, borderRadiusSM: 100 } }}>
                             <Button className='mt-8 text-3xl font-semibold w-[400px] h-[50px] bg-[#3b0764]' size='large' type='primary'
-                                onClick={() => { navigate('/loan-application') }}
+                                onClick={() => { resetAppDetails(); navigate('/loan-application') }}
                                 onKeyUp={(e) => { e.key === 'enter' ? navigate('/loan-application') : '' }}>APPLY FOR A LOAN</Button>
                         </ConfigProvider>
                     </div>

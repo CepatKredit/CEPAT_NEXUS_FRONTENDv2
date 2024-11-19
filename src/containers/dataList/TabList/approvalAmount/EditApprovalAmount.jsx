@@ -5,37 +5,44 @@ import LabeledSelect from '@components/marketing/LabeledSelect';
 import LabeledTextArea from '@components/marketing/LabeledTextArea';
 import LabeledInput from '@components/marketing/LabeledInput';
 import { jwtDecode } from 'jwt-decode';
-import AmountTable from './AmountTable';
 
 function EditApprovalAmount({ data, receive }) {
+    const [getMAmort, setMAmort] = React.useState(0);
+    const [getTExposure, setTExposure] = React.useState(0);
+
     const rendered = true;
     const monthsOptions = [];
     for (let i = 3; i <= 24; i++) {
         monthsOptions.push({ value: i, label: `${i} months` });
     }
- 
 
     useEffect(() => {
         const approvedAmount = data.ApprvAmount ? parseFloat(data.ApprvAmount.toString().replaceAll(',', '')) : 0;
-        const interestRate = parseFloat(data.ApprvInterestRate) || 0;
-        const terms = parseInt(data.ApprvTerms) || 1;
-
+        const interestRate = data.ApprvInterestRate ? parseFloat(data.ApprvInterestRate) : 0;
+        const terms = data.ApprvTerms ? parseInt(data.ApprvTerms) : 0;
         if (approvedAmount && interestRate && terms) {
-            const calculatedAmort = (((interestRate * terms) * approvedAmount) + approvedAmount) / terms;
-            console.log(calculatedAmort.toFixed(2))
-            receive({ name: 'MonthlyAmort', value: calculatedAmort.toFixed(2) });
+            const calculatedAmort = ((((interestRate * terms)/100) * approvedAmount) + approvedAmount) / terms;
+            setMAmort(calculatedAmort || 0);
+            receive({ name: 'MonthlyAmort', value: calculatedAmort || 0 })
         } else {
-            receive({ name: 'MonthlyAmort', value: 0 });
+            setMAmort(0);
+            receive({ name: 'MonthlyAmort', value: '0' })
         }
     }, [data.ApprvAmount, data.ApprvInterestRate, data.ApprvTerms]);
 
     useEffect(() => {
         const approvedAmount = data.ApprvAmount ? parseFloat(data.ApprvAmount.toString().replaceAll(',', '')) : 0;
-        const otherExposure = data.OtherExposure ? parseFloat(data.OtherExposure.toString().replaceAll(',','')) : 0;
+        const otherExposure = data.OtherExposure ? parseFloat(data.OtherExposure.toString().replaceAll(',', '')) : 0;
         const calculatedTotal = approvedAmount + otherExposure;
-        console.log(calculatedTotal.toFixed(2))
-        receive({ name: 'TotalExposure', value: calculatedTotal.toFixed(2) });
+        if (approvedAmount === 0) {
+            setTExposure("0.00");
+            receive({ name: 'TotalExposure', value: '0.00' }) 
+        } else {
+            setTExposure(calculatedTotal ? calculatedTotal.toFixed(2) : "0.00");
+            receive({ name: 'TotalExposure', value: calculatedTotal ? calculatedTotal.toFixed(2) : "0.00" }) 
+        }
     }, [data.ApprvAmount, data.OtherExposure]);
+
     const token = localStorage.getItem('UTK');
     const decodedToken = token ? jwtDecode(token) : {};
     const modUser = decodedToken.USRID || ''; // Retrieve user ID or set as empty string if unavailable
@@ -44,7 +51,6 @@ function EditApprovalAmount({ data, receive }) {
         // Update the ModUser in the data when the component loads
         receive({ name: 'ModUser', value: modUser });
     }, [modUser]);
-
 
     return (
         <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
@@ -69,7 +75,7 @@ function EditApprovalAmount({ data, receive }) {
                 category="marketing"
                 rendered={rendered}
             />
-            
+
             <LabeledSelect
                 className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
                 className_label="font-bold"
@@ -85,7 +91,7 @@ function EditApprovalAmount({ data, receive }) {
                 placeHolder={'Select Approved Terms'}
                 rendered={rendered}
             />
-             <LabeledCurrencyInput
+            <LabeledCurrencyInput
                 className_dmain="mt-10 w-[400px] h-[4rem] pt-[.4rem]"
                 className_label="font-bold"
                 value={data.MonthlyAmort}
@@ -95,18 +101,19 @@ function EditApprovalAmount({ data, receive }) {
                 readOnly
                 category="marketing"
                 rendered={rendered}
+                calculated_val={getMAmort}
             />
 
             <LabeledCurrencyInput
-                 className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
-                 className_label="font-bold"
-                 value={data.OtherExposure}
-                 receive={(e) => receive({ name: 'OtherExposure', value: e })}
-                 label="Other Exposure"
-                 placeHolder="Enter Other Exposure"
-                 category={'marketing'}
-                 rendered={rendered}
-                 required={false}
+                className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
+                className_label="font-bold"
+                value={data.OtherExposure}
+                receive={(e) => receive({ name: 'OtherExposure', value: e })}
+                label="Other Exposure"
+                placeHolder="Enter Other Exposure"
+                category={'marketing'}
+                rendered={rendered}
+                required={false}
             />
             <LabeledCurrencyInput
                 className_dmain="mt-10 w-[400px] h-[4rem] pt-[.4rem]"
@@ -118,17 +125,18 @@ function EditApprovalAmount({ data, receive }) {
                 readOnly
                 category="marketing"
                 rendered={rendered}
+                calculated_val={getTExposure}
             />
-           <LabeledInput
+            <LabeledInput
                 className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
                 className_label={'font-bold'}
                 label={'Approved By'}
                 placeHolder="Approved By"
-                value={data.ModUser || modUser} 
+                value={data.ModUser || modUser}
                 receive={(e) => receive({ name: 'ModUser', value: e })}
                 category="marketing"
                 rendered={rendered}
-                readOnly 
+                readOnly
             />
             <div className="mt-10 w-[500px] h-[3rem] pt-[.1rem]">
                 <label className="font-bold">Remarks</label>
@@ -145,10 +153,8 @@ function EditApprovalAmount({ data, receive }) {
                     style={{ height: '8rem', resize: 'none' }}
                 />
             </div>
-           {/* <div className="w-[68rem] mb-[5rem] mt-[10rem] mx-auto">
-            <AmountTable data={data} receive={receive} User="Credit" creditisEdit={false} loading={false} />
-                </div>*/}
-                {/* 
+           
+            {/* 
                 <textarea
                     className="w-full p-2 border border-gray-300 rounded-md"
                     value={data.CRORemarks}

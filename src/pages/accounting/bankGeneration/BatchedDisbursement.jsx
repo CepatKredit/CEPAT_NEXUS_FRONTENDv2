@@ -7,7 +7,7 @@ import axios from 'axios';
 import { AvailableModal } from "@hooks/ModalController";
 import { AvailableDisbursementList } from '@hooks/DisbursementData';
 import { jwtDecode } from 'jwt-decode';
-import { useDataContainer } from '@containers/PreLoad';
+import { useDataContainer } from '@context/PreLoad';
 import ResponsiveModal from '@components/global/ResponsiveModal';
 import AvailableList from '@containers/bankGeneration/AvailableList';
 import { render } from 'react-dom';
@@ -31,7 +31,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
         queryFn: async () => {
             let container = 0
             let counter = 0
-            const result = await GET_LIST(`/getBatchedDisbursement/${BID}`)
+            const result = await GET_LIST(`/GroupGet/G103BD/${BID}`)
             result.list?.map((x) => { container += parseFloat(x.amount); counter += 1; })
             LoadData()
             setTotal({ ...getTotal, Amount: container, Count: counter })
@@ -45,7 +45,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
     const GetDisbursementListQuery = useQuery({
         queryKey: ["GetAvailabletListQuery"],
         queryFn: async () => {
-            const result = await GET_LIST(`/availableList`)
+            const result = await GET_LIST(`/GroupGet/G102AL`)
             let container = []
             result.list?.map((x) => {
                 container.push({
@@ -134,7 +134,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
             AMT: parseFloat(getTotal.Amount) - parseFloat(removeCommas(data.amount)),
             USR: jwtDecode(token).USRID
         }
-        await axios.post('/removeFromBatchList', container)
+        await axios.post('/GroupPost/P144DBL', container)
             .then((result) => {
                 getDisbursementList.refetch()
                 queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
@@ -159,8 +159,8 @@ function BatchedDisbursement({ BID, Data, FileName }) {
     async function UpdateStatus(id, status, lan) {
         if (!status) return setEditingKey('');
 
-        //console.log(`/updateStatDisbursement/${id}/${jwtDecode(token).USRID}/${status}`)
-        await axios.post(`/updateStatDisbursement/${id}/${jwtDecode(token).USRID}/${status}`)
+        //console.log(`/GroupPost/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
+        await axios.post(`/GroupPost/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -173,7 +173,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                 console.log(error)
             })
 /*
-        await axios.post(`/getDisbursementList/${lan}/NP`)
+        await axios.post(`/GroupGet/G106DL/${lan}/NP`)
             .then((result) => {
                 result.data?.every((x) => x.status === "POSTED")
                 api[result.data.status]({
@@ -197,7 +197,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                 SoaDate: '',
                 ModUser: jwtDecode(token).USRID,
             }
-            await axios.post(`/updateApplicationStatus`,data)
+            await axios.post(`/GroupPost/P81UAS`,data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -402,28 +402,34 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                 <div>
                     <div className='w-[12rem]'>Company Code</div>
                     <div className='w-[12rem]'>
-                        <Input disabled={FileName} className='w-full' value={getBatchInfo.CC} onChange={(e) => { setBatchInfo({ ...getBatchInfo, CC: e.target.value }) }} />
+                        {/* <Input disabled={FileName} className='w-full' value={getBatchInfo.CC} onChange={(e) => { setBatchInfo({ ...getBatchInfo, CC: e.target.value }) }} /> */}
+                        <h1><strong>CEPAT</strong></h1>
                     </div>
                 </div>
                 <div>
                     <div className='w-[12rem]'>Company Name</div>
                     <div className='w-[12rem]'>
-                        <Input disabled={FileName} className='w-full' value={Data?.CN} readOnly />
+                        {/* <Input disabled={FileName} className='w-full' value={Data?.CN} readOnly /> */}
+                        <h1><strong>CEPAT KREDIT FINANCING INC</strong></h1>
                     </div>
                 </div>
                 <div>
-                    <div className='w-[20rem]'>Funding Account Number</div>
-                    <div className='w-[20rem]'>
-                        <Input disabled={FileName} className='w-full' value={getBatchInfo?.FAN} onChange={(e) => { setBatchInfo({ ...getBatchInfo, FAN: e.target.value }) }} />
+                    <div className='w-[12rem]'>Funding Account Number</div>
+                    <div className='w-[12rem]'>
+                        {/* <Input disabled={FileName} className='w-full' value={getBatchInfo?.FAN} onChange={(e) => { setBatchInfo({ ...getBatchInfo, FAN: e.target.value }) }} /> */}
+                        <h1><strong>0000-057309-503</strong></h1>
                     </div>
                 </div>
-                <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => { updateBatch(); LoadData() }}>Update</Button>
+                {/*UPDATE BUTTON */}
+                {/* <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => { updateBatch(); LoadData() }}>Update</Button> */}
+                <div>
                 <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => {
                     LoadData()
                     SetTotalAmount(parseFloat(getTotal.Amount))
                     SetTotalCount(parseInt(getTotal.Count))
                     setStatus(true)
                 }}>Add Disburse</Button>
+                </div>
             </div>
             <Table
                 dataSource={getDisbursementList.data?.map((x) => ({

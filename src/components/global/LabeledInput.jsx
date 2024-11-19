@@ -15,6 +15,7 @@ function LabeledInput({ className, label, placeHolder, value, receive, disabled 
                 <Input style={{ width: '100%' }}
                     size='large'
                     value={value}
+                    autoComplete="new-password"
                     placeholder={placeHolder}
                     onChange={onChange}
                     allowClear

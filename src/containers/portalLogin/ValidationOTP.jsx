@@ -48,6 +48,12 @@ function ValidationOTP({ username, accessList }) {
         setOTP(e)
     }
 
+    function keydown(e) {
+        if (e.key === 'Enter') onClickValidate.mutate();
+        if (e.key === 'Tab') e.preventDefault();
+
+    }
+
     React.useEffect(() => {
         setTime(300)
         setStartTime(Date.now())
@@ -60,7 +66,7 @@ function ValidationOTP({ username, accessList }) {
                 Otp: getOTP.toString()
             }
             if (time === 0) {
-                await axios.post(`/cancelOtp/${username}`)
+                await axios.post(`/GroupPost/P89CO/${username}`)
                     .then((result) => {
                         if (result.data.status === 'info') {
                             api.info({
@@ -77,7 +83,7 @@ function ValidationOTP({ username, accessList }) {
                     })
             } else {
                 try {
-                    const result = await axios.post('/verifyOtp', dataHolder);
+                    const result = await axios.post('/GroupPost/P90VO', dataHolder);
                     const { status, message, description } = result.data;
                     if (status === 'success') {
                         // Reset OTPLock on success
@@ -106,7 +112,7 @@ function ValidationOTP({ username, accessList }) {
     });
 
     async function onClickResendOTP() {
-        await axios.post(`/resendOtp/${username}`)
+        await axios.post(`/GroupPost/P88RO/${username}`)
             .then((result) => {
                 setTime(300)
                 setStartTime(Date.now())
@@ -137,13 +143,26 @@ function ValidationOTP({ username, accessList }) {
                         )}
 
                         <span className='text-2xl font-bold'>OTP Verification</span>
-                    </div> 
+                    </div>
                     <div className='pb-4'>
                         <span className='text-sm'>Enter the OTP sent to your&nbsp;
                             <span className='font-bold'>{maskEmail(username)}</span>
                         </span>
                     </div>
-                    <Input.OTP value={getOTP} formatter={(str) => str.replace(/[^0-9]/g, '')} onChange={(e) => onChangeOTP(e)} disabled={isLocked} onKeyDown={(e) => { if (e.key === 'Enter') onClickValidate.mutate() }} />
+                    <Input.OTP
+                        value={getOTP}
+                        formatter={(str) => str.replace(/[^0-9]/g, '')}
+                        onChange={(e) => onChangeOTP(e)}
+                        disabled={isLocked}
+                        onKeyDown={(e) => {
+                            if ((e.key && !/[0-9]/.test(e.key) && e.key !== 'Backspace')|| e.key === 'Tab') {
+                                e.preventDefault();
+                            }else if(e.key === 'Enter'){
+                                onClickValidate.mutate();
+                            }
+                            keydown(e);
+                        }}
+                    />
                     <div className='pt-1'>
                         {
                             time === 0

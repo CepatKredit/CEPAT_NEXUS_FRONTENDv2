@@ -26,11 +26,11 @@
                 <div>
                     <Input
                         value={value}
+                        autoComplete="new-password"
                         onChange={onChangeValue}
                         size='large'
                         allowClear
                         placeholder='0.00'
-                        autoComplete='off'
                         style={{ width: '100%' }}
                         disabled={disabled}
                         readOnly={readOnly}

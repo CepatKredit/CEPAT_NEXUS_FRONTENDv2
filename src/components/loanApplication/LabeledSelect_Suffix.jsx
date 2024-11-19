@@ -52,7 +52,7 @@ function LabeledSelect_Suffix({
   const getSuffix = useQuery({
     queryKey: ["getSuffix"],
     queryFn: async () => {
-      const result = await GET_LIST("/OFWDetails/GetSuffix");
+      const result = await GET_LIST("/GroupGet/G28S");
       return result.list;
     },
     refetchInterval: (data) => {
@@ -94,7 +94,10 @@ function LabeledSelect_Suffix({
           disabled={disabled}
           size="large"
           placeholder={placeHolder}
-          showSearch={showSearch}
+          showSearch 
+          filterOption={(input, option) =>
+              option.label.toLowerCase().includes(input.toLowerCase())
+            }
           onChange={(e) => {
             onChange(e);
           }}

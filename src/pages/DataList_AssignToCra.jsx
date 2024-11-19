@@ -27,7 +27,7 @@ function DataList_AssignToCra() {
     const AppDataListQuery = useQuery({
         queryKey: ['AppDataListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getAppDataList/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
+            const result = await GET_LIST(`/GroupGet/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
             return result.list;
         },
         enabled: true,
@@ -39,7 +39,7 @@ function DataList_AssignToCra() {
     const CraListQuery = useQuery({
         queryKey: ['CraListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/craList`);
+            const result = await GET_LIST(`/GroupGet/G112CL`);
             return result.list || [];
         },
         enabled: true,
@@ -51,7 +51,7 @@ function DataList_AssignToCra() {
     async function OnChange(craId, loanAppId) {
         if (!craId || !loanAppId) return; // Ensure both values are present
         try {
-            const result = await axios.post(`/craAssign`, {
+            const result = await axios.post(`/GroupPost/P141UCA`, {
                 AssignedCra: craId,
                 LoggedBy: jwtDecode(token).USRID,
                 LogggedDate: mmddyy(dayjs()),
@@ -91,7 +91,7 @@ function DataList_AssignToCra() {
                             onChange={(e) => { setSearch(e.target.value.toUpperCase()) }}
                             value={getSearch} />
                     </div>
-                    <ResponsiveTable columns={ColumnList('11')} height={'calc(100vh - 505px)'} width={'100%'}
+                    <ResponsiveTable columns={ColumnList('11', AppDataListQuery)} height={'calc(95vh - 505px)'} width={'100%'}
                         rows={AppDataListQuery.data?.filter((x) =>
                             x.loanAppCode.includes(getSearch) ||
                             x.recDate.includes(getSearch) ||
@@ -109,6 +109,7 @@ function DataList_AssignToCra() {
                                 NO: i + 1,
                                 LAN: <Button key={i} onClick={() => {
                                     localStorage.setItem('SIDC', toEncrypt(x.loanAppId));
+                                    localStorage.setItem('activeTab', 'deduplication')
                                     navigate(`${localStorage.getItem('SP')}/${x.loanAppCode}/deduplication`)
                                     queryClient.invalidateQueries({ queryKey: ['getRemarks', x.loanAppCode] }, { exact: true })
                                 }} type='link'>{x.loanAppCode}</Button>,

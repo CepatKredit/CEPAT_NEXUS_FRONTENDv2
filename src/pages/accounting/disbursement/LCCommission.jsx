@@ -5,7 +5,7 @@ import { generateKey } from '@utils/Generate';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import DisbursementList from './DisbursementList';
-import { useDataContainer } from '@containers/PreLoad';
+import { useDataContainer } from '@context/PreLoad';
 
 function LCCommission({ data }) {
 
@@ -98,7 +98,7 @@ function LCCommission({ data }) {
             Lan: data.LAN.props.children
         }
 
-        await axios.post('/createDisbursement', container)
+        await axios.post('/GroupPost/P122AD', container)
             .then((result) => {
                 queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', data.LAN.props.children, 'LC'] }, { exact: true })
                 api[result.data.status]({
