@@ -13,13 +13,16 @@ import moment from "moment";
 import { toEncrypt } from "@utils/Converter";
 import NetProceeds from "./disbursement/NetProceeds";
 import LCCommission from "./disbursement/LCCommission";
+import { useDataContainer } from "@context/PreLoad";
 
 function ForDisbursement() {
   const [getSearch, setSearch] = React.useState("");
   const [expandedRowKey, setExpandedRowKey] = React.useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("UTK");
-
+  const {
+    SET_REFRESH_LAN
+  } = useDataContainer();
   React.useEffect(() => {
     AppDataListQuery.refetch();
   }, [localStorage.getItem("SP")]);
@@ -144,6 +147,7 @@ function ForDisbursement() {
                 expandedRowKeys: [expandedRowKey], 
                 onExpand: (expanded, record) => {
                   if (expanded) {
+                    SET_REFRESH_LAN(1)
                     setExpandedRowKey(record.key); 
                     localStorage.setItem("SIDC", toEncrypt(record.CID));
                   } else {

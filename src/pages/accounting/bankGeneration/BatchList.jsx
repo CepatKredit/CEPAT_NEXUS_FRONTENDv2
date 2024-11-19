@@ -103,8 +103,8 @@ function BatchList() {
     }
     async function UpdateStatus(res,id,filename) {
         try {
-            res.list.forEach(async (x) => {
-                await axios.post(`/updateStatDisbursement/${x.id}/${jwtDecode(token).USRID}/${'0'}`);
+            res.list.forEach(async (x) => {//                                              /use to escape params in backend 
+                await axios.post(`/updateStatDisbursement/${x.id}/${jwtDecode(token).USRID}/${'0'}/${'0'}`);
             });
             await axios.post(`/updateFileNameBatch/${id}/${filename}`);
         } catch (error) {
