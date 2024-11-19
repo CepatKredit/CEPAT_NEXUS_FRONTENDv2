@@ -37,11 +37,12 @@ import StatusRemarks from '../TabList/StatusRemarks';
 import { FocusHook } from '@hooks/ComponentHooks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading }) {
+function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading }) {
     //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
     const { GetStatus } = ApplicationStatus();
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
@@ -472,10 +473,11 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         queryFn: async () => {
             if (!value || !value.VesselIMO || value.VesselIMO.length < 6) return null;
             try {
+
                 const result = await axios.get(`/GroupGet/G113SVD/${value.VesselIMO}`);
                 receive({ name: 'VesselInfo', value: result.data });
             } catch (error) {
-                receive({ name: 'VesselInfo', value: 'No Gathered Data!' });
+                updateAppDetails({ name: 'VesselInfo', value: 'No Gathered Data!' });
                 // console.log(error);
             }
             return null;
@@ -545,28 +547,28 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                             className="h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh] w-full overflow-y-auto mx-2 mb-9"
                         >
                             <div id='Loan-Details'>
-                                <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} creditisEdit={isEdit} User={'Credit'} />
+                                <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} creditisEdit={isEdit} User={'Credit'} />
                             </div>
                             <div id='OFW-Details'>
-                                <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
+                                <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
                             </div>
                             <div id="Employment-History" className="w-full">
                                 <EmploymentHistoryTable data={value} isEdit={isEdit} />
                             </div>
                             <div id='Credit-History' className="w-full ">
-                                <CreditHistory data={value} receive={receive} isEdit={isEdit} />
+                                <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} />
                             </div>
                             <div id='Owned-Assets' className="w-full">
-                                <AssetTable data={value} receive={receive} isEdit={isEdit} />
+                                <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} />
                             </div>
                             <div id='Owned-Properties' className="w-full">
-                                <OwnedProperties data={value} receive={receive} isEdit={isEdit} />
+                                <OwnedProperties data={value} receive={updateAppDetails} isEdit={isEdit} />
                             </div>
                             <div id='Character-Reference' className="w-full">
                                 <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
                             </div>
                             <div id='Beneficiary-Details'>
-                                <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
+                                <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
                             </div>
                         </div>
         
@@ -612,7 +614,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount classname={'h-[14rem]'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount classname={'h-[14rem]'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { updateAppDetails(e) }} />,
         },
         {
             label: <div className='flex flex-row'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,

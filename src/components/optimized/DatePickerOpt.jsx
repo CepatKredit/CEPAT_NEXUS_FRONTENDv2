@@ -1,6 +1,6 @@
 import { Input, DatePicker } from 'antd';
 import { ExclamationCircleFilled, CheckCircleFilled, CalendarOutlined } from '@ant-design/icons';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DateComponentHook } from '@hooks/ComponentHooks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
@@ -20,6 +20,8 @@ function DatePickerOpt({
   notValidMsg,
   disabledate,
 }) {
+  const [isRendered, setRendered] = useState(rendered !== undefined? rendered : true);//make sure rendered has a value
+
   const {
     status,
     iconVisible,
@@ -32,21 +34,20 @@ function DatePickerOpt({
     setDatePickerOpen,
     validationMessage,
     handleBlur,
-  } = DateComponentHook(value, receive, rendered, KeyName, notValidMsg);
+  } = DateComponentHook(value, rendered, receive, KeyName, notValidMsg, setRendered);
 
   const inputRef = useRef(null);
   const { setfocus } = useContext(LoanApplicationContext)
   useEffect(() => {
-      setfocus(KeyName, inputRef.current);
+    setfocus(KeyName, inputRef.current);
   }, [KeyName, setfocus])
 
-
   const icon =
-  required && status === "error" ? (
-    <ExclamationCircleFilled style={{ color: "#ff6767", fontSize: "12px" }} />
-  ) : required && status === "success" ? (
-    <CheckCircleFilled style={{ color: "#00cc00", fontSize: "12px" }} />
-  ) : null;
+    (required || required === undefined) && status === "error" ? (
+      <ExclamationCircleFilled style={{ color: "#ff6767", fontSize: "12px" }} />
+    ) : (required || required === undefined) && status === "" ? (
+      <CheckCircleFilled style={{ color: "#00cc00", fontSize: "12px" }} />
+    ) : null;
 
   const suffix = (
     <>
@@ -59,7 +60,7 @@ function DatePickerOpt({
         }}
         onClick={toggleDatePicker}
       />
-     {required && iconVisible && icon}
+      {isRendered && (required || required === undefined) && iconVisible && icon}
     </>
   );
 
@@ -69,6 +70,10 @@ function DatePickerOpt({
       <div className={className_dsub} style={{ position: "relative" }}>
         {!isDatePickerOpen ? (
           <Input
+            autoCapitalize='off'
+            aria-autocomplete='off'
+            autoSave='off'
+
             size="large"
             placeholder={placeHolder}
             value={inputValue}
@@ -76,13 +81,17 @@ function DatePickerOpt({
             onBlur={handleBlur}
             disabled={disabled}
             readOnly={readOnly}
-            status={required && status}
+            status={(required || required === undefined) && status}
             maxLength={10}
             suffix={suffix}
             ref={inputRef}
           />
         ) : (
           <DatePicker
+            autoCapitalize='off'
+            aria-autocomplete='off'
+            autoSave='off'
+
             size="large"
             style={{ width: "100%" }}
             open={isDatePickerOpen}
@@ -94,7 +103,7 @@ function DatePickerOpt({
             disabled={disabled}
             inputReadOnly
             disabledDate={disabledate}
-            status={required && status}
+            status={(required || required === undefined) && status}
             suffix={iconVisible && icon}
           />
         )}

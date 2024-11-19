@@ -138,6 +138,12 @@ const createInitialAppDetails = (direct) => {
     TotalExposure: "",
     ApprvTerms: "",
     CRORemarks: "",
+    // Approve Data
+    RecBy: "",
+    RecDate: "",
+    CremanBy: "",
+    CremanDate: "",
+
 
     // Present Address Tables
     OfwPoBRemarks: "",
@@ -245,6 +251,30 @@ const createInitialAppDetails = (direct) => {
     // groupChat:"",
     // relationship: "",
     // relationshipID: "",
+
+
+
+    //Charges
+    PFR: "",
+    InterestRate: "",
+    CFRF: "",
+    Terms: "",
+    GracePeriod: "",
+    ChargeType: "",
+    ProcessingFee: "",
+    CRF: "",
+    Notatial: "",
+    PNDST: "",
+    ServiceFee: "",
+    DocuSign: "",
+    IBFTFee: "",
+    Others: "",
+    TotalCharges: "",
+    PNValue: "",
+    NetProceeds: "",
+    MonthlyAmortization: "",
+
+
 
 
   };

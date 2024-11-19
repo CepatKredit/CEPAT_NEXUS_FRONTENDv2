@@ -22,10 +22,11 @@ import CharacterReference from "../TabList/CharacterReference";
 import LastUpdateBy from "../TabList/LastUpdateBy";
 import AuditTrail from "../TabList/AuditTrail";
 import { GetData } from "@utils/UserData";
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+
 
 function MarketingTabs({
   value,
-  receive,
   ClientId,
   FileType,
   Uploader,
@@ -41,6 +42,8 @@ function MarketingTabs({
   const [activeKey, setActiveKey] = React.useState(
     localStorage.getItem("activeTab") || "deduplication"
   );
+  const { updateAppDetails } = React.useContext(LoanApplicationContext)
+
 
   function onChangeTab(e) {
     //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
@@ -77,7 +80,7 @@ function MarketingTabs({
           classname={"h-[14rem]"}
           data={value}
           receive={(e) => {
-            receive(e);
+            updateAppDetails(e);
           }}
           isEdit={isEdit}
           User={"MARKETING"}
@@ -99,7 +102,7 @@ function MarketingTabs({
           presaddress={presaddress}
           data={value}
           receive={(e) => {
-            receive(e);
+            updateAppDetails(e);
           }}
           BorrowerId={BorrowerId}
           User={"MARKETING"}
@@ -122,7 +125,7 @@ function MarketingTabs({
           classname={"h-[14rem]"}
           data={value}
           receive={(e) => {
-            receive(e);
+            updateAppDetails(e);
           }}
           BorrowerId={BorrowerId}
           isEdit={isEdit}
@@ -150,7 +153,7 @@ function MarketingTabs({
           sepcoborrowfname={sepcoborrowfname}
           FileType={FileType}
           receive={(e) => {
-            receive(e);
+            updateAppDetails(e);
           }}
         />
       ),

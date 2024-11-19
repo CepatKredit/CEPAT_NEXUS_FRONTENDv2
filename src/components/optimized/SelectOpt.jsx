@@ -21,11 +21,10 @@ function SelectOpt({
     notValid,
     notValidMsg,
     KeyName,
-    keyName,
     rendered,
 }) {
     const [search, setSearchInput] = useState('');
-
+    const [isRendered, setRendered] = useState(rendered !== undefined? rendered : true);//make sure rendered has a value
     const inputRef = useRef(null);
     const { setfocus } = useContext(LoanApplicationContext);
 
@@ -38,9 +37,10 @@ function SelectOpt({
         filteredOptions,
         handleSelectChange,
         handleKeyDown,
-        dropdownOpen, 
         setDropdownOpen,
-    } = SelectComponentHooks(search, receive, options, setSearchInput, keyName || KeyName, rendered, value,);
+    } = SelectComponentHooks(search, receive, options, setSearchInput,KeyName, rendered, value, setRendered);
+
+    const [dropdownOpen, setDropdownVisible] = useState(false);
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),
@@ -51,12 +51,11 @@ function SelectOpt({
         debouncedSearch(value);
     };
 
-    const handleFocus = () => {
-        setDropdownOpen(true);
+    const handleDropdownVisibleChange = (open) => {
+        setDropdownVisible(open);
     };
 
     const handleBlur = () => {
-        setDropdownOpen(false);
         if (required && !value) {
             handleSelectChange('');
         }
@@ -83,19 +82,20 @@ function SelectOpt({
                         placeholder={placeHolder}
                         onChange={handleSelectChange}
                         onBlur={handleBlur}
-                        onFocus={handleFocus}
+                        onFocus={() => setDropdownVisible(true)}
                         showSearch={showSearch}
                         filterOption={false}
                         onSearch={handleSearch}
                         onKeyDown={handleKeyDown}
                         readOnly={readOnly}
                         open={dropdownOpen}
+                        onDropdownVisibleChange={handleDropdownVisibleChange}
                         status={!disabled && (required || required === undefined) ? status : false}
                         style={{ width: '100%' }}
                         suffixIcon={
-                            !disabled && (required || required === undefined) && status === 'error' ? (
+                            isRendered && !disabled && (required || required === undefined) && status === 'error' ? (
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
-                            ) : status === 'success' ? (
+                            ) :  isRendered && !disabled && (required || required === undefined) && status === '' ? (
                                 <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
                             ) : null
                         }

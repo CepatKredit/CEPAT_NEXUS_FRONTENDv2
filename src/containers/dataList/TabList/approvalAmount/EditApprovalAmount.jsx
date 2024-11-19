@@ -4,11 +4,13 @@ import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
 import LabeledSelect from '@components/marketing/LabeledSelect';
 import LabeledTextArea from '@components/marketing/LabeledTextArea';
 import LabeledInput from '@components/marketing/LabeledInput';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { jwtDecode } from 'jwt-decode';
 
 function EditApprovalAmount({ data, receive }) {
     const [getMAmort, setMAmort] = React.useState(0);
     const [getTExposure, setTExposure] = React.useState(0);
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
 
     const rendered = true;
     const monthsOptions = [];
@@ -45,12 +47,11 @@ function EditApprovalAmount({ data, receive }) {
 
     const token = localStorage.getItem('UTK');
     const decodedToken = token ? jwtDecode(token) : {};
-    const modUser = decodedToken.USRID || ''; // Retrieve user ID or set as empty string if unavailable
-
+    const recBy = decodedToken.USRID || ''; 
     useEffect(() => {
-        // Update the ModUser in the data when the component loads
-        receive({ name: 'ModUser', value: modUser });
-    }, [modUser]);
+        receive({ 
+            RecBy: recBy});
+    }, [recBy,receive]);
 
     return (
         <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
@@ -59,7 +60,7 @@ function EditApprovalAmount({ data, receive }) {
                 className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
                 className_label="font-bold"
                 value={data.ApprvAmount}
-                receive={(e) => receive({ name: 'ApprvAmount', value: e })}
+                receive={(e) => updateAppDetails({ name: 'ApprvAmount', value: e })}
                 label={<>Approved Amount <span className="text-red-500">*</span></>}
                 placeHolder="Enter Approved Amount"
                 category={'marketing'}
@@ -69,7 +70,7 @@ function EditApprovalAmount({ data, receive }) {
                 className_dmain="mt-10 w-[400px] h-[4rem] pt-[.4rem]"
                 className_label="font-bold"
                 value={data.ApprvInterestRate}
-                receive={(e) => receive({ name: 'ApprvInterestRate', value: e })}
+                receive={(e) => updateAppDetails({ name: 'ApprvInterestRate', value: e })}
                 label={<>Approved Interest Rate (%) <span className="text-red-500">*</span></>}
                 placeHolder="Enter Interest Rate"
                 category="marketing"
@@ -83,7 +84,7 @@ function EditApprovalAmount({ data, receive }) {
                 value={data.ApprvTerms}
                 data={Array.from({ length: 22 }, (_, i) => ({ value: i + 3, label: `${i + 3} months` }))}
                 receive={(e) => {
-                    receive({
+                    updateAppDetails({
                         name: 'ApprvTerms',
                         value: e,
                     });
@@ -95,7 +96,7 @@ function EditApprovalAmount({ data, receive }) {
                 className_dmain="mt-10 w-[400px] h-[4rem] pt-[.4rem]"
                 className_label="font-bold"
                 value={data.MonthlyAmort}
-                receive={(e) => receive({ name: 'MonthlyAmort', value: e })}
+                receive={(e) => updateAppDetails({ name: 'MonthlyAmort', value: e })}
                 label={<>Monthly Amort <span className="text-red-500">*</span></>}
                 placeHolder="Calculated Monthly Amortization"
                 readOnly
@@ -108,7 +109,7 @@ function EditApprovalAmount({ data, receive }) {
                 className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
                 className_label="font-bold"
                 value={data.OtherExposure}
-                receive={(e) => receive({ name: 'OtherExposure', value: e })}
+                receive={(e) => updateAppDetails({ name: 'OtherExposure', value: e })}
                 label="Other Exposure"
                 placeHolder="Enter Other Exposure"
                 category={'marketing'}
@@ -119,7 +120,7 @@ function EditApprovalAmount({ data, receive }) {
                 className_dmain="mt-10 w-[400px] h-[4rem] pt-[.4rem]"
                 className_label="font-bold"
                 value={data.TotalExposure}
-                receive={(e) => receive({ name: 'TotalExposure', value: e })}
+                receive={(e) => updateAppDetails({ name: 'TotalExposure', value: e })}
                 label={<>Total Exposure <span className="text-red-500">*</span></>}
                 placeHolder="Calculated Total Exposure"
                 readOnly
@@ -130,10 +131,21 @@ function EditApprovalAmount({ data, receive }) {
             <LabeledInput
                 className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
                 className_label={'font-bold'}
+                label={'Encoded By'}
+                placeHolder="Encoded By"
+                value={data.RecBy || recBy}
+                receive={(e) => updateAppDetails({ name: 'ModUser', value: e })}
+                category="marketing"
+                rendered={rendered}
+                readOnly
+            />
+            <LabeledInput
+                className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
+                className_label={'font-bold'}
                 label={'Approved By'}
                 placeHolder="Approved By"
-                value={data.ModUser || modUser}
-                receive={(e) => receive({ name: 'ModUser', value: e })}
+                value={data.CremanBy}
+                receive={(e) => updateAppDetails({ name: 'ModUser', value: e })}
                 category="marketing"
                 rendered={rendered}
                 readOnly

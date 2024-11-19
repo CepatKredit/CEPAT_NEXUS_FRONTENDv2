@@ -24,13 +24,15 @@ function EditLoanDetails({ data, receive, User }) {
     const [isEdit, setEdit] = React.useState(false);
     const isFirstRender = React.useRef(true);
     const rendered = true;
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
+
 
     React.useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
-        receive({ name: 'ofwDeptDate', value: '' })
+        updateAppDetails({ name: 'ofwDeptDate', value: '' })
     }, [data.loanProd])
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
@@ -51,7 +53,7 @@ function EditLoanDetails({ data, receive, User }) {
                     label="Loan Application ID"
                     value={data.loanAppCode}
                     readOnly={true}
-                    receive={(e) => receive({ name: 'loanIdCode', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'loanIdCode', value: e })}
 
                 />)}
             {User === 'LC'
@@ -62,7 +64,7 @@ function EditLoanDetails({ data, receive, User }) {
                     label="Date of Application"
                     value={data.loanCreated}
                     readOnly={true}
-                    receive={(e) => receive({ name: 'loanCreated', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'loanCreated', value: e })}
                 />)}
             { /* User === 'LC'
                         ? (<></>)
@@ -73,7 +75,7 @@ function EditLoanDetails({ data, receive, User }) {
                             label="Loan Application Status"
                             value={data.loanAppStat}
                             readOnly={true}
-                            receive={(e) => receive({ name: 'loanAppStat', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'loanAppStat', value: e })}
                         />)*/ }
             <SelectOpt
                 className_dmain="mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
@@ -82,7 +84,7 @@ function EditLoanDetails({ data, receive, User }) {
                 value={data.loanProd}
                 rendered={rendered}
                 showSearch
-                receive={(e) => receive({ name: 'loanProd', value: e })}
+                receive={(e) => updateAppDetails({ name: 'loanProd', value: e })}
                 options={get_loan_product_list}
                 notValidMsg={'Loan Product Required'}
                 KeyName={'loanProd'}
@@ -95,7 +97,7 @@ function EditLoanDetails({ data, receive, User }) {
                     className_dsub=""
                     label={<>OFW Departure Date <span className="text-red-500">*</span></>}
                     value={data.ofwDeptDate}
-                    receive={(e) => { receive({ name: 'ofwDeptDate', value: e }) }}
+                    receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
                     //disabled={!isEdit && !(data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL')}
                     placeHolder="Departure Date"
                     disabledate={disableDate_deployment}
@@ -108,7 +110,7 @@ function EditLoanDetails({ data, receive, User }) {
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
                     value={data.loanBranch}
-                    receive={(e) => receive({ name: 'loanBranch', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'loanBranch', value: e })}
                     label={User === 'Credit' ? 'Loan Branch' : 'Assigned Branch'}
                     readOnly
                     category={User !== 'Credit' ? 'MARKETING' : undefined}
@@ -122,7 +124,7 @@ function EditLoanDetails({ data, receive, User }) {
                 label={<>Loan Application Type <span className="text-red-500">*</span></>}
                 value={data.loanType}
                 data={LoanType(true)}
-                receive={(e) => receive({ name: 'loanType', value: e })}
+                receive={(e) => updateAppDetails({ name: 'loanType', value: e })}
                 rendered={rendered}
             />
             {User === 'Credit' && data.loanType === 2 && (
@@ -130,7 +132,7 @@ function EditLoanDetails({ data, receive, User }) {
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
                     value={data.PrevAmount}
-                    receive={(e) => receive({ name: 'PrevAmount', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'PrevAmount', value: e })}
                     label={<>Previous Approved Amount <span className="text-red-500">*</span></>}
                     placeHolder={'Previous Amount'}
                     category={'marketing'}
@@ -140,7 +142,7 @@ function EditLoanDetails({ data, receive, User }) {
                 className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                 className_label="font-bold"
                 value={data.loanPurpose}
-                receive={(e) => receive({ name: 'loanPurpose', value: e })}
+                receive={(e) => updateAppDetails({ name: 'loanPurpose', value: e })}
                 label={<>Purpose <span className="text-red-500">*</span></>}
                 showSearch
                 rendered={rendered}
@@ -149,7 +151,7 @@ function EditLoanDetails({ data, receive, User }) {
                 className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                 className_label="font-bold"
                 value={data.loanAmount}
-                receive={(e) => receive({ name: 'loanAmount', value: e })}
+                receive={(e) => updateAppDetails({ name: 'loanAmount', value: e })}
                 label={<>{User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'} <span className="text-red-500">*</span></>}
                 category={'marketing'}
                 rendered={rendered}
@@ -160,7 +162,7 @@ function EditLoanDetails({ data, receive, User }) {
                     className_label="font-bold"
                     label={<>Applied Loan Terms <span className="text-red-500">*</span></>}
                     value={data.loanTerms}
-                    receive={(e) => receive({ name: 'loanTerms', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'loanTerms', value: e })}
                     placeholder="Enter Loan Terms"
                     readOnly={true}
                     rendered={rendered}
@@ -173,7 +175,7 @@ function EditLoanDetails({ data, receive, User }) {
                     label={<>Loan Terms (in Months) <span className="text-red-500">*</span></>}
                     value={data.loanTerms}
                     data={LoanTerms(24)}
-                    receive={(e) => receive({ name: 'loanTerms', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'loanTerms', value: e })}
                     rendered={rendered}
                 />)}
             {User === 'Credit' && (
@@ -181,7 +183,7 @@ function EditLoanDetails({ data, receive, User }) {
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
                     value={data.CRAApprvRec}
-                    receive={(e) => receive({ name: 'CRAApprvRec', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'CRAApprvRec', value: e })}
                     label={<>CRA Recommendation <span className="text-red-500">*</span></>}
                     placeHolder={"CRA Recommendation"}
                     category={'marketing'}
@@ -195,7 +197,7 @@ function EditLoanDetails({ data, receive, User }) {
                     label={<>How did you know about Cepat Kredit Financing? <span className="text-red-500">*</span></>}
                     value={data.channelId}
                     data={Hckfi()}
-                    receive={(e) => receive({ name: 'channelId', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'channelId', value: e })}
                     showSearch
                     rendered={rendered}
                 />)}
@@ -204,7 +206,7 @@ function EditLoanDetails({ data, receive, User }) {
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
                     value={data.consultName}
-                    receive={(e) => receive({ name: 'consultName', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'consultName', value: e })}
                     label={<>Loan Consultant <span className="text-red-500">*</span></>}
                     placeHolder={"Loan Consultant"}
                     disabled={User == 'LC' ? true : false}
@@ -217,7 +219,7 @@ function EditLoanDetails({ data, receive, User }) {
                         className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                         className_label="font-bold"
                         value={data.consultNumber}
-                        receive={(e) => receive({ name: 'consultNumber', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'consultNumber', value: e })}
                         label={'Loan Consultant No.'}
                         type='contact'
                         required={false}
@@ -229,7 +231,7 @@ function EditLoanDetails({ data, receive, User }) {
                         className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                         className_label="font-bold"
                         value={data.consultantfblink}
-                        receive={(e) => receive({ name: 'consultantfblink', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'consultantfblink', value: e })}
                         label={<>Consultant Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeHolder="Facebook Name / Profile"
                         rendered={rendered}
@@ -242,7 +244,7 @@ function EditLoanDetails({ data, receive, User }) {
 
                     className_label="font-bold"
                     value={data.CRARemarks}
-                    receive={(e) => receive({ name: 'CRARemarks', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'CRARemarks', value: e })}
                     label="CRA Remarks "
                     placeHolder="Remarks "
                     rendered={rendered}

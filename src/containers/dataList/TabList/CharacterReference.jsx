@@ -520,9 +520,6 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             form.setFieldsValue({ 'remarks': toUpperText(e) });
         }
     }
-    console.log("Relationship List Data:", getRelationshipList.data);
-
-
 
     const EditableCell = ({
         editing,

@@ -71,10 +71,10 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
          (User === 'Credit' || User === 'Lp') && { key: '14', label: <span className={`font-semibold ${data.BenReligion ? 'text-black' : 'text-red-600'}`}>Religion</span>,  children: Religion().find(x => x.value === data.BenReligion)?.label || '' },
          (User === 'Credit' || User === 'Lp') && { key: '15', label: <span className={`font-semibold ${data.BenFormerOFW ? 'text-black' : 'text-red-600'}`}>Former OFW (Overseas Filipino Worker)</span>, children: Overseas().find(BenFormerOFW => BenFormerOFW.value === data.BenFormerOFW)?.label || '' },
          data.BenFormerOFW === 1 && (User === 'Credit' || User === 'Lp') && {key: '16', label: <span className={`font-semibold ${data.BenLastReturn ? 'text-black' : 'text-red-600'}`}>When was your last return home?</span>, children: data.BenLastReturn || ''},
-         (User === 'Credit' || User === 'Lp') && { key: '17', label: <span className={`font-semibold ${data.BenPlanAbroad ? 'text-black' : 'text-red-600'}`}>Plans to Abroad</span>, children: Overseas().find(BenPlanAbroad => BenPlanAbroad.value === data.BenPlanAbroad)?.label || '' },
+         (User === 'Credit' || User === 'Lp') && { key: '17', label: <span className={`font-semibold ${data.BenPlanAbroad ? 'text-black' : 'text-red-600'}`}>Plans to go Abroad</span>, children: Overseas().find(BenPlanAbroad => BenPlanAbroad.value === data.BenPlanAbroad)?.label || '' },
          data.BenPlanAbroad === 1 && (User === 'Credit' || User === 'Lp') && {key: '18', label: <span className='font-semibold text-black'>Remarks</span>, children: data.BenRemarks || ''},
          (User === 'Credit' || User === 'Lp') && { key: '19', label: <span className={`font-semibold ${data.BenPEP ? 'text-black' : 'text-red-600'}`}>PEP</span>, children: Overseas().find(BenPEP => BenPEP.value === data.BenPEP)?.label || '' },
-        { key: '20', label: <span className={`font-semibold ${data.bendependents ? 'text-black' : 'text-red-600'}`}>Dependents</span>, children: data.bendependents || '' },
+        { key: '20', label: <span className='font-semibold text-black'>Dependents</span>, children: data.bendependents || 0 },
         { key: '21', label: <span className={`font-semibold ${data.benmstatus ? 'text-black' : 'text-red-600'}`}>Marital Status</span>, children: MaritalStatus().find(status => status.value === data.benmstatus)?.label || '' },
     ].filter(Boolean);
 
@@ -83,7 +83,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         { key: '27', label: <span className={`font-semibold ${data.benpresmunicipalityname ? 'text-black' : 'text-red-600'}`}>Present City/Municipality</span>, children: data.benpresmunicipalityname || '' },
         { key: '28', label: <span className={`font-semibold ${data.benpresbarangayname ? 'text-black' : 'text-red-600'}`}>Present Barangay</span>, children: data.benpresbarangayname || '' },
         { key: '29', label: <span className={`font-semibold ${data.benpresstreet ? 'text-black' : 'text-red-600'}`}>Present Street</span>, children: data.benpresstreet || '' },
-        { key: '30', label: (<span className={`font-semibold ${data.benstaymonths || data.benstayyears ? 'text-black' : 'text-red-600'}`}> Length of Stay</span> ),children: `${ data.benstayyears > 0 ? `${data.benstayyears} Year(s)` :`` } ${(data.benstayyears > 0 && data.benstaymonths >= 1 ) ? ' / ' : ``} ${data.benstaymonths > 0 ? `${data.benstaymonths} Month(s)` : ``}` },
+        { key: '30', label: (<span className={`font-semibold ${data.benstaymonths || data.benstayyears ? 'text-black' : 'text-red-600'}`}> Length of Stay</span> ),children: `${data.benstayyears > 0 ? `${data.benstayyears} Year(s)` : ''} ${data.benstayyears > 0 && data.benstaymonths > 0 ? ' / ' : ''}  ${data.benstaymonths > 0 ? `${data.benstaymonths} Month(s)` : ''}`},
         { key: '31', label: <span className={`font-semibold ${data.benresidences ? 'text-black' : 'text-red-600'}`}>Type of Residences</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
         (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className={`font-semibold ${data.BenLandMark ? 'text-black' : 'text-red-600'}`}>Landmark</span>, children: data.BenLandMark || '' },
         (User === 'Credit' || User === 'Lp') && { key: '34', label: <span className={`font-semibold ${data.BenPoBRemarks ? 'text-black' : 'text-red-600'}`}>Proof of Billing Remarks</span>, children: data.BenPoBRemarks || '' },     
@@ -130,10 +130,10 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         (User === 'Credit' || User === 'Lp') && { key: '15', label: <span className='font-semibold text-black'>Religion</span>, children: Religion().find(AcbReligion => AcbReligion.value === data.AcbReligion)?.label || '' },
         (User === 'Credit' || User === 'Lp') && { key: '16', label: <span className='font-semibold text-black'>Former OFW (Overseas Filipino Worker)</span>, children: Overseas().find(AcbFormerOFW => AcbFormerOFW.value === data.AcbFormerOFW)?.label || '' },
         data.AcbFormerOFW === 1 && (User === 'Credit' || User === 'Lp') && {key: '17', label: <span className='font-semibold text-black'>When was your last return home?</span>, children: data.AcbLastReturn || ''},
-        (User === 'Credit' || User === 'Lp') && { key: '18', label: <span className='font-semibold text-black'>Plans to Abroad</span>, children: Overseas().find(AcbPlanAbroad => AcbPlanAbroad.value === data.AcbPlanAbroad)?.label || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '18', label: <span className='font-semibold text-black'>Plans to go Abroad</span>, children: Overseas().find(AcbPlanAbroad => AcbPlanAbroad.value === data.AcbPlanAbroad)?.label || '' },
         data.AcbPlanAbroad === 1 && (User === 'Credit' || User === 'Lp') && {key: '19', label: <span className='font-semibold text-black'>Remarks</span>, children: data.AcbRemarks || ''},
         (User === 'Credit' || User === 'Lp') && { key: '20', label: <span className='font-semibold text-black'>PEP</span>, children: Overseas().find(AcbPEP => AcbPEP.value === data.AcbPEP)?.label || '' },
-        { key: '21', label: <span className='font-semibold text-black'>Dependents</span>, children: data.coborrowdependents || '' },
+        { key: '21', label: <span className='font-semibold text-black'>Dependents</span>, children: data.coborrowdependents || 0 },
         { key: '22', label: <span className='font-semibold text-black'>Marital Status</span>, children: MaritalStatus().find(status => status.value === data.coborrowmstatus)?.label || '' }
     ].filter(Boolean);
 
