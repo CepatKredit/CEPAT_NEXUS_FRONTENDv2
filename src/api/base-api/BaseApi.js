@@ -23,6 +23,19 @@ export async function GET_LIST(path) {
     })
 }
 
+//Nico 11/09/2024 since axios is already a promise 
+//I think taking advantage of async/await is much cleaner and more optimized since it is not calling Promise twice
+export async function GET_LIST_ASYNC (path) {
+    try {
+        const res = await axios.get(path);
+        console.log("API Response:", res.data); 
+        return res.data; 
+    } catch (error) {
+        // throw { message: error };
+        throw new Error(error.message || 'Failed to fetch data');
+    }
+}
+
 export async function POST_DATA(path, data) {
     return new Promise((resolve, reject) => {
         axios.post(path, data)

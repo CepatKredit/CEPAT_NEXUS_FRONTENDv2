@@ -9,7 +9,6 @@ import ReleaseDocuments from "../TabList/ReleaseDocuments";
 
 function AccountingTabs({
   value,
-  receive,
   ClientId,
   FileType,
   Uploader,
