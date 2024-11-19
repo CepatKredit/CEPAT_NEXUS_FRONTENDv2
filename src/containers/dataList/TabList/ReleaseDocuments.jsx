@@ -169,9 +169,7 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
             }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={LoanStatus} />
             <div className='space-x-[1.5rem]'>
                 {
-                    LoanStatus === 'CANCELLED' || LoanStatus === 'DECLINED' || LoanStatus === 'APPROVED (TRANS-OUT)'
-                        || LoanStatus === 'ON WAIVER' || LoanStatus === 'CONFIRMATION' || LoanStatus === 'CONFIRMED' || LoanStatus === 'UNDECIDED'
-                        || LoanStatus === 'RETURN TO LOANS PROCESSOR' || LoanStatus === 'FOR DISBURSEMENT'
+                    LoanStatus === 'CANCELLED' || LoanStatus === 'DECLINED' || LoanStatus === 'ON WAIVER' || LoanStatus === 'UNDECIDED' || LoanStatus === 'FOR DISBURSEMENT'
                         ? (<></>)
                         : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                             <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }}>Upload Document</Button>

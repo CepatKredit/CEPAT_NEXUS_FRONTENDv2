@@ -27,7 +27,7 @@ function Charges({ LoanAppId, data, User }) {
         if (!getAppDetails?.loanProd) {
             return ''; // Return empty if data is not available
         }
-        const ProductHolder = loanProducts.data.find(
+        const ProductHolder = loanProducts.data?.find(
             (x) => x.code === getAppDetails?.loanProd || x.description === getAppDetails?.loanProd
         );
         return ProductHolder ? `${ProductHolder.description}` : getAppDetails?.loanProd;

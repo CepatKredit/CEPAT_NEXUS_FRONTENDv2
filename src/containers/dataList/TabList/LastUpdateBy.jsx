@@ -172,7 +172,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
     }
 
-
     const onClickUpdateStatus = useMutation({
         mutationFn: async () => {
             if (getUpdate.Status === 'DECLINED') {
@@ -218,10 +217,10 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         message: 'Error',
                         description: 'Failed to update Please try again.',
                     });
-                    return; 
+                    return;
                 }
             } else {
-             
+
                 const dataContainer = [
                     {
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
@@ -266,35 +265,50 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         return;
                     }
                 }
-                try {
-                    const result = await axios.post('/updateApplicationStatus',
-                        getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
-                            ? dataContainer[2]
-                            : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
-                                ? dataContainer[1]
-                                : dataContainer[0]
-                    );
-                    SET_PATH_LOCATION(getUpdate.Status)
-                    SET_REFRESH_TILE_COUNTER(1)
-                    StatusList.refetch();
-                    api[result.data.status]({
-                        message: result.data.message,
-                        description: result.data.description
-                    });
-                    queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
-                    navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
-                    setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
-
-                    if (deletePN) {
-                        await onClickDeleteXTable();
-                    }
-
+                let PN_CHECK = 0
+                if (getUpdate.Status === 'FOR DISBURSEMENT') {
+                    await axios.post('/getPNNumber', dataContainer[0])
+                        .then((result) => { PN_CHECK = 0 })
+                        .catch((error) => { PN_CHECK = 1 })
                 }
-                catch (error) {
-                    console.log(error);
-                    api['error']({
-                        message: 'Something went wrong',
-                        description: error.message
+
+                if (PN_CHECK === 0) {
+                    try {
+                        const result = await axios.post('/updateApplicationStatus',
+                            getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
+                                ? dataContainer[2]
+                                : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined
+                                    ? dataContainer[1]
+                                    : dataContainer[0]
+                        );
+                        SET_PATH_LOCATION(getUpdate.Status)
+                        SET_REFRESH_TILE_COUNTER(1)
+                        StatusList.refetch();
+                        api[result.data.status]({
+                            message: result.data.message,
+                            description: result.data.description
+                        });
+                        queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
+                        navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
+                        setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
+
+                        if (deletePN) {
+                            await onClickDeleteXTable();
+                        }
+
+                    }
+                    catch (error) {
+                        console.log(error);
+                        api['error']({
+                            message: 'Something went wrong',
+                            description: error.message
+                        });
+                    }
+                }
+                else {
+                    api['warning']({
+                        message: 'No PN Number from SOFIA',
+                        description: 'Unable to change status to FOR DISBURSEMENT, please generate PN Number to proceed.'
                     });
                 }
             }
@@ -563,77 +577,77 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
 
 
-                        {getUpdate.Status === 'FOR CREDIT ASSESSMENT' 
-                        ?(
-                            <div className='pt-2'>
-                                <Space>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>Principal Borrower Full Name</label>
-                                        </div>
-                                        <div>
-                                            <Input readOnly className="w-full" size="large" value={getFullName(data.ofwfname, data.ofwmname, data.ofwlname, data.ofwsuffix)} />
-                                        </div>
-                                    </div>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>Co-Borrower Full Name</label>
-                                        </div>
-                                        <div>
-                                            <Input readOnly className='w-full' size='large' value={getFullName(data.benfname, data.benmname, data.benlname, data.bensuffix)} />
-                                        </div>
-                                    </div>
-                                </Space>
-                                <Space>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>Additional Co-Borrower Full Name</label>
-                                        </div>
-                                        <div>
-                                            <Input readOnly className='w-full' size='large' value={getFullName(data.coborrowfname, data.coborrowmname, data.coborrowlname, data.coborrowsuffix)} />
-                                        </div>
-                                    </div>
-                                    <div className='w-[23.5rem]'>
-                                        <div>
-                                            <label className='font-bold'>For Urgent Application, Please select Reason</label>
-                                        </div>
-                                        <div>
-                                            <Select
-                                                className='w-full'
-                                                size='large'
-                                                allowClear
-                                                options={RequestTypeDropdown(data.loanProd).MArequestType}
-                                                value={getUpdate.UrgentApp}
-                                                onChange={(e) => { setUpdate({ ...getUpdate, UrgentApp: e }) }}
-                                                disabled={isDisabled}
-                                            />
-                                        </div>
-                                    </div>
-                                </Space>
-                                {getUpdate.UrgentApp === 2 && (
-                                    <div className='pt-2'>
+                        {getUpdate.Status === 'FOR CREDIT ASSESSMENT'
+                            ? (
+                                <div className='pt-2'>
+                                    <Space>
                                         <div className='w-[23.5rem]'>
                                             <div>
-                                                <label className='font-bold'>Departure Date</label>
+                                                <label className='font-bold'>Principal Borrower Full Name</label>
                                             </div>
                                             <div>
-                                                <DatePicker
+                                                <Input readOnly className="w-full" size="large" value={getFullName(data.ofwfname, data.ofwmname, data.ofwlname, data.ofwsuffix)} />
+                                            </div>
+                                        </div>
+                                        <div className='w-[23.5rem]'>
+                                            <div>
+                                                <label className='font-bold'>Co-Borrower Full Name</label>
+                                            </div>
+                                            <div>
+                                                <Input readOnly className='w-full' size='large' value={getFullName(data.benfname, data.benmname, data.benlname, data.bensuffix)} />
+                                            </div>
+                                        </div>
+                                    </Space>
+                                    <Space>
+                                        <div className='w-[23.5rem]'>
+                                            <div>
+                                                <label className='font-bold'>Additional Co-Borrower Full Name</label>
+                                            </div>
+                                            <div>
+                                                <Input readOnly className='w-full' size='large' value={getFullName(data.coborrowfname, data.coborrowmname, data.coborrowlname, data.coborrowsuffix)} />
+                                            </div>
+                                        </div>
+                                        <div className='w-[23.5rem]'>
+                                            <div>
+                                                <label className='font-bold'>For Urgent Application, Please select Reason</label>
+                                            </div>
+                                            <div>
+                                                <Select
                                                     className='w-full'
-                                                    format={'MM-DD-YYYY'}
-                                                    allowClear
-                                                    value={isDateTimeValid(data.ofwDeptDate) ? dayjs(data.ofwDeptDate) : undefined}
                                                     size='large'
-                                                    onChange={(date) => {
-                                                    }}
-                                                    disabled={true}
-                                                    disabledDate={(current) => current && current < dayjs().startOf('day')}
+                                                    allowClear
+                                                    options={RequestTypeDropdown(data.loanProd).MArequestType}
+                                                    value={getUpdate.UrgentApp}
+                                                    onChange={(e) => { setUpdate({ ...getUpdate, UrgentApp: e }) }}
+                                                    disabled={isDisabled}
                                                 />
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
-                        ):(<></>)}
+                                    </Space>
+                                    {getUpdate.UrgentApp === 2 && (
+                                        <div className='pt-2'>
+                                            <div className='w-[23.5rem]'>
+                                                <div>
+                                                    <label className='font-bold'>Departure Date</label>
+                                                </div>
+                                                <div>
+                                                    <DatePicker
+                                                        className='w-full'
+                                                        format={'MM-DD-YYYY'}
+                                                        allowClear
+                                                        value={isDateTimeValid(data.ofwDeptDate) ? dayjs(data.ofwDeptDate) : undefined}
+                                                        size='large'
+                                                        onChange={(date) => {
+                                                        }}
+                                                        disabled={true}
+                                                        disabledDate={(current) => current && current < dayjs().startOf('day')}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (<></>)}
                         <center>
                             <div className='pt-[2rem]'>
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
