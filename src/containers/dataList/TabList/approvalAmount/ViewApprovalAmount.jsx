@@ -66,8 +66,8 @@ function ViewApprovalAmount({ data, loading, receive = () => {} }) {
                 : '0.00' },
         { key: '6', label: <span className={`font-semibold ${getTExposure ? 'text-black' : 'text-red-600'}`}>Total Exposure</span>, children: getTExposure ? formatNumberWithCommas(formatToTwoDecimalPlaces(String(getTExposure).replaceAll(',', ''))) : '' },
         { key: '7', label: <span className="font-semibold text-black">Remarks</span>, children: data.CRORemarks || '' },
-        { key: '8', label: <span className="font-semibold text-black">Encoded By</span>, children: data.RecBy || recBy || '' },
-        { key: '9', label: <span className="font-semibold text-black">Encoded Date</span>, children: data.RecDate ||  '' },
+        { key: '8', label: <span className="font-semibold text-black">Encoded By</span>, children: data.ForApprovalBy ||  '' },
+        { key: '9', label: <span className="font-semibold text-black">Encoded Date</span>, children: data.ForApprovalDate ||  '' },
         { key: '10', label: <span className="font-semibold text-black">Approved By</span>, children: data.CremanBy || '' },
         { key: '11', label: <span className="font-semibold text-black">Approved Date</span>, children: data.CremanDate || '' },
 
@@ -86,20 +86,6 @@ function ViewApprovalAmount({ data, loading, receive = () => {} }) {
                     </Descriptions.Item>
                 ))}
             </Descriptions>
-            <div className="flex justify-center mt-8">
-                <ConfigProvider theme={{ token: { colorPrimary: '#2b972d' } }}>
-                    <Tooltip title="Click to approve">
-                        <Button
-                            size="large"
-                            className="bg-[#2b972d] text-white"
-                            type="primary"
-                            onClick={handleApprove}
-                        >
-                            Approve
-                        </Button>
-                    </Tooltip>
-                </ConfigProvider>
-            </div>
         </div>
     );
 }
