@@ -15,7 +15,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, loading }) {
-    const { getAppDetails } = React.useContext(LoanApplicationContext);
+    const { getAppDetails , updateAppDetails} = React.useContext(LoanApplicationContext);
     const [isEdit, setEdit] = React.useState(false);
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
@@ -87,9 +87,9 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     LoanAppId: getAppDetails.loanIdCode,
                     ProcessingFeeRate: parseFloat(getAppDetails.PFR),
                     InterestRate: parseFloat(getAppDetails.InterestRate),
-                   CreditRiskFeeRate: parseFloat(getAppDetails.CFRF),
+                    CreditRiskFeeRate: parseFloat(getAppDetails.CFRF),
                     GracePeriod: getAppDetails.GracePeriod,
-                     ChargesType: getAppDetails.ChargeType,
+                    ChargesType: getAppDetails.ChargeType,
                     ProcessingFee: parseFloat(getAppDetails.ProcessingFee),
                     Crf: parseFloat(getAppDetails.CRF),
                     Notarial: parseFloat(getAppDetails.Notatial),
