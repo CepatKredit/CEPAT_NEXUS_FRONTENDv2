@@ -46,7 +46,7 @@ function AddressContainer({
   // const provinceList = useQuery({
   //   queryKey: ["ProvinceListQuery"],
   //   queryFn: async () => {
-  //     const result = await axios.get("/getProvinceList");
+  //     const result = await axios.get("/GroupGet/G23PL");
   //     return result.data.list;
   //   },
   //   refetchInterval: (data) => {
@@ -94,7 +94,7 @@ function AddressContainer({
           : null;
 
       if (!provCode) return [];
-      const result = await axios.get(`/getMuniArea/${provCode}`);
+      const result = await axios.get(`/GroupGet/G6MA/${provCode}`);
       return result.data.list;
     },
     refetchInterval: (data) => {
@@ -142,7 +142,7 @@ function AddressContainer({
           ? data.coborrowMunicipality
           : null;
       if (!munCode) return [];
-      const result = await axios.get(`/getbarangaylist/${munCode}`);
+      const result = await axios.get(`/GroupGet/G7BL/${munCode}`);
       return result.data.list;
     },
     refetchInterval: (data) => {
