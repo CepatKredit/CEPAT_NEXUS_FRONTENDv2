@@ -19,6 +19,7 @@ function DatePickerOpt({
   KeyName,
   notValidMsg,
   disabledate,
+  SkipRender
 }) {
   const [isRendered, setRendered] = useState(rendered !== undefined? rendered : true);//make sure rendered has a value
 
@@ -81,7 +82,7 @@ function DatePickerOpt({
             onBlur={handleBlur}
             disabled={disabled}
             readOnly={readOnly}
-            status={(required || required === undefined) && status}
+            status={isRendered && (required || required === undefined) && status}
             maxLength={10}
             suffix={suffix}
             ref={inputRef}
@@ -103,11 +104,11 @@ function DatePickerOpt({
             disabled={disabled}
             inputReadOnly
             disabledDate={disabledate}
-            status={(required || required === undefined) && status}
+            status={isRendered && (required || required === undefined) && status}
             suffix={iconVisible && icon}
           />
         )}
-        {((required || required === undefined) && status === 'error') && (
+        {isRendered && ((required || required === undefined) && status === 'error') && (
           <div className="text-xs text-red-500 pt-1 pl-2">
             {validationMessage || notValidMsg}
           </div>

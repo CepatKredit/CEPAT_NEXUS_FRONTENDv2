@@ -156,6 +156,8 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
               disabled={false || !getAppDetails.dataPrivacy}
               KeyName={"loanDateDep"}
               disabledate={disableDate_deployment}
+              rendered={false}
+              //SkipRender={false}
             />
           </>
         ) : (
