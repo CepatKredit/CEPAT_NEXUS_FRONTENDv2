@@ -76,7 +76,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {
-            const result = await GET_LIST('/OFWDetails/GetSuffix');
+            const result = await GET_LIST('/GroupGet/G28S');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -96,7 +96,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const getRemarks = useQuery({
         queryKey: ['getRemarks'],
         queryFn: async () => {
-            const result = await axios.get(`/getRemarks/${data?.loanIdCode}`);
+            const result = await axios.get(`/GroupGet/G37R/${data?.loanIdCode}`);
             return result.data.list[0];
         },
         enabled: true,
@@ -169,7 +169,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         }
 
         onClickUpdateStatus.mutate();
-
     }
 
     const onClickUpdateStatus = useMutation({
@@ -206,7 +205,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 };
 
                 try {
-                    await axios.post('/updateCheckListForApproval', checkListData);
+                    await axios.post('/GroupPost/P139UCA', checkListData);
                     api['success']({
                         message: 'Application Status',
                         description: 'Status updated',
@@ -252,7 +251,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 ];
 
                 if (getUpdate.UrgentApp === 2 && getUpdate.DepartureDate) {
-                    const departureUpdateResponse = await axios.post('/updateDepartDate', {
+                    const departureUpdateResponse = await axios.post('/GroupPost/P140UD', {
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
                         DepartureDate: dayjs(getUpdate.DepartureDate).format('MM-DD-YYYY')
                     });
@@ -267,14 +266,14 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 }
                 let PN_CHECK = 0
                 if (getUpdate.Status === 'FOR DISBURSEMENT') {
-                    await axios.post('/getPNNumber', dataContainer[0])
+                    await axios.post('/GroupPost/P141UD', dataContainer[0])
                         .then((result) => { PN_CHECK = 0 })
                         .catch((error) => { PN_CHECK = 1 })
                 }
 
                 if (PN_CHECK === 0) {
                     try {
-                        const result = await axios.post('/updateApplicationStatus',
+                        const result = await axios.post('/GroupPost/P81UAS',
                             getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
                                 ? dataContainer[2]
                                 : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined

@@ -48,7 +48,7 @@ function LabeledSelectLoanPurpose({
   const data = useQuery({
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanPurpose");
+      const result = await GET_LIST("/GroupGet/G20LP");
       return result.list;
     },
     refetchInterval: 30 * 1000,

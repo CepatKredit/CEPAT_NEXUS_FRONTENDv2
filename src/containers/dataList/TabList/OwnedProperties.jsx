@@ -40,7 +40,7 @@ function OwnedProperties({ data, User }) {
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
             try {
-                const result = await axios.get(`/getOwnedProperties/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                const result = await axios.get(`/GroupGet/G111OP/${toDecrypt(localStorage.getItem('SIDC'))}`);
                 let dataList = [{
                     key: 0,
                     no: '',
@@ -105,7 +105,7 @@ function OwnedProperties({ data, User }) {
             RecUser: jwtDecode(token).USRID
         }
         console.log(data)
-        await axios.post('/addOwnedProperties', data)
+        await axios.post('/GroupPost/P136AOP', data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -145,7 +145,7 @@ function OwnedProperties({ data, User }) {
             };
 
             console.log('Data to be sent to the server:', data);
-            const result = await axios.post('/editOwnedProperties', data);
+            const result = await axios.post('/GroupPost/P137UOP', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description,
@@ -173,7 +173,7 @@ function OwnedProperties({ data, User }) {
 
     async function onClickDelete(e) {
         try {
-            const result = await axios.post(`/DeleteOwnedProperties/${e}`);
+            const result = await axios.post(`/GroupPost/P138DOP/${e}`);
             queryClient.invalidateQueries({ queryKey: ['getOwnedProperties'] }, { exact: true });
             api[result.data.status]({
                 message: result.data.message,

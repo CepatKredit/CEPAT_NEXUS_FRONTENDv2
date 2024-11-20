@@ -36,7 +36,7 @@ function Relatives({ BorrowerId, onUpdateCount }) {
     const getRelatives = useQuery({
         queryKey: ['getRelatives'],
         queryFn: async () => {
-            const result = await axios.get(`/getRelatives/${BorrowerId}`);
+            const result = await axios.get(`/GroupGet/G35R/${BorrowerId}`);
             console.log("API Result:", result);
 
             let dataList = [{
@@ -89,7 +89,7 @@ function Relatives({ BorrowerId, onUpdateCount }) {
     const getRelationshipList = useQuery({
         queryKey: ['getRelationshipList'],
         queryFn: async () => {
-            const result = await axios.get('/getRelativesRelationship');
+            const result = await axios.get('/GroupGet/G33RR');
             setReshipList(result.data.list)
             return result.data.list;
         },
@@ -232,7 +232,7 @@ function Relatives({ BorrowerId, onUpdateCount }) {
             RecUser: jwtDecode(token).USRID
         }
         console.log(data)
-        await axios.post('/addRelatives', data)
+        await axios.post('/GroupPost/P75AR', data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -307,7 +307,7 @@ function Relatives({ BorrowerId, onUpdateCount }) {
 
             console.log('Data to be sent to the server:', data);
 
-            const result = await axios.post('/editRelatives', data);
+            const result = await axios.post('/GroupPost/P76UR', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description,
@@ -338,7 +338,7 @@ function Relatives({ BorrowerId, onUpdateCount }) {
 
     async function onClickDelete(e) {
         try {
-            const result = await axios.post(`/Relativedelete/${e}`);
+            const result = await axios.post(`/GroupPost/P77DR/${e}`);
             queryClient.invalidateQueries({ queryKey: ['getRelatives'] }, { exact: true });
             api[result.data.status]({
                 message: result.data.message,

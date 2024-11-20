@@ -52,7 +52,7 @@ function NetProceeds({ data }) {
     queryKey: ["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))],
     queryFn: async () => {
       const result = await GET_LIST(
-        `/getClientDataList/${toDecrypt(localStorage.getItem("SIDC"))}`
+        `/GroupGet/G3CD/${toDecrypt(localStorage.getItem("SIDC"))}`
       );
       const data = result.list;
 
@@ -214,7 +214,7 @@ function NetProceeds({ data }) {
     };
 
     await axios
-      .post("/createDisbursement", container)
+      .post("/GroupPost/P122AD", container)
       .then((result) => {
         queryClient.invalidateQueries(
           { queryKey: ["DisbursementListQuery", data.LAN.props.children] },

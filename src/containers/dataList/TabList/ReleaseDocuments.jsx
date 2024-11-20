@@ -23,11 +23,11 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
         queryKey: ['ReleaseDocListQuery'],
         queryFn: async () => {
             let container = []
-            const LPACCDDT = await GET_LIST(`/getFileType/${'LPACCDDT'}`)
+            const LPACCDDT = await GET_LIST(`/GroupGet/G16FT/${'LPACCDDT'}`)
             LPACCDDT.list?.map((x) => {
                 container.push({ id: x.id, name: 'LPACCDDT', docsType: x.docsType })
             })
-            const LPACCREL = await GET_LIST(`/getFileType/${'LPACCREL'}`)
+            const LPACCREL = await GET_LIST(`/GroupGet/G16FT/${'LPACCREL'}`)
             LPACCREL.list?.map((x) => {
                 container.push({ id: x.id, name: 'LPACCREL', docsType: x.docsType })
             })

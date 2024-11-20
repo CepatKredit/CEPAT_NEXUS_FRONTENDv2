@@ -111,87 +111,86 @@ function PortalLogin() {
   const setUnlockStatus = viewUnlockAccountModal((state) => state.setStatus);
   // const [getAccessList, setAccessList] = React.useState()
 
-//   const onClickLogin = useMutation({
-//     mutationFn: async () => {
-//       if (getAccount.Username === "" || getAccount.Password === "") {
-//         api["info"]({
-//           message: "Invalid input",
-//           description: "Please input your username and password to login.",
-//         });
-//       } else {
-//         await axios
-//           .post("/login", getAccount)
-//           .then((result) => {
-//             console.log(
-//               decode(result.data.userData.password) === getAccount.Password
-//             );
-//             console.log("Received response:", result.data);
-//             if (
-//               result.data.message === "Account not found" ||
-//               result.data.message === "Account disabled" ||
-//               result.data.message === "Account for approval" ||
-//               result.data.message === "Account rejected"
-//             ) {
-//               api[result.data.status]({
-//                 message: result.data.message,
-//                 description: result.data.description,
-//               });
-//             } else {
-//               if (
-//                 decode(result.data.userData.password) === getAccount.Password
-//               ) {
-//                 PasswordMatch.mutate();
-//                 resetAppDetails();
-//               } else {
-//                 PasswordNotMatch.mutate();
-//               }
-//             }
-//           })
-//           .catch((error) => {
-//             api["error"]({
-//               message: "Something went wrong",
-//               description: error.message,
-//             });
-//           });
-//       }
-//     },
-//   });
+    const onClickLogin = useMutation({
+        mutationFn: async () => {
+            if (getAccount.Username === '' || getAccount.Password === '') {
+                api['info']({
+                    message: 'Invalid input',
+                    description: 'Please input your username and password to login.'
+                })
+            }
+            else {
+                await axios.post('/GroupPost/P85L', getAccount)
+                    .then(result => {
+                        console.log((decode(result.data.userData.password) === getAccount.Password))
+                        console.log("Received response:", result.data);
+                        if (result.data.message === 'Account not found' ||
+                            result.data.message === 'Account disabled' ||
+                            result.data.message === 'Account for approval' ||
+                            result.data.message === 'Account rejected'
+                        ) {
+                            api[result.data.status]({
+                                message: result.data.message,
+                                description: result.data.description
+                            })
+                        }
+                        else {
+                            if (decode(result.data.userData.password) === getAccount.Password) {
+                                PasswordMatch.mutate()
+                                resetAppDetails(); 
+                            }
+                            else {
+                                PasswordNotMatch.mutate()
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        api['error']({
+                            message: 'Something went wrong',
+                            description: error.message
+                        })
+                    })
+            }
+        }
+    })
 
-//   const PasswordMatch = useMutation({
-//     mutationFn: async () => {
-//       await axios
-//         .post("/verifiedAccount", getAccount)
-//         .then((result) => {
-//           if (result.data.status === "warning") {
-//             api[result.data.status]({
-//               message: result.data.message,
-//               description: result.data.description,
-//             });
-//           } else if (result.data.status === "info") {
-//             setModalResetStatus(true);
-//             const data = {
-//               id: result.data.container.id,
-//               username: result.data.container.username,
-//               password: getAccount.Password,
-//             };
-//             setAccountId(data);
-//             setAccount({
-//               Username: "",
-//               Password: "",
-//             });
-//             api[result.data.status]({
-//               message: result.data.message,
-//               description: result.data.description,
-//             });
-//           } else {
-//             let AccessPath = "";
-//             result.data.access?.map((x) => {
-//               if (AccessPath === "") {
-//                 AccessPath += x.accessPath;
-//               } else {
-//                 AccessPath += "," + x.accessPath;
-//               }
-//             });
+    const PasswordMatch = useMutation({
+        mutationFn: async () => {
+            await axios.post('/GroupPost/P87VA', getAccount)
+                .then((result) => {
+                    if (result.data.status === 'warning') {
+                        api[result.data.status]({
+                            message: result.data.message,
+                            description: result.data.description
+                        })
+                    }
+                    else if (result.data.status === 'info') {
+                        setModalResetStatus(true)
+                        const data = {
+                            id: result.data.container.id,
+                            username: result.data.container.username,
+                            password: getAccount.Password
+                        }
+                        setAccountId(data)
+                        setAccount({
+                            Username: '',
+                            Password: ''
+                        })
+                        api[result.data.status]({
+                            message: result.data.message,
+                            description: result.data.description
+                        })
+                    }
+                    else {
+                        let AccessPath = ''
+                        result.data.access?.map((x) => {
+                            if (AccessPath === '') {
+                                AccessPath += x.accessPath
+                            }
+                            else {
+                                AccessPath += ',' + x.accessPath
+                            }
+                        })
 
 // //expirationInHours is set on seconds for testing purposes.
 //             if (result.data.department === "LC") {
@@ -258,39 +257,35 @@ function PortalLogin() {
 //     },
 //   });
 
-//   const PasswordNotMatch = useMutation({
-//     mutationFn: async () => {
-//       await axios
-//         .post("/passwordAttempt", getAccount)
-//         .then((result) => {
-//           api[result.data.status]({
-//             message: result.data.message,
-//             description: result.data.description,
-//           });
-//         })
-//         .catch((error) => {
-//           api["error"]({
-//             message: "Something went wrong",
-//             description: error.message,
-//           });
-//         });
-//     },
-//   });
+    const PasswordNotMatch = useMutation({
+        mutationFn: async () => {
+            await axios.post('/GroupPost/P86PA', getAccount)
+                .then((result) => {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description
+                    })
+                })
+                .catch(error => {
+                    api['error']({
+                        message: 'Something went wrong',
+                        description: error.message
+                    })
+                })
+        }
+    })
 
-
-  async function onClickCancelOTP() {
-    await axios
-      .post(`/cancelOtp/${getAccount.Username}`)
-      .then((result) => {
-        setOTPStatus(false);
-      })
-      .catch((error) => {
-        api["error"]({
-          message: "Something went wrong",
-          description: error.message,
-        });
-      });
-  }
+        await axios.post(`/GroupPost/P89CO/${getAccount.Username}`)
+            .then((result) => {
+                setOTPStatus(false)
+            })
+            .catch(error => {
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message
+                })
+            })
+    }
 
   return (
     <div
