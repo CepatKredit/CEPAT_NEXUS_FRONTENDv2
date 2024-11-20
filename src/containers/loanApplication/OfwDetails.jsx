@@ -10,7 +10,8 @@ import LabeledCurrencyInput from "@components/loanApplication/LabeledCurrencyInp
 function OfwDetails({
   ofwrendered,
   setofwrendered,
-  direct
+  direct,
+  stepperView
 }) {
   const { getAppDetails } = React.useContext(LoanApplicationContext);
   const classname_main =
@@ -23,11 +24,12 @@ function OfwDetails({
 
   return (
     <div className="flex flex-col justify-center mt-[2%]">
+      <div ref={stepperView}></div>
       <div className="flex flex-col justify-center items-center w-[850px]">
         {!direct ? (
           <>
             <Divider></Divider>
-            <h2 className="mb-[2%] text-xl">
+            <h2 ref={stepperView} className="mb-[2%] text-xl">
               <b>OFW DETAILS</b>
             </h2>
           </>

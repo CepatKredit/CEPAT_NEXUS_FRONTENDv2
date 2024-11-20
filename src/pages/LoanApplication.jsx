@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import Logo from "@assets/images/logo.png";
 
 import Modal_Result from "@components/loanApplication/Modal_Result";
-import createInitialAppDetails from "@utils/IntialValues";
 import {
   isValidLoanDetails,
   isValidOFWDetails,
@@ -22,52 +21,63 @@ import { getLoanApplicationSteps } from "@components/loanApplication/LoanApplica
 import { useAppDetailsEffects, useDirectLoan } from "@hooks/LoanApplicationHooks";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 
-
 function LoanApplication() {
-    React.useEffect(() => {
-      const unloadCallBack = (e) => {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-      window.addEventListener("beforeunload", unloadCallBack);
-      return () => window.removeEventListener("beforeunload", unloadCallBack);
-    }, []);
+  React.useEffect(() => {
+    const unloadCallBack = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+    window.addEventListener("beforeunload", unloadCallBack);
+    return () => window.removeEventListener("beforeunload", unloadCallBack);
+  }, []);
 
-  // Control if it is direct / lc / marketing
-  // let direct = true;
   document.title = "Loan Application Form";
-
   const [loanrendered, setloanrendered] = React.useState(false);
   const [ofwrendered, setofwrendered] = React.useState(false);
   const [benrendered, setbenrendered] = React.useState(false);
 
-  const [api, contextHolder] = notification.useNotification();
   const [getLoanDetail, setLoanDetail] = React.useState();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [getStep, setStep] = React.useState(0);
   const [confirm, setconfirm] = React.useState(true);
 
-  const {getAppDetails, setAppDetails, direct, resetAppDetails } = React.useContext(LoanApplicationContext)
+  const { getAppDetails, setAppDetails, direct, resetAppDetails, api } = React.useContext(LoanApplicationContext)
 
   const [loadings, setLoadings] = React.useState(false);
   const [getDetails, setDetails] = React.useState();
   const { directLoan } = useDirectLoan(setDetails, setLoadings, setIsModalOpen)
-
+  const stepperView = React.useRef()
   const lc_loandetails =
-    !getAppDetails.dataPrivacy || parseInt(getAppDetails.loanAmount) < 30000 || !isValidLoanDetails(getAppDetails);
+    !getAppDetails.dataPrivacy || !isValidLoanDetails(getAppDetails);
 
   const lc_ofwdetails = !isValidOFWDetails(getAppDetails);
 
   const loandetails =
-    !getAppDetails.dataPrivacy || 
-    !isValidLoanDetails(getAppDetails) || 
+    !getAppDetails.dataPrivacy ||
+    !isValidLoanDetails(getAppDetails) ||
     ([15, 6].includes(getAppDetails.hckfi) && !getAppDetails.loanBranch);
 
   const ofwdetails = !isValidOFWDetails(getAppDetails);
 
   const ben_details = !isValidBeneficiaryDetails(getAppDetails);
 
+  React.useEffect(() => {
+    if (!getAppDetails.dataPrivacy) {
+      resetAppDetails();
+    }
+  }, [getAppDetails.dataPrivacy]);
+
   const navigate = useNavigate();
+
+  const onClickNext = (e) => {
+    e.preventDefault();
+
+    if (stepperView.current) {
+      stepperView.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    setStep((prevStep) => prevStep + 1);
+  };
 
   const steps = getLoanApplicationSteps({
     loanrendered,
@@ -77,13 +87,11 @@ function LoanApplication() {
     benrendered,
     setbenrendered,
     api,
+    stepperView
   });
 
   useAppDetailsEffects(getAppDetails, setAppDetails);
 
-  const onClickNext = () => {
-    setStep(getStep + 1);
-  };
 
   const onClickBack = () => {
     if (getStep == 2) {
@@ -94,7 +102,7 @@ function LoanApplication() {
 
   const applyDirectLoan = () => {
     directLoan(direct)
-    resetAppDetails();
+    // resetAppDetails();
   };
 
   const cancelModal = () => {
@@ -104,6 +112,10 @@ function LoanApplication() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  React.useState(() => {
+    console.log(getStep)
+  }, [getStep])
 
   return (
     <div className="flex flex-col bg-[#e8eee5] h-[100vh] w-[100vw] justify-center items-center">
@@ -173,7 +185,7 @@ function LoanApplication() {
                     onClick={onClickNext}
                     className="bg-[#6B73C1]"
                     type="primary"
-                    disabled={direct ? loandetails  : lc_loandetails}
+                    disabled={direct ? loandetails : lc_loandetails}
                   >
                     Next
                   </Button>
@@ -211,7 +223,7 @@ function LoanApplication() {
                     >
                       <Button
                         size="large"
-                        onClick={ applyDirectLoan }
+                        onClick={applyDirectLoan}
                         className="bg-[#31b235]"
                         type="primary"
                         disabled={direct ? ben_details : lc_ofwdetails}
@@ -239,7 +251,7 @@ function LoanApplication() {
                   >
                     <Button
                       size="large"
-                      onClick={ applyDirectLoan }
+                      onClick={applyDirectLoan}
                       className="bg-[#31b235]"
                       type="primary"
                       disabled={ben_details}

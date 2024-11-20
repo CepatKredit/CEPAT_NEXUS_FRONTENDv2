@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin } from 'antd';
+import React, { useEffect, useRef } from 'react';
+import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin, Form } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import { useQueryClient, useQuery } from '@tanstack/react-query';
@@ -14,15 +14,18 @@ import { DropdownOwnedAssets } from '@utils/FixedData';
 import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
+import { toUpperText } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function OwnedAsset({ data, User }) {
-    const [loading, setLoading] = React.useState(true);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
     const [editingKey, setEditingKey] = React.useState('');
+    const saveButtonRef = useRef(null);
     const [getInfo, setInfo] = React.useState({
         LoanAppId: '',
         key: '',
@@ -36,35 +39,40 @@ function OwnedAsset({ data, User }) {
     const [getStat, setStat] = React.useState(true);
     const role = GetData('ROLE').toString();
 
-    //React.useEffect(() => { getOtherLoanHistory.refetch() }, [data.loanIdCode]);
+
+
     const getOwnedAssets = useQuery({
         queryKey: ['getOwnedAssets'],
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
-            //  console.log("Decrypted SIDC:", sidcDecrypted);
-            const result = await axios.get(`/getOwnedAssets/${toDecrypt(localStorage.getItem('SIDC'))}`);
-            // console.log("get Owned Properties:", result);
-            let dataList = [{
-                key: 0,
-                no: '',
-                Category: '',
-                Make: '',
-                YearModel: '',
-                PlateNo: '',
-            }];
+            try {
+                const result = await axios.get(`/GroupGet/G110OA/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                let dataList = [{
+                    key: 0,
+                    no: '',
+                    Category: '',
+                    Make: '',
+                    YearModel: '',
+                    PlateNo: '',
+                }];
 
-            result.data.list?.map((x, i) => {
-                dataList.push({
-                    key: x.id,
-                    no: i + 1,
-                    Category: x.category,
-                    Make: x.make,
-                    YearModel: x.yearModel,
-                    PlateNo: x.plateNo,
+                result.data.list?.map((x, i) => {
+                    dataList.push({
+                        key: x.id,
+                        no: i + 1,
+                        Category: x.category,
+                        Make: x.make,
+                        YearModel: x.yearModel,
+                        PlateNo: x.plateNo,
+                    });
                 });
-            });
-            setLoading(false);
-            return dataList;
+                SET_LOADING_INTERNAL('AssetTABLE', false)
+                return dataList;
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('AssetTABLE', false);
+            }
+            return null;
         },
         refetchInterval: (data) => {
             return data?.length === 0 ? 500 : false;
@@ -73,74 +81,37 @@ function OwnedAsset({ data, User }) {
         retryDelay: 1000,
     });
 
-    /*useEffect(() =>
-    {
-        console.log('loan product ' + data.loanProd);
-    }, [data])*/
-    const [fieldErrors, setFieldErrors] = React.useState({
-        Category: '',
-        Make: '',
-        YearModel: '',
-        PlateNo: '',
-
-
-    });
+    React.useEffect(() => {
+        if (!data.loanIdCode) {
+            SET_LOADING_INTERNAL('AssetTABLE', true)
+            getOwnedAssets.refetch();
+        }
+    }, [data]);
 
     function GetAssetsOption() {
+        const categoryValue = form.getFieldValue('category');
         const CategoryOptionHolder = DropdownOwnedAssets().find(
-            (x) => x.label === getInfo.Category || x.value === getInfo.Category
+            (x) => x.label === categoryValue || x.value === categoryValue
         );
         return CategoryOptionHolder ? CategoryOptionHolder.value : null;
     }
 
-    function validateCategory(Category) {
-        return Category !== '';
-    }
-
-    function validateMake(Make) {
-        return Make.trim() !== '';
-    }
-
-    function validateYearModel(YearModel) {
-        return YearModel.trim() !== '';
-    }
     const [getAddStat, setAddStat] = React.useState(false)
-    function validatePlateNo(PlateNo) {
-        return PlateNo.trim() !== '';
-    }
+
     async function onClickSave() {
-        let errors = {};
 
-        if (!validateCategory(getInfo.Category)) {
-            errors.Category = 'Category is required.';
-        }
-
-        if (!validateMake(getInfo.Make)) {
-            errors.Make = 'Make is required.';
-        }
-
-        if (!validateYearModel(getInfo.YearModel)) {
-            errors.YearModel = 'Year Model is required.';
-        }
-
-
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-
-        setFieldErrors({ Category: '', Make: '', YearModel: '', PlateNo: '' });
         setStat(false);
+
+        const row = await form.validateFields();
         const data = {
             LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
             Category: GetAssetsOption(),
-            Make: getInfo.Make,
-            YearModel: getInfo.YearModel,
-            PlateNo: getInfo.PlateNo,
+            Make: row.make,
+            YearModel: row.yearModel,
+            PlateNo: row.plateNo,
             RecUser: jwtDecode(token).USRID
         }
-        //   console.log(data)
-        await axios.post('/addOwnAsset', data)
+        await axios.post('/GroupPost/P133AOA', data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -164,47 +135,22 @@ function OwnedAsset({ data, User }) {
                     message: 'Something went wrong',
                     description: error.message,
                 });
-                setFocus({
-                    name: false,
-                    conNum: true,
-                    remarks: false,
-                });
             })
-
+        saveButtonRef.current?.focus();
     }
 
     async function onClickEdit() {
-        let errors = {};
-        if (!validateCategory(getInfo.Category)) {
-            errors.Category = 'Category is required.';
-        }
-
-        if (!validateMake(getInfo.Make)) {
-            errors.Make = 'Make is required.';
-        }
-
-        if (!validateYearModel(getInfo.YearModel)) {
-            errors.YearModel = 'Year Model is required.';
-        }
-        if (!validatePlateNo(getInfo.PlateNo)) {
-            errors.PlateNo = 'Plate Number is required.';
-        }
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-
-        setFieldErrors({ Category: '', Make: '', YearModel: '', PlateNo: '' });
         try {
+            const row = await form.validateFields();
             const data = {
-                Id: getInfo.key,
+                Id: editingKey,
                 Category: GetAssetsOption(),
-                Make: getInfo.Make,
-                YearModel: getInfo.YearModel,
-                PlateNo: getInfo.PlateNo,
+                Make: row.make,
+                YearModel: row.yearModel,
+                PlateNo: row.plateNo,
                 ModUser: jwtDecode(token).USRID
             };
-            //   console.log('Data to be sent to the server:', data);
+            console.log('Data to be sent to the server:', data);
             const result = await axios.post('/editOwnedAssets', data);
             api[result.data.status]({
                 message: result.data.message,
@@ -234,7 +180,7 @@ function OwnedAsset({ data, User }) {
 
     async function onClickDelete(e) {
         try {
-            const result = await axios.post(`/DeleteOwnedAssets/${e}`);
+            const result = await axios.post(`/GroupPost/P135DOA/${e}`);
             queryClient.invalidateQueries({ queryKey: ['getOwnedAssets'] }, { exact: true });
             api[result.data.status]({
                 message: result.data.message,
@@ -247,73 +193,133 @@ function OwnedAsset({ data, User }) {
             });
         }
     }
-    const disabledStatuses = [
-        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
-        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
-        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'RELEASED'
-    ];
+    function DISABLE_STATUS(LOCATION) {
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
+                || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
+                console.log('MA')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '20') {
+            {
+                if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/for-approval'
+                    || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-re-application'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('LC')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/returned/credit-associate'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
+    }
 
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
+
+    const [form] = Form.useForm();
     const columns = [
         {
 
-            title: (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                <Tooltip title='Add'>
-                    <Button className='bg-[#3b0764]' type='primary' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || getAddStat}
-                        icon={<PlusOutlined style={{ fontSize: '15px' }} />}
-                        onClick={() => {
-                            setStat(false)
-                            setEditingKey(0);
-                            setAddStat(!getAddStat)
-                            setInfo({
-                                ...getInfo,
-                                Category: '',
-                                Make: '',
-                                YearModel: '',
-                                PlateNo: '',
-                            })
-                        }} />
+            title: (<div className="flex items-center">
+                {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                    <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                        <Tooltip title='Add'>
+                            <Button className='bg-[#3b0764]' type='primary'
+                                icon={<PlusOutlined style={{ fontSize: '15px' }} />}
+                                onClick={() => {
+                                    const record = { key: 0, category: '', make: '', yearModel: '', plateNo: '' }
+                                    edit(record)
+                                    setStat(false)
+                                    setEditingKey(0);
+                                    setAddStat(!getAddStat)
+                                    setInfo({
+                                        ...getInfo,
+                                        Category: '',
+                                        Make: '',
+                                        YearModel: '',
+                                        PlateNo: '',
+                                    })
+                                }} />
 
-                </Tooltip>
-            </ConfigProvider>),
+                        </Tooltip>
+                    </ConfigProvider>
+                )}
+            </div>
+            ),
             dataIndex: 'no',
             key: 'no',
-            width: '1rem',
+            width: '5%',
             align: 'center'
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            width: '40px',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Make',
             dataIndex: 'make',
             key: 'make',
-            width: '40px',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Year Model',
             dataIndex: 'yearModel',
             key: 'yearModel',
-            width: '40px',
+            width: '15%',
             editable: true,
         },
         {
-            title: 'Plate Number',
+            title: 'Remarks',
             dataIndex: 'plateNo',
             key: 'plateNo',
-            width: '100px',
+            width: '25%',
             editable: true,
         },
         {
+            hidden: DISABLE_STATUS(localStorage.getItem('SP')),
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '15px',
+            width: '10%',
             fixed: 'right',
             align: 'center',
             render: (_, record) => {
@@ -322,35 +328,21 @@ function OwnedAsset({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => {
-                                        onClickSave();
-                                    }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type="primary" />
-                                </Popconfirm>
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel this record?"
-                                    onConfirm={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<CloseOutlined />} type="primary" danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     );
@@ -358,35 +350,21 @@ function OwnedAsset({ data, User }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save the changes?"
-                                    onConfirm={() => {
-                                        onClickEdit();
-                                    }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type="primary" />
-                                </Popconfirm>
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]' />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel the edit?"
-                                    onConfirm={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type='primary'
+                                    danger
+                                    onClick={() => {
                                         setStat(true);
                                         setAddStat(!getAddStat);
                                         setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<CloseOutlined />} type="primary" danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     ) : (
@@ -394,12 +372,7 @@ function OwnedAsset({ data, User }) {
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
 
                                 <Tooltip title='Edit'>
-                                    <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} onClick={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            remarks: false,
-                                        });
+                                    <Button className='bg-[#3b0764]' disabled={editingKey !== ''} onClick={() => {
                                         edit(record);
                                         setAddStat(!getAddStat);
                                     }}
@@ -415,7 +388,7 @@ function OwnedAsset({ data, User }) {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button disabled={role === '60' || User === 'Lp' || disabledStatuses.includes(GetStatus) || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
+                                    <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>
@@ -424,23 +397,14 @@ function OwnedAsset({ data, User }) {
             },
         },
     ];
-
-    const [getFocus, setFocus] = React.useState({
-        Category: false,
-        Make: false,
-        YearModel: false,
-        PlateNo: false,
-    })
-
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
-        setInfo({
-            ...getInfo,
+        form.setFieldsValue({
             key: record.key,
-            Category: record.category,
-            Make: record.make,
-            YearModel: record.yearModel,
-            PlateNo: record.plateNo,
+            category: record.category,
+            make: record.make,
+            yearModel: record.yearModel,
+            plateNo: record.plateNo,
         })
         setEditingKey(record.key);
     };
@@ -459,6 +423,21 @@ function OwnedAsset({ data, User }) {
             }),
         };
     });
+    async function onChangeCategory(e, pointer) {
+        if (pointer === 'category') { form.setFieldsValue({ 'category': e }); }
+    }
+
+    async function onChangeToUpper(e, pointer) {
+
+        if (pointer === 'make') {
+            form.setFieldsValue({ 'make': e });
+        } else if (pointer === 'yearModel') {
+            form.setFieldsValue({ 'yearModel': e });
+        } else {
+            form.setFieldsValue({ 'plateNo': e });
+        }
+    }
+
 
     const EditableCell = ({
         editing,
@@ -473,107 +452,59 @@ function OwnedAsset({ data, User }) {
         const inputNode = dataIndex === 'category'
             ? (
                 <>
-
                     <Select
-                        className="w-[100%]"
-                        value={getInfo.Category || undefined}
-                        placeholder="Category"
+                        className='w-[13rem]'
+                        onChange={(value) => { onChangeCategory(value); }}
+                        placeholder='Category'
                         options={DropdownOwnedAssets().map(x => ({
                             value: x.value,
                             label: x.label
                         }))}
-                        onChange={e => {
-                            setInfo(prev => ({ ...prev, Category: e }));
-                        }}
+                        showSearch
+                        filterOption={(input, option) =>
+                            option.label.toLowerCase().includes(input.toLowerCase())
+                        }
                     />
-
-                    {fieldErrors.Category && (
-                        <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.Category}</div>
-                    )}
                 </>
             )
             : dataIndex === 'make'
                 ? (
                     <>
+
                         <Input
-                            className='w-[13rem]'
-                            value={(getInfo.Make || '').toUpperCase()}
-                            onChange={(e) => {
-                                setInfo(prev => ({ ...prev, Make: e.target.value.toUpperCase() }));
-                            }}
-                            placeholder={'Make'}
-                            autoFocus={getFocus.Make}
-                            onClick={() => {
-                                setFocus({
-                                    ...getFocus,
-                                    YearModel: false,
-                                    PlateNo: false,
-                                    Make: true,
-                                });
-                            }}
-                        />
-                        {fieldErrors.Make && (
-                            <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.Make}</div>
-                        )}
+                            className='w-[10rem]'
+                            onChange={(e) => { onChangeToUpper(e.target.value, 'make'); }}
+                            placeholder='Make' />
                     </>
                 )
                 : dataIndex === 'yearModel'
                     ? (
                         <>
+
                             <Input
-                                className='w-[13rem]'
-                                value={(getInfo.YearModel || '').toUpperCase()}
-                                onChange={(e) => {
-                                    setInfo(prev => ({ ...prev, YearModel: e.target.value.toUpperCase() }));
-                                }}
-                                placeholder={'Year Model'}
-                                autoFocus={getFocus.YearModel}
-                                onClick={() => {
-                                    setFocus({
-                                        ...getFocus,
-                                        Make: false,
-                                        PlateNo: false,
-                                        YearModel: true,
-                                    });
-                                }}
-                            />
-                            {fieldErrors.YearModel && (
-                                <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.YearModel}</div>
-                            )}
+                                className='w-[10rem]'
+                                onChange={(e) => { onChangeToUpper(e.target.value, 'yearModel'); }}
+                                placeholder='Year Model' />
                         </>
                     )
                     : dataIndex === 'plateNo'
                         ? (
                             <>
-                                <Input
-                                    className='w-[18rem]'
-                                    value={(getInfo.PlateNo || '').toUpperCase()}
-                                    onChange={(e) => {
-                                        setInfo(prev => ({ ...prev, PlateNo: e.target.value.toUpperCase() }));
-                                    }}
-                                    placeholder='Plate Number'
-                                    autoFocus={getFocus.PlateNo}
-                                    onClick={() => {
-                                        setFocus({
-                                            ...getFocus,
-                                            Make: false,
-                                            PlateNo: true,
-                                            YearModel: false,
 
-                                        });
-                                    }}
-                                />
-                                {/*fieldErrors.PlateNo && (
-                                <div className="text-red-500 mt-1 text-[7px] font-bold ml-[7rem] text-left">{fieldErrors.PlateNo}</div>
-                            )*/}
+                                <Input
+                                    className='w-[17rem]'
+                                    onChange={(e) => { onChangeToUpper(e.target.value, 'plateNo'); }}
+                                    placeholder='Remarks' />
+
                             </>
                         ) : null
         return (
             <td {...restProps}>
-                {editing ? (
-                    <>
-                        {inputNode}
-                    </>
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={
+                    dataIndex !== 'plateNo' ? [{ required: true, message: `Please Input ${title}` }] : []
+                }>
+                    {inputNode}
+                </Form.Item>
                 ) : (
                     children
                 )}
@@ -586,44 +517,43 @@ function OwnedAsset({ data, User }) {
         : [];
 
     return (
-        <div className='h-[500px] flex flex-col items-center'>
+        <div className='flex flex-col items-center'>
             {contextHolder}
-            <div className='mt-[5rem] w-[100%]'>
-                <div className='mt-[-4rem]'>
+            <div className=' w-full px-2'>
+                <div>
                     <center>
                         <SectionHeader title="Owned Assets of OFW / Seaman" />
                     </center>
                 </div>
                 <div className='mt-[0rem]'>
-                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                            <Table
-                                columns={mergedColumns}
-                                dataSource={
-                                    getStat === false
-                                        ? getOwnedAssets.data?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
-                                            make: x.Make,
-                                            yearModel: x.YearModel,
-                                            plateNo: x.PlateNo,
-                                        }))
-                                        : dataOnly?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
-                                            make: x.Make,
-                                            yearModel: x.YearModel,
-                                            plateNo: x.PlateNo,
-                                        }))
-                                }
-                                components={{ body: { cell: EditableCell } }}
-                                rowClassName='editable-row'
-                                pagination={false}
-                            />
-                        </Spin>
-                    </ConfigProvider>
+                    <Form form={form} component={false} >
+                        <Table
+                            columns={mergedColumns}
+                            dataSource={
+                                getStat === false
+                                    ? getOwnedAssets.data?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
+                                        make: x.Make,
+                                        yearModel: x.YearModel,
+                                        plateNo: x.PlateNo,
+                                    }))
+                                    : dataOnly?.map((x) => ({
+                                        key: x.key,
+                                        no: x.no,
+                                        category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
+                                        make: x.Make,
+                                        yearModel: x.YearModel,
+                                        plateNo: x.PlateNo,
+                                    }))
+                            }
+                            components={{ body: { cell: EditableCell } }}
+                            rowClassName='editable-row'
+                            pagination={false}
+                            scroll={{ y: 200 }}
+                        />
+                    </Form>
                 </div>
             </div>
         </div>

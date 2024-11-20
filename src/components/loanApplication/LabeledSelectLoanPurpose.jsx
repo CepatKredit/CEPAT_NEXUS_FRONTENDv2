@@ -28,7 +28,7 @@ const { getStatus, getIcon, onChange, onBlur } = useSelectValidation(getAppDetai
   const data = useQuery({
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanPurpose");
+      const result = await GET_LIST("/GroupGet/G20LP");
       console.log("HELLO ", result)
       return result.list;
     },
