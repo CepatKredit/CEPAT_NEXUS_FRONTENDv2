@@ -16,10 +16,12 @@ import { GET_LIST, GetBranchCode, GetPurposeId } from '@api/base-api/BaseApi';
 import axios from 'axios';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import LabeledInput_NotRequired from '@components/trackApplication/LabeledInput_NotRequired';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function BeneficiaryDetails({ data, receive, presaddress }) {
+    const { updateAppDetails, api, getAppDetails } = React.useContext(LoanApplicationContext)
     const [isEdit, setEdit] = React.useState(false);
-    const [api, contextHolder] = notification.useNotification();
+    // const [api, contextHolder] = notification.useNotification();
 
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
@@ -30,10 +32,10 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
         refetchInterval: 30 * 1000,
         retryDelay: 1000,
     });
-    const { data: relationshipOptions, isLoading } = useQuery({
+    const { data: relationshipOptions } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
-            const result = await GET_LIST('/getListRelationship');
+            const result = await GET_LIST('/GET/G33RR');
             return result.list;
         },
         refetchInterval: 30 * 1000,
@@ -44,96 +46,97 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
         {
             key: '1',
             label: <span className="font-semibold text-black">First Name</span>,
-            children: data.benfname || '',
+            children: getAppDetails.benfname || '',
         },
         {
             key: '2',
             label: <span className="font-semibold text-black">Middle Name</span>,
-            children: data.benmname || '',
+            children: getAppDetails.benmname || '',
         },
         {
             key: '3',
             label: <span className="font-semibold text-black">Last Name</span>,
-            children: data.benlname || '',
+            children: getAppDetails.benlname || '',
         },
         {
             key: '4',
             label: <span className="font-semibold text-black">Suffix</span>,
-            children: suffixOption?.find(suffix => suffix.code === data.bensuffix)?.description || '',
+            children: suffixOption?.find(suffix => suffix.code === getAppDetails.bensuffix)?.description || '',
         },
         {
             key: '5',
             label: <span className="font-semibold text-black">Birthdate</span>,
-            children: data.benbdate || '',
+            children: getAppDetails.benbdate || '',
         },
         {
             key: '6',
             label: <span className="font-semibold text-black">Gender</span>,
-            children: Gender().find(gender => gender.value === data.bengender)?.label || '',
+            children: Gender().find(gender => gender.value === getAppDetails.bengender)?.label || '',
         },
         {
             key: '7',
             label: <span className="font-semibold text-black w-[5rem]">Relationship to the OFW</span>,
-            children: relationshipOptions?.find(relationship => relationship.code === data.benrelationship)?.description || '',
+            children: relationshipOptions?.find(relationship => relationship.code === getAppDetails.benrelationship)?.description || '',
         },
         {
             key: '8',
             label: <span className="font-semibold text-black">Mobile Number</span>,
-            children: data.benmobile || '',
+            children: getAppDetails.benmobile || '',
         },
         {
             key: '9',
             label: <span className="font-semibold text-black">Email Address</span>,
-            children: data.benemail || '',
+            children: getAppDetails.benemail || '',
         },
         {
             key: '10',
             label: <span className="font-semibold text-black">Marital Status</span>,
-            children: MaritalStatus().find(status => status.value === data.benmstatus)?.label || '',
+            children: MaritalStatus().find(status => status.value === getAppDetails.benmstatus)?.label || '',
         },
         {
             key: '11',
             label: <span className="font-semibold text-black">Present Area/Province</span>,
-            children: data.benpresprovname || '',
+            children: getAppDetails.benpresprovname || '',
         },
         {
             key: '12',
             label: <span className="font-semibold text-black">Present City/Municipality</span>,
-            children: data.benpresmunicipalityname || '',
+            children: getAppDetails.benpresmunicipalityname || '',
         },
         {
             key: '13',
             label: <span className="font-semibold text-black">Present Barangay</span>,
-            children: data.benpresbarangayname || '',
+            children: getAppDetails.benpresbarangayname || '',
         },
         {
             key: '14',
             label: <span className="font-semibold text-black">Present Street</span>,
-            children: data.benpresstreet || '',
+            children: getAppDetails.benpresstreet || '',
         },
     ];
 
+    
     const queryClient = useQueryClient()
     async function updateData() {
         const value = {
-            LoanAppId: data.loanIdCode,
+            LoanAppId: getAppDetails.loanIdCode,
             Tab: 3,
-            BorrowersCode: data.borrowersCode,
-            BenFirstName: data.benfname,
-            BenMiddleName: data.benmname,
-            BenLastName: data.benlname,
-            BenSuffix: data.bensuffix,
-            BenBirthday: data.benbdate,
-            BenGender: data.bengender,
-            BenCivilStatus: data.benmstatus,
-            BenEmail: data.benemail,
-            BenMobileNo: data.benmobile,
-            BenRelationship: data.benrelationship,
-            BenProvinceId: data.benpresprov,
-            BenMunicipalityId: data.benpresmunicipality,
-            BenBarangayId: data.benpresbarangay,
-            BenAddress1: data.benpresstreet,
-            ModUser: data.borrowersCode
+            BorrowersCode: getAppDetails.borrowersCode,
+            BenFirstName: getAppDetails.benfname,
+            BenMiddleName: getAppDetails.benmname,
+            BenLastName: getAppDetails.benlname,
+            BenSuffix: getAppDetails.bensuffix,
+            BenBirthday: getAppDetails.benbdate,
+            BenGender: getAppDetails.bengender,
+            BenCivilStatus: getAppDetails.benmstatus,
+            BenEmail: getAppDetails.benemail,
+            BenMobileNo: getAppDetails.benmobile,
+            BenRelationship: getAppDetails.benrelationship,
+            BenProvinceId: getAppDetails.benpresprov,
+            BenMunicipalityId: getAppDetails.benpresmunicipality,
+            BenBarangayId: getAppDetails.benpresbarangay,
+            BenAddress1: getAppDetails.benpresstreet,
+            ModUser: getAppDetails.borrowersCode
         }
 
         console.log('testtset',value)
@@ -154,38 +157,41 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
     }
 
     return (<>
-        {contextHolder}
+        {/* {contextHolder} */}
         {
             isEdit
                 ?
-                (<div className="h-full">
+                (<div className="h-full ">
                     <div className="flex flex-col items-center justify-center h-full">
                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mb-8">
                             <LabeledInput_UpperCase
                                 className_dmain="w-full h-[3rem] mt-3"
                                 className_label="font-bold"
                                 label="First Name"
-                                value={data.benfname}
+                                value={getAppDetails.benfname}
+                                fieldName={"benfname"}
                                 placeHolder="First Name"
-                                receive={(e) => receive({ name: 'benfname', value: e })}
+                                // receive={(e) => receive({ name: 'benfname', value: e })}
                                 category="marketing"
                             />
                             <LabeledInput_NotRequired
                                 className_dmain="w-full h-[3rem] mt-3"
                                 className_label="font-bold"
                                 label="Middle Name"
-                                value={data.benmname}
+                                value={getAppDetails.benmname}
+                                fieldName={"benmname"}
                                 placeHolder="Middle Name"
-                                receive={(e) => receive({ name: 'benmname', value: e })}
+                                // receive={(e) => receive({ name: 'benmname', value: e })}
                                 category="marketing"
                             />
                             <LabeledInput_UpperCase
                                 className_dmain="w-full h-[3rem] mt-3"
                                 className_label="font-bold"
                                 label="Last Name"
-                                value={data.benlname}
+                                value={getAppDetails.benlname}
+                                fieldName={"benlname"}
                                 placeHolder="Last Name"
-                                receive={(e) => receive({ name: 'benlname', value: e })}
+                                // receive={(e) => receive({ name: 'benlname', value: e })}
                                 category="marketing"
                             />
                             <LabeledSelect_Suffix
@@ -193,16 +199,18 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                                 className_label="font-bold"
                                 label="Suffix"
                                 placeHolder="Suffix"
-                                value={data.bensuffix}
-                                receive={(e) => receive({ name: 'bensuffix', value: e })}
+                                value={getAppDetails.bensuffix}
+                                fieldName={"bensuffix"}
+                                // receive={(e) => receive({ name: 'bensuffix', value: e })}
                             />
                             <DatePicker_BDate
                                 className_dmain="w-full h-[3rem] mt-8"
                                 className_label="font-bold"
                                 label="Birthdate"
                                 placeHolder="Birthdate"
-                                receive={(e) => receive({ name: 'benbdate', value: e })}
-                                value={data.benbdate}
+                                // receive={(e) => receive({ name: 'benbdate', value: e })}
+                                value={getAppDetails.benbdate}
+                                fieldName={"benbdate"}
                                 category="marketing"
                             />
                             <LabeledSelect
@@ -210,9 +218,10 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                                 className_label="font-bold"
                                 label="Gender"
                                 placeHolder="Please Select"
-                                value={data.bengender}
+                                value={getAppDetails.bengender}
                                 data={Gender()}
-                                receive={(e) => receive({ name: 'bengender', value: e })}
+                                // receive={(e) => receive({ name: 'bengender', value: e })}
+                                fieldName={"bengender"}
                                 category="marketing"
                             />
                             <LabeledSelect_Relationship
@@ -220,8 +229,9 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                                 className_label={'font-bold'}
                                 label={'Relationship to the OFW'}
                                 placeHolder='Relationship to the OFW'
-                                value={data.benrelationship}
-                                receive={(e) => receive({ name: 'benrelationship', value: e })}
+                                value={getAppDetails.benrelationship}
+                                fieldName={"benrelationship"}
+                                // receive={(e) => receive({ name: 'benrelationship', value: e })}
                                 category={'marketing'}
                             />
                             <LabeledInput_Email
@@ -229,15 +239,17 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                                 className_label="font-bold"
                                 label="Email Address"
                                 placeHolder="Email Address"
-                                value={data.benemail}
-                                receive={(e) => receive({ name: 'benemail', value: e })}
+                                value={getAppDetails.benemail}
+                                fieldName={"benemail"}
+                                // receive={(e) => receive({ name: 'benemail', value: e })}
                                 category="marketing"
                             />
                             <LabeledInput_Contact
                                 label="Mobile Number"
                                 placeHolder="Mobile Number"
-                                value={data.benmobile}
-                                receive={(e) => receive({ name: 'benmobile', value: e })}
+                                value={getAppDetails.benmobile}
+                                fieldName={"benmobile"}
+                                // receive={(e) => receive({ name: 'benmobile', value: e })}
                                 category="marketing"
                                 className_dmain="w-full h-[3rem] mt-8"
                                 className_label="font-bold"
@@ -247,17 +259,18 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                                 className_label="font-bold"
                                 label="Marital Status"
                                 placeHolder="Marital Status"
-                                value={data.benmstatus}
+                                value={getAppDetails.benmstatus}
+                                fieldName={"benmstatus"}
                                 data={MaritalStatus()}
-                                receive={(e) => receive({ name: 'benmstatus', value: e })}
+                                // receive={(e) => receive({ name: 'benmstatus', value: e })}
                                 category="marketing"
                             />
                         </div>
                         <SectionHeader title="Present Address" />
                         <AddressGroup_Component
                             data={data}
-                            receive={(e) => receive(e)}
-                            presaddress={(e) => presaddress(e)}
+                            // receive={(e) => receive(e)}
+                            // presaddress={(e) => presaddress(e)}
                             type="beneficiary"
                             disabled={!isEdit}
                             className_dsub="w-full h-[3.5rem]"
@@ -269,37 +282,38 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
                     </div>
                 </div>)
                 : (<>
-                    <Descriptions className="mt-6" column={{ md: 2, lg: 3, xl: 4 }} items={items} />
+                    <Descriptions className="mt-5" column={{ md: 2, lg: 3, xl: 4 }} items={items} />
                     </>)
         }
-        <div className="flex justify-center space-x-4 mb-2 mt-6">
-            {isEdit ? (
-                <>
+        {getAppDetails.loanStatus === 'RECEIVED' && (
+            <div className="flex justify-center space-x-4 mb-2 mt-6">
+                {isEdit ? (
+                    <>
+                        <Button
+                            type="primary"
+                            icon={<SaveOutlined />}
+                            onClick={() => { updateData() }}
+                        >
+                            Save
+                        </Button>
+                        <Button
+                            type="default"
+                            onClick={() => { setEdit(!isEdit) }}
+                        >
+                            Cancel
+                        </Button>
+                    </>
+                ) : (
                     <Button
                         type="primary"
-                        icon={<SaveOutlined />}
-                        onClick={() => { updateData() }}
-                    >
-                        Save
-                    </Button>
-                    <Button
-                        type="default"
+                        icon={<EditOutlined />}
                         onClick={() => { setEdit(!isEdit) }}
                     >
-                        Cancel
+                        Edit
                     </Button>
-                </>
-            ) : (
-                <Button
-                    type="primary"
-                    icon={<EditOutlined />}
-                    onClick={() => { setEdit(!isEdit) }}
-                    disabled={data.loanStatus !== 'RECEIVED'}
-                >
-                    Edit
-                </Button>
-            )}
-        </div>
+                )}
+            </div>
+        )}
     </>
     );
 }

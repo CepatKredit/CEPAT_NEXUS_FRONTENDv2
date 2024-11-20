@@ -12,9 +12,12 @@ import moment from 'moment'
 import { jwtDecode } from 'jwt-decode';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { useDataContainer } from '@context/PreLoad';
 
 function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
-const [loading, setLoading] = useState(true);
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const { GetStatus } = ApplicationStatus()
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
@@ -22,7 +25,7 @@ const [loading, setLoading] = useState(true);
     const DocListQuery = useQuery({
         queryKey: ['DocListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${FileType}`)
+            const result = await GET_LIST(`/GET/G16FT/${FileType}`)
             return result.list
         },
         enabled: true,
@@ -34,15 +37,28 @@ const [loading, setLoading] = useState(true);
     const FileListQuery = useQuery({
         queryKey: ['FileListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
-            setLoading(false);
-            return result.list
+            try {
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${Uploader}`)
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return result.list
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return [];
+            }
         },
         enabled: true,
         retryDelay: 1000,
         staleTime: 5 * 1000
     })
-    
+
+    React.useEffect(() => {
+        SET_LOADING_INTERNAL('UploadDocs', true)
+        FileListQuery.refetch();
+    }, [getAppDetails]);
+
+    console.log("STATUS", GetStatus)
+
     function GetFile(id, command) {
         let count = 0;
         let file_list = []
@@ -87,12 +103,10 @@ const [loading, setLoading] = useState(true);
                 return count;
             case 'FILE':
                 return file_list;
-
             case 'COUNT-ARCH':
                 return count_arch;
             case 'FILE-ARCH':
                 return file_arch;
-
             default:
                 return;
         }
@@ -106,24 +120,41 @@ const [loading, setLoading] = useState(true);
                     Others <span className='text-rose-500' />
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
-                    <FileLoader key={0} files={GetFile('Others', 'FILE')} />
+                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' />
                 </div>
             },
         ]
 
         DocListQuery.data?.map((x, i) => {
             if (x.docsType !== 'Others') {
-                data.push({
-                    key: i + 1,
-                    label: <span className='font-bold'>
-                        {x.docsType}
-                        <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
-                    </span>,
-                    children: <div className='h-[300px] overflow-y-auto'>
-                        <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
-                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
-                    </div>
-                })
+                if (Display === 'USER') {
+                    data.push({
+                        key: i + 1,
+                        label: <span className='font-bold'>
+                            {x.docsType}
+                            <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                        </span>,
+                        children: <div className='h-[300px] overflow-y-auto'>
+                            <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
+                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                        </div>
+                    })
+                }
+                else {
+                    if (GetFile(x.id, 'COUNT') !== 0) {
+                        data.push({
+                            key: i + 1,
+                            label: <span className='font-bold'>
+                                {x.docsType}
+                                <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                            </span>,
+                            children: <div className='h-[300px] overflow-y-auto'>
+                                <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
+                                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                            </div>
+                        })
+                    }
+                }
             }
             else {
                 data[0] = {
@@ -132,55 +163,79 @@ const [loading, setLoading] = useState(true);
                         Others <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                     </span>,
                     children: <div className='h-[300px] overflow-y-auto'>
-                        <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
+                        <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
                             Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
                     </div>
                 }
             }
         })
 
-        data[data.length + 1] = {
-            key: data.length + 1,
-            label: <span className='font-bold'>
-                Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
-            </span>,
-            children: <div className='h-[300px] overflow-y-auto'>
-                <FileLoader key={0} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
-                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} />
-            </div>
+        if (Display === 'USER') {
+            data[data.length + 1] = {
+                key: data.length + 1,
+                label: <span className='font-bold'>
+                    Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
+                </span>,
+                children: <div className='h-[300px] overflow-y-auto'>
+                    <FileLoader key={data.length + 1} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
+                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} className='z-50' />
+                </div>
+            }
         }
-
         return data
     }
-
+    function DISABLE_STATUS(LOCATION, LoanStatus) {
+        if (!GetData('ROLE')) {
+            return !(LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
+        }
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '20') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/for-re-application', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            return ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '60') {
+            return ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '70') {
+            return ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '80') {
+            return ['/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        }
+        return false;
+    }
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
     return (
         <div>
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+            <StatusRemarks isEdit={!isEdit} User={User} data={getAppDetails} />
 
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
                 clearFileList()
             }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} />
-            <div className='space-x-[1.5rem]'>
+            <div className="space-x-[1.5rem]">
                 {
-                    GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
-                        || GetStatus === 'TAGGED FOR RELEASE' || GetStatus === 'ON WAIVER' || GetStatus === 'CONFIRMATION' || GetStatus === 'CONFIRMED' || GetStatus === 'UNDECIDED' ||
-                        GetStatus === 'FOR DISBURSEMENT' || GetStatus === 'RELEASED' || GetStatus === 'RETURN TO LOANS PROCESSOR' || GetStatus === 'APPROVED (TRANS-OUT)' ||
-                        LoanStatus === 'COMPLIED - LACK OF DOCUMENTS'
-                        ? (<></>)
-                        : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                            <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
-                        </ConfigProvider>)
+                    !DISABLE_STATUS(localStorage.getItem('SP'), GetStatus) ? (
+                        (GetStatus === "LACK OF DOCUMENTS" || GetStatus === "RECEIVED") && (
+                            <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                                <Button
+                                    size="large"
+                                    className="ml-6 mb-2 bg-[#3b0764]"
+                                    type="primary"
+                                    onClick={() => setModalStatus(true)}
+                                    disabled={User === 'Lp'}
+                                >
+                                    Upload Document
+                                </Button>
+                            </ConfigProvider>
+                        )
+                    ) : null
                 }
-                <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                    <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                        <div className={classname}>
-                            <div className='mr-[.5rem]'>
-                                <Collapse items={CollapseList()} />
-                            </div>
-                        </div>
-                    </Spin>
-                </ConfigProvider>
+                <div className={classname}>
+                    <div className="mr-[.5rem]">
+                        <Collapse items={CollapseList()} />
+                    </div>
+                </div>
             </div>
         </div>
     )

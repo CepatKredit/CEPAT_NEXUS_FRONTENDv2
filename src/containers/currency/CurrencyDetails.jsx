@@ -95,7 +95,7 @@ function CurrencyDetails({ option,api }) {
             status: getData.Status,
         }
         try {
-            const result = await axios.post('/addCurrency', data);
+            const result = await axios.post('/GroupPost/P120AC', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -126,7 +126,7 @@ function CurrencyDetails({ option,api }) {
         }
         console.log(data)
         try {
-            const result = await axios.post('/editCurrency', data);
+            const result = await axios.post('/GroupPost/P121UC', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description

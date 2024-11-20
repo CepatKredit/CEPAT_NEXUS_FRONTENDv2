@@ -13,13 +13,15 @@ import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, User }) {
+function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialOtherIncome, InitialOtherExpense, data, setMiscellanious }) {
+    const {SET_LOADING_INTERNAL} = React.useContext(LoanApplicationContext);
     const { setACB, setACBDOC } = GrandTotal()
     const { setCounter } = Validation()
     const roles = ['70', '80'];
     const isReadOnly = roles.includes(GetData('ROLE').toString());
-    const [MiscExp, setMiscExp] = React.useState();
+    const [MiscExp, setMiscExp] = React.useState(true);
     const { GetStatus } = ApplicationStatus();
     const [isComputing, setIsComputing] = React.useState(false);
     const disabledStatuses = [
@@ -83,11 +85,12 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
             const user = jwtDecode(token).USRID;
             const date = mmddyy(dayjs());
             //console.log(loanApp, borrow, type, user, date) // Details
-            await axios.get(`/getNDIData/${loanApp}/${borrow}/${type}/${user}/${date}`)
+            await axios.get(`/GET/G109ND/${loanApp}/${borrow}/${type}/${user}/${date}`)
                 .then((result) => {
                     console.log(result.data.list)
                     let incomeData = [];
                     let expenseData = [];
+                    SET_LOADING_INTERNAL('ACBNDI', false);
                     result.data.list.forEach((item) => {
                         switch (item.listNo) {
                             case 50:
@@ -140,7 +143,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                                 }));
                                 break;
                             case 64:
-                                setMiscExp(item.formattedDocumented !== '0.00' || item.formattedDeclared !== '0.00'? true:false)
+                                setMiscExp(!(item.formattedDocumented === '0.00' && item.formattedDeclared === '0.00' ? false : true))
                                 setValue(prev => ({
                                     ...prev,
                                     MiscExpenseDoc: formatNumberWithCommas(item.formattedDocumented.toString()),
@@ -162,13 +165,16 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                                 break;
                         }
                     });
+                    setMiscellanious(3, MiscExp);
+
                     setOtherIncome(incomeData);
                     setOtherExpense(expenseData);
                     InitialOtherIncome(3, incomeData)
                     InitialOtherExpense(3, expenseData);
                     setTrigger(1)
                 }).catch((error) => {
-                    console.log(error)
+                    console.log(error);
+                    SET_LOADING_INTERNAL('ACBNDI', false);
                 })
             return null;
         },
@@ -176,6 +182,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
     });
     React.useEffect(() => {
         if (data.loanIdCode !== '' || Object.keys(data).length !== 0) {
+            SET_LOADING_INTERNAL('ACBNDI', true);
             NdiDataQuery.refetch();
         }
     }, [data.loanIdCode]);
@@ -188,17 +195,24 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
             });
         }
     }, [getTrigger, isComputing]);
-    React.useEffect(() => {
-        if (MiscExp) {
+    
+    function checkMisc() {
+        if(MiscExp){
+            setMiscExp(false);
+        }else{
+            setMiscExp(true);
+        }
+        
+        if (MiscExp) { 
             setValue({
                 ...getValue,
-                MiscExpense: 0.00,
-                MiscExpenseDoc: 0.00,
+                MiscExpense: '0.00',
+                MiscExpenseDoc: '0.00',
             });
         }
-        setTrigger(1)
-
-    }, [MiscExp])
+        setTrigger(1);
+        setMiscellanious(3, MiscExp);
+    }
 
     const [getOtherIncome, setOtherIncome] = React.useState([])
     const [getOtherExpense, setOtherExpense] = React.useState([])
@@ -249,7 +263,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
         let TNIDOC = (parseFloat(removeCommas(getValue.AveRemittanceDoc === '' ? 0 : getValue.AveRemittanceDoc)) +
             parseFloat(removeCommas(getValue.IncomeEmployedHouseholdDoc === '' ? 0 : getValue.IncomeEmployedHouseholdDoc)) +
             parseFloat(removeCommas(getValue.SalaryDoc === '' ? 0 : getValue.SalaryDoc)) + parseFloat(totalOtherIncome('DOC'))).toFixed(2);
-        let MISCDOC = MiscExp ? parseFloat(removeCommas(getValue.MiscExpenseDoc === '' ? 0.00 : getValue.MiscExpenseDoc)) : (removeCommas(TNIDOC) * 0.08).toFixed(2);
+        let MISCDOC = !MiscExp ? parseFloat(removeCommas(getValue.MiscExpenseDoc === '' ? 0.00 : getValue.MiscExpenseDoc)) : (removeCommas(TNIDOC) * 0.08).toFixed(2);
         let TOTALDOC = (parseFloat(removeCommas(getValue.MonthlyFoodDoc === '' ? 0 : getValue.MonthlyFoodDoc)) + parseFloat(removeCommas(getValue.MARDoc)) +
             parseFloat(removeCommas(getValue.UtilitiesDoc === '' ? 0 : getValue.UtilitiesDoc)) + parseFloat(removeCommas(getValue.TuitionDoc === '' ? 0 : getValue.TuitionDoc)) +
             parseFloat(removeCommas(MISCDOC)) + parseFloat(totalOtherExpense('DOC'))).toFixed(2)
@@ -258,7 +272,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
         let TNI = (parseFloat(removeCommas(getValue.AveRemittance === '' ? 0 : getValue.AveRemittance)) +
             parseFloat(removeCommas(getValue.IncomeEmployedHousehold === '' ? 0 : getValue.IncomeEmployedHousehold)) +
             parseFloat(removeCommas(getValue.Salary === '' ? 0 : getValue.Salary)) + parseFloat(totalOtherIncome('DEC'))).toFixed(2);
-        let MISC = ( MiscExp) ? parseFloat(removeCommas(getValue.MiscExpense === '' ? 0.00 : getValue.MiscExpense)) : (removeCommas(TNI) * 0.08).toFixed(2);
+        let MISC = ( !MiscExp) ? parseFloat(removeCommas(getValue.MiscExpense === '' ? 0.00 : getValue.MiscExpense)) : (removeCommas(TNI) * 0.08).toFixed(2);
         let TOTAL = (parseFloat(removeCommas(getValue.MonthlyFood === '' ? 0 : getValue.MonthlyFood)) + parseFloat(removeCommas(getValue.MAR)) +
             parseFloat(removeCommas(getValue.Utilities === '' ? 0 : getValue.Utilities)) + parseFloat(removeCommas(getValue.Tuition === '' ? 0 : getValue.Tuition)) +
             parseFloat(removeCommas(MISC)) + parseFloat(totalOtherExpense('DEC'))).toFixed(2)
@@ -268,12 +282,12 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
             ...getValue,
             /* DOCUMENTED */
             TotalNetIncomeDoc: formatNumberWithCommas(TNIDOC),
-            ...( !MiscExp && { MiscExpenseDoc: formatNumberWithCommas(MISCDOC) }), //CRA Only
+            ...( MiscExp && { MiscExpenseDoc: formatNumberWithCommas(MISCDOC) }), //CRA Only
             TotalExpenseDoc: formatNumberWithCommas(TOTALDOC),
             NetDisposableDoc: formatNumberWithCommas(NETDOC),
             /* DECLARED */
             TotalNetIncome: formatNumberWithCommas(TNI),
-            ...( !MiscExp && { MiscExpense: formatNumberWithCommas(MISC) }), //CRA Only
+            ...( MiscExp && { MiscExpense: formatNumberWithCommas(MISC) }), //CRA Only
             TotalExpense: formatNumberWithCommas(TOTAL),
             NetDisposable: formatNumberWithCommas(NET)
         })
@@ -563,7 +577,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         </div>
                     </Space>))}
                     <Space className='pt-2'>
-                        <div className='w-[15rem] font-bold'>Total Net Income</div>
+                        <div className='w-[15rem] font-bold'>Total Salary</div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='TotalNetIncomeDoc'
                                 placeholder='0.00' readOnly
@@ -655,10 +669,10 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         </div>
                     </Space>
                     <Space className='pt-2'>
-                        <div className='w-[15rem]'>Miscellaneous Expense{(GetData('ROLE').toString() === '60' && (<Checkbox className='ml-[.8rem]' checked={MiscExp} onClick={() => { setMiscExp(!MiscExp) }} />))} </div>
-                        <div className='w-[15rem]'>
+                    <div className='w-[15rem]'>Miscellaneous Expense{(GetData('ROLE').toString() === '60' && (<Checkbox className='ml-[.8rem]' checked={!MiscExp} onClick={() => { checkMisc()}} />))} </div>
+                    <div className='w-[15rem]'>
                             <Input className='w-full' name='MiscExpenseDoc'
-                                placeholder='0.00' readOnly={!MiscExp}
+                                placeholder='0.00' readOnly={MiscExp}
                                 maxLength={13}
                                 value={getValue.MiscExpenseDoc}
                                 onChange={(e) => { onChange(e, 0, null) }}
@@ -667,7 +681,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         </div>
                         <div className='w-[15rem]'>
                             <Input className='w-full' name='MiscExpense'
-                                placeholder='0.00' readOnly={!MiscExp}
+                                placeholder='0.00' readOnly={MiscExp}
                                 maxLength={13}
                                 value={getValue.MiscExpense}
                                 onChange={(e) => { onChange(e, 0, null) }}
@@ -680,7 +694,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
                         <div className='w-[15rem]'>
                             <Space>
                                 <Button type='primary' icon={<PlusOutlined style={{ fontSize: '15px' }} />} onClick={() => { addOtherIncome('EXPENSE') }} disabled={isReadOnly || disabledStatuses.includes(GetStatus)} />
-                                <span>Other Payables</span>
+                                <span>Other Expenses</span>
                             </Space>
                         </div>
                         <div className='w-[15rem]' />
