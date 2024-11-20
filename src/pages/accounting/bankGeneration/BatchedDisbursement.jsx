@@ -31,7 +31,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
         queryFn: async () => {
             let container = 0
             let counter = 0
-            const result = await GET_LIST(`/api/GET/G103BD/${BID}`)
+            const result = await GET_LIST(`/api/v1/GET/G103BD/${BID}`)
             result.list?.map((x) => { container += parseFloat(x.amount); counter += 1; })
             LoadData()
             setTotal({ ...getTotal, Amount: container, Count: counter })
@@ -45,7 +45,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
     const GetDisbursementListQuery = useQuery({
         queryKey: ["GetAvailabletListQuery"],
         queryFn: async () => {
-            const result = await GET_LIST(`/api/GET/G102AL`)
+            const result = await GET_LIST(`/api/v1/GET/G102AL`)
             let container = []
             result.list?.map((x) => {
                 container.push({
@@ -134,7 +134,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
             AMT: parseFloat(getTotal.Amount) - parseFloat(removeCommas(data.amount)),
             USR: jwtDecode(token).USRID
         }
-        await axios.post('/api/POST/P144DBL', container)
+        await axios.post('/api/v1/POST/P144DBL', container)
             .then((result) => {
                 getDisbursementList.refetch()
                 queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
@@ -158,7 +158,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
 
     async function UpdateStatus(id, status, lan) {
         if (!status) return setEditingKey('');
-        await axios.post(`/api/POST/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
+        await axios.post(`/api/v1/POST/P125USD/${id}/${jwtDecode(token).USRID}/${status}`)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,

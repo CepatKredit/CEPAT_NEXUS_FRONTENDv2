@@ -42,7 +42,7 @@ function EditUser() {
     const UserInfoQuery = useQuery({
         queryKey: ['UserInfo'],
         queryFn: async () => {
-            var result = await axios.get(`/api/GET/G39UI/${toDecrypt(localStorage.getItem('EUSD'))}`)
+            var result = await axios.get(`/api/v1/GET/G39UI/${toDecrypt(localStorage.getItem('EUSD'))}`)
             console.log(result.data)
             setData({
                 Id: toDecrypt(localStorage.getItem('EUSD')),
@@ -99,7 +99,7 @@ function EditUser() {
     const BranchListQuery = useQuery({
         queryKey: ['BranchList'],
         queryFn: async () => {
-            const result = await GET_LIST('/api/GET/G40BL')
+            const result = await GET_LIST('/api/v1/GET/G40BL')
             setBranch(result.list)
             return result.list
         },
@@ -163,7 +163,7 @@ function EditUser() {
                 ModUser: jwtDecode(token).USRID,
             }
 
-            await axios.post('/api/POST/P84UU', dataHolder)
+            await axios.post('/api/v1/POST/P84UU', dataHolder)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,

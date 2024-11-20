@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Divider, Tag, Button } from 'antd'; 
+import { Table, Divider, Tag, Button } from 'antd';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -9,29 +9,27 @@ import { jwtDecode } from 'jwt-decode';
 import { TileNumber } from '@utils/Conditions';
 
 function WildSearch() {
-    const { userID } = useParams();
+    const { userID, searchValue } = useParams();
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient()
     const navigate = useNavigate();
-  
-    const searchValue = searchParams.get("searching");
 
     const { data: getData = [], isFetching } = useQuery({
         queryKey: ["wildSearch", userID, searchValue],
         queryFn: async () => {
-          const { data } = await axios.get(`/api/GET/G146WS/${userID}?searching=${searchValue}`);
-          return data.map((item) => ({
-            key: item.loanAppId,
-            loanAppCode: item.loanAppCode,
-            borrowersFullName: item.borrowersFullName,
-            status: item.status,
-          }));
+            const { data } = await axios.get(`/api/v1/GET/G146WS/${userID}/${searchValue}`);
+            return data.map((item) => ({
+                key: item.loanAppId,
+                loanAppCode: item.loanAppCode,
+                borrowersFullName: item.borrowersFullName,
+                status: item.status,
+            }));
         },
         enabled: !!userID && !!searchValue
-      });
+    });
 
 
-      const columns = [
+    const columns = [
         {
             title: "Loan Application Number",
             dataIndex: "loanAppCode",
@@ -80,11 +78,11 @@ function WildSearch() {
         },
     ];
 
-  return (
-    <div className="p-[2%] ">
-        <Table dataSource={getData} columns={columns} loading={isFetching} />;
-    </div>
-  )
+    return (
+        <div className="p-[2%] ">
+            <Table dataSource={getData} columns={columns} loading={isFetching} />;
+        </div>
+    )
 }
 
 export default WildSearch

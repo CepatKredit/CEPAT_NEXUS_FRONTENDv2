@@ -79,7 +79,7 @@ function ResetPassword() {
                 }
 
                 let ctr_password = 0;
-                await axios.post(`/api/POST/P94CP/${AccountId.id}`)
+                await axios.post(`/api/v1/POST/P94CP/${AccountId.id}`)
                     .then((result) => {
                         result.data.list?.map((x) => { if (decode(x.password) === getData.password) { ctr_password += 1 } })
                     })
@@ -91,8 +91,8 @@ function ResetPassword() {
                     })
 
                 if (ctr_password === 0) {
-                    await axios.post('/api/POST/P96SP', passwordData)
-                    await axios.post('/api/POST/P95URP', passwordData)
+                    await axios.post('/api/v1/POST/P96SP', passwordData)
+                    await axios.post('/api/v1/POST/P95URP', passwordData)
                         .then(result => {
                             if (result.data.status === 'success') {
                                 setModalResetStatus(false);

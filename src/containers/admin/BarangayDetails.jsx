@@ -57,7 +57,7 @@ function BarangayDetails({ option }) {
     const getProvinceSelect = useQuery({
         queryKey: ['getProvinceSelect'],
         queryFn: async () => {
-            const result = await GET_LIST('/api/GET/G8P')
+            const result = await GET_LIST('/api/v1/GET/G8P')
             setProvCode(result.list)
 
             return result.list
@@ -81,7 +81,7 @@ function BarangayDetails({ option }) {
         queryKey: ['getMunFromProvCode'],
         queryFn: async () => {
 
-            const result = await GET_LIST(`/api/GET/G6MA/${GetProvCode()}`)
+            const result = await GET_LIST(`/api/v1/GET/G6MA/${GetProvCode()}`)
             setMunCode(result.list)
             return result.list
         },
@@ -107,7 +107,7 @@ function BarangayDetails({ option }) {
             IsNegative: getData.IsNegative === 'POSITIVE' ? 0 : 1
         }
         try {
-            const result = await axios.post('/api/POST/P53AB', data);
+            const result = await axios.post('/api/v1/POST/P53AB', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -144,7 +144,7 @@ function BarangayDetails({ option }) {
 
         }
         try {
-            const result = await axios.post('/api/POST/P54UB', data)
+            const result = await axios.post('/api/v1/POST/P54UB', data)
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description

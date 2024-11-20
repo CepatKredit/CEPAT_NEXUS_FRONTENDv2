@@ -246,7 +246,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                         message: result.data.message,
                         description: result.data.description,
                     });
-                    const result2 = await axios.post('/api/POST/P43AACB', dataHolder);
+                    const result2 = await axios.post('/api/v1/POST/P43AACB', dataHolder);
                     api[result2.data.status]({
                         message: result2.data.message,
                         description: result2.data.description

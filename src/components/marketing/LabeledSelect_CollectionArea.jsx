@@ -15,7 +15,7 @@ function LabeledSelect_CollectionArea({value_mun, value_prov, rendered, showSear
     // const collectionArea = useQuery({
     //     queryKey: ['collectionArea'],
     //     queryFn: async () => {
-    //         const result = await axios.get('/api/GET/G29CA');
+    //         const result = await axios.get('/api/v1/GET/G29CA');
     //         return result.data.list;
     //     },
     //     refetchInterval: (data) => (data?.length === 0 ? 500 : false),

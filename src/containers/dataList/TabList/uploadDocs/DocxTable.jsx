@@ -306,7 +306,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 })
             }
             else {
-                await axios.post(`/api/POST/P66UFR`, formData, {
+                await axios.post(`/api/v1/POST/P66UFR`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -335,7 +335,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
     })
 
     async function UpdateStatus() {
-        await axios.post(`/api/POST/P82ULD/${ClientId}/${Uploader}`)
+        await axios.post(`/api/v1/POST/P82ULD/${ClientId}/${Uploader}`)
             .then((result) => {
                 //WORKING
             })

@@ -37,7 +37,7 @@ function LoanApplicationInfo() {
         queryKey: ['ClientDataListQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/api/GET/G3CD/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                const result = await GET_LIST(`/api/v1/GET/G3CD/${toDecrypt(localStorage.getItem('SIDC'))}`);
                 const data = result.list;
                 console.log('Get From API Data ',data)
                 setDetails({

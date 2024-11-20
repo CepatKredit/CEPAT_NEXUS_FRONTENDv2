@@ -23,7 +23,7 @@ function ResetPassword() {
     })
     const [getStatus, setStatus] = React.useState(1)
     async function checkURLValidity() {
-        await axios.post(`/api/POST/P93VU/${id}`)
+        await axios.post(`/api/v1/POST/P93VU/${id}`)
             .then((result) => {
                 setStatus(result.data.status)
                 if (result.data.status === 1) {
@@ -90,7 +90,7 @@ function ResetPassword() {
             }
 
             let ctr_password = 0;
-            await axios.post(`/api/POST/P94CP/${getAccount.Id}`)
+            await axios.post(`/api/v1/POST/P94CP/${getAccount.Id}`)
                 .then((result) => {
                     result.data.list?.map((x) => { if (decode(x.password) === getData.password) { ctr_password += 1 } })
                 })
@@ -101,7 +101,7 @@ function ResetPassword() {
                     })
                 })
             if (ctr_password === 0) {
-                await axios.post('/api/POST/P97RP', data)
+                await axios.post('/api/v1/POST/P97RP', data)
                     .then((result) => {
                         api[result.data.status]({
                             message: result.data.message,

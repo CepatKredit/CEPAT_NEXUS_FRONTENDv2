@@ -40,7 +40,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
   const { data: suffixOption } = useQuery({
     queryKey: ["getSuffix"],
     queryFn: async () => {
-      const result = await GET_LIST("/api/GET/G28S");
+      const result = await GET_LIST("/api/v1/GET/G28S");
       return result.list;
     },
     refetchInterval: (data) => {
@@ -53,7 +53,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
   const getCountrySelect = useQuery({
     queryKey: ["getCountrySelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/api/GET/G26C");
+      const result = await GET_LIST("/api/v1/GET/G26C");
       return (
         result?.list?.map((x) => ({ value: x.code, label: x.description })) ||
         []
@@ -69,7 +69,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
   const validIdDisplay = useQuery({
     queryKey: ["validIdDisplay"],
     queryFn: async () => {
-      const result = await GET_LIST("/api/GET/G27IT");
+      const result = await GET_LIST("/api/v1/GET/G27IT");
       return result.list;
     },
     refetchInterval: (data) => {
@@ -504,7 +504,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
 
   //     console.log("DITOOO",checkLoan)
 
-  //     var result = await POST_DATA("/api/POST/P47CL", checkLoan);
+  //     var result = await POST_DATA("/api/v1/POST/P47CL", checkLoan);
   //     if (result.list.length === 0) {
   //       update = 0;
   //     } else {

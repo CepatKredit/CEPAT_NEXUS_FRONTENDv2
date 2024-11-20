@@ -27,7 +27,7 @@ function AddressContainer({
   const provinceList = useQuery({
     queryKey: ["ProvinceListQuery"],
     queryFn: async () => {
-      const result = await axios.get("/api/GET/G23PL");
+      const result = await axios.get("/api/v1/GET/G23PL");
       return result.data.list;
     },
     refetchInterval: (data) => {
@@ -75,7 +75,7 @@ function AddressContainer({
           : null;
 
       if (!provCode) return [];
-      const result = await axios.get(`/api/GET/G6MA/${provCode}`);
+      const result = await axios.get(`/api/v1/GET/G6MA/${provCode}`);
       return result.data.list;
     },
     refetchInterval: 15 * 1000,
@@ -119,7 +119,7 @@ function AddressContainer({
           ? data.coborrowMunicipality
           : null;
       if (!munCode) return [];
-      const result = await axios.get(`/api/GET/G7BL/${munCode}`);
+      const result = await axios.get(`/api/v1/GET/G7BL/${munCode}`);
       return result.data.list;
     },
     refetchInterval: 15 * 1000,

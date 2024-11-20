@@ -55,7 +55,7 @@ function NewUser() {
     const BranchListQuery = useQuery({
         queryKey: ['BranchList'],
         queryFn: async () => {
-            const result = await GET_LIST('/api/GET/G40BL')
+            const result = await GET_LIST('/api/v1/GET/G40BL')
             setBranch(result.list)
             return result.list
         },
@@ -70,7 +70,7 @@ function NewUser() {
     const DepartmentListQuery = useQuery({
         queryKey: ['DepartmentList'],
         queryFn: async () => {
-            const result = await GET_LIST('/api/GET/G41DL')
+            const result = await GET_LIST('/api/v1/GET/G41DL')
             return result.list
         },
         refetchInterval: (data) => {
@@ -86,7 +86,7 @@ function NewUser() {
     const RoleListQuery = useQuery({
         queryKey: ['RoleList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/api/GET/G42RL/${getData.Department}`);
+            const result = await GET_LIST(`/api/v1/GET/G42RL/${getData.Department}`);
             const counter = getRefresher + 1
             setRefresher(counter)
             return result.list
@@ -153,7 +153,7 @@ function NewUser() {
                 SessionTimeout: getData.SessionTimeout
             }
 
-           await axios.post('/api/POST/P83R', dataHolder)
+           await axios.post('/api/v1/POST/P83R', dataHolder)
                 .then(result => {
                     api[result.data.status]({
                         message: result.data.message,

@@ -27,7 +27,7 @@ useEffect(() => {
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {
-            const result = await GET_LIST('/api/GET/G28S');
+            const result = await GET_LIST('/api/v1/GET/G28S');
             if (result && result.list) {
                 return result.list;
             } else {

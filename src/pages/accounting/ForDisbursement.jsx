@@ -30,7 +30,7 @@ function ForDisbursement() {
     queryKey: ["AppDataListQuery"],
     queryFn: async () => {
       const result = await GET_LIST(
-        `/api/GET/G2AD/${jwtDecode(token).USRID}/${TileNumber(
+        `/api/v1/GET/G2AD/${jwtDecode(token).USRID}/${TileNumber(
           localStorage.getItem("SP")
         )}`
       );

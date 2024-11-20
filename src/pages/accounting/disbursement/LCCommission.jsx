@@ -98,7 +98,7 @@ function LCCommission({ data }) {
             Lan: data.LAN.props.children
         }
 
-        await axios.post('/api/POST/P122AD', container)
+        await axios.post('/api/v1/POST/P122AD', container)
             .then((result) => {
                 queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', data.LAN.props.children, 'LC'] }, { exact: true })
                 api[result.data.status]({

@@ -76,7 +76,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {
-            const result = await GET_LIST('/api/GET/G28S');
+            const result = await GET_LIST('/api/v1/GET/G28S');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -96,7 +96,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     const getRemarks = useQuery({
         queryKey: ['getRemarks'],
         queryFn: async () => {
-            const result = await axios.get(`/api/GET/G37R/${data?.loanIdCode}`);
+            const result = await axios.get(`/api/v1/GET/G37R/${data?.loanIdCode}`);
             return result.data.list[0];
         },
         enabled: true,
@@ -205,7 +205,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 };
 
                 try {
-                    await axios.post('/api/POST/P139UCA', checkListData);
+                    await axios.post('/api/v1/POST/P139UCA', checkListData);
                     api['success']({
                         message: 'Application Status',
                         description: 'Status updated',
@@ -251,7 +251,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 ];
 
                 if (getUpdate.UrgentApp === 2 && getUpdate.DepartureDate) {
-                    const departureUpdateResponse = await axios.post('/api/POST/P140UD', {
+                    const departureUpdateResponse = await axios.post('/api/v1/POST/P140UD', {
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
                         DepartureDate: dayjs(getUpdate.DepartureDate).format('MM-DD-YYYY')
                     });
@@ -266,14 +266,14 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                 }
                 let PN_CHECK = 0
                 if (getUpdate.Status === 'FOR DISBURSEMENT') {
-                    await axios.post('/api/POST/P141UD', dataContainer[0])
+                    await axios.post('/api/v1/POST/P141UD', dataContainer[0])
                         .then((result) => { PN_CHECK = 0 })
                         .catch((error) => { PN_CHECK = 1 })
                 }
 
                 if (PN_CHECK === 0) {
                     try {
-                        const result = await axios.post('/api/POST/P81UAS',
+                        const result = await axios.post('/api/v1/POST/P81UAS',
                             getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
                                 ? dataContainer[2]
                                 : getUpdate.UrgentApp !== undefined && getUpdate.SoaDate === undefined

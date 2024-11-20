@@ -17,7 +17,7 @@ function AmountTable({ data, receive, User, creditisEdit, loading }) {
         console.log('test', data.loanIdCode);
         const fetchApprovalData = async () => {
             try {
-                const response = await axios.get(`/api/GET/G108A/${data.loanIdCode}`);
+                const response = await axios.get(`/api/v1/GET/G108A/${data.loanIdCode}`);
                 if (response.status === 200) {
                     const approvalData = response.data.list[0];
                     console.log("Fetched approval data:", approvalData);

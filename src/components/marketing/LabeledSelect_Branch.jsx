@@ -33,7 +33,7 @@ function LabeledSelect_Branch({rendered, showSearch, custom_options,placeHolder,
     const branchList = useQuery({
         queryKey: ['BranchListQuery'],
         queryFn: async () => {
-            const result = await axios.get('/api/GET/G10BL');
+            const result = await axios.get('/api/v1/GET/G10BL');
             return result.data.list;
         },
         refetchInterval: 1000,

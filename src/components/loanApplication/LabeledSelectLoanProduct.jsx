@@ -34,7 +34,7 @@ function LabeledSelectLoanProduct({
   const ProductSelect = useQuery({
     queryKey: ["getProductSelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/api/GET/G19LLP");
+      const result = await GET_LIST("/api/v1/GET/G19LLP");
       return result.list;
     },
     refetchInterval: 5000,

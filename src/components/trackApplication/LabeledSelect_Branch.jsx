@@ -53,7 +53,7 @@ function LabeledSelect_Branch({
   const branchList = useQuery({
     queryKey: ["BranchListQuery"],
     queryFn: async () => {
-      const result = await axios.get("/api/GET/G10BL");
+      const result = await axios.get("/api/v1/GET/G10BL");
       return result.data.list;
     },
     enabled: true,

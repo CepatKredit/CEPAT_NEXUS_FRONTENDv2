@@ -225,7 +225,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
   //   queryKey: ['ClientDataListQuery', toDecrypt(localStorage.getItem('SIDC'))],
   //   queryFn: async () => {
   //     try {
-  //       const result = await GET_LIST(`/api/GET/G3CD/${toDecrypt(localStorage.getItem('SIDC'))}`);
+  //       const result = await GET_LIST(`/api/v1/GET/G3CD/${toDecrypt(localStorage.getItem('SIDC'))}`);
   //       const data = result.list;
         
   //       // Populate app details and old client data when data is fetched

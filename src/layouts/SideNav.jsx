@@ -26,21 +26,21 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 function SideNav() {
-    //   const handleFilterChange = (e) => {
-//     setSearchValue(e.target.value);
-//   };
+  //   const handleFilterChange = (e) => {
+  //     setSearchValue(e.target.value);
+  //   };
 
-//   const searchResult = () => {
-//     axios
-//       .get(`/api/GET/G146WS/${userID}?searching=${value}`)
-//       .then((result) => {
-//         result.data;
-//       })
-//       .catch((error) => {
-//         console.error(error.message);
-//         throw new Error("Token generation failed.");
-//       });
-//   };
+  //   const searchResult = () => {
+  //     axios
+  //       .get(`/api/v1/GET/G146WS/${userID}?searching=${value}`)
+  //       .then((result) => {
+  //         result.data;
+  //       })
+  //       .catch((error) => {
+  //         console.error(error.message);
+  //         throw new Error("Token generation failed.");
+  //       });
+  //   };
   //   const handleSearch = (value) => {
   //     const userID = jwtDecode(token).USRID;
   //     if (value.trim() !== "") {
@@ -63,8 +63,8 @@ function SideNav() {
     const token = localStorage.getItem("UTK");
     const userID = jwtDecode(token).USRID
     if (searchValue.trim() !== "") {
-        console.log(`Navigating to /ckfi/searches/${userID}?searching=${searchValue}`);
-      navigate(`/ckfi/searches/${userID}?searching=${searchValue}`);
+      console.log(`Navigating to /ckfi/searches/${userID}/${searchValue}`);
+      navigate(`/ckfi/searches/${userID}/${searchValue}`);
     }
   };
 
@@ -199,11 +199,11 @@ function SideNav() {
                     placeholder="search..."
                     allowClear
                     style={{ width: 170 }}
-                    value={searchValue} 
+                    value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
                   <Button
-                    type="default"  
+                    type="default"
                     onClick={handleSearchClick}
                     icon={<SearchOutlined />}
                   />
@@ -241,9 +241,8 @@ function SideNav() {
             <img
               src={isModalOpen ? CepatChatbotOpen : CepatChatbot}
               alt="Chatbot Icon"
-              className={`${
-                isModalOpen ? "w-22 h-24" : "w-18 h-20"
-              } transition-transform duration-200 hover:scale-105 hover:-translate-y-3`}
+              className={`${isModalOpen ? "w-22 h-24" : "w-18 h-20"
+                } transition-transform duration-200 hover:scale-105 hover:-translate-y-3`}
             />
           </div>
 

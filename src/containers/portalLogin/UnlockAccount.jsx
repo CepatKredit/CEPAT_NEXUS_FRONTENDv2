@@ -12,7 +12,7 @@ function UnlockAccount() {
 
     const onClickUnlock = useMutation({
         mutationFn: async () => {
-            await axios.post(`/api/POST/P92UA/${getUsername}`)
+            await axios.post(`/api/v1/POST/P92UA/${getUsername}`)
                 .then((result) => {
                     setUsername('')
                     setUnlockStatus(false)

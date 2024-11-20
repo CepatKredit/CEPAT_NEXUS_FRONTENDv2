@@ -33,7 +33,7 @@ function LabeledSelectLoanPurpose({rendered, required, label, value, placeHolder
     const data = useQuery({
         queryKey: ['getLoanPurpose'],
         queryFn: async () => {
-            const result = await GET_LIST('/api/GET/G20LP');
+            const result = await GET_LIST('/api/v1/GET/G20LP');
 
             return result.list;
         },

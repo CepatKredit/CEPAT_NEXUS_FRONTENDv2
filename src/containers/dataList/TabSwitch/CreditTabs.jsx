@@ -67,7 +67,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
     const fetchRelativesAndUpdateCount = async () => {
         if (BorrowerId) {
             try {
-                const result = await GET_LIST(`/api/GET/G35R/${BorrowerId}`);
+                const result = await GET_LIST(`/api/v1/GET/G35R/${BorrowerId}`);
                 if (result?.list) {
                     const relativesCount = result.list.length;
                     setRelativesCount(relativesCount);
@@ -389,7 +389,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
         }
 
         if (value.ofwfname !== null || value.ofwlname !== null) {
-            await axios.post('/api/POST/P47CL', checkLoan)
+            await axios.post('/api/v1/POST/P47CL', checkLoan)
                 .then((result) => {
                     if (result.data.list != 0) {
                         api['info']({
@@ -421,7 +421,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             //Start to insert Acb and then update all
             console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
             try {
-                const result2 = await axios.post('/api/POST/P43AACB', acb_data);
+                const result2 = await axios.post('/api/v1/POST/P43AACB', acb_data);
                 api[result2.data.status]({
                     message: result2.data.message,
                     description: result2.data.description
@@ -474,7 +474,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             if (!value || !value.VesselIMO || value.VesselIMO.length < 6) return null;
             try {
 
-                const result = await axios.get(`/api/GET/G113SVD/${value.VesselIMO}`);
+                const result = await axios.get(`/api/v1/GET/G113SVD/${value.VesselIMO}`);
                 receive({ name: 'VesselInfo', value: result.data });
             } catch (error) {
                 updateAppDetails({ name: 'VesselInfo', value: 'No Gathered Data!' });

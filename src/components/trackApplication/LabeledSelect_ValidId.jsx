@@ -27,7 +27,7 @@ function LabeledSelect_Suffix({
   const { data: IDtypeOption } = useQuery({
     queryKey: ["getValidIdSelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/api/GET/G27IT");
+      const result = await GET_LIST("/api/v1/GET/G27IT");
       return result.list;
     },
     refetchInterval: 30 * 1000,

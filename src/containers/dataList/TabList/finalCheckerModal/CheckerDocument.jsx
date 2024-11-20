@@ -20,7 +20,7 @@ function CheckerDocument({ data, ClientId, Uploader }) {
     const DocListICQuery = useQuery({
         queryKey: ['DocListICQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/api/GET/G16FT/${'IC'}`)
+            const result = await GET_LIST(`/api/v1/GET/G16FT/${'IC'}`)
             return result.list
         },
         enabled: true,
@@ -426,7 +426,7 @@ function CheckerDocument({ data, ClientId, Uploader }) {
                 })
             }
             else {
-                await axios.post(`/api/POST/P67UFF`, formData, {
+                await axios.post(`/api/v1/POST/P67UFF`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

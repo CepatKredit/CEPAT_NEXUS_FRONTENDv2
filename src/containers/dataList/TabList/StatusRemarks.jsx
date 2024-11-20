@@ -19,7 +19,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
         queryKey: ['getRemarks', data?.loanIdCode],
         queryFn: async () => {
             try {
-                const result = await axios.get(`/api/GET/G37R/${data?.loanIdCode}`);
+                const result = await axios.get(`/api/v1/GET/G37R/${data?.loanIdCode}`);
                 SetStatus(result.data.list[0].status)
                 console.log(localStorage.getItem('activeTab'));
                 if (localStorage.getItem('activeTab') === 'last-update-by')
