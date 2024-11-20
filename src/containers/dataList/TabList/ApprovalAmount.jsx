@@ -1,7 +1,7 @@
-import React, { useRef,useEffect, useState } from 'react';
+import React, { useRef,  useState, useEffect } from 'react';
 import ViewApprovalAmount from './approvalAmount/ViewApprovalAmount';
 import EditApprovalAmount from './approvalAmount/EditApprovalAmount';
-import { Button, notification, ConfigProvider, Anchor } from 'antd';
+import { Button, notification, ConfigProvider } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
@@ -13,10 +13,11 @@ import Charges from './Charges';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
 import dayjs, { Dayjs } from 'dayjs';
+import { GET_LIST } from '@api/base-api/BaseApi';
 
 
 function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, loading }) {
-    const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext);
+    const { getAppDetails , updateAppDetails} = React.useContext(LoanApplicationContext);
     const [isEdit, setEdit] = React.useState(false);
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
@@ -30,7 +31,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             didMountRef.current = true;
         }
     }, [getTab]);
-
+    
     const [isEligibleToApprove, setIsEligibleToApprove] = useState(false);
     const fetchEligibility = async () => {
         try {
@@ -50,6 +51,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             fetchEligibility();
         }
     }, [data.loanIdCode, token]);
+
     const ApprvAmount_valid = !data.ApprovAmount || !data.approvTerms || !data.ApprvInterestRate || !data.MonthlyAmort || !data.TotalExposure;
 
     const toggleEditMode = async () => {
@@ -67,10 +69,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         }
     };
 
-    React.useEffect(() => {
-        console.log('status to noh ', data.loanAppStat)
-    }, [data])
-
     async function updateData() {
         const value = {
             LoanAppId: data.loanIdCode,
@@ -85,6 +83,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             CRORemarks: data.CRORemarks,
             ModUser: jwtDecode(token).USRID,
         }
+        console.log('TEST_APPRV_AMOUNT', value)
         let result = await UpdateLoanDetails(value);
         if (result.data.status === "success") {
             api[result.data.status]({
@@ -110,8 +109,9 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 Tab: 5,
                 CremanBy: jwtDecode(token).USRID,
             };
-
+    
             let result = await UpdateLoanDetails(value);
+    
             if (result.data.status === "success") {
                 api[result.data.status]({
                     message: result.data.message,
@@ -129,10 +129,10 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 description: 'Something went wrong while updating. Please try again.',
             });
         }
-
+    
         queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
     };
-
+    
 
     const onClickSaveData = useMutation({
         mutationFn: async () => {
@@ -194,35 +194,36 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     const handleSubmit = async () => {
         onClickSaveData.mutate();
     };
+
     function DISABLE_STATUS(LOCATION) {
-         if (GetData('ROLE').toString() === '60') {
-            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/on-waiver' 
-                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-verification'
-                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
-                console.log('CRO')
-                return true
-            }
-            else { return false }
-        }
-        else if (GetData('ROLE').toString() === '70') {
-            console.log('LPA')
-            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
-                || LOCATION === '/ckfi/returned/credit-associate'
-                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
-            else { return false }
-        }
-        else if (GetData('ROLE').toString() === '80') {
-            console.log('LPO')
-            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
-                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
-            else { return false }
-        }
-        else { return false }
-    }
+        if (GetData('ROLE').toString() === '60') {
+           if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/on-waiver' 
+               || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-verification'
+               || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+               console.log('CRO')
+               return true
+           }
+           else { return false }
+       }
+       else if (GetData('ROLE').toString() === '70') {
+           console.log('LPA')
+           if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+               || LOCATION === '/ckfi/returned/credit-associate'
+               || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+           else { return false }
+       }
+       else if (GetData('ROLE').toString() === '80') {
+           console.log('LPO')
+           if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+               || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+           else { return false }
+       }
+       else { return false }
+   }
     return (
         <div className={classname}>
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-
+    
             <div
                 className={`w-full overflow-y-auto ${
                     ((GetData('ROLE') === '70' || GetData('ROLE') === '80') ? 
@@ -241,11 +242,9 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 {GetData('ROLE') === '70' || GetData('ROLE') === '80' ? (
                     <Charges data={data} LoanAppId={getAppDetails?.loanIdCode} />
                 ) : null}
-
-               
             </div>
             {contextHolder}
-
+    
             <div className="w-full flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-1 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-1">
             {GetData('ROLE') === '70' || GetData('ROLE') === '80' ? (
                     !['CONFIRMED', 'DECLINED', 'CANCELLED'].includes(data.loanAppStat) && (
@@ -270,6 +269,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 ) : null}
             </div>
 
+    
             <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
             {!isEdit && (!!isEligibleToApprove ) && (
                     <ConfigProvider
@@ -293,84 +293,84 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             </div>
             {(GetData('ROLE').toString() === '60' || GetData('ROLE').toString() === '100' &&
                 ['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) && !DISABLE_STATUS(localStorage.getItem('SP')) && (
-                    <ConfigProvider
-                        theme={{
-                            token: {
-                                fontSize: 14,
-                                borderRadius: 8,
-                                fontWeightStrong: 600,
-                                colorText: '#ffffff',
-                            },
-                        }}
-                    >
-                        <div className="w-full p-4 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-                            {isEdit ? (
-                                <>
-                                    <ConfigProvider
-                                        theme={{
-                                            token: {
-                                                colorPrimary: '#2b972d',
-                                                colorPrimaryHover: '#34b330',
-                                            },
-                                        }}
-                                    >
-                                        <Button
-                                            type="primary"
-                                            icon={<SaveOutlined />}
-                                            onClick={() => {
-                                                toggleEditMode();
-                                            }}
-                                            size="large"
-                                        >
-                                            SAVE
-                                        </Button>
-                                    </ConfigProvider>
-                                    <ConfigProvider
-                                        theme={{
-                                            token: {
-                                                colorPrimary: '#dc3545',
-                                                colorPrimaryHover: '#f0aab1',
-                                            },
-                                        }}
-                                    >
-                                        <Button
-                                            type="primary"
-                                            icon={<CloseOutlined />}
-                                            onClick={() => {
-                                                setEdit(false);
-                                                queryClient.invalidateQueries(
-                                                    { queryKey: ['ClientDataListQuery'] },
-                                                    { exact: true }
-                                                );
-                                            }}
-                                            size="large"
-                                        >
-                                            CANCEL
-                                        </Button>
-                                    </ConfigProvider>
-                                </>
-                            ) : (
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            fontSize: 14,
+                            borderRadius: 8,
+                            fontWeightStrong: 600,
+                            colorText: '#ffffff',
+                        },
+                    }}
+                >
+                    <div className="w-full p-4 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
+                        {isEdit ? (
+                            <>
                                 <ConfigProvider
                                     theme={{
                                         token: {
-                                            colorPrimary: '#3b0764',
-                                            colorPrimaryHover: '#6b21a8',
+                                            colorPrimary: '#2b972d',
+                                            colorPrimaryHover: '#34b330',
                                         },
                                     }}
                                 >
                                     <Button
                                         type="primary"
-                                        icon={<EditOutlined />}
-                                        onClick={toggleEditMode}
+                                        icon={<SaveOutlined />}
+                                        onClick={() => {
+                                            toggleEditMode();
+                                        }}
                                         size="large"
                                     >
-                                        EDIT
+                                        SAVE
                                     </Button>
                                 </ConfigProvider>
-                            )}
-                        </div>
-                    </ConfigProvider>
-                )}
+                                <ConfigProvider
+                                    theme={{
+                                        token: {
+                                            colorPrimary: '#dc3545',
+                                            colorPrimaryHover: '#f0aab1',
+                                        },
+                                    }}
+                                >
+                                    <Button
+                                        type="primary"
+                                        icon={<CloseOutlined />}
+                                        onClick={() => {
+                                            setEdit(false);
+                                            queryClient.invalidateQueries(
+                                                { queryKey: ['ClientDataListQuery'] },
+                                                { exact: true }
+                                            );
+                                        }}
+                                        size="large"
+                                    >
+                                        CANCEL
+                                    </Button>
+                                </ConfigProvider>
+                            </>
+                        ) : (
+                            <ConfigProvider
+                                theme={{
+                                    token: {
+                                        colorPrimary: '#3b0764',
+                                        colorPrimaryHover: '#6b21a8',
+                                    },
+                                }}
+                            >
+                                <Button
+                                    type="primary"
+                                    icon={<EditOutlined />}
+                                    onClick={toggleEditMode}
+                                    size="large"
+                                >
+                                    EDIT
+                                </Button>
+                            </ConfigProvider>
+                        )}
+                    </div>
+                </ConfigProvider>
+            )}
         </div>
     );
 }
