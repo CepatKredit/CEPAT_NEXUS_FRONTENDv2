@@ -44,9 +44,9 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
         queryFn: async () => {
             try {
                 let container = []
-                const LPACCDDT = await GET_LIST(`/getFileList/${ClientId}/${'LPACCDDT'}/${jwtDecode(token).USRID}`)
+                const LPACCDDT = await GET_LIST(`/GET/G17FL/${ClientId}/${'LPACCDDT'}/${jwtDecode(token).USRID}`)
                 LPACCDDT.list?.map((x) => { container.push(x) })
-                const LPACCREL = await GET_LIST(`/getFileList/${ClientId}/${'LPACCREL'}/${jwtDecode(token).USRID}`)
+                const LPACCREL = await GET_LIST(`/GET/G17FL/${ClientId}/${'LPACCREL'}/${jwtDecode(token).USRID}`)
                 LPACCREL.list?.map((x) => { container.push(x) })
                 SET_LOADING_INTERNAL('ReleaseFile', false);
                 return container

@@ -156,7 +156,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
         queryKey: ['FileListFinQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/getFileList/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
                 let dataContainer = []
                 SET_LOADING_INTERNAL('FinancialChecker', false);
                 result.list?.map((x) => {
