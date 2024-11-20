@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef,useEffect, useState } from 'react';
 import ViewApprovalAmount from './approvalAmount/ViewApprovalAmount';
 import EditApprovalAmount from './approvalAmount/EditApprovalAmount';
 import { Button, notification, ConfigProvider, Anchor } from 'antd';
@@ -31,6 +31,25 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         }
     }, [getTab]);
 
+    const [isEligibleToApprove, setIsEligibleToApprove] = useState(false);
+    const fetchEligibility = async () => {
+        try {
+            const id = jwtDecode(token).USRID;
+            console.log('LAI',data.loanIdCode)
+            console.log('User',jwtDecode(token).USRID)
+            const result = await GET_LIST(`/getApprovedDataList/${data.loanIdCode}/${id}`);
+            console.log('test', result)
+            setIsEligibleToApprove(result.list[0].isEligible);
+        } catch (error) {
+            console.error('Error fetching approval eligibility:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (token && data.loanIdCode !== ''){
+            fetchEligibility();
+        }
+    }, [data.loanIdCode, token]);
     const ApprvAmount_valid = !data.ApprovAmount || !data.approvTerms || !data.ApprvInterestRate || !data.MonthlyAmort || !data.TotalExposure;
 
     const toggleEditMode = async () => {
@@ -66,7 +85,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             CRORemarks: data.CRORemarks,
             ModUser: jwtDecode(token).USRID,
         }
-        console.log('TEST_APPRV_AMOUNT', value)
         let result = await UpdateLoanDetails(value);
         if (result.data.status === "success") {
             api[result.data.status]({
@@ -87,12 +105,13 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         try {
             const value = {
                 LoanAppId: data.loanIdCode,
+                UserId: jwtDecode(token).USRID,
+                isEligible: 1,
                 Tab: 5,
                 CremanBy: jwtDecode(token).USRID,
             };
 
             let result = await UpdateLoanDetails(value);
-
             if (result.data.status === "success") {
                 api[result.data.status]({
                     message: result.data.message,
@@ -157,18 +176,13 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                         MonthlyAmortization: parseFloat(getAppDetails.MonthlyAmortization),
                         LoggedUser: jwtDecode(token).USRID,
                     };
-
-                    console.log('Payload being sent:', payload);
-
                     await axios.post('addCharges/', payload);
-
                     api.success({
                         message: 'Success',
                         description: 'Charges Updated successfully!',
                     });
                 }
             } catch (error) {
-                console.log('Error in charges', error);
                 api.error({
                     message: 'Error',
                     description: 'An error occurred while updating charges.',
@@ -186,10 +200,14 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
 
             <div
-                className={`w-full overflow-y-auto ${(!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
-                    ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
-                    : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]'
-                    }`}
+                className={`w-full overflow-y-auto ${
+                    ((GetData('ROLE') === '70' || GetData('ROLE') === '80') ? 
+                        'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[43vh] 3xl:h-[35vh]' :
+                        ((!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
+                            ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
+                            : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]')
+                    )
+                }`}
             >
                 {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                     <ViewApprovalAmount loading={loading} data={data} User={User} />
@@ -204,8 +222,8 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             </div>
             {contextHolder}
 
-            <div className="w-full p-1 flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-1 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-                {GetData('ROLE') === '70' || GetData('ROLE') === '80' ? (
+            <div className="w-full flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-1 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-1">
+            {GetData('ROLE') === '70' || GetData('ROLE') === '80' ? (
                     !['CONFIRMED', 'DECLINED', 'CANCELLED'].includes(data.loanAppStat) && (
                         <ConfigProvider
                             theme={{
@@ -218,7 +236,8 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                             <Button
                                 type="primary"
                                 onClick={handleSubmit}
-                                loading={onClickSaveData.isPending}
+                                size="large"
+                            loading={onClickSaveData.isPending}
                                 icon={<SaveOutlined />}
                             >
                                 Save Charges
@@ -228,7 +247,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             </div>
 
             <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-                {(!isEdit && (GetData('ROLE').toString() === '60' || GetData('ROLE').toString() === '100')) && (
+            {!isEdit && (!!isEligibleToApprove ) && (
                     <ConfigProvider
                         theme={{
                             token: {

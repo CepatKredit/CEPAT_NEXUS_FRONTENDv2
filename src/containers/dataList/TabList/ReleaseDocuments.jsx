@@ -172,10 +172,10 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
                     LoanStatus === 'CANCELLED' || LoanStatus === 'DECLINED' || LoanStatus === 'ON WAIVER' || LoanStatus === 'UNDECIDED' || LoanStatus === 'FOR DISBURSEMENT'
                         ? (<></>)
                         : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                            <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }}>Upload Document</Button>
+                            <Button size='large' className='ml-6 mb-2 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }}>Upload Document</Button>
                         </ConfigProvider>)
                 }
-                <div className='h-[54vh] pt-2 overflow-y-auto'>
+                <div className='xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[45vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'>
                     <div className='mr-[.5rem]'>
                         <Collapse items={CollapseList()} />
                     </div>

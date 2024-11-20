@@ -403,7 +403,9 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                 <div className="flex flex-row mt-4">
                     <div
                         id="scrollable-container"
-                        className="h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh] w-full mb-8 overflow-y-auto px-4 mx-2"
+                        className={`w-full mb-8 overflow-y-auto px-4 mx-2 ${GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80' ? 
+                            'h-[45vh] xs:h-[38vh] sm:h-[38vh] md:h-[40vh] lg:h-[42vh] xl:h-[44vh] 2xl:h-[50vh] 3xl:h-[59vh]' : 
+                            'h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]'}`}
                     >
                         <div className="w-full">
                             {data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ? (
@@ -503,8 +505,10 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                     </div>
                     
                     {/* Navigation Anchor Section */}
-                    <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]">
-                        <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+                    <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80' 
+                        ? 'h-[45vh] xs:h-[38vh] sm:h-[38vh] md:h-[40vh] lg:h-[42vh] xl:h-[44vh] 2xl:h-[50vh] 3xl:h-[59vh]' 
+                        : 'h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]'}`}>
+                    <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
                             <Anchor
                                 replace
                                 affix={false}
