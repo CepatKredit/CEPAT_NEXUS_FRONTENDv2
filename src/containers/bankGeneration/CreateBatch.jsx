@@ -27,7 +27,7 @@ function CreateBatch() {
     const GetDisbursementListQuery = useQuery({
         queryKey: ["GetDisbursementListQuery"],
         queryFn: async () => {
-            const result = await GET_LIST(`/GroupGet/G102AL`)
+            const result = await GET_LIST(`/api/GET/G102AL`)
             let container = []
             result.list?.map((x) => {
                 container.push({
@@ -123,7 +123,7 @@ function CreateBatch() {
 
         let check = 0
 
-        await axios.post('/GroupPost/P115ABL', container)
+        await axios.post('/api/POST/P115ABL', container)
             .then((result) => {
                 check = 1
                 api[result.data.status]({
@@ -141,7 +141,7 @@ function CreateBatch() {
         if (check === 1) {
             getData.map(async (x) => {
                 if (x.checker === true) {
-                    await axios.post(`/GroupPost/P116UBD/${BID}/${jwtDecode(token).USRID}/${x.id}`)
+                    await axios.post(`/api/POST/P116UBD/${BID}/${jwtDecode(token).USRID}/${x.id}`)
                         .catch((error) => {
                             console.log(error)
                         })

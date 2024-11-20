@@ -51,7 +51,7 @@ function Deduplication({ classname, data }) {
         queryKey: ['getDuplicateLoan'],
         queryFn: async () => {
             try {
-                var result = await axios.get(`/GroupGet/G4DL/${data?.ofwfname}/${data?.ofwlname}/${data?.loanIdCode}`)
+                var result = await axios.get(`/api/GET/G4DL/${data?.ofwfname}/${data?.ofwlname}/${data?.loanIdCode}`)
                 setList(result.data.list);
                 SET_LOADING_INTERNAL('Deduplication', false)
                 return result.data.list;

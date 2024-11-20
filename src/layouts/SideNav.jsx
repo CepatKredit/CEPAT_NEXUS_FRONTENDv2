@@ -32,7 +32,7 @@ function SideNav() {
 
 //   const searchResult = () => {
 //     axios
-//       .get(`/GroupGet/G146WS/${userID}?searching=${value}`)
+//       .get(`/api/GET/G146WS/${userID}?searching=${value}`)
 //       .then((result) => {
 //         result.data;
 //       })

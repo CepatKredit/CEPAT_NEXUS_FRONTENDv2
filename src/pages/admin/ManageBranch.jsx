@@ -83,7 +83,7 @@ function ManageBranch() {
     const BranchListQuery = useQuery({
         queryKey: ['BranchList'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G11B')
+            const result = await GET_LIST('/api/GET/G11B')
             return result.list
         },
         enabled: true,

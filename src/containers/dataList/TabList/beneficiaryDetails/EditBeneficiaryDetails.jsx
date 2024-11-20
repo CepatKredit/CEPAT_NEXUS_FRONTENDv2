@@ -94,7 +94,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
  
          console.log("Co-Borrower data holder:", dataHolder);
          try {
-             const result = await axios.post('/GroupPost/P43AACB', dataHolder);
+             const result = await axios.post('/api/POST/P43AACB', dataHolder);
              api[result.data.status]({
                  message: result.data.message,
                  description: result.data.description
@@ -115,7 +115,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
      };*/
     const handleDeleteCoborrower = async () => {
         try {
-            const result = await axios.post(`/GroupPost/P43DACB/${toDecrypt(localStorage.getItem('SIDC'))}`);
+            const result = await axios.post(`/api/POST/P43DACB/${toDecrypt(localStorage.getItem('SIDC'))}`);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description,

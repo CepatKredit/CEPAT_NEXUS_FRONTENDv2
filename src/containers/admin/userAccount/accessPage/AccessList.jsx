@@ -36,7 +36,7 @@ function AccessList({ DataList }) {
     const DepartmentListQuery = useQuery({
         queryKey: ['DepartmentList'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G41DL')
+            const result = await GET_LIST('/api/GET/G41DL')
             setDeptList(result.list)
             return result.list
         },
@@ -52,7 +52,7 @@ function AccessList({ DataList }) {
     const RoleListQuery = useQuery({
         queryKey: ['RoleList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/GroupGet/G42RL/${GetDeptId()}`)
+            const result = await GET_LIST(`/api/GET/G42RL/${GetDeptId()}`)
             setRoleList(result.list)
             return result.list
         },
@@ -85,7 +85,7 @@ function AccessList({ DataList }) {
                 Id: DataList.Id,
                 RoleId: GetRoleId().toString()
             }
-            const result = await POST_DATA('/GroupPost/P78GDAL', data)
+            const result = await POST_DATA('/api/POST/P78GDAL', data)
             return result.list
         },
         enabled: !!DataList.Id
@@ -98,7 +98,7 @@ function AccessList({ DataList }) {
                 Id: DataList.Id,
                 RoleId: DataList.RoleID.toString()
             }
-            const result = await POST_DATA('/GroupPost/P79GCAL', data)
+            const result = await POST_DATA('/api/POST/P79GCAL', data)
             return result.list
         },
         enabled: !!DataList.Id
@@ -112,7 +112,7 @@ function AccessList({ DataList }) {
                 Department: GetDeptId()
             }
             setEdit('')
-            await axios.post('/GroupPost/P80UR', data)
+            await axios.post('/api/POST/P80UR', data)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,

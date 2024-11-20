@@ -95,7 +95,7 @@ function CurrencyDetails({ option,api }) {
             status: getData.Status,
         }
         try {
-            const result = await axios.post('/GroupPost/P120AC', data);
+            const result = await axios.post('/api/POST/P120AC', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -126,7 +126,7 @@ function CurrencyDetails({ option,api }) {
         }
         console.log(data)
         try {
-            const result = await axios.post('/GroupPost/P121UC', data);
+            const result = await axios.post('/api/POST/P121UC', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -148,7 +148,7 @@ function CurrencyDetails({ option,api }) {
     const getCountrySelect = useQuery({
         queryKey: ['getCountrySelect'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G26C');
+            const result = await GET_LIST('/api/GET/G26C');
             return result.list;
         },
         refetchInterval: (data) => {

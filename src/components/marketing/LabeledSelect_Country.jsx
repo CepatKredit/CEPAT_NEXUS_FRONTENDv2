@@ -12,7 +12,7 @@ function LabeledSelect_Country({rendered, showSearch, required, placeHolder, lab
     const getCountrySelect = useQuery({
         queryKey: ['getCountrySelect'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G26C');
+            const result = await GET_LIST('/api/GET/G26C');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),

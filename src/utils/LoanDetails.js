@@ -413,7 +413,7 @@ export const UpdateLoanDetails = async ({
     var duplicate_result = null;
 
     if (FirstName !== null || LastName !== null) {
-        await axios.post('/GroupPost/P47CL', checkLoan)
+        await axios.post('/api/POST/P47CL', checkLoan)
             .then((result) => {
                 result.data?.list.map(() => { check = 1; })
                 duplicate_result = result;
@@ -437,7 +437,7 @@ export const UpdateLoanDetails = async ({
     }
 
     if (check === 0) {
-        await axios.post('/GroupPost/P48UD', data)
+        await axios.post('/api/POST/P48UD', data)
             .then((result) => {
                 fresult = result;
             })

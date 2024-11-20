@@ -29,7 +29,7 @@ function LabeledSelectIDType({ className, label, value, receive, disabled, readO
     const getIDType = useQuery({
         queryKey: ['getIDType'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G27IT');
+            const result = await GET_LIST('/api/GET/G27IT');
             return result.list;
         },
         refetchInterval: 30 * 1000,

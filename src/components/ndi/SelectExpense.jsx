@@ -13,7 +13,7 @@ function SelectExpense({ data, event, excludeItems }) {
     const NDIExpenseListQuery = useQuery({
         queryKey: ['NDIExpenseList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/GroupGet/G24N/${parseInt(24)}`)
+            const result = await GET_LIST(`/api/GET/G24N/${parseInt(24)}`)
             return result.list
         },
         refetchInterval: (data) => {
@@ -28,7 +28,7 @@ function SelectExpense({ data, event, excludeItems }) {
     const token = localStorage.getItem('UTK');
     const onClickAdd = useMutation({
         mutationFn: async () => {
-            await axios.post(`/GroupPost/P74ANS/${parseInt(22)}/${newValue}/${jwtDecode(token).USRID}`)
+            await axios.post(`/api/POST/P74ANS/${parseInt(22)}/${newValue}/${jwtDecode(token).USRID}`)
                 .then((result) => {
                     setValue('')
                     NDIExpenseListQuery.refetch()

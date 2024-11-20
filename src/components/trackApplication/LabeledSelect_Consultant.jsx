@@ -11,7 +11,7 @@ function LabeledSelect_Consultant({ className, label, data,value, receive, disab
     const getLoanConsultant = useQuery({
         queryKey: ['getLoanConsultant'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G21LC');
+            const result = await GET_LIST('/api/GET/G21LC');
             console.log(result.list)
             return result.list;
         },

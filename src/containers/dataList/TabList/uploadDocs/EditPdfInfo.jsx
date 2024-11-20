@@ -43,7 +43,7 @@ function EditPdfInfo({ showModal, closeModal, toolBar, data, isClient }) {
             PRODID: 'FILE'
         }
 
-        await axios.post('/GroupPost/P68FS', dataContainer)
+        await axios.post('/api/POST/P68FS', dataContainer)
             .then((result) => {
                 setStatus(false)
                 queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })

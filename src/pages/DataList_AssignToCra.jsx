@@ -27,7 +27,7 @@ function DataList_AssignToCra() {
     const AppDataListQuery = useQuery({
         queryKey: ['AppDataListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/GroupGet/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
+            const result = await GET_LIST(`/api/GET/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
             return result.list;
         },
         enabled: true,
@@ -39,7 +39,7 @@ function DataList_AssignToCra() {
     const CraListQuery = useQuery({
         queryKey: ['CraListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/GroupGet/G112CL`);
+            const result = await GET_LIST(`/api/GET/G112CL`);
             return result.list || [];
         },
         enabled: true,
@@ -51,7 +51,7 @@ function DataList_AssignToCra() {
     async function OnChange(craId, loanAppId) {
         if (!craId || !loanAppId) return; // Ensure both values are present
         try {
-            const result = await axios.post(`/GroupPost/P141UCA`, {
+            const result = await axios.post(`/api/POST/P141UCA`, {
                 AssignedCra: craId,
                 LoggedBy: jwtDecode(token).USRID,
                 LogggedDate: mmddyy(dayjs()),

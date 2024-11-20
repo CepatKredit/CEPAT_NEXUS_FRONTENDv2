@@ -53,7 +53,7 @@ function CityDetails({ option }) {
     const provinceList = useQuery({
         queryKey: ['ProvinceListQuery'],
         queryFn: async () => {
-            const result = await axios.get('/GroupGet/G23PL');
+            const result = await axios.get('/api/GET/G23PL');
             return result.data.list;
         },
         refetchInterval: (data) => {
@@ -75,7 +75,7 @@ function CityDetails({ option }) {
         };
 
         try {
-            const result = await axios.post('/GroupPost/P72AM', data);
+            const result = await axios.post('/api/POST/P72AM', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -112,7 +112,7 @@ function CityDetails({ option }) {
         };
 
         try {
-            const result = await axios.post('/GroupPost/P73UM', data);
+            const result = await axios.post('/api/POST/P73UM', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description

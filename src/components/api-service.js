@@ -8,7 +8,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["LoanProductList"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G19LLP");
+      const result = await GET_LIST("/api/GET/G19LLP");
       setLoanProdList(result.list);
       return result.list;
     },
@@ -20,7 +20,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["CountryList"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G26C");
+      const result = await GET_LIST("/api/GET/G26C");
       setCountryList(result.list);
       return result.list;
     },
@@ -32,7 +32,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["ProvinceList"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G23PL");
+      const result = await GET_LIST("/api/GET/G23PL");
       setProvinceList(result.list);
       return result.list;
     },
@@ -44,7 +44,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G20LP");
+      const result = await GET_LIST("/api/GET/G20LP");
       setLoanPurpose(result.list);
       return result.list;
     },
@@ -56,7 +56,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["BranchListQuery"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G10BL");
+      const result = await GET_LIST("/api/GET/G10BL");
       console.log("BRANCH API", result.list);
       setBranchList(result.list);
       return result.list;
@@ -69,7 +69,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getSuffix"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G28S");
+      const result = await GET_LIST("/api/GET/G28S");
       setSuffix(result.list);
       return result.list;
     },
@@ -81,7 +81,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getValidIdSelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G27IT");
+      const result = await GET_LIST("/api/GET/G27IT");
       setValidId(result.list);
       return result.list;
     },
@@ -93,7 +93,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getRelationship"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G33RR");
+      const result = await GET_LIST("/api/GET/G33RR");
       setRelationship(result.list)
       return result.list;
     },
@@ -108,7 +108,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ['getCurrency'],
     queryFn: async () => {
-        const result = await GET_LIST('/GroupGet/G105CL');
+        const result = await GET_LIST('/api/GET/G105CL');
         setCurrency(result.list)
         return result.list;
     },
@@ -120,7 +120,7 @@ const [getCollectionArea, setCollectionArea] = React.useState([])
 const collectionArea = useQuery({
   queryKey: ['collectionArea'],
   queryFn: async () => {
-      const result = await GET_LIST('/GroupGet/G29CA');
+      const result = await GET_LIST('/api/GET/G29CA');
       setCollectionArea(result.list)
       return result.list;
   },
@@ -151,7 +151,7 @@ const collectionArea = useQuery({
         queryKey: ["getMunF", getProvCode(type, data)],
         queryFn: async () => {
             const provCode = getProvCode(type, data);
-            const result = await GET_LIST(`/GroupGet/G6MA/${provCode}`);
+            const result = await GET_LIST(`/api/GET/G6MA/${provCode}`);
             setMunicipalityList(result.list)
             return result.list;
         },

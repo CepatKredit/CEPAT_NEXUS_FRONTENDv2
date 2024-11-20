@@ -85,7 +85,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
   const loanProducts = useQuery({
     queryKey: ["getProductSelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G19LLP");
+      const result = await GET_LIST("/api/GET/G19LLP");
       console.log(result.list);
       return result.list;
     },
@@ -99,7 +99,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
   const loanPurpose = useQuery({
     queryKey: ["LoanPurposeQuery"],
     queryFn: async () => {
-      const result = await GET_LIST("/GroupGet/G20LP");
+      const result = await GET_LIST("/api/GET/G20LP");
       return result.list;
     },
     refetchInterval: (data) => {

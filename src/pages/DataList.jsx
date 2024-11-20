@@ -25,7 +25,7 @@ function DataList() {
     queryKey: ['AppDataListQuery'],
     queryFn: async () => {
       try {
-      const result = await GET_LIST(`/GroupGet/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
+      const result = await GET_LIST(`/api/GET/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
       setLoading(false);
       return result.list;
     } catch (error) {

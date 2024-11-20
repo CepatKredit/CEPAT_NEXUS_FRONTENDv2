@@ -20,7 +20,7 @@ export const MunicipalityList = (type, data) => {
       queryKey: ['getMunFromProvCode', provCode],
       queryFn: async () => {
           if (!provCode) return [];
-          const result = await GET_LIST(`/GroupGet/G6MA/${provCode}`);
+          const result = await GET_LIST(`/api/GET/G6MA/${provCode}`);
           setMunicipalityList(result.list);
           return result.list;
       },

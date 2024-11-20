@@ -46,7 +46,7 @@ function OwnedAsset({ data, User }) {
         queryFn: async () => {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
             try {
-                const result = await axios.get(`/GroupGet/G110OA/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                const result = await axios.get(`/api/GET/G110OA/${toDecrypt(localStorage.getItem('SIDC'))}`);
                 let dataList = [{
                     key: 0,
                     no: '',
@@ -111,7 +111,7 @@ function OwnedAsset({ data, User }) {
             PlateNo: row.plateNo,
             RecUser: jwtDecode(token).USRID
         }
-        await axios.post('/GroupPost/P133AOA', data)
+        await axios.post('/api/POST/P133AOA', data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -180,7 +180,7 @@ function OwnedAsset({ data, User }) {
 
     async function onClickDelete(e) {
         try {
-            const result = await axios.post(`/GroupPost/P135DOA/${e}`);
+            const result = await axios.post(`/api/POST/P135DOA/${e}`);
             queryClient.invalidateQueries({ queryKey: ['getOwnedAssets'] }, { exact: true });
             api[result.data.status]({
                 message: result.data.message,

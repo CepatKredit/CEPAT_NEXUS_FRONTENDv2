@@ -25,7 +25,7 @@ function ManageUsers() {
     const UserListQuery = useQuery({
         queryKey: ['UserListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G38U')
+            const result = await GET_LIST('/api/GET/G38U')
             let roleList = []
             result.list?.map((x) => {
                 var data = roleList.some((data) => data.text === x.role)

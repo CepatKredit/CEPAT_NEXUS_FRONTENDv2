@@ -26,7 +26,7 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G28S');
+            const result = await GET_LIST('/api/GET/G28S');
             return result.list;
         },
         refetchInterval: 30 * 1000,
@@ -35,7 +35,7 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
     const { data: relationshipOptions } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G33RR');
+            const result = await GET_LIST('/api/GET/G33RR');
             return result.list;
         },
         refetchInterval: 30 * 1000,

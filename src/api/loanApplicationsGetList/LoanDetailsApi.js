@@ -5,7 +5,7 @@ export const useLoanProductSelectValues = (fieldName) => {
     return useQuery({
       queryKey: ["getProductSelect"],
       queryFn: async () => {
-        const result = await GET_LIST_ASYNC("/GroupGet/G19LLP");
+        const result = await GET_LIST_ASYNC("/api/GET/G19LLP");
         return result.list;
       },
       refetchInterval: 5000,
@@ -18,7 +18,7 @@ export const useLoanPurposeSelectValues = (fieldName) =>{
     return useQuery({
         queryKey: ["getLoanPurpose"],
         queryFn: async () => {
-          const result = await GET_LIST_ASYNC("/GroupGet/G20LP");
+          const result = await GET_LIST_ASYNC("/api/GET/G20LP");
 
           return result.list;
         },

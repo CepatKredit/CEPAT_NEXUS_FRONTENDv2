@@ -85,7 +85,7 @@ function ACB({ activeKey, onValueChange, onOtherIncome, onOtherExpense, InitialO
             const user = jwtDecode(token).USRID;
             const date = mmddyy(dayjs());
             //console.log(loanApp, borrow, type, user, date) // Details
-            await axios.get(`/GroupGet/G109ND/${loanApp}/${borrow}/${type}/${user}/${date}`)
+            await axios.get(`/api/GET/G109ND/${loanApp}/${borrow}/${type}/${user}/${date}`)
                 .then((result) => {
                     console.log(result.data.list)
                     let incomeData = [];

@@ -189,8 +189,8 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
             console.log("Rows to Delete", del_dat)
             try {
                 const [updateRNdi, deleteRNdi] = await Promise.all([
-                    axios.post('/GroupPost/P131UN', dat),
-                    axios.post('/GroupPost/P132DN', del_dat),
+                    axios.post('/api/POST/P131UN', dat),
+                    axios.post('/api/POST/P132DN', del_dat),
                 ]);
                 if (updateRNdi.data.status !== 'success' || (Object.keys(del_dat).length !== 0 && deleteRNdi.data.status !== 'success')) {
                     api['warning']({

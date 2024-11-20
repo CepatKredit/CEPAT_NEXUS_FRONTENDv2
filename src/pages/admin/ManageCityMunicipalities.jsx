@@ -86,7 +86,7 @@ function ManageCityMunicipalities() {
     const MunicipalityListQuery = useQuery({
         queryKey: ['MunicipalityListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST('/GroupGet/G22MA')
+            const result = await GET_LIST('/api/GET/G22MA')
             return result.list
         },
         enabled: true,

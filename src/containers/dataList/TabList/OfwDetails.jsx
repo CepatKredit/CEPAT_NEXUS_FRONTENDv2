@@ -28,7 +28,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
     const fetchRelativesAndUpdateCount = () => {
 
         if (BorrowerId) {
-            GET_LIST(`/GroupGet/G35R/${BorrowerId}`).then((result) => {
+            GET_LIST(`/api/GET/G35R/${BorrowerId}`).then((result) => {
                 if (result?.list) {
                     const relativescount = result.list.length;
                     setRelativesCount(relativescount);

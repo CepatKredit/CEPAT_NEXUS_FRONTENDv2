@@ -24,7 +24,7 @@ function PreLoad({ children }) {
   const getPurposeList = useQuery({
     queryKey: ["PurposeListQuery"],
     queryFn: async () => {
-      const result = await GET_LIST(`/GroupGet/G99PL`);
+      const result = await GET_LIST(`/api/GET/G99PL`);
       let dataContainer = [];
       result.list?.map((x) => {
         dataContainer.push(x);
@@ -39,7 +39,7 @@ function PreLoad({ children }) {
   const getBankList = useQuery({
     queryKey: ["BankListQuery"],
     queryFn: async () => {
-      const result = await GET_LIST(`/GroupGet/G100PT`);
+      const result = await GET_LIST(`/api/GET/G100PT`);
       let dataContainer = [];
       result.list?.map((x) => {
         dataContainer.push(x);
@@ -61,7 +61,7 @@ function PreLoad({ children }) {
     queryFn: async () => {
       let total = 0;
       const result = await GET_LIST(
-        `/GroupGet/G106DL/${GET_LOAN_APPLICATION_NUMBER}/${"NP"}`
+        `/api/GET/G106DL/${GET_LOAN_APPLICATION_NUMBER}/${"NP"}`
       );
       result.list?.map((x) => {
         total += parseFloat(x.amount);
@@ -89,7 +89,7 @@ function PreLoad({ children }) {
   const TileCountListQuery = useQuery({
     queryKey: ["TileCountListQuery"],
     queryFn: async () => {
-      const result = await GET_LIST(`/GroupGet/G98TC`);
+      const result = await GET_LIST(`/api/GET/G98TC`);
       setDataCounter(result.list);
       return result.list;
     },

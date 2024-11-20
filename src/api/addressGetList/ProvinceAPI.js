@@ -7,7 +7,7 @@ export function ProvinceList() {
   useQuery({
     queryKey: ["ProvinceListQuery"],
     queryFn: async () => {
-      const result = await GET_LIST('/GroupGet/G23PL')
+      const result = await GET_LIST('/api/GET/G23PL')
       setProvinceList(result.list);
     },
     refetchInterval: (data) => (data && data.length === 0 ? 500 : false),
