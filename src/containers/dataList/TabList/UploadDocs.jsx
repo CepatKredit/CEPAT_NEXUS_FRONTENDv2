@@ -53,10 +53,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     })
 
     React.useEffect(() => {
-        if (!getAppDetails.loanIdCode) {
-            SET_LOADING_INTERNAL('UploadDocs', true)
-            FileListQuery.refetch();
-        }
+        SET_LOADING_INTERNAL('UploadDocs', true)
+        FileListQuery.refetch();
     }, [getAppDetails]);
 
     console.log("STATUS", GetStatus)
