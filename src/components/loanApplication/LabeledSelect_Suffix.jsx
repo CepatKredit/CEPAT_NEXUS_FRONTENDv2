@@ -94,7 +94,10 @@ function LabeledSelect_Suffix({
           disabled={disabled}
           size="large"
           placeholder={placeHolder}
-          showSearch={showSearch}
+          showSearch 
+          filterOption={(input, option) =>
+              option.label.toLowerCase().includes(input.toLowerCase())
+            }
           onChange={(e) => {
             onChange(e);
           }}

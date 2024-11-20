@@ -29,7 +29,12 @@ function LabeledInput_OfwContact({
   const [getItem, setItem] = React.useState(
     typeof getAppDetails[fieldName] === "string" ? getAppDetails[fieldName].split("/")[1] : ""
   );
-
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+    setItem("")
+  }, [!getAppDetails.dataPrivacy])
+  
   function onPrefChange(value) {
     setPref(value);
     if (value) {
@@ -130,6 +135,7 @@ function LabeledInput_OfwContact({
 
       <div className={className_dsub}>
         <Input
+        autoComplete="new-password"
           addonBefore={prefix}
           disabled={disabled}
           readOnly={readOnly}
@@ -138,7 +144,7 @@ function LabeledInput_OfwContact({
           size="large"
           placeholder={placeHolder}
           maxLength={20}
-          autoComplete="off"
+          // autoComplete="off"
           style={{ width: "100%" }}
           onBlur={onBlur}
           status={required || required == undefined ? getStatus : false}

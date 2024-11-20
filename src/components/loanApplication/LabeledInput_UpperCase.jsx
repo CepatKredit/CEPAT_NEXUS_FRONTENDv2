@@ -29,6 +29,11 @@ function LabeledInput_UpperCase({
   const [getStatus, setStatus] = React.useState("");
   const [getIcon, setIcon] = React.useState(false);
 
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+  }, [!getAppDetails.dataPrivacy])
+
   function onChange(e) {
     const newValue = e.target.value.replace(/[^a-zA-Z\s]/g, "").slice(0, 80);
     const upperValue = newValue.toUpperCase();
@@ -47,11 +52,11 @@ function LabeledInput_UpperCase({
     if (rendered) {
       setIcon(false);
       if (getAppDetails[fieldName]) {
-        setStatus(""); // Set checkmark icon when input is valid
-        setIcon(true); // Automatically close tooltip when input is valid
+        setStatus(""); 
+        setIcon(true);
       } else {
-        setStatus("error"); // Set error status when input is empty
-        setIcon(true); // Keep tooltip visible when input is empty
+        setStatus("error");
+        setIcon(true); 
       }
     }
   }, []);
@@ -69,6 +74,7 @@ function LabeledInput_UpperCase({
       <div className={className_dsub}>
         <Input
           style={{ width: "100%" }}
+          autoComplete="new-password"
           size="large"
           value={
             fieldName === "consultName" && GetData("ROLE")?.toString() === "20"
