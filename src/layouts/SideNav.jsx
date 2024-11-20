@@ -203,7 +203,7 @@ function SideNav() {
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
                   <Button
-                    type="primary"
+                    type="default"  
                     onClick={handleSearchClick}
                     icon={<SearchOutlined />}
                   />

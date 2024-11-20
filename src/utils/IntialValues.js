@@ -3,7 +3,7 @@ import { GetData } from "./UserData";
 
 const createInitialAppDetails = (direct) => {
   const USRNAME = toDecrypt(localStorage.getItem("USRFN"));
-  const ROLE = GetData('ROLE');
+  const ROLE = GetData('ROLE') ? GetData('ROLE') : "" ;
   const BRANCH = GetData("BRANCH");
   console.log("ROLE from localStorage:", ROLE);
 

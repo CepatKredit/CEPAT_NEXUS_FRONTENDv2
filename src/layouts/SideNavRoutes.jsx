@@ -61,7 +61,7 @@ function SideNavRoutes() {
         })
     }
 
-    if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55' || GetData('ROLE').toString() === '60') {
+    if (GetData('ROLE')?.toString() === '50' || GetData('ROLE')?.toString() === '55' || GetData('ROLE')?.toString() === '60') {
         PageAccess.push({
             key: '/ckfi/manage-currency',
             icon: <DollarOutlined style={{ fontSize: '18px' }} />,
@@ -69,7 +69,7 @@ function SideNavRoutes() {
         })
     }
 
-    toDecrypt(localStorage.getItem('UPTH')).split(',').map((x) => {
+    toDecrypt(localStorage.getItem('UPTH'))?.split(',').map((x) => {
         if (x === '/ckfi/searches') {
             return;
         }
