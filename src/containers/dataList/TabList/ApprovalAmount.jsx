@@ -194,7 +194,31 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     const handleSubmit = async () => {
         onClickSaveData.mutate();
     };
-
+    function DISABLE_STATUS(LOCATION) {
+         if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/on-waiver' 
+                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-verification'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '70') {
+            console.log('LPA')
+            if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/returned/credit-associate'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else if (GetData('ROLE').toString() === '80') {
+            console.log('LPO')
+            if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
+                || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
+            else { return false }
+        }
+        else { return false }
+    }
     return (
         <div className={classname}>
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
@@ -268,7 +292,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 )}
             </div>
             {(GetData('ROLE').toString() === '60' || GetData('ROLE').toString() === '100' &&
-                ['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) && (
+                ['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) && !DISABLE_STATUS(localStorage.getItem('SP')) && (
                     <ConfigProvider
                         theme={{
                             token: {
