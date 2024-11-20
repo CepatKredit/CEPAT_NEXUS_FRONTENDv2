@@ -29,7 +29,6 @@ import OwnedProperties from '../TabList/OwnedProperties';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReleaseDocuments from '../TabList/ReleaseDocuments';
-import Charges from '../TabList/Charges';
 import StatusRemarks from '../TabList/StatusRemarks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
@@ -276,11 +275,6 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
             label: <div className="flex flex-rows"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
             children: <ApprovalAmount valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { updateAppDetails(e) }} />,
-        },
-        {
-            label: <div className='flex flex-rows'><LuCalculator style={{ fontSize: '20px', marginRight: 5 }} /><span>Charges</span></div>,
-            key: 'charges',
-            children: <Charges LoanAppId={ClientId} data={value} />,
         },
         {
             label: <div className='flex flex-rows'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,

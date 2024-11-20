@@ -34,42 +34,22 @@ function Charges({ LoanAppId, data, User, }) {
     }
 
 
-
-    /*const [getCharges, setCharges] = React.useState({
-        ProductLoan: getAppDetails?.loanProd,
-        PFR: '',
-        InterestRate: '',
-        CFRF: '',
-        Terms: '',
-        GracePeriod: '',
-        ApprovedAmount: getAppDetails?.ApprvAmount,
-        ChargeType: '',
-        ProcessingFee: '',
-        CRF: '',
-        Notatial: 300.00,
-        PNDST: '',
-        ServiceFee: '',
-        DocuSign: '' || 300.00,
-        IBFTFee: '' || 300.00,
-        Others: '',
-        TotalCharges: '',
-        PNValue: '',
-        NetProceeds: '',
-        MonthlyAmortization: '',
-    });*/
-
-
-
-
-
     React.useEffect(() => {
         // Set temporary default values for PFR, CFRF, and InterestRate based on loanType and loanProd
-        if (!getAppDetails?.PFR || !getAppDetails?.CFRF || !getAppDetails?.InterestRate|| !getAppDetails?.DocuSign || !getAppDetails?.IBFTFee) {
+        if (
+            !getAppDetails?.PFR &&
+            !getAppDetails?.CFRF &&
+            !getAppDetails?.InterestRate &&
+            !getAppDetails?.DocuSign &&
+            !getAppDetails?.IBFTFee &&
+            !getAppDetails?.Notarial
+        ) {
             let defaultPFR = '';
             let defaultCFRF = '';
             let defaultInterestRate = '';
             let defaultDocuSign = 300;  // Default value for DocuSign
             let defaultIBFTFee = 300;   // Default value for IBFTFee
+            let defaultNotarial = 300;
 
             // Default value for PFR based on loanType
             if (data.loanType === 1) {
@@ -99,7 +79,7 @@ function Charges({ LoanAppId, data, User, }) {
             if (!getAppDetails.InterestRate) {
                 defaultInterestRate = 0.025; // Default InterestRate
             }
-            
+
 
             // Set PFR, CFRF, and InterestRate values in the state
             setAppDetails((prevState) => ({
@@ -109,6 +89,7 @@ function Charges({ LoanAppId, data, User, }) {
                 InterestRate: defaultInterestRate, // Set temporary InterestRate value
                 DocuSign: defaultDocuSign,  // Set temporary DocuSign value
                 IBFTFee: defaultIBFTFee,
+                Notarial: defaultNotarial,
             }));
         }
 
@@ -118,7 +99,7 @@ function Charges({ LoanAppId, data, User, }) {
         const CFRF = getAppDetails?.CFRF;
         const terms = parseFloat(getAppDetails.loanTerms);
         const gracePeriod = getAppDetails.GracePeriod;
-        const others = parseFloat(getAppDetails.Others) || 0;
+        const others = parseFloat(getAppDetails.Others);
         const chargetype = getAppDetails.ChargeType;
 
         const processingFee = (parseFloat(PFR) * approvedAmount).toFixed(2);
@@ -137,7 +118,9 @@ function Charges({ LoanAppId, data, User, }) {
             serviceFee = '0.00'; // Default value if no valid grace period
         }
 
-        const totalCharges = (parseFloat(processingFee) + others).toFixed(2);
+        const totalCharges = others > 0
+            ? (parseFloat(processingFee) + parseFloat(others)).toFixed(2)
+            : "0.00";
 
         // Default value for PNValue calculation
         let pnValue = 0;
@@ -151,13 +134,17 @@ function Charges({ LoanAppId, data, User, }) {
             pnValue = (baseAmount * terms * interestRate) + baseAmount;
         }
 
-
         // Compute netProceeds based on ChargeType
         let netProceeds = 0;
+
         if (chargetype === 1) {
-            netProceeds = approvedAmount + parseFloat(totalCharges);
+            netProceeds = parseFloat(totalCharges) > 0
+                ? approvedAmount + parseFloat(totalCharges)
+                : approvedAmount; // If TotalCharges is 0, only use ApprovedAmount
         } else if (chargetype === 2) {
-            netProceeds = approvedAmount + parseFloat(others);
+            netProceeds = parseFloat(others) > 0
+                ? approvedAmount + parseFloat(others)
+                : approvedAmount; // If Others is 0, only use ApprovedAmount
         }
 
 
@@ -185,8 +172,8 @@ function Charges({ LoanAppId, data, User, }) {
             PNDST: pndst,
             ServiceFee: serviceFee,
             TotalCharges: totalCharges,
-            PNValue: pnValue,
-            NetProceeds: netProceeds,
+            PNValue: pnValue.toFixed(2),
+            NetProceeds: netProceeds.toFixed(2),
             MonthlyAmortization: monthlyAmortization.toFixed(2),
         }));
     }, [data.loanType, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.Terms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
@@ -209,7 +196,7 @@ function Charges({ LoanAppId, data, User, }) {
                     ChargeType: result.list[0]?.chargesType,
                     ProcessingFee: result.list[0]?.processingFee,
                     CRF: result.list[0]?.crf,
-                    Notatial: result.list[0]?.notarial,
+                    Notarial: result.list[0]?.notarial,
                     PNDST: result.list[0]?.pnDst,
                     ServiceFee: result.list[0]?.serviceFee,
                     DocuSign: result.list[0]?.docuSign,
@@ -349,7 +336,7 @@ function Charges({ LoanAppId, data, User, }) {
                                         onChange={handleTermChange}
                                         placeholder="Select terms"
                                     >
-                                        {generateTermOptions()}  // Generate options based on getAppDetails.loanTerms
+                                        {generateTermOptions()}
                                     </Select>
                                 </div>
                             </Space>
@@ -431,7 +418,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem]'>Notarial</div>
                                 <div className='w-[15rem]'>
-                                    <Input readOnly value={parseFloat(getAppDetails.Notatial).toFixed(2)} onChange={(e) => updateAppDetails({ name: 'Notatial', value: e.target.value })} />
+                                    <Input readOnly value={parseFloat(getAppDetails.Notarial).toFixed(2)} onChange={(e) => updateAppDetails({ name: 'Notarial', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
@@ -449,7 +436,7 @@ function Charges({ LoanAppId, data, User, }) {
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
-                                <div className='w-[10rem]'>DocuSign</div>
+                                <div className='w-[10rem]'>Docusign</div>
                                 <div className='w-[15rem]'>
                                     <Input
                                         value={getAppDetails.DocuSign}
@@ -630,7 +617,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.Notatial}
+                                        value={getAppDetails.Notarial}
                                         readOnly
                                     />
                                 </div>

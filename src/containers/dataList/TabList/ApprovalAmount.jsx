@@ -114,6 +114,24 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     const onClickSaveData = useMutation({
         mutationFn: async () => {
             try {
+                if(
+                    parseFloat(getAppDetails.CFRF) === 0 ||
+                    parseFloat(getAppDetails.InterestRate) === 0 ||
+                    parseFloat(getAppDetails.DocuSign) === 0 ||
+                    parseFloat(getAppDetails.IBFTFee) === 0 || 
+                    parseFloat(getAppDetails.GracePeriod) === 0 ||
+                    parseFloat(getAppDetails.ChargeType) === 0 ||
+                    parseFloat(getAppDetails.TotalCharges) === 0 ||
+                    parseFloat(getAppDetails.PNValue) === 0 ||
+                    parseFloat(getAppDetails.NetProceeds) === 0 ||
+                    parseFloat(getAppDetails.MonthlyAmort) === 0 
+                ) {
+                    api.warning({
+                        message:'Notification',
+                        description: 'Please fill all the required fields',
+                    });
+                }
+                else {
                 const payload = {
                     LoanAppId: getAppDetails.loanIdCode,
                     ProcessingFeeRate: parseFloat(getAppDetails.PFR),
@@ -123,7 +141,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     ChargesType: getAppDetails.ChargeType,
                     ProcessingFee: parseFloat(getAppDetails.ProcessingFee),
                     Crf: parseFloat(getAppDetails.CRF),
-                    Notarial: parseFloat(getAppDetails.Notatial),
+                    Notarial: parseFloat(getAppDetails.Notarial),
                     PnDst: parseFloat(getAppDetails.PNDST),
                     ServiceFee: parseFloat(getAppDetails.ServiceFee),
                     DocuSign: parseFloat(getAppDetails.DocuSign),
@@ -133,7 +151,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     PnValue: parseFloat(getAppDetails.PNValue),
                     NetProceeds: parseFloat(getAppDetails.NetProceeds),
                     MonthlyAmortization: parseFloat(getAppDetails.MonthlyAmortization),
-                    LoggedUser: 'rhafrhaf',
+                    LoggedUser: jwtDecode(token).USRID,
                 };
 
                 console.log('Payload being sent:', payload);
@@ -144,11 +162,12 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     message: 'Success',
                     description: 'Charges Updated successfully!',
                 });
+            }
             } catch (error) {
                 console.log('Error in charges', error);
                 api.error({
                     message: 'Error',
-                    description: 'Something went wrong. Please try again.',
+                    description: 'An error occurred while updating charges.',
                 });
             }
         },
