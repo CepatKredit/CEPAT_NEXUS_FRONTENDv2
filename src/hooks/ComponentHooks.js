@@ -1,6 +1,6 @@
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
-import { debounce } from '@utils/Debounce';
+import { debouncef } from '@utils/Debounce';
 import { DateFormat, Uppercase } from '@utils/Formatting';
 import { dateMessage } from '@utils/MessageValidationList';
 import { checkAgeisValid, CheckDateValid, checkDeployisValid } from '@utils/Validations';
@@ -247,7 +247,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName) {
 
   const debouncedReceive = useMemo(
       () =>
-          debounce((value, delay) => {
+          debouncef((value, delay) => {
               if (latestValueRef.current !== value) {
                   receive(value);
                   latestValueRef.current = value;
