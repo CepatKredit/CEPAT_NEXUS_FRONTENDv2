@@ -53,10 +53,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     })
 
     React.useEffect(() => {
-        if (!getAppDetails.loanIdCode) {
-            SET_LOADING_INTERNAL('UploadDocs', true)
-            FileListQuery.refetch();
-        }
+        SET_LOADING_INTERNAL('UploadDocs', true)
+        FileListQuery.refetch();
     }, [getAppDetails]);
 
     console.log("STATUS", GetStatus)
@@ -218,18 +216,18 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             <div className="space-x-[1.5rem]">
                 {
                     !DISABLE_STATUS(localStorage.getItem('SP'), GetStatus) ? (
-                        (GetStatus === "LACK OF DOCUMENTS"  || GetStatus === "RECEIVED") && (
-                        <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                            <Button
-                                size="large"
-                                className="ml-6 mb-2 bg-[#3b0764]"
-                                type="primary"
-                                onClick={() => setModalStatus(true)}
-                                disabled={User === 'Lp'}
-                            >
-                                Upload Document
-                            </Button>
-                        </ConfigProvider>
+                        (GetStatus === "LACK OF DOCUMENTS" || GetStatus === "RECEIVED") && (
+                            <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                                <Button
+                                    size="large"
+                                    className="ml-6 mb-2 bg-[#3b0764]"
+                                    type="primary"
+                                    onClick={() => setModalStatus(true)}
+                                    disabled={User === 'Lp'}
+                                >
+                                    Upload Document
+                                </Button>
+                            </ConfigProvider>
                         )
                     ) : null
                 }

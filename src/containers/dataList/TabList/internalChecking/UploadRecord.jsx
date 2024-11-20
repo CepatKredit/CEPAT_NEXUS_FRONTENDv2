@@ -151,10 +151,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
         },
     ]
 
-    React.useEffect(() => {
-        FileListQuery.refetch()
-        SET_LOADING_INTERNAL('FinancialChecker', true);
-    }, [ClientId])
+   
 
     const token = localStorage.getItem('UTK');
     const FileListQuery = useQuery({
@@ -186,6 +183,11 @@ function UploadRecord({ data, ClientId, Uploader }) {
         },
         enabled: true
     })
+
+    React.useEffect(() => {
+        FileListQuery.refetch()
+        SET_LOADING_INTERNAL('FinancialChecker', true);
+    }, [data])
 
     const { modalStatus, setStatus, storeData } = viewPDFView()
 
