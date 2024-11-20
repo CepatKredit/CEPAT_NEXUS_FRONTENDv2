@@ -24,6 +24,13 @@ function LabeledInput_Numeric({
   const [getStatus, setStatus] = React.useState("");
   const [getIconType, setIconType] = React.useState(false);
   const [getItem, setItem] = React.useState(getAppDetails[fieldName] || "");
+
+  React.useEffect(() => {
+    setStatus(null)
+    setIconType(false)
+    setItem("")
+  }, [!getAppDetails.dataPrivacy])
+
   function onChangeValue(e) {
     const inputValue = e.target.value;
 
@@ -78,13 +85,14 @@ function LabeledInput_Numeric({
 
       <div className={className_dsub}>
         <Input
+        autoComplete="new-password"
           disabled={disabled}
           readOnly={readOnly}
           value={getItem}
           onChange={onChangeValue}
           size="large"
           placeholder={placeHolder}
-          autoComplete="off"
+          // autoComplete="off"
           style={{ width: "100%" }}
           //onBlur={onBlur}
           status={getStatus}

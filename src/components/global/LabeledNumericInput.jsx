@@ -17,10 +17,11 @@ function LabeledNumericInput({ className, label, placeHolder, value, receive, di
                     size='large'
                     allowClear
                     placeholder={placeHolder}
-                    autoComplete='off'
+                    // autoComplete='off'
                     style={{ width: '100%' }}
                     disabled={disabled}
                     readOnly={readOnly}
+                    autoComplete="new-password"
                 />
             </div>
         </div>
