@@ -522,7 +522,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                 
                 {/* Save Button Section */}
                 <center className="flex justify-center items-center ">
-                    <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                    <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
                         {!DISABLE_STATUS(localStorage.getItem('SP')) && (
                             <Button
                                 size="large"

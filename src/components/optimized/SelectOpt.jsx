@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Select, ConfigProvider } from 'antd';
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { debounce } from '@utils/Debounce';
@@ -24,7 +24,7 @@ function SelectOpt({
     rendered,
 }) {
     const [search, setSearchInput] = useState('');
-    const [isRendered, setRendered] = useState(rendered !== undefined? rendered : true);//make sure rendered has a value
+    const [isRendered, setRendered] = useState(rendered !== undefined ? rendered : true);//make sure rendered has a value
     const inputRef = useRef(null);
     const { setfocus } = useContext(LoanApplicationContext);
 
@@ -38,7 +38,31 @@ function SelectOpt({
         handleSelectChange,
         handleKeyDown,
         setDropdownOpen,
-    } = SelectComponentHooks(search, receive, options, setSearchInput,KeyName, rendered, value, setRendered);
+    } = SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered);
+
+    const newOptions = useMemo(() => {
+        if (KeyName === 'ofwcountry') {
+          return filteredOptions.map((x) => {
+            const bgColor = x.negative === 1 ? 'bg-[#ff0000]' : '';
+            const textColor = x.negative === 0 ? 'text-black' : 'text-white';
+            return {
+              ...x,
+              label: (
+                <div
+                  className={`${bgColor} ${textColor} py-1 px-2 rounded-md h-7 text-sm`}
+                >
+                  {x.label}
+                </div>
+              ),
+            };
+          });
+        } else {
+          return filteredOptions.map((x) => ({
+            ...x, 
+            label: x.label, 
+          }));
+        }
+      }, [KeyName, filteredOptions]);
 
     const [dropdownOpen, setDropdownVisible] = useState(false);
 
@@ -75,7 +99,7 @@ function SelectOpt({
                     <Select
                         ref={inputRef}
                         className='text-left'
-                        options={filteredOptions}
+                        options={newOptions}
                         value={value || undefined}
                         disabled={disabled}
                         size='large'
@@ -95,7 +119,7 @@ function SelectOpt({
                         suffixIcon={
                             isRendered && !disabled && (required || required === undefined) && status === 'error' ? (
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
-                            ) :  isRendered && !disabled && (required || required === undefined) && status === '' ? (
+                            ) : isRendered && !disabled && (required || required === undefined) && status === '' ? (
                                 <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
                             ) : null
                         }

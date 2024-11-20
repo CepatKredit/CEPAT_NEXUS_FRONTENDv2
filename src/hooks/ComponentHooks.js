@@ -1,28 +1,47 @@
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
-import { DateFormat } from '@utils/Formatting';
+import { debouncef } from '@utils/Debounce';
+import { DateFormat, Uppercase } from '@utils/Formatting';
 import { dateMessage } from '@utils/MessageValidationList';
 import { checkAgeisValid, CheckDateValid, checkDeployisValid } from '@utils/Validations';
 import dayjs from 'dayjs';
 import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'react';
 
 
-function hookValid(KeyName, date) {
+function hookDateValid(KeyName, date) {
   if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') { return !checkDeployisValid(date) }
   else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") { return !checkAgeisValid(date) }
   else { return CheckDateValid(date) }
 }
 
-export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value,setRendered) {
+function hookInputValid(KeyName, input){
+  if(KeyName === 'NotDefault' ){
+    return false;
+  }else if(KeyName === 'Default' && input !== ''){
+    return true;
+  }
+}
+
+function hookInputFormat(KeyName, input) {
+  
+}
+
+export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered) {
   const { getAppDetails } = useContext(LoanApplicationContext)
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   const filteredOptions = useMemo(() => {
-    return options.filter(option =>
-      option.label.toLowerCase().includes(search ? search.toLowerCase() : '')
-    );
+    if (KeyName === 'ofwcountry') {
+      return options.filter(option =>
+        option.name.toLowerCase().includes(search ? search.toLowerCase() : '')
+      );
+    } else {
+      return options.filter(option =>
+        option.label.toLowerCase().includes(search ? search.toLowerCase() : '')
+      );
+    }
   }, [search, options]);
 
   useEffect(() => { //Should place to another file?
@@ -85,13 +104,13 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   const [debouncedInput, setDebouncedInput] = useState(inputValue);
   const [validationMessage, setValidationMessage] = useState('');
 
-  /* cant be used here or add new paramater to trigger this function
-  useEffect(() => {
-      setStatus("");
-      setIconVisible(false)
-      setInputValue('')
-      setDebouncedInput('')
-  }, [!getAppDetails.dataPrivacy])*/
+  /*
+    useEffect(() => {
+        setStatus("");
+        setIconVisible(false)
+        setInputValue('')
+        setDebouncedInput('')
+    }, [!getAppDetails.dataPrivacy])*/
 
   const debounceChange = useCallback((formattedValue) => {
     setDebouncedInput(formattedValue);
@@ -123,10 +142,10 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setRendered(true);
       const date = dayjs(debouncedInput, 'MM-DD-YYYY');
       if (debouncedInput.length === 10 && date.isValid()) {
-        if (hookValid(KeyName, date)) {
+        if (hookDateValid(KeyName, date)) {
+          setRendered(true);
           setStatus('error');
           setValidationMessage(dateMessage(KeyName, 'Invalid'));
           /*
@@ -140,18 +159,21 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
           updateAppDetails({ name: KeyName, value: '' })
           */
         } else {
+          setRendered(true);
           setIconVisible(true);
           setValidationMessage('');
           setStatus('');
           receive(mmddyy(date))
         }
       } else if (debouncedInput.length === 0 && (rendered === false || rendered === undefined)) {
-        setStatus('');
+        setStatus('error');
         receive()
       } else if (rendered === true && debouncedInput.length === 0) {
+        setRendered(true);
         setStatus('error');
         setValidationMessage(dateMessage(KeyName, 'Empty'));
       } else {
+        setRendered(true);
         setStatus('error');
         setValidationMessage(dateMessage(KeyName, 'Invalid'));
         receive()
@@ -164,21 +186,22 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   useEffect(() => {
     if (rendered) {
       setIconVisible(true);
-      if (CheckDateValid(value)) {//Reset the DatePicker value when there is no valid date in input date
+      if (CheckDateValid(inputValue)) {//Reset the DatePicker value when there is no valid date in input date
         setDatePickerValue('');
       }
-      if (hookValid(KeyName, value)) {
+      if (hookDateValid(KeyName, inputValue)) {
         setStatus('error');
       } else {
         setStatus('');
       }
+      setDatePickerValue(CheckDateValid(inputValue) ? dayjs(inputValue) : '');
     }
   }, []);
 
 
   const handleBlur = () => {
     if (debouncedInput.length === 10 && inputValue.isValid()) {
-      if (hookValid(KeyName, date)) {
+      if (hookDateValid(KeyName, date)) {
         setStatus('error');
         setValidationMessage(dateMessage(KeyName, 'Invalid'));
         receive()
@@ -186,7 +209,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
         setIconVisible(true);
         setValidationMessage('');
         setStatus('');
-        receive( mmddyy(date) )
+        receive(mmddyy(date))
       }
     } else if (debouncedInput.length === 0) {
       setStatus('error');
@@ -213,6 +236,76 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
     handleBlur,
   };
 }
+
+export function InputComponentHook(initialValue, receive, rendered, KeyName) {
+  const [inputValue, setInputValue] = useState(initialValue || '');
+  const [status, setStatus] = useState('');
+  const [iconVisible, setIconVisible] = useState(false);
+  const latestValueRef = useRef(initialValue);
+  const delay_def = 1000;
+
+
+  const debouncedReceive = useMemo(
+      () =>
+          debouncef((value, delay) => {
+              if (latestValueRef.current !== value) {
+                  receive(value);
+                  latestValueRef.current = value;
+              }
+          }), // The debounce function itself will handle the delay
+      [receive]
+  );
+
+  const statusValidation = (valid, update, val) =>{
+    if (valid) {
+          setStatus('');
+          if (update){
+            setInputValue(val);
+            debouncedReceive(val, delay_def); // Pass the custom delay as 1sec
+          }
+      } else {
+          setStatus('error');
+          if (update){
+            setInputValue(val);
+            debouncedReceive(val, delay_def); // Pass the custom delay as 1sec
+          }
+      }
+    
+  }
+
+  const handleChange = (e) => {
+      const value = Uppercase(e.target.value);
+      statusValidation(hookInputValid(KeyName, value), true, value) // FORMATTING value here hookInputFormat(KeyName, value)
+  };
+
+  const handleBlur = () => {
+      setIconVisible(true);
+      statusValidation(hookInputValid(KeyName, inputValue), true, inputValue) // FORMATTING value here
+  };
+
+  useEffect(() => {
+      if (rendered) {
+        setIconVisible(true);
+        statusValidation(hookInputValid(KeyName, inputValue), false, inputValue) // FORMATTING value here
+      }
+  }, [rendered]);
+
+  useEffect(() => {
+      return () => {
+          debouncedReceive.cancel();
+      };
+  }, [debouncedReceive]);
+
+  return {
+      inputValue,
+      status,
+      iconVisible,
+      handleChange,
+      handleBlur,
+  };
+}
+
+
 
 //Focus to Required/Invalid Field
 export function FocusHook() {

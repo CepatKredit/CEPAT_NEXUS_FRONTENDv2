@@ -2,8 +2,7 @@ import React, { useRef } from 'react';
 import ViewApprovalAmount from './approvalAmount/ViewApprovalAmount';
 import EditApprovalAmount from './approvalAmount/EditApprovalAmount';
 import { Button, notification, ConfigProvider } from 'antd';
-import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import AmountTable from './approvalAmount/AmountTable';
+import { EditOutlined, SaveOutlined, CloseOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { GetData } from '@utils/UserData';
@@ -12,10 +11,12 @@ import { UpdateLoanDetails } from '@utils/LoanDetails';
 import { jwtDecode } from 'jwt-decode';
 import Charges from './Charges';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { mmddyy } from '@utils/Converter';
+import dayjs, { Dayjs } from 'dayjs';
 
 
 function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, loading }) {
-    const { getAppDetails } = React.useContext(LoanApplicationContext);
+    const { getAppDetails , updateAppDetails} = React.useContext(LoanApplicationContext);
     const [isEdit, setEdit] = React.useState(false);
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
@@ -60,7 +61,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             TotalExposure: data.TotalExposure ? parseFloat(data.TotalExposure.toString().replaceAll(',', '')) : 0.00,
             CRORemarks: data.CRORemarks,
             ModUser: jwtDecode(token).USRID,
-            RecBy: jwtDecode(token).USRID
         }
         console.log('TEST_APPRV_AMOUNT', value)
         let result = await UpdateLoanDetails(value);
@@ -79,6 +79,37 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
 
     }
+    const onClickApprove = async () => {
+        try {
+            const value = {
+                LoanAppId: data.loanIdCode,
+                Tab: 5,
+                CremanBy: jwtDecode(token).USRID,
+            };
+    
+            let result = await UpdateLoanDetails(value);
+    
+            if (result.data.status === "success") {
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description,
+                });
+            } else {
+                api['warning']({
+                    message: 'Error: Failed to Update',
+                    description: "Fail Connection",
+                });
+            }
+        } catch (error) {
+            api.error({
+                message: 'Error',
+                description: 'Something went wrong while updating. Please try again.',
+            });
+        }
+    
+        queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+    };
+    
 
     const onClickSaveData = useMutation({
         mutationFn: async () => {
@@ -87,9 +118,9 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     LoanAppId: getAppDetails.loanIdCode,
                     ProcessingFeeRate: parseFloat(getAppDetails.PFR),
                     InterestRate: parseFloat(getAppDetails.InterestRate),
-                   CreditRiskFeeRate: parseFloat(getAppDetails.CFRF),
+                    CreditRiskFeeRate: parseFloat(getAppDetails.CFRF),
                     GracePeriod: getAppDetails.GracePeriod,
-                     ChargesType: getAppDetails.ChargeType,
+                    ChargesType: getAppDetails.ChargeType,
                     ProcessingFee: parseFloat(getAppDetails.ProcessingFee),
                     Crf: parseFloat(getAppDetails.CRF),
                     Notarial: parseFloat(getAppDetails.Notatial),
@@ -130,30 +161,26 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     return (
         <div className={classname}>
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
-
-            <div className={`w-full overflow-y-auto ${(!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
-                ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[48vh] 3xl:h-[57vh]'
-                : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[58vh] 3xl:h-[65vh]'
-                }`}>
+    
+            <div
+                className={`w-full overflow-y-auto ${
+                    (!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
+                        ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
+                        : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]'
+                }`}
+            >
                 {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                     <ViewApprovalAmount loading={loading} data={data} User={User} />
                 ) : (
                     <EditApprovalAmount data={data} receive={receive} User={User} />
                 )}
-                {/*!isEdit && (
-                <div className="w-[73rem] mb-[2rem] mt-[1rem] mx-auto">
-                    <AmountTable data={data} receive={receive} User="Credit" creditisEdit={false} loading={false} />
-                </div>
-            )*/}
                 {GetData('ROLE') === '70' || GetData('ROLE') === '80' ? (
                     <Charges data={data} LoanAppId={getAppDetails?.loanIdCode} />
                 ) : null}
             </div>
             {contextHolder}
-
-            <div className="w-full p-8 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 
-                            space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-
+    
+            <div className="w-full p-1 flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-1 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
                 {GetData('ROLE') === '70' || GetData('ROLE') === '80' ? (
                     <ConfigProvider
                         theme={{
@@ -165,8 +192,8 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     >
                         <Button
                             type="primary"
-                            onClick={handleSubmit} // Assuming handleSubmit triggers the save logic
-                            loading={onClickSaveData.isPending} // Loading state
+                            onClick={handleSubmit}
+                            loading={onClickSaveData.isPending}
                             icon={<SaveOutlined />}
                         >
                             Save Charges
@@ -174,83 +201,108 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     </ConfigProvider>
                 ) : null}
             </div>
-
-            {/*(*/GetData('ROLE').toString() === '60' &&
-                /*['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) &&*/ (
+    
+            <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
+            {(!isEdit && (GetData('ROLE').toString() === '60' || GetData('ROLE').toString() === '100')) && (
                     <ConfigProvider
                         theme={{
                             token: {
-                                fontSize: 14,
-                                borderRadius: 8,
-                                fontWeightStrong: 600,
-                                colorText: '#ffffff',
+                                colorPrimary: '#28a745',
+                                colorPrimaryHover: '#218838',
                             },
                         }}
                     >
-                        <div className="w-full p-8 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 
-                            space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-                            {isEdit ? (
-                                <>
-                                    <ConfigProvider
-                                        theme={{
-                                            token: {
-                                                colorPrimary: '#2b972d',
-                                                colorPrimaryHover: '#34b330',
-                                            },
-                                        }}
-                                    >
-                                        <Button
-                                            type="primary"
-                                            icon={<SaveOutlined />}
-                                            onClick={() => { toggleEditMode(); }}
-                                            size="large"
-                                        >
-                                            SAVE
-                                        </Button>
-                                    </ConfigProvider>
-                                    <ConfigProvider
-                                        theme={{
-                                            token: {
-                                                colorPrimary: '#dc3545',
-                                                colorPrimaryHover: '#f0aab1',
-                                            },
-                                        }}
-                                    >
-                                        <Button
-                                            type="primary"
-                                            icon={<CloseOutlined />}
-                                            onClick={() => {
-                                                setEdit(false);
-                                                queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
-                                            }}
-                                            size="large"
-                                        >
-                                            CANCEL
-                                        </Button>
-                                    </ConfigProvider>
-                                </>
-                            ) : (
+                        <Button
+                            type="primary"
+                            onClick={onClickApprove}
+                            icon={<CheckCircleOutlined />}
+                            size="large"
+                        >
+                            Approve
+                        </Button>
+                    </ConfigProvider>
+                )}
+            </div>
+            {(GetData('ROLE').toString() === '60' || GetData('ROLE').toString() === '100' &&
+                ['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) && (
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            fontSize: 14,
+                            borderRadius: 8,
+                            fontWeightStrong: 600,
+                            colorText: '#ffffff',
+                        },
+                    }}
+                >
+                    <div className="w-full p-4 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
+                        {isEdit ? (
+                            <>
                                 <ConfigProvider
                                     theme={{
                                         token: {
-                                            colorPrimary: '#3b0764',
-                                            colorPrimaryHover: '#6b21a8',
+                                            colorPrimary: '#2b972d',
+                                            colorPrimaryHover: '#34b330',
                                         },
                                     }}
                                 >
                                     <Button
                                         type="primary"
-                                        icon={<EditOutlined />}
-                                        onClick={toggleEditMode}
+                                        icon={<SaveOutlined />}
+                                        onClick={() => {
+                                            toggleEditMode();
+                                        }}
                                         size="large"
                                     >
-                                        EDIT
+                                        SAVE
                                     </Button>
                                 </ConfigProvider>
-                            )}
-                        </div>
-                    </ConfigProvider>
-                )}
+                                <ConfigProvider
+                                    theme={{
+                                        token: {
+                                            colorPrimary: '#dc3545',
+                                            colorPrimaryHover: '#f0aab1',
+                                        },
+                                    }}
+                                >
+                                    <Button
+                                        type="primary"
+                                        icon={<CloseOutlined />}
+                                        onClick={() => {
+                                            setEdit(false);
+                                            queryClient.invalidateQueries(
+                                                { queryKey: ['ClientDataListQuery'] },
+                                                { exact: true }
+                                            );
+                                        }}
+                                        size="large"
+                                    >
+                                        CANCEL
+                                    </Button>
+                                </ConfigProvider>
+                            </>
+                        ) : (
+                            <ConfigProvider
+                                theme={{
+                                    token: {
+                                        colorPrimary: '#3b0764',
+                                        colorPrimaryHover: '#6b21a8',
+                                    },
+                                }}
+                            >
+                                <Button
+                                    type="primary"
+                                    icon={<EditOutlined />}
+                                    onClick={toggleEditMode}
+                                    size="large"
+                                >
+                                    EDIT
+                                </Button>
+                            </ConfigProvider>
+                        )}
+                    </div>
+                </ConfigProvider>
+            )}
         </div>
     );
 }

@@ -1,5 +1,4 @@
 export const dateMessage = (keyName, state) => {
-    console.log(keyName, state);
     switch (keyName) {
         case 'ContractDate':
             if (state === 'Invalid') {

@@ -61,7 +61,7 @@ function SideNavRoutes() {
         })
     }
 
-    if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55' || GetData('ROLE').toString() === '60') {
+    if (GetData('ROLE')?.toString() === '50' || GetData('ROLE')?.toString() === '55' || GetData('ROLE')?.toString() === '60') {
         PageAccess.push({
             key: '/ckfi/manage-currency',
             icon: <DollarOutlined style={{ fontSize: '18px' }} />,
@@ -69,7 +69,10 @@ function SideNavRoutes() {
         })
     }
 
-    toDecrypt(localStorage.getItem('UPTH')).split(',').map((x) => {
+    toDecrypt(localStorage.getItem('UPTH'))?.split(',').map((x) => {
+        if (x === '/ckfi/searches') {
+            return;
+        }
         if (x === '/ckfi/manage-users') { PageAccess.push({ key: x, label: 'Manage Users', icon: <FaUsers style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/manage-branch') { PageAccess.push({ key: x, label: 'Manage Branch', icon: <FaCodeBranch style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/manage-country') { PageAccess.push({ key: x, label: 'Manage Country', icon: <FaGlobeAsia style={{ fontSize: '18px' }} />, }) }

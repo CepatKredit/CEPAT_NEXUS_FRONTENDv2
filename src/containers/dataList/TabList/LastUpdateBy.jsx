@@ -171,7 +171,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         onClickUpdateStatus.mutate();
     }
 
-
     const onClickUpdateStatus = useMutation({
         mutationFn: async () => {
             if (getUpdate.Status === 'DECLINED') {
@@ -265,21 +264,14 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         return;
                     }
                 }
-
-                let checkpn = 0;
+                let PN_CHECK = 0
                 if (getUpdate.Status === 'FOR DISBURSEMENT') {
                     await axios.post('/GroupPost/P141UD', dataContainer[0])
-                        .then((result) => { checkpn = result.data.status; })
-                        .catch((error) => { console.log(error); })
+                        .then((result) => { PN_CHECK = 0 })
+                        .catch((error) => { PN_CHECK = 1 })
                 }
 
-                if (checkpn !== undefined) {
-                    api['info']({
-                        message: 'No PN from SOFIA',
-                        description: 'Unable to disburse with no PN Number from SOFIA.'
-                    });
-                }
-                else {
+                if (PN_CHECK === 0) {
                     try {
                         const result = await axios.post('/GroupPost/P81UAS',
                             getUpdate.UrgentApp !== undefined && getUpdate.SoaDate !== undefined
@@ -311,6 +303,12 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             description: error.message
                         });
                     }
+                }
+                else {
+                    api['warning']({
+                        message: 'No PN Number from SOFIA',
+                        description: 'Unable to change status to FOR DISBURSEMENT, please generate PN Number to proceed.'
+                    });
                 }
             }
         }
