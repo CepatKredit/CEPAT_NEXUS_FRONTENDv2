@@ -11,12 +11,12 @@ import dayjs from 'dayjs';
 import UploadRecord from './internalChecking/UploadRecord';
 import { generateKey } from '@utils/Generate';
 import LabelDisplay from '@components/marketing/LabelDisplay';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey, sepcoborrowfname }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const [isEdit, setEdit] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-
     const columns = [
         {
             title: '#',
@@ -141,9 +141,9 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
         }
 
         const requests = [
-            axios.post(`/getKaiser/`, data1),
-            axios.post(`/getKaiser/`, data2),
-            axios.post(`/getKaiser/`, data3)
+            axios.post(`/GroupGet/G18K/`, data1),
+            axios.post(`/GroupGet/G18K/`, data2),
+            axios.post(`/GroupGet/G18K/`, data3)
         ];
         try {
             const results = await Promise.allSettled(requests);
@@ -159,7 +159,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                 coborrow: coborrowData,
             }));
             settrigger(false);
-            setLoading(false)
+            SET_LOADING_INTERNAL('KaiserOFW', false);
             return {
                 ofw: ofwData,
                 beneficiary: beneficiaryData,
@@ -178,7 +178,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
     function genKaiser() {
         if (data.loanIdCode !== '') {
             if (data.benfname.trim() !== '' || data.benlname.trim() !== '') {
-                setLoading(true);
+                SET_LOADING_INTERNAL('KaiserOFW', true);
                 getKaiser();
             } else {
                 api['warning']({
@@ -194,15 +194,11 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
             key: '1',
             label: 'Kaiser Check',
             children: (<>
-                {gettrigger && (<center><div >
+                <center>
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                        <Button
-                            onClick={() => { genKaiser() }}
-                            className='bg-[#3b0764] w-[8rem]'
-                            type='primary' > Load Kaiser
-                        </Button>
+                        <Button  size='large' className='mb-2 bg-[#3b0764]' type='primary' onClick={() => { genKaiser() }}  >Load Kaiser</Button>
                     </ConfigProvider>
-                </div></center>)}
+                </center>
                 {
                     data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL'
                         ? (<div>
@@ -216,192 +212,12 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.ofw ? get.ofw.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
-                                    {/*  {emptyRows && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 text-gray-600">
-                                            No data available
-                                        </div>
-                                    )}*/}
-                                </div>
-                            </div>
-                            <center>
-                                <div className='mb-[3%]'>
-                                    <SectionHeader title="Beneficiary" tag={'Co-Borrower'} />
-                                    <Space>
-                                        <LabelDisplay label={'First Name'} readOnly={true} value={data.benfname || 'NO RECORDS FOUND'} />
-                                        <LabelDisplay label={'Last Name'} readOnly={true} value={data.benlname || 'NO RECORDS FOUND'} />
-                                    </Space>
-                                </div>
-                            </center>
-                            <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
-                                </div>
-                            </div>
-                        </div>)
-                        : (<div>
-                            <center>
-                                <div className='mb-[3%]'>
-                                    <SectionHeader title="Beneficiary" tag={'Principal Borrower'} />
-                                    <Space>
-                                        <LabelDisplay label={'First Name'} readOnly={true} value={data.benfname || 'NO RECORDS FOUND'} />
-                                        <LabelDisplay label={'Last Name'} readOnly={true} value={data.benlname || 'NO RECORDS FOUND'} />
-                                    </Space>
-                                </div>
-                            </center>
-                            <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
-                                </div>
-                            </div>
-                            <center>
-                                <div className='mb-[3%]'>
-                                    <SectionHeader title="OFW" tag={'Co-Borrower'} />
-                                    <Space>
-                                        <LabelDisplay label={'First Name'} readOnly={true} value={data.ofwfname || 'NO RECORDS FOUND'} />
-                                        <LabelDisplay label={'Last Name'} readOnly={true} value={data.ofwlname || 'NO RECORDS FOUND'} />
-                                    </Space>
-                                </div>
-                            </center>
-                            <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.ofw ? get.ofw.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
-                                </div>
-                            </div>
-                        </div>)
-                }
-                {sepcoborrowfname && (<>
-                    <center>
-                        <div className='mb-[3%]'>
-                            <SectionHeader title="Additional Co-Borrower" />
-                            <Space>
-                                <LabelDisplay label={'First Name'} readOnly={true} value={data.coborrowfname || 'NO RECORDS FOUND'} />
-                                <LabelDisplay label={'Last Name'} readOnly={true} value={data.coborrowlname || 'NO RECORDS FOUND'} />
-                            </Space>
-                        </div>
-                    </center>
-                    <div className='h-[400px]'>
-                        <div className='mt-2 w-[81rem]'>
-                            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
+                                <div className='mt-2 px-2 w-full'>
                                     <ResponsiveTable
                                         columns={columns}
                                         height={300}
                                         width={400}
-                                        rows={get.coborrow ? get.coborrow.map((x, i) => ({
+                                        rows={get.ofw ? get.ofw.map((x, i) => ({
                                             key: generateKey(),
                                             num: i + 1,
                                             fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
@@ -420,10 +236,170 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                             ckdate: x.checkedDate || mmddyy(dayjs()),
                                         }))
                                             : []}
-                                        locale={ get.coborrow && get.coborrow.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                        locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
                                     />
-                                </Spin>
-                            </ConfigProvider>
+                                    {/*  {emptyRows && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 text-gray-600">
+                                            No data available
+                                        </div>
+                                    )}*/}
+                                </div>
+                            </div>
+                            <center>
+                                <div className='mb-[3%]'>
+                                    <SectionHeader title="Beneficiary" tag={'Co-Borrower'} />
+                                    <Space>
+                                        <LabelDisplay label={'First Name'} readOnly={true} value={data.benfname || 'NO RECORDS FOUND'} />
+                                        <LabelDisplay label={'Last Name'} readOnly={true} value={data.benlname || 'NO RECORDS FOUND'} />
+                                    </Space>
+                                </div>
+                            </center>
+                            <div className='h-[400px]' key={generateKey()}>
+                                <div className='mt-2 w-full px-2'>
+                                    <ResponsiveTable
+                                        columns={columns}
+                                        height={300}
+                                        width={400}
+                                        rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
+                                            key: generateKey(),
+                                            num: i + 1,
+                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                            score: x.score || 'NO RECORDS FOUND',
+                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                            ckby: x.checkedBy || USRNAME,
+                                            ckdate: x.checkedDate || mmddyy(dayjs()),
+                                        }))
+                                            : []}
+                                        locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                    />
+                                </div>
+                            </div>
+                        </div>)
+                        : (<div>
+                            <center>
+                                <div className='mb-[3%]'>
+                                    <SectionHeader title="Beneficiary" tag={'Principal Borrower'} />
+                                    <Space>
+                                        <LabelDisplay label={'First Name'} readOnly={true} value={data.benfname || 'NO RECORDS FOUND'} />
+                                        <LabelDisplay label={'Last Name'} readOnly={true} value={data.benlname || 'NO RECORDS FOUND'} />
+                                    </Space>
+                                </div>
+                            </center>
+                            <div className='h-[400px]' key={generateKey()}>
+                                <div className='mt-2 w-full px-2'>
+                                    <ResponsiveTable
+                                        columns={columns}
+                                        height={300}
+                                        width={400}
+                                        rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
+                                            key: generateKey(),
+                                            num: i + 1,
+                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                            score: x.score || 'NO RECORDS FOUND',
+                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                            ckby: x.checkedBy || USRNAME,
+                                            ckdate: x.checkedDate || mmddyy(dayjs()),
+                                        }))
+                                            : []}
+                                        locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                    />
+                                </div>
+                            </div>
+                            <center>
+                                <div className='mb-[3%]'>
+                                    <SectionHeader title="OFW" tag={'Co-Borrower'} />
+                                    <Space>
+                                        <LabelDisplay label={'First Name'} readOnly={true} value={data.ofwfname || 'NO RECORDS FOUND'} />
+                                        <LabelDisplay label={'Last Name'} readOnly={true} value={data.ofwlname || 'NO RECORDS FOUND'} />
+                                    </Space>
+                                </div>
+                            </center>
+                            <div className='h-[400px]' key={generateKey()}>
+                                <div className='mt-2 w-full px-2'>
+                                    <ResponsiveTable
+                                        columns={columns}
+                                        height={300}
+                                        width={400}
+                                        rows={get.ofw ? get.ofw.map((x, i) => ({
+                                            key: generateKey(),
+                                            num: i + 1,
+                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                            score: x.score || 'NO RECORDS FOUND',
+                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                            ckby: x.checkedBy || USRNAME,
+                                            ckdate: x.checkedDate || mmddyy(dayjs()),
+                                        }))
+                                            : []}
+                                        locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                    />
+                                </div>
+                            </div>
+                        </div>)
+                }
+                {sepcoborrowfname && (<>
+                    <center>
+                        <div className='mb-[3%]'>
+                            <SectionHeader title="Additional Co-Borrower" />
+                            <Space>
+                                <LabelDisplay label={'First Name'} readOnly={true} value={data.coborrowfname || 'NO RECORDS FOUND'} />
+                                <LabelDisplay label={'Last Name'} readOnly={true} value={data.coborrowlname || 'NO RECORDS FOUND'} />
+                            </Space>
+                        </div>
+                    </center>
+                    <div className='h-[400px]'>
+                        <div className='mt-2 w-full px-2'>
+                            <ResponsiveTable
+                                columns={columns}
+                                height={300}
+                                width={400}
+                                rows={get.coborrow ? get.coborrow.map((x, i) => ({
+                                    key: generateKey(),
+                                    num: i + 1,
+                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                    score: x.score || 'NO RECORDS FOUND',
+                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                    ckby: x.checkedBy || USRNAME,
+                                    ckdate: x.checkedDate || mmddyy(dayjs()),
+                                }))
+                                    : []}
+                                locale={get.coborrow && get.coborrow.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                            />
                         </div>
                     </div>
                 </>)}

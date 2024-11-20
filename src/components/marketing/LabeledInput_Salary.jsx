@@ -105,6 +105,7 @@ function LabeledInput_Salary({ rendered, triggered,
                     onChange={(e) => { onChange(e) }}
                     size='large'
                     placeholder={placeHolder}
+                    maxLength={12}
                     autoComplete='off'
                     style={{ width: '100%' }}
                     onBlur={(e) => { onBlur(e) }}

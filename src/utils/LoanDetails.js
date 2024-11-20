@@ -126,6 +126,9 @@ export const UpdateLoanDetails = async ({
     OtherExposure = null,
     TotalExposure = null,
     CRORemarks = null,
+    RecBy = null,
+    CremanBy = null,
+    
     // Present Address Tables
     OfwPoBRemarks = null,
     BenPoBRemarks = null,
@@ -325,6 +328,9 @@ export const UpdateLoanDetails = async ({
         OtherExposure: OtherExposure,
         TotalExposure: TotalExposure,
         CRORemarks: CRORemarks,
+        RecBy: RecBy,
+        CremanBy: CremanBy,
+
         // Present Address Tables
         OfwPoBRemarks: OfwPoBRemarks,
         BenPoBRemarks: BenPoBRemarks,
@@ -402,7 +408,7 @@ export const UpdateLoanDetails = async ({
     var duplicate_result = null;
 
     if (FirstName !== null || LastName !== null) {
-        await axios.post('/checkLoan', checkLoan)
+        await axios.post('/GroupPost/P47CL', checkLoan)
             .then((result) => {
                 result.data?.list.map(() => { check = 1; })
                 duplicate_result = result;
@@ -426,7 +432,7 @@ export const UpdateLoanDetails = async ({
     }
 
     if (check === 0) {
-        await axios.post('/updateDetails', data)
+        await axios.post('/GroupPost/P48UD', data)
             .then((result) => {
                 fresult = result;
             })
