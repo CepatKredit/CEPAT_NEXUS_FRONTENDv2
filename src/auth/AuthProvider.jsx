@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
                 })
             }
             else {
-                await axios.post('/login', getAccount)
+                await axios.post('/GroupPost/P85L', getAccount)
                     .then(result => {
                         console.log((decode(result.data.userData.password) === getAccount.Password))
                         console.log("Received response:", result.data);
@@ -104,7 +104,7 @@ export function AuthProvider({ children }) {
 
     const PasswordMatch = useMutation({
         mutationFn: async (navigate) => {
-            await axios.post('/verifiedAccount', getAccount)
+            await axios.post('/GroupPost/P87VA', getAccount)
                 .then((result) => {
                     if (result.data.status === 'warning') {
                         api[result.data.status]({
@@ -141,7 +141,7 @@ export function AuthProvider({ children }) {
                         })
 
                         if (result.data.department === 'LC') {
-                            axios.post(
+                            /*axios.post(
                               `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
                             )
                             .then(function (response) {
@@ -168,7 +168,7 @@ export function AuthProvider({ children }) {
                             .catch(function (error) {
                               console.error(error);
                               throw new Error("Token generation failed.");
-                            });
+                            });*/
                             localStorage.setItem('UTK', result.data.eeyyy);
                             localStorage.setItem('UPTH', toEncrypt(AccessPath));
                             localStorage.setItem('SP', '/ckfi/dashboard')
@@ -200,7 +200,7 @@ export function AuthProvider({ children }) {
 
     const PasswordNotMatch = useMutation({
         mutationFn: async () => {
-            await axios.post('/passwordAttempt', getAccount)
+            await axios.post('/GroupPost/P86PA', getAccount)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,

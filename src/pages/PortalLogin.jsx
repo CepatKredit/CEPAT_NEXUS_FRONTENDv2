@@ -11,7 +11,6 @@ import {
   Spin,
   Divider,
 } from "antd";
-import axios from "axios";
 import FullScreenBackground from "@assets/images/LoginBG.jpg";
 import LoginBackground from "@assets/images/side.jpg";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -20,24 +19,18 @@ import Datos from "@assets/images/datos.png";
 import ResponsiveModal from "@components/global/ResponsiveModal";
 import {
   viewModal,
-  viewResetPasswordModal,
   viewForgotPasswordModal,
   viewUnlockAccountModal,
 } from "@hooks/ModalController";
 import ForgotPassword from "@containers/portalLogin/ForgotPassword";
-import { DisplayOTP } from "@hooks/OTPController";
 import TrackLoanApp from "@containers/portalLogin/TrackLoanApp";
 import { IoLocationSharp } from "react-icons/io5";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { FaCalendar } from "react-icons/fa";
 import ResetPassword from "@containers/portalLogin/ResetPassword";
-import { useCookies } from "react-cookie";
 // import OTPModal from '@components/global/OTPModal';
 import ValidationOTP from "@containers/portalLogin/ValidationOTP";
-import { useMutation } from "@tanstack/react-query";
 import UnlockAccount from "@containers/portalLogin/UnlockAccount";
-import { decode } from "@utils/Secure";
-import { toEncrypt } from "@utils/Converter";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { useAuth } from "@auth/AuthProvider";
 
@@ -73,11 +66,6 @@ function PortalLogin() {
     }
   }, [state]);
 
-  // const [getAccount, setAccount] = React.useState({
-  //     Username: '',
-  //     Password: ''
-  // })
-
   function handleChange(e) {
     setAccount({
       ...getAccount,
@@ -89,203 +77,14 @@ function PortalLogin() {
       onClickLogin.mutate();
     }
   }
-  // const [cookies, setCookie] = useCookies(['SESSION_ID'])
   const getModalStatus = viewModal((state) => state.modalStatus);
   const setModalStatus = viewModal((state) => state.setStatus);
-
-  // const getModalResetStatus = viewResetPasswordModal(
-  //   (state) => state.modalStatus
-  // );
-  // const setModalResetStatus = viewResetPasswordModal(
-  //   (state) => state.setStatus
-  // );
-  // const setAccountId = viewResetPasswordModal((state) => state.setId);
-
-  // const getOTPStatus = DisplayOTP((state) => state.modalStatus)
-  // const setOTPStatus = DisplayOTP((state) => state.setStatus)
 
   const getForgotStatus = viewForgotPasswordModal((state) => state.modalStatus);
   const setForgotStatus = viewForgotPasswordModal((state) => state.setStatus);
 
   const getUnlockStatus = viewUnlockAccountModal((state) => state.modalStatus);
   const setUnlockStatus = viewUnlockAccountModal((state) => state.setStatus);
-  // const [getAccessList, setAccessList] = React.useState()
-
-    const onClickLogin = useMutation({
-        mutationFn: async () => {
-            if (getAccount.Username === '' || getAccount.Password === '') {
-                api['info']({
-                    message: 'Invalid input',
-                    description: 'Please input your username and password to login.'
-                })
-            }
-            else {
-                await axios.post('/GroupPost/P85L', getAccount)
-                    .then(result => {
-                        console.log((decode(result.data.userData.password) === getAccount.Password))
-                        console.log("Received response:", result.data);
-                        if (result.data.message === 'Account not found' ||
-                            result.data.message === 'Account disabled' ||
-                            result.data.message === 'Account for approval' ||
-                            result.data.message === 'Account rejected'
-                        ) {
-                            api[result.data.status]({
-                                message: result.data.message,
-                                description: result.data.description
-                            })
-                        }
-                        else {
-                            if (decode(result.data.userData.password) === getAccount.Password) {
-                                PasswordMatch.mutate()
-                                resetAppDetails(); 
-                            }
-                            else {
-                                PasswordNotMatch.mutate()
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        api['error']({
-                            message: 'Something went wrong',
-                            description: error.message
-                        })
-                    })
-            }
-        }
-    })
-
-    const PasswordMatch = useMutation({
-        mutationFn: async () => {
-            await axios.post('/GroupPost/P87VA', getAccount)
-                .then((result) => {
-                    if (result.data.status === 'warning') {
-                        api[result.data.status]({
-                            message: result.data.message,
-                            description: result.data.description
-                        })
-                    }
-                    else if (result.data.status === 'info') {
-                        setModalResetStatus(true)
-                        const data = {
-                            id: result.data.container.id,
-                            username: result.data.container.username,
-                            password: getAccount.Password
-                        }
-                        setAccountId(data)
-                        setAccount({
-                            Username: '',
-                            Password: ''
-                        })
-                        api[result.data.status]({
-                            message: result.data.message,
-                            description: result.data.description
-                        })
-                    }
-                    else {
-                        let AccessPath = ''
-                        result.data.access?.map((x) => {
-                            if (AccessPath === '') {
-                                AccessPath += x.accessPath
-                            }
-                            else {
-                                AccessPath += ',' + x.accessPath
-                            }
-                        })
-
-// //expirationInHours is set on seconds for testing purposes.
-//             if (result.data.department === "LC") {
-//               axios
-//                 .post(
-//                   `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
-//                 )
-//                 .then(function (response) {
-//                     const accessToken = response.data.accessToken;
-//                     const refreshToken = response.data.refreshToken;
-//                     const refreshExpiresIn = response.data.refreshExpiresIn; // In seconds
-              
-//                     // Store tokens
-//                     localStorage.setItem("ACCESS TOKEN", accessToken);
-//                     setCookie("REFRESH TOKEN", refreshToken, {
-//                       secure: true,
-//                       sameSite: "strict",
-//                       maxAge: refreshExpiresIn, // Expiration in seconds
-//                     });
-              
-//                     // Alert before the cookie expires (5 seconds before expiration for demonstration)
-//                     // const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
-//                     // const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
-              
-//                     // setTimeout(() => {
-//                     //   alert("Your session is about to expire. Please refresh or re-login.");
-//                     // }, alertTimeout);
-//                 })
-//                 .catch(function (error) {
-//                   console.error(error);
-//                   throw new Error("Token generation failed.");
-//                 });
-//               localStorage.setItem("UTK", result.data.eeyyy);
-//               localStorage.setItem("UPTH", toEncrypt(AccessPath));
-//               localStorage.setItem("SP", "/ckfi/dashboard");
-//               localStorage.setItem("USRFN", toEncrypt(result.data.fn));
-//               localStorage.setItem(
-//                 "USRDT",
-//                 toEncrypt(
-//                   `${result.data.department}?${result.data.role}?${result.data.branch}`
-//                 )
-//               );
-//               navigate("/ckfi/dashboard");
-//               setCookie("SESSION_ID", result.data.eeyyy, {
-//                 secure: true,
-//                 sameSite: "strict",
-//               });
-//               api[result.data.status]({
-//                 message: result.data.message,
-//                 description: result.data.description,
-//               });
-//             } else {
-//               setAccessList(AccessPath);
-//               setOTPStatus(true);
-//             }
-//           }
-//         })
-//         .catch((error) => {
-//           api["error"]({
-//             message: "Something went wrong",
-//             description: error.message,
-//           });
-//         });
-//     },
-//   });
-
-    const PasswordNotMatch = useMutation({
-        mutationFn: async () => {
-            await axios.post('/GroupPost/P86PA', getAccount)
-                .then((result) => {
-                    api[result.data.status]({
-                        message: result.data.message,
-                        description: result.data.description
-                    })
-                })
-                .catch(error => {
-                    api['error']({
-                        message: 'Something went wrong',
-                        description: error.message
-                    })
-                })
-        }
-    })
-
-        await axios.post(`/GroupPost/P89CO/${getAccount.Username}`)
-            .then((result) => {
-                setOTPStatus(false)
-            })
-            .catch(error => {
-                api['error']({
-                    message: 'Something went wrong',
-                    description: error.message
-                })
-            })
-    }
 
   return (
     <div

@@ -88,7 +88,7 @@ function ValidationOTP({ username, accessList }) {
                     if (status === 'success') {
                         // Reset OTPLock on success
                         ///FOR REFRESH TOKEN 
-                        axios.post(
+                        /*axios.post(
                             `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
                           )
                           .then(function (response) {
@@ -115,7 +115,7 @@ function ValidationOTP({ username, accessList }) {
                           .catch(function (error) {
                             console.error(error);
                             throw new Error("Token generation failed.");
-                          });
+                          });*/
                             ///FOR REFRESH TOKEN 
                         localStorage.setItem('UTK', result.data.eeyyy);
                         localStorage.setItem('UPTH', toEncrypt(accessList));
@@ -164,14 +164,12 @@ function ValidationOTP({ username, accessList }) {
             {contextHolder}
             <div className='pt-6'>
                 <center>
-
                     <div>
                         {isLocked && (
                             <div className="text-red-500 font-bold mb-4">
                                 TOO MANY ATTEMPTS, YOUR ACCOUNT HAS BEEN LOCKED
                             </div>
                         )}
-
                         <span className='text-2xl font-bold'>OTP Verification</span>
                     </div>
                     <div className='pb-4'>
