@@ -9,7 +9,6 @@ export function LoanProductList () {
         queryFn: async () => {
             const result = await GET_LIST('/getListLoanProduct');
             setLoanProdList(result.list)
-            console.log("API LOAN PRODUCT", result.list)
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),

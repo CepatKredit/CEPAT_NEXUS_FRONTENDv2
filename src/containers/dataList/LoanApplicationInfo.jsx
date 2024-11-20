@@ -34,7 +34,7 @@ function LoanApplicationInfo() {
     })
 
     const ClientDataListQuery = useQuery({
-        queryKey: ['ClientDataListQuery'],
+        queryKey: ['ClientDataListQuery', localStorage.getItem('SIDC')],
         queryFn: async () => {
             try {
                 const result = await GET_LIST(`/getClientDataList/${toDecrypt(localStorage.getItem('SIDC'))}`);
@@ -120,10 +120,10 @@ function LoanApplicationInfo() {
                     collectionareaname: data?.OfwPresAddress?.collectionArea || '',
 
                     landmark: data?.OfwPresAddress?.landmark || '',
-                    ofwSameAdd: data.OfwPresAddress.provinceId && (data?.OfwPermAddress?.address1 == data?.OfwPresAddress?.address1) && (data?.OfwPermAddress?.barangayId == data?.OfwPresAddress?.barangayId) ? 1 : 0,
-                    ofwProvSameAdd: data.OfwPermAddress.provinceId && (data?.OfwPermAddress?.address1 == data?.OfwProvAddress?.address1) && (data?.OfwPermAddress?.barangayId == data?.OfwProvAddress?.barangayId) ? 1 : 0,
-                    bensameadd: data.OfwPresAddress.provinceId && (data?.BeneficiaryPresAddress?.address1 == data?.OfwPresAddress?.address1) && (data?.BeneficiaryPresAddress?.barangayId == data?.OfwPresAddress?.barangayId) ? 1 : 0,
-                    coborrowSameAdd: data.OfwPresAddress.provinceId && (data?.CoborrowPresAddress?.address1 == data?.OfwPresAddress?.address1) && (data?.CoborrowPresAddress?.barangayId == data?.OfwPresAddress?.barangayId) ? 1 : 0,
+                    ofwSameAdd: data?.OfwPresAddress?.provinceId && (data?.OfwPermAddress?.address1 == data?.OfwPresAddress?.address1) && (data?.OfwPermAddress?.barangayId == data?.OfwPresAddress?.barangayId) ? 1 : 0,
+                    ofwProvSameAdd: data?.OfwPermAddress?.provinceId && (data?.OfwPermAddress?.address1 == data?.OfwProvAddress?.address1) && (data?.OfwPermAddress?.barangayId == data?.OfwProvAddress?.barangayId) ? 1 : 0,
+                    bensameadd: data?.OfwPresAddress?.provinceId && (data?.BeneficiaryPresAddress?.address1 == data?.OfwPresAddress?.address1) && (data?.BeneficiaryPresAddress?.barangayId == data?.OfwPresAddress?.barangayId) ? 1 : 0,
+                    coborrowSameAdd: data?.OfwPresAddress?.provinceId && (data?.CoborrowPresAddress?.address1 == data?.OfwPresAddress?.address1) && (data?.CoborrowPresAddress?.barangayId == data?.OfwPresAddress?.barangayId) ? 1 : 0,
 
                     ofwPermProv: data?.OfwPermAddress?.provinceId || '',
                     ofwPermProvname: data?.OfwPermAddress?.province || '',
@@ -266,7 +266,7 @@ function LoanApplicationInfo() {
                     BenRemarks: data?.BeneficiaryDetails?.remarks || '',
                     // Additional Co-Borrower Table
                     AcbSpSrcIncome: data?.CoborrowDetails?.spouseSourceIncome || '',
-                    AcbSpIncome: data.CoborrowDetails?.spouseIncome || '',
+                    AcbSpIncome: data?.CoborrowDetails?.spouseIncome || '',
                     AcbGrpChat: data?.CoborrowDetails?.groupchat || '',
                     AcbSrcIncome: data?.CoborrowDetails?.cbAcbIncomeSource || '',
                     AcbReligion: data?.CoborrowDetails?.religion || '',
@@ -298,6 +298,8 @@ function LoanApplicationInfo() {
         },
         enabled: true,
     });
+
+    console.log("HAAAA", ClientDataListQuery.data)
 
     const [getCRDValue, setCRDValue] = React.useState({
         TotalSalary: 0,

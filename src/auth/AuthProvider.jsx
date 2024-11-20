@@ -70,8 +70,6 @@ export function AuthProvider({ children }) {
             else {
                 await axios.post('/login', getAccount)
                     .then(result => {
-                        console.log((decode(result.data.userData.password) === getAccount.Password))
-                        console.log("Received response:", result.data);
                         if (result.data.message === 'Account not found' ||
                             result.data.message === 'Account disabled' ||
                             result.data.message === 'Account for approval' ||
@@ -141,34 +139,34 @@ export function AuthProvider({ children }) {
                         })
 
                         if (result.data.department === 'LC') {
-                            axios.post(
-                              `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
-                            )
-                            .then(function (response) {
-                                const accessToken = response.data.accessToken;
-                                const refreshToken = response.data.refreshToken;
-                                const refreshExpiresIn = response.data.refreshExpiresIn; // In seconds
+                            // axios.post(
+                            //   `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
+                            // )
+                            // .then(function (response) {
+                            //     const accessToken = response.data.accessToken;
+                            //     const refreshToken = response.data.refreshToken;
+                            //     const refreshExpiresIn = response.data.refreshExpiresIn; // In seconds
                           
-                                // Store tokens
-                                localStorage.setItem("ACCESS TOKEN", accessToken);
-                                setCookie("REFRESH TOKEN", refreshToken, {
-                                  secure: true,
-                                  sameSite: "strict",
-                                  maxAge: refreshExpiresIn, // Expiration in seconds
-                                });
+                            //     // Store tokens
+                            //     localStorage.setItem("ACCESS TOKEN", accessToken);
+                            //     setCookie("REFRESH TOKEN", refreshToken, {
+                            //       secure: true,
+                            //       sameSite: "strict",
+                            //       maxAge: refreshExpiresIn, // Expiration in seconds
+                            //     });
                           
-                                // Alert before the cookie expires (5 seconds before expiration for demonstration)
-                                // const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
-                                // const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
+                            //     // Alert before the cookie expires (5 seconds before expiration for demonstration)
+                            //     // const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
+                            //     // const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
                           
-                                // setTimeout(() => {
-                                //   alert("Your session is about to expire. Please refresh or re-login.");
-                                // }, alertTimeout);
-                            })
-                            .catch(function (error) {
-                              console.error(error);
-                              throw new Error("Token generation failed.");
-                            });
+                            //     // setTimeout(() => {
+                            //     //   alert("Your session is about to expire. Please refresh or re-login.");
+                            //     // }, alertTimeout);
+                            // })
+                            // .catch(function (error) {
+                            //   console.error(error);
+                            //   throw new Error("Token generation failed.");
+                            // });
                             localStorage.setItem('UTK', result.data.eeyyy);
                             localStorage.setItem('UPTH', toEncrypt(AccessPath));
                             localStorage.setItem('SP', '/ckfi/dashboard')

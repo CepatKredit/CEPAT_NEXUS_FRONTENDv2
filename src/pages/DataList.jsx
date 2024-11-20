@@ -20,7 +20,7 @@ function DataList() {
   const token = localStorage.getItem('UTK')
   const queryClient = useQueryClient()
 
-  React.useEffect(() => { AppDataListQuery.refetch() }, [localStorage.getItem('SP')])
+  React.useEffect(() => { AppDataListQuery.refetch() }, [localStorage.getItem('SP')]);
   const AppDataListQuery = useQuery({
     queryKey: ['AppDataListQuery'],
     queryFn: async () => {
@@ -37,8 +37,10 @@ function DataList() {
     enabled: true,
     refetchInterval: 60 * 1000,
     retryDelay: 1000,
-    staleTime: 5 * 1000
+    staleTime: 5 * 1000,
   });
+
+  console.log(AppDataListQuery.data)
 
   return (
     <div className='mx-[1%] my-[2%]'>
@@ -62,7 +64,7 @@ function DataList() {
         </div>
       </div>
       <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-        <Spin spinning={loading} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center" size='large'>
+        <Spin spinning={AppDataListQuery.isFetching} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center" size='large'>
           <ResponsiveTable columns={ColumnList(3, AppDataListQuery)} height={'calc(95vh - 505px)'} width={'100%'}
             rows={AppDataListQuery.data?.filter((x) =>
               x.loanAppCode.includes(getSearch) ||

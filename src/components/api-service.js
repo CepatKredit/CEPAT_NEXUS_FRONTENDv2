@@ -57,7 +57,6 @@ export function ComponentPreloads() {
     queryKey: ["BranchListQuery"],
     queryFn: async () => {
       const result = await GET_LIST("/getBranchList");
-      console.log("BRANCH API", result.list);
       setBranchList(result.list);
       return result.list;
     },

@@ -50,7 +50,6 @@ function GenderRadioGroup({
       setStatus("");
       setIcon(true);
       setItem(selectedValue)
-      console.log("GENDER SELECTED", selectedValue)
       updateAppDetails({
         name: fieldName,
         value: selectedValue,

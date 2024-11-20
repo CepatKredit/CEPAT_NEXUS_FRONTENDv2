@@ -60,7 +60,6 @@ function LoanApplicationTracker({ data }) {
 
   React.useEffect(() => {
     ClientData.refetch();
-    console.log("TEST", ClientData);
   }, [localStorage.getItem("CLID")]);
   const [messageApi, contextHolder] = message.useMessage();
   const textAreaRef = React.useRef(null);

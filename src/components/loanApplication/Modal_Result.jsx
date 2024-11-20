@@ -120,8 +120,6 @@ function Modal_Result({
     },
   });
 
-  console.log("MODAL", getAppDetails)
-
   return (
     <Modal
       centered

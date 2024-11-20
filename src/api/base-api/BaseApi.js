@@ -27,8 +27,7 @@ export async function GET_LIST(path) {
 //I think taking advantage of async/await is much cleaner and more optimized since it is not calling Promise twice
 export async function GET_LIST_ASYNC (path) {
     try {
-        const res = await axios.get(path);
-        console.log("API Response:", res.data); 
+        const res = await axios.get(path); 
         return res.data; 
     } catch (error) {
         // throw { message: error };

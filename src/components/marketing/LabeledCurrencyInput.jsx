@@ -67,7 +67,6 @@ function LabeledCurrencyInput({
         setItem(formattedValue);
         if (placeHolder === 'Enter Interest Rate') {
             debreceive(formattedValue);
-            console.log(plainNum)
             if ((required || required === undefined) && (num === '' || plainNum < 0)) {
                 setStatus('error');
                 setIcon(true);
