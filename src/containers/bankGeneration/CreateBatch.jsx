@@ -14,14 +14,14 @@ function CreateBatch() {
     const queryClient = useQueryClient()
     const [api, contextHolder] = notification.useNotification();
     const [getInfo, setInfo] = React.useState({
-        CODE: '',
-        FN: '',
+        CODE: 'CEPAT',
+        FN: '0000-057309-503',
         TYPE: 'ALL',
         SELECT: ''
     })
 
     const { modalStatus, setStatus } = BatchModal()
-    React.useEffect(() => { if (modalStatus === true) { setInfo({ CODE: '', FN: '', TYPE: '', SELECT: '' }) } }, [modalStatus])
+    //React.useEffect(() => { if (modalStatus === true) { setInfo({ CODE: '', FN: '', TYPE: '', SELECT: '' }) } }, [modalStatus])
 
     const [getData, setData] = React.useState([])
     const GetDisbursementListQuery = useQuery({
@@ -147,6 +147,7 @@ function CreateBatch() {
                         })
                 }
             })
+            setInfo({ CODE: '', FN: '', TYPE: '', SELECT: '' })
             queryClient.invalidateQueries({ queryKey: ['GetBatchListQuery', jwtDecode(token).USRID] }, { exact: true })
             setStatus(false)
         }
@@ -159,7 +160,11 @@ function CreateBatch() {
                 <div>
                     <div className='w-[10rem]'>Company Code</div>
                     <div className='w-[10rem]'>
-                        <Input className='w-full' value={getInfo.CODE} onChange={(e) => { setInfo({ ...getInfo, CODE: e.target.value }) }} />
+                        <Input className='w-full'
+                        value={'CEPAT'} 
+                        readOnly
+                        /*value={getInfo.CODE}*/ 
+                        /*onChange={(e) => { setInfo({ ...getInfo, CODE: e.target.value }) }}*/ />
                     </div>
                 </div>
                 <div>
@@ -170,7 +175,12 @@ function CreateBatch() {
                 </div>
                 <div>
                     <div className='w-[18rem]'>Funding Account Number</div>
-                    <Input className='w-[18rem]' value={getInfo.FN} onChange={(e) => { setInfo({ ...getInfo, FN: e.target.value }) }} />
+                    <Input className='w-[18rem]' 
+                    value={'0000-057309-503'} 
+                    readOnly
+                    // value={getInfo.FN} 
+                    // onChange={(e) => { setInfo({ ...getInfo, FN: e.target.value }) }} 
+                    />
                 </div>
                 <Radio.Group className='pt-[1.5rem] pl-4'
                     onChange={(e) => { setInfo({ ...getInfo, SELECT: e.target.value }); }} value={getInfo.SELECT}>
