@@ -8,7 +8,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["LoanProductList"],
     queryFn: async () => {
-      const result = await GET_LIST("/getListLoanProduct");
+      const result = await GET_LIST("/GET/G19LLP");
       setLoanProdList(result.list);
       return result.list;
     },
@@ -32,7 +32,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["ProvinceList"],
     queryFn: async () => {
-      const result = await GET_LIST("/getProvinceList");
+      const result = await GET_LIST("/GET/G23PL");
       setProvinceList(result.list);
       return result.list;
     },
@@ -44,7 +44,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanPurpose");
+      const result = await GET_LIST("/GET/G20LP");
       setLoanPurpose(result.list);
       return result.list;
     },
@@ -56,7 +56,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["BranchListQuery"],
     queryFn: async () => {
-      const result = await GET_LIST("/getBranchList");
+      const result = await GET_LIST("/GET/G10BL");
       console.log("BRANCH API", result.list);
       setBranchList(result.list);
       return result.list;
@@ -93,7 +93,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getRelationship"],
     queryFn: async () => {
-      const result = await GET_LIST("/getListRelationship");
+      const result = await GET_LIST("/GET/G33RR");
       setRelationship(result.list)
       return result.list;
     },
@@ -108,7 +108,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ['getCurrency'],
     queryFn: async () => {
-        const result = await GET_LIST('/getCurrencyList');
+        const result = await GET_LIST('/GET/G105CL');
         setCurrency(result.list)
         return result.list;
     },

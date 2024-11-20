@@ -42,7 +42,7 @@ function EmploymentHistory({ data, User }) {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
             // console.log("Decrypted SIDC:", sidcDecrypted);
             try {
-                const result = await axios.get(`/getEmploymentHistory/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                const result = await axios.get(`/GET/G107EH/${toDecrypt(localStorage.getItem('SIDC'))}`);
 
                 //console.log("Employment History:", result);
 
@@ -109,7 +109,7 @@ function EmploymentHistory({ data, User }) {
         }
 
 
-        await axios.post('/addEmploymentHistory', data)
+        await axios.post('/GroupPost/P128AEH', data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -157,7 +157,7 @@ function EmploymentHistory({ data, User }) {
 
 
 
-            const result = await axios.post('/editEmploymentHistory', data);
+            const result = await axios.post('/GroupPost/P127UEH', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description,
@@ -187,7 +187,7 @@ function EmploymentHistory({ data, User }) {
 
     async function onClickDelete(e) {
         try {
-            const result = await axios.post(`/DeleteEmploymentHistory/${e}`);
+            const result = await axios.post(`/GroupPost/P130DEH/${e}`);
             queryClient.invalidateQueries({ queryKey: ['getEmploymentHistory'] }, { exact: true });
             api[result.data.status]({
                 message: result.data.message,

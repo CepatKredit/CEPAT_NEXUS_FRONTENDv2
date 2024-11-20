@@ -25,7 +25,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     const DocListQuery = useQuery({
         queryKey: ['DocListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${FileType}`)
+            const result = await GET_LIST(`/GET/G16FT/${FileType}`)
             return result.list
         },
         enabled: true,
@@ -38,7 +38,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
         queryKey: ['FileListQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${Uploader}`)
                 SET_LOADING_INTERNAL('UploadDocs', false);
                 return result.list
             } catch (error) {

@@ -26,7 +26,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
     const getDisbursementList = useQuery({
         queryKey: ['DisbursementListQuery', LAN, type],
         queryFn: async () => {
-            const result = await GET_LIST(`/getDisbursementList/${LAN}/${type}`)
+            const result = await GET_LIST(`/GET/G106DL/${LAN}/${type}`)
             return result.list
         },
         enabled: true
@@ -214,7 +214,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
                 ID: key
             }
 
-            await axios.post('/updateDisbursement', container)
+            await axios.post('/GroupPost/P123UD', container)
                 .then((result) => {
                     queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', LAN] }, { exact: true })
                     if (type === 'NP') {
@@ -239,7 +239,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
     }
 
     async function Delete(key) {
-        await axios.post(`/deleteDisbursement/${key}`)
+        await axios.post(`/GroupPost/P124DD/${key}`)
             .then((result) => {
                 queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', LAN] }, { exact: true })
                 if (type === 'NP') {

@@ -74,7 +74,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
             const user = jwtDecode(token).USRID;
             const date = mmddyy(dayjs());
 
-            await axios.get(`/getNDIData/${loanApp}/${borrow}/${type}/${user}/${date}`)
+            await axios.get(`/GET/G109ND/${loanApp}/${borrow}/${type}/${user}/${date}`)
                 .then((result) => {
                     let incomeData = [];
                     let expenseData = [];

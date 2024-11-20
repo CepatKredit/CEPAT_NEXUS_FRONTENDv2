@@ -280,7 +280,7 @@ function PortalLogin() {
 
   async function onClickCancelOTP() {
     await axios
-      .post(`/cancelOtp/${getAccount.Username}`)
+      .post(`//GroupPost/P89CO/${getAccount.Username}`)
       .then((result) => {
         setOTPStatus(false);
       })

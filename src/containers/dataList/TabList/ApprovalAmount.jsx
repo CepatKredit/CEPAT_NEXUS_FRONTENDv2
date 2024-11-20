@@ -156,7 +156,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
 
                 console.log('Payload being sent:', payload);
 
-                await axios.post('addCharges/', payload);
+                await axios.post('GroupPost/P143AC/', payload);
 
                 api.success({
                     message: 'Success',

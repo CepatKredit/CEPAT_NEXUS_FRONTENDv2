@@ -76,7 +76,7 @@ function Modal_Result({
         LastName: code.LastName,
         Birthday: code.Birthday,
       };
-      return await POST_DATA("/checkLoan", checkLoan);
+      return await POST_DATA("/GroupPost/P47CL", checkLoan);
     },
     onSuccess: (result) => {
       if (result.list.length === 0) {
@@ -101,7 +101,7 @@ function Modal_Result({
 
   const ClickLoan = useMutation({
     mutationFn: async () => {
-      const endpoint = direct ? "/addDirectClient" : "/addLCClient";
+      const endpoint = direct ? "/GroupPost/P52ADC" : "/GroupPost/AddLCClient";
       return axios.post(endpoint, code);
     },
     onSuccess: (response) => {

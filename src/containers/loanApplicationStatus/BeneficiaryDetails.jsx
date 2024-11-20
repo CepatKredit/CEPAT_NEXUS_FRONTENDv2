@@ -35,7 +35,7 @@ function BeneficiaryDetails({ data, receive, presaddress }) {
     const { data: relationshipOptions } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
-            const result = await GET_LIST('/getListRelationship');
+            const result = await GET_LIST('/GET/G33RR');
             return result.list;
         },
         refetchInterval: 30 * 1000,

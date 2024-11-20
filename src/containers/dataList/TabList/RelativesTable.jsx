@@ -46,7 +46,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         queryKey: ['getRelatives'],
         queryFn: async () => {
             try {
-                const result = await axios.get(`/getRelatives/${BorrowerId}`);
+                const result = await axios.get(`/GET/G35R/${BorrowerId}`);
                 let dataList = [{
                     key: 0,
                     no: '',
@@ -103,7 +103,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
     const getRelationshipList = useQuery({
         queryKey: ['getRelationshipList'],
         queryFn: async () => {
-            const result = await axios.get('/getRelativesRelationship');
+            const result = await axios.get('/GET/G33RR');
             setReshipList(result.data.list)
             return result.data.list;
         },
@@ -156,7 +156,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
 
             try {
                 console.log(data)
-                const result = await axios.post('/addRelatives', data);
+                const result = await axios.post('/GroupPost/P75AR', data);
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description,
@@ -212,7 +212,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     ModUser: jwtDecode(token).USRID
                 };
                 console.log(data)
-                const result = await axios.post('/editRelatives', data);
+                const result = await axios.post('/GroupPost/P76UR', data);
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description,
@@ -256,7 +256,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
     const onClickDeleteData = useMutation({
         mutationFn: async (e) => {
             try {
-                const result = await axios.post(`/Relativedelete/${e}`);
+                const result = await axios.post(`/GroupPost/P77DR/${e}`);
                 queryClient.invalidateQueries({ queryKey: ['getRelatives'] }, { exact: true });
                 api[result.data.status]({
                     message: result.data.message,

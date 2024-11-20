@@ -31,7 +31,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
         queryFn: async () => {
             let container = 0
             let counter = 0
-            const result = await GET_LIST(`/getBatchedDisbursement/${BID}`)
+            const result = await GET_LIST(`/GET/G103BD/${BID}`)
             result.list?.map((x) => { container += parseFloat(x.amount); counter += 1; })
             LoadData()
             setTotal({ ...getTotal, Amount: container, Count: counter })
@@ -45,7 +45,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
     const GetDisbursementListQuery = useQuery({
         queryKey: ["GetAvailabletListQuery"],
         queryFn: async () => {
-            const result = await GET_LIST(`/availableList`)
+            const result = await GET_LIST(`/GET/G102AL`)
             let container = []
             result.list?.map((x) => {
                 container.push({
@@ -134,7 +134,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
             AMT: parseFloat(getTotal.Amount) - parseFloat(removeCommas(data.amount)),
             USR: jwtDecode(token).USRID
         }
-        await axios.post('/removeFromBatchList', container)
+        await axios.post('/GroupPost/P144DBL', container)
             .then((result) => {
                 getDisbursementList.refetch()
                 queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
@@ -160,7 +160,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
         if (!status) return setEditingKey('');
         console.log('check ', lan, id)
         //console.log(`/updateStatDisbursement/${id}/${jwtDecode(token).USRID}/${status}`)
-        await axios.post(`/updateStatDisbursement/${id}/${jwtDecode(token).USRID}/${status}/${lan}`)
+        await axios.post(`/GroupPost/P125USD/${id}/${jwtDecode(token).USRID}/${status}/${lan}`)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -370,7 +370,7 @@ function BatchedDisbursement({ BID, Data, FileName }) {
             FundingAccountNumber: getBatchInfo.FAN
         }
 
-        await axios.post('updateBatchDetails', container)
+        await axios.post('/GroupPost/P117UBD', container)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,

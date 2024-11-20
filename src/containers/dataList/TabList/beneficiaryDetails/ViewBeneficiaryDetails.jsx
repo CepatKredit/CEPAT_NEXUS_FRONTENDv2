@@ -33,7 +33,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
     const { data: relationshipOptions } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
-            const result = await GET_LIST('/getListRelationship');
+            const result = await GET_LIST('/GET/G33RR');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),

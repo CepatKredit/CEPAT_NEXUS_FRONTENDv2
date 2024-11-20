@@ -115,7 +115,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
      };*/
     const handleDeleteCoborrower = async () => {
         try {
-            const result = await axios.post(`/AdditionalCoborrowerdelete/${toDecrypt(localStorage.getItem('SIDC'))}`);
+            const result = await axios.post(`/GroupPost/P43DACB/${toDecrypt(localStorage.getItem('SIDC'))}`);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description,
