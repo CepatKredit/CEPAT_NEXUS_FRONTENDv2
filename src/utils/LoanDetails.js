@@ -126,6 +126,11 @@ export const UpdateLoanDetails = async ({
     OtherExposure = null,
     TotalExposure = null,
     CRORemarks = null,
+    ForApprovalBy = null,
+    ForApprovalDate = null,
+    CremanBy = null,
+    CremanDate = null,
+    
     // Present Address Tables
     OfwPoBRemarks = null,
     BenPoBRemarks = null,
@@ -325,6 +330,12 @@ export const UpdateLoanDetails = async ({
         OtherExposure: OtherExposure,
         TotalExposure: TotalExposure,
         CRORemarks: CRORemarks,
+        ForApprovalBy: ForApprovalBy,
+        ForApprovalDate: ForApprovalDate,
+        CremanBy: CremanBy,
+        CremanDate: CremanDate,
+
+
         // Present Address Tables
         OfwPoBRemarks: OfwPoBRemarks,
         BenPoBRemarks: BenPoBRemarks,

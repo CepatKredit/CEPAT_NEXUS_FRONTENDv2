@@ -76,13 +76,14 @@ function LabeledInput({
 
       <div className={className_dsub}>
         <Input
+        autoComplete="new-password"
           disabled={disabled}
           readOnly={readOnly}
           value={getAppDetails[fieldName] || ""}
           onChange={onChange}
           size="large"
           placeholder={placeHolder}
-          autoComplete="off"
+          // autoComplete="off"
           style={{ width: "100%" }}
           maxLength={100}
           status={required || required === undefined ? getStatus : false}

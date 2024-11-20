@@ -40,11 +40,6 @@ function Dashboard() {
         return path
     }
 
-    const randomNumberInRange = (min, max) => {
-        return Math.floor(Math.random()
-            * (max - min + 1)) + min;
-    };
-
     return (
         <center>
             <div className='mx-[1%] my-[2%]'>
@@ -55,7 +50,7 @@ function Dashboard() {
                 </div>
                 <Divider />
                 <div className='flex flex-wrap justify-center gap-1 h-[58vh] overflow-y-auto'>
-                    {pathList()?.map((x, i) => (<AnimatedCard value={randomNumberInRange(0, 2000)} key={i} path={x} />))}
+                    {pathList()?.map((x, i) => (<AnimatedCard key={i} path={x} />))}
                 </div>
             </div>
         </center>

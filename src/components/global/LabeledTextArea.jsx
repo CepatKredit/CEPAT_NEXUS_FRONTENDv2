@@ -21,6 +21,7 @@ function LabeledTextArea({ className, label, placeHolder, value, receive, disabl
                     disabled={disabled}
                     readOnly={readOnly}
                     maxLength={250}
+                    autoComplete="new-password"
                 />
             </div>
         </div>

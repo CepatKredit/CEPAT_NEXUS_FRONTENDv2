@@ -103,8 +103,8 @@ function BatchList() {
     }
     async function UpdateStatus(res,id,filename) {
         try {
-            res.list.forEach(async (x) => {
-                await axios.post(`/updateStatDisbursement/${x.id}/${jwtDecode(token).USRID}/${'0'}`);
+            res.list.forEach(async (x) => {//                                              /use to escape params in backend 
+                await axios.post(`/updateStatDisbursement/${x.id}/${jwtDecode(token).USRID}/${'0'}/${'0'}`);
             });
             await axios.post(`/updateFileNameBatch/${id}/${filename}`);
         } catch (error) {
@@ -128,22 +128,21 @@ function BatchList() {
             let content = '';
             result.list.forEach(x => {
                 //console.log(x)
-                content += `10${x.bankName}${x.bankAcctNo.toString().padStart(16, '0')}${''.padStart(30, ' ')}${x.amount.toString().replaceAll('.', '').padStart(13, '0')}CEPAT KREDIT FINANCING INC.${''.padStart(43, ' ')}CEPAT KREDIT FINANCING INC.${''.padStart(47, ' ')}${x.firstName}${''.padStart(37, ' ')}${x.lastName}${''.padStart(124, ' ')}${/*x.city*/ 'PASIG CITY'}${''.padStart(124, ' ')}${x.traceId}${''.padStart(124, ' ')}\n`
+                const bank = x.bankName.trim();
+                content += `10${bank}${x.bankAcctNo.toString().trim().padStart(16, '0')}${''.padStart(30, ' ')}${x.amount.toString().replaceAll('.', '').padStart(13, '0')}CEPAT KREDIT FINANCING INC.${''.padStart(43, ' ')}CEPAT KREDIT FINANCING INC.${''.padStart(47, ' ')}${x.firstName}${''.padStart(37, ' ')}${x.lastName}${''.padStart(124, ' ')}${/*x.city*/ 'PASIG CITY'}${''.padStart(124, ' ')}${x.traceId}\n\n\n`
             });
-            console.log(`${header}${content}`)
+            //console.log(`${header}${content}`)
             UpdateStatus(result,v.id,filename)
             return `${header}${content}`
         } else if (result.length != 0 && v.paymentChannel === 'PESONET') {
-            const header = `HDR${''.padStart(32, ' ')}PNETIMPTSETCPHMMXXX${v.totalNumberOfRecords.toString().replaceAll('.', '').padStart(8, '0')}${v.totalAmountToDisburse.toString().replaceAll('.', '').padStart(16, '0')}${v.batchNumber.padStart(9,' ')}${''.padStart(32, ' ')}\n`
+            const header = `HDR${''.padStart(32, ' ')}PNETIMPTSETCPHMMXXX${v.totalNumberOfRecords.toString().replaceAll('.', '').padStart(8, '0')}${v.totalAmountToDisburse.toString().trim().replaceAll('.', '').padStart(16,'0')}${v.batchNumber.toString().trim().padStart(9,'0')}${''.padStart(32,' ')}\n`
             let content = '';
+            console.log('TESt' ,result.list)
             result.list.forEach(x => {
-               // console.log(x)
-                content += `
-                            test
-                            \n`
+                content += `${''.padStart(32,' ')}CKFPC${v.batchNumber.trim().padStart(9,'0')}${x.traceId.padStart(10,'0')}${''.padStart(11,' ')}NURGBONUPHP${x.amount.toString().replaceAll('.', '').padStart(16, '0')}SLEVCEPAT KREDIT FINANCE PASIG CITY${''.padStart(239, ' ')}PASIG CITY\nSETCPHMMXXX${v.fundingAccountNumber.padStart(35,'0')}${x.firstName} ${x.lastName}${''.padStart(126,' ')}PASIG CITY\n${x.bankName.padEnd(8,'X')}${''.padStart(2,' ')}12345678901234567890123456789012345${''.padStart(449,' ')}${x.traceId}\n`
             })
-            const footer = `TRL${''.padStart(32, ' ')}${result.list.length.toString().padStart(8, '0')}${v.totalAmountToDisburse}`
-            console.log(`${header}${content}${footer}`)
+            const footer = `TRL${''.padStart(32, ' ')}${result.list.length.toString().padStart(8, '0')}${v.totalAmountToDisburse.toString().replaceAll('.','').padStart(16,'0')}`
+            //console.log(`${header}${content}${footer}`)
             UpdateStatus(result,v.id,filename)
             return `${header}${content}${footer}`;
         } else {
@@ -179,7 +178,7 @@ function BatchList() {
                     FAN: x.fundingAccountNumber,
                     ACTION: (!x.fileName? <Button onClick={async () => {
                         const Filename =(x.paymentChannel === 'INSTAPAY'? `${x.companyCode}_${mmddyy(dayjs()).replaceAll('-', '')}_${x.batchNumber}.txt`
-                                            : x.paymentChannel === 'PESONET' ? `${x.companyName.split(' ').map((w) => w.charAt(0)).join('')}_${mmddyy(dayjs()).replaceAll('-', '')}_${x.batchNumber}.txt` : null);
+                                            : x.paymentChannel === 'PESONET' ? `${x.companyName.split(' ').map((w) => w.charAt(0)).join('')}_${mmddyy(dayjs()).replaceAll('-', '')}_${x.batchNumber}.rmt` : null);
                         const textData = await genTextSBD(x,Filename);
                         const link = document.createElement('a');
                         link.href = `data:text/plain;charset=utf-8,${encodeURIComponent(textData)}`;
@@ -194,7 +193,6 @@ function BatchList() {
                 expandable={{
                     expandedRowRender: (data, num) =>
                     (<div className='h-[350px] px-5 overflow-y-auto'>
-                        console.log(data.key)
                         <BatchedDisbursement BID={data.key} Data={data} FileName={data.FN} />
                     </div>)
                 }}

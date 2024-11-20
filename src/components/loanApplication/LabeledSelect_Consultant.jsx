@@ -30,6 +30,12 @@ function LabeledSelect_Consultant({
   const [icon, setIcon] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(getAppDetails[fieldName] || '');
 
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+    setSelectedValue("")
+  }, [!getAppDetails.dataPrivacy])
+
   const { data: consultantData } = useQuery({
     queryKey: ["getLoanConsultant"],
     queryFn: async () => {
