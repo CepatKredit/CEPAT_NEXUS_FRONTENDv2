@@ -63,8 +63,8 @@ function SideNav() {
     const token = localStorage.getItem("UTK");
     const userID = jwtDecode(token).USRID
     if (searchValue.trim() !== "") {
-        console.log(`Navigating to /ckfi/searches/${userID}?searching=${searchValue}`);
-      navigate(`/ckfi/searches/${userID}?searching=${searchValue}`);
+        console.log(`Navigating to /ckfi/searches/${userID}/${searchValue}`);
+      navigate(`/ckfi/searches/${userID}/${searchValue}`);
     }
   };
 

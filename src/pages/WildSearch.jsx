@@ -9,17 +9,17 @@ import { jwtDecode } from 'jwt-decode';
 import { TileNumber } from '@utils/Conditions';
 
 function WildSearch() {
-    const { userID } = useParams();
+    const { userID, searchValue } = useParams();
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient()
     const navigate = useNavigate();
   
-    const searchValue = searchParams.get("searching");
+    // const searchValue = searchParams.get("searching");
 
     const { data: getData = [], isFetching } = useQuery({
         queryKey: ["wildSearch", userID, searchValue],
         queryFn: async () => {
-          const { data } = await axios.get(`/wild-search/${userID}?searching=${searchValue}`);
+          const { data } = await axios.get(`/wild-search/${userID}/${searchValue}`);
           return data.map((item) => ({
             key: item.loanAppId,
             loanAppCode: item.loanAppCode,
