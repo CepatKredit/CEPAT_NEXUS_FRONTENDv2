@@ -249,31 +249,31 @@ function OtherLoanHistory({ data, User }) {
     const columns = [
         {
             title: (<div className="flex items-center">
-                    {!DISABLE_STATUS(localStorage.getItem('SP')) && (
-            <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                <Tooltip title='Add'>
-                    <Button className='bg-[#3b0764]' type='primary' 
-                        icon={<PlusOutlined style={{ fontSize: '15px' }} />}
-                        onClick={() => {
-                            const record = { key: 0, loan: '', amount: '', amortization: '', remarks: '' }
-                            edit(record)
-                            setStat(false)
-                            setEditingKey(0);
-                            setAddStat(!getAddStat)
-                            setInfo({
-                                ...getInfo,
-                                Loan: '',
-                                Amount: '',
-                                Amortization: '',
-                                Remarks: '',
-                            })
-                        }} />
+                {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                    <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                        <Tooltip title='Add'>
+                            <Button className='bg-[#3b0764]' type='primary'
+                                icon={<PlusOutlined style={{ fontSize: '15px' }} />}
+                                onClick={() => {
+                                    const record = { key: 0, loan: '', amount: '', amortization: '', remarks: '' }
+                                    edit(record)
+                                    setStat(false)
+                                    setEditingKey(0);
+                                    setAddStat(!getAddStat)
+                                    setInfo({
+                                        ...getInfo,
+                                        Loan: '',
+                                        Amount: '',
+                                        Amortization: '',
+                                        Remarks: '',
+                                    })
+                                }} />
 
-                </Tooltip>
-            </ConfigProvider>
-            )}
+                        </Tooltip>
+                    </ConfigProvider>
+                )}
             </div>
-        ),
+            ),
             dataIndex: 'no',
             key: 'no',
             width: '5%',
@@ -321,7 +321,9 @@ function OtherLoanHistory({ data, User }) {
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -341,7 +343,9 @@ function OtherLoanHistory({ data, User }) {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]'/>
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]' />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -360,7 +364,7 @@ function OtherLoanHistory({ data, User }) {
                         <Space>
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                 <Tooltip title='Edit'>
-                                    <Button className='bg-[#3b0764]' disabled={ editingKey !== ''} onClick={() => {
+                                    <Button className='bg-[#3b0764]' disabled={editingKey !== ''} onClick={() => {
 
                                         edit(record);
                                         setAddStat(!getAddStat);
@@ -377,7 +381,7 @@ function OtherLoanHistory({ data, User }) {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button disabled={ editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
+                                    <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>

@@ -376,13 +376,15 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Button
-                                    icon={<SaveOutlined />}
-                                    type="primary"
-                                    onClick={onClickSave}
-                                    loading={onClickSaveData.isPending}
-                                    className="bg-[#2b972d]"
-                                />
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button
+                                        icon={<SaveOutlined />}
+                                        type="primary"
+                                        onClick={onClickSave}
+                                        loading={onClickSaveData.isPending}
+                                        className="bg-[#2b972d]"
+                                    />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
@@ -402,13 +404,15 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button
-                                    icon={<SaveOutlined />}
-                                    type="primary"
-                                    onClick={onClickEdit}
-                                    loading={onClickEditData.isPending}
-                                    className="bg-[#2b972d]"
-                                />
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button
+                                        icon={<SaveOutlined />}
+                                        type="primary"
+                                        onClick={onClickEdit}
+                                        loading={onClickEditData.isPending}
+                                        className="bg-[#2b972d]"
+                                    />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
                                 <Button
