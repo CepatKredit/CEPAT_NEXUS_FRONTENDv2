@@ -120,7 +120,7 @@ const [getCollectionArea, setCollectionArea] = React.useState([])
 const collectionArea = useQuery({
   queryKey: ['collectionArea'],
   queryFn: async () => {
-      const result = await GET_LIST('OFWDetails/getCollectionArea');
+      const result = await GET_LIST('/GroupGet/G29CA');
       setCollectionArea(result.list)
       return result.list;
   },
