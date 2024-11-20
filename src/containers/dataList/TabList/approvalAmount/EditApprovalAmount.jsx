@@ -133,8 +133,19 @@ function EditApprovalAmount({ data, receive }) {
                 className_label={'font-bold'}
                 label={'Encoded By'}
                 placeHolder="Encoded By"
-                value={data.RecBy || recBy}
-                receive={(e) => updateAppDetails({ name: 'ModUser', value: e })}
+                value={data.ForApprovalBy}
+                receive={(e) => updateAppDetails({ name: 'ForApprovalBy', value: e })}
+                category="marketing"
+                rendered={rendered}
+                readOnly
+            />
+            <LabeledInput
+                className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
+                className_label={'font-bold'}
+                label={'Encoded Date'}
+                placeHolder="Encoded Date"
+                value={data.ForApprovalDate}
+                receive={(e) => updateAppDetails({ name: 'ForApprovalDate', value: e })}
                 category="marketing"
                 rendered={rendered}
                 readOnly
@@ -145,7 +156,18 @@ function EditApprovalAmount({ data, receive }) {
                 label={'Approved By'}
                 placeHolder="Approved By"
                 value={data.CremanBy}
-                receive={(e) => updateAppDetails({ name: 'ModUser', value: e })}
+                receive={(e) => updateAppDetails({ name: 'CremanBy', value: e })}
+                category="marketing"
+                rendered={rendered}
+                readOnly
+            />
+             <LabeledInput
+                className_dmain={'mt-10 w-[400px] h-[4rem] pt-[.4rem]'}
+                className_label={'font-bold'}
+                label={'Approved Date'}
+                placeHolder="Approved Date"
+                value={data.CremanDate}
+                receive={(e) => updateAppDetails({ name: 'CremanDate', value: e })}
                 category="marketing"
                 rendered={rendered}
                 readOnly

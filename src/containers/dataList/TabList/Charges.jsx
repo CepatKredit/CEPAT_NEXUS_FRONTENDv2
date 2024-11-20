@@ -8,7 +8,7 @@ import { toDecrypt } from '@utils/Converter';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
-function Charges({ LoanAppId, data, User }) {
+function Charges({ LoanAppId, data, User, }) {
     const { getAppDetails, setAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext);
     const [api, contextHolder] = notification.useNotification();
     const [isEdit, setEdit] = React.useState(false);
@@ -27,7 +27,7 @@ function Charges({ LoanAppId, data, User }) {
         if (!getAppDetails?.loanProd) {
             return ''; // Return empty if data is not available
         }
-        const ProductHolder = loanProducts.data.find(
+        const ProductHolder = loanProducts.data?.find(
             (x) => x.code === getAppDetails?.loanProd || x.description === getAppDetails?.loanProd
         );
         return ProductHolder ? `${ProductHolder.description}` : getAppDetails?.loanProd;
@@ -35,7 +35,7 @@ function Charges({ LoanAppId, data, User }) {
 
 
 
-    const [getCharges, setCharges] = React.useState({
+    /*const [getCharges, setCharges] = React.useState({
         ProductLoan: getAppDetails?.loanProd,
         PFR: '',
         InterestRate: '',
@@ -51,16 +51,147 @@ function Charges({ LoanAppId, data, User }) {
         ServiceFee: '',
         DocuSign: '' || 300.00,
         IBFTFee: '' || 300.00,
-        Others: 500,
+        Others: '',
         TotalCharges: '',
         PNValue: '',
         NetProceeds: '',
         MonthlyAmortization: '',
-    });
+    });*/
+
+
+
+
 
     React.useEffect(() => {
-        console.log('approveamount', getAppDetails.ApprvAmount)
-    }, [data])
+        // Set temporary default values for PFR, CFRF, and InterestRate based on loanType and loanProd
+        if (!getAppDetails?.PFR || !getAppDetails?.CFRF || !getAppDetails?.InterestRate|| !getAppDetails?.DocuSign || !getAppDetails?.IBFTFee) {
+            let defaultPFR = '';
+            let defaultCFRF = '';
+            let defaultInterestRate = '';
+            let defaultDocuSign = 300;  // Default value for DocuSign
+            let defaultIBFTFee = 300;   // Default value for IBFTFee
+
+            // Default value for PFR based on loanType
+            if (data.loanType === 1) {
+                defaultPFR = 0.055; // Default PFR for loanType 1
+            } else if (data.loanType === 2) {
+                defaultPFR = 0.045; // Default PFR for loanType 2
+            }
+
+            // Additional condition for PFR if loanProd is DH or DHW
+            if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
+                defaultPFR = 0.055; // Set PFR for DH or DHW loanProd
+            }
+
+            // Set default value for CFRF based on loanType
+            if (data.loanType === 1) {
+                defaultCFRF = 0.025; // Default CFRF for loanType 1
+            } else if (data.loanType === 2) {
+                defaultCFRF = 0.02; // Default CFRF for loanType 2
+            }
+
+            // Additional condition for CFRF if loanProd is DH or DHW
+            if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
+                defaultCFRF = 0.03; // Set CFRF for DH or DHW loanProd
+            }
+
+            // Set default value for InterestRate if not already set
+            if (!getAppDetails.InterestRate) {
+                defaultInterestRate = 0.025; // Default InterestRate
+            }
+            
+
+            // Set PFR, CFRF, and InterestRate values in the state
+            setAppDetails((prevState) => ({
+                ...prevState,
+                PFR: defaultPFR, // Set temporary PFR value
+                CFRF: defaultCFRF, // Set temporary CFRF value
+                InterestRate: defaultInterestRate, // Set temporary InterestRate value
+                DocuSign: defaultDocuSign,  // Set temporary DocuSign value
+                IBFTFee: defaultIBFTFee,
+            }));
+        }
+
+        // Compute processingFee based on the approvedAmount and PFR
+        const approvedAmount = parseFloat(getAppDetails.ApprvAmount);
+        const PFR = getAppDetails.PFR; // Use PFR from the state or defaultPFR
+        const CFRF = getAppDetails?.CFRF;
+        const terms = parseFloat(getAppDetails.loanTerms);
+        const gracePeriod = getAppDetails.GracePeriod;
+        const others = parseFloat(getAppDetails.Others) || 0;
+        const chargetype = getAppDetails.ChargeType;
+
+        const processingFee = (parseFloat(PFR) * approvedAmount).toFixed(2);
+        const crf = (parseFloat(CFRF) * approvedAmount).toFixed(2);
+        const pndst = ((approvedAmount / 200) * (terms / 12) * 1.5).toFixed(2);
+
+
+
+
+        let serviceFee = '';
+        if (gracePeriod === 2) {
+            serviceFee = (terms * 25 + 100).toFixed(2);
+        } else if (gracePeriod === 1) {
+            serviceFee = ((terms - 1) * 25 + 100).toFixed(2);
+        } else {
+            serviceFee = '0.00'; // Default value if no valid grace period
+        }
+
+        const totalCharges = (parseFloat(processingFee) + others).toFixed(2);
+
+        // Default value for PNValue calculation
+        let pnValue = 0;
+        const interestRate = parseFloat(getAppDetails.InterestRate) || 0;
+        const ibftFee = parseFloat(getAppDetails.IBFTFee);
+
+        if (chargetype === 1) {
+            pnValue = (approvedAmount * terms * interestRate) + approvedAmount;
+        } else if (chargetype === 2) {
+            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
+            pnValue = (baseAmount * terms * interestRate) + baseAmount;
+        }
+
+
+        // Compute netProceeds based on ChargeType
+        let netProceeds = 0;
+        if (chargetype === 1) {
+            netProceeds = approvedAmount + parseFloat(totalCharges);
+        } else if (chargetype === 2) {
+            netProceeds = approvedAmount + parseFloat(others);
+        }
+
+
+        // Computation for monthly amortization
+        let monthlyAmortization = 0;
+        if (chargetype === 1 && gracePeriod === 2) {
+            monthlyAmortization = (approvedAmount * terms * interestRate) + (approvedAmount / terms);
+        } else if (chargetype === 1 && gracePeriod === 1) {
+            monthlyAmortization = (approvedAmount * terms * interestRate) + (approvedAmount / terms) - 1;
+        } else if (chargetype === 2 && gracePeriod === 2) {
+            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
+            monthlyAmortization = (baseAmount * terms * interestRate) + (baseAmount / terms);
+        } else if (chargetype === 2 && gracePeriod === 1) {
+            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
+            monthlyAmortization = (baseAmount * terms * interestRate) + (baseAmount / terms) - 1;
+        }
+
+
+
+        // Optionally, you can set the processingFee in the state as well
+        setAppDetails((prevState) => ({
+            ...prevState,
+            ProcessingFee: processingFee, // Set computed processingFee
+            CRF: crf,
+            PNDST: pndst,
+            ServiceFee: serviceFee,
+            TotalCharges: totalCharges,
+            PNValue: pnValue,
+            NetProceeds: netProceeds,
+            MonthlyAmortization: monthlyAmortization.toFixed(2),
+        }));
+    }, [data.loanType, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.Terms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
+
+
 
     const getChargesQuery = useQuery({
         queryKey: ['getChargesQuery'],
@@ -111,150 +242,27 @@ function Charges({ LoanAppId, data, User }) {
 
 
 
-    React.useEffect(() => {
-        if (data && data) {
-            let defaultPFR = '';
-            let defaultCFRF = '';
-            let defaultInterestRate = '';
-
-            //PFR
-            if (data.loanType === 1) {
-                defaultPFR = '0.055';
-            } else if (data.loanType === 2) {
-                defaultPFR = '0.045';
-            }
-
-            //PFR if DH
-            if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
-                defaultPFR = '0.055';
-            }
-
-            // CFRF
-            if (data.loanType === 1) {
-                defaultCFRF = '0.025';
-            } else if (data.loanType === 2) {
-                defaultCFRF = '0.02';
-            }
-
-            //PFR if CFRF
-            if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
-                defaultCFRF = '0.03';
-            }
-
-            // temporary value of interestrate
-            if (!getCharges.InterestRate) {
-                defaultInterestRate = '0.025';
-            }
-
-
-            const approvedAmount = parseFloat(getAppDetails.ApprvAmount);
-            const PFR = getCharges.PFR || defaultPFR;
-            const CFRF = getCharges.CFRF || defaultCFRF;
-            const terms = parseFloat(getCharges.Terms) || data?.loanTerms;
-
-            // ProcessingFee default value
-            const processingFee = (parseFloat(PFR) * approvedAmount).toFixed(2);
-            // CRF default value
-            const crf = (parseFloat(CFRF) * approvedAmount).toFixed(2);
-            // PNDST default value
-            const pndst = ((approvedAmount / 200) * (terms / 12) * 1.5).toFixed(2);
-
-            // Condition for ServiceFee default value
-            let serviceFee = '';
-            const gracePeriod = getCharges.GracePeriod;
-            if (gracePeriod === 2) {
-                serviceFee = (terms * 25 + 100).toFixed(2);
-            } else if (gracePeriod === 1) {
-                serviceFee = ((terms - 1) * 25 + 100).toFixed(2);
-            }
-
-            // Others 
-            const others = parseFloat(getCharges.Others) || 0;
-            // default value ng TotalCharges
-            const totalCharges = (parseFloat(processingFee) + others).toFixed(2);
-
-            //set
-            setCharges((prevCharges) => ({
-                ...prevCharges,
-                PFR: prevCharges.PFR || defaultPFR,
-                CFRF: prevCharges.CFRF || defaultCFRF,
-                InterestRate: prevCharges.InterestRate || defaultInterestRate,
-                ProcessingFee: processingFee,
-                CRF: crf,
-                PNDST: pndst,
-                ServiceFee: serviceFee,
-                TotalCharges: totalCharges,
-            }));
-
-            // default value ng PNValue
-            let pnValue = 0;
-            const interestRate = parseFloat(getCharges.InterestRate) || 0;
-            const ibftFee = parseFloat(getCharges.IBFTFee || 0);
-            if (getCharges.ChargeType === 1) {
-                pnValue = (approvedAmount * terms * interestRate) + approvedAmount;
-            } else if (getCharges.ChargeType === 2) {
-                const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-                pnValue = (baseAmount * terms * interestRate) + baseAmount;
-            }
-
-            // default value ng netProceed
-            let netProceeds = 0;
-            if (getCharges.ChargeType === 1) {
-                netProceeds = approvedAmount + parseFloat(totalCharges);
-            } else if (getCharges.ChargeType === 2) {
-                netProceeds = approvedAmount + parseFloat(others);
-            }
-
-            // Computation for monthly amortization
-            let monthlyAmortization = 0;
-            if (getCharges.ChargeType === 1 && getCharges.GracePeriod === 2) {
-                monthlyAmortization = (approvedAmount * terms * interestRate) + (approvedAmount / terms);
-            } else if (getCharges.ChargeType === 1 && getCharges.GracePeriod === 1) {
-                monthlyAmortization = (approvedAmount * terms * interestRate) + (approvedAmount / terms) - 1;
-            } else if (getCharges.ChargeType === 2 && getCharges.GracePeriod === 2) {
-                const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-                monthlyAmortization = (baseAmount * terms * interestRate) + (baseAmount / terms);
-            } else if (getCharges.ChargeType === 2 && getCharges.GracePeriod === 1) {
-                const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-                monthlyAmortization = (baseAmount * terms * interestRate) + (baseAmount / terms) - 1;
-            }
-
-            // set
-            setCharges((prevCharges) => ({
-                ...prevCharges,
-                PNValue: pnValue.toFixed(2),
-                NetProceeds: netProceeds.toFixed(2),
-                MonthlyAmortization: monthlyAmortization.toFixed(2),
-            }));
-            console.log("PFR:", PFR, "ApprovedAmount:", approvedAmount, "ProcessingFee:", processingFee);
-
-        }
-    }, [data, getCharges.ApprovedAmount, getCharges.Terms, getCharges.GracePeriod, getCharges.Others, getCharges.ChargeType, getCharges.IBFTFee, getCharges.PFR,
-        getCharges.CFRF]);
-
-
-
+    // Define the onChange function for the Terms dropdown
     const handleTermChange = (value) => {
-        setCharges((prevCharges) => ({
-            ...prevCharges,
-            Terms: value,
+        // Simply update the loan terms without any condition checks
+        updateAppDetails({ name: 'loanTerms', value });
+        setAppDetails((prevState) => ({
+            ...prevState,
+            Terms: value, // Update the state with the selected term
         }));
     };
 
-
+    // Function to generate options for the terms dropdown (always 3 to 24)
     const generateTermOptions = () => {
         const options = [];
+
+        // Add options from 3 to 24
         for (let i = 3; i <= 24; i++) {
-            options.push(
-                <Select.Option key={i} value={i}>
-                    {i}
-                </Select.Option>
-            );
+            options.push(<Select.Option key={i} value={i}>{i}</Select.Option>);
         }
+
         return options;
     };
-
-
 
     return (
         <>
@@ -291,8 +299,8 @@ function Charges({ LoanAppId, data, User }) {
                                             updateAppDetails({ name: 'PFR', value: formattedValue });
                                         }}
                                         onBlur={() => {
-                                            const formattedValue = parseFloat(getCharges.PFR || 0);
-                                            setCharges({ ...getCharges, PFR: formattedValue });
+                                            const formattedValue = parseFloat(getAppDetails.PFR || 0);
+                                            setAppDetails({ ...getAppDetails, PFR: formattedValue });
                                         }}
                                     />
 
@@ -309,8 +317,8 @@ function Charges({ LoanAppId, data, User }) {
                                             updateAppDetails({ name: 'InterestRate', value: formattedValue });
                                         }}
                                         onBlur={() => {
-                                            const formattedValue = parseFloat(getCharges.InterestRate || 0);
-                                            setCharges({ ...getCharges, InterestRate: formattedValue });
+                                            const formattedValue = parseFloat(getAppDetails.InterestRate || 0);
+                                            setAppDetails({ ...getAppDetails, InterestRate: formattedValue });
                                         }}
                                     />
                                 </div>
@@ -326,8 +334,8 @@ function Charges({ LoanAppId, data, User }) {
                                             updateAppDetails({ name: 'CFRF', value: formattedValue });
                                         }}
                                         onBlur={() => {
-                                            const formattedValue = parseFloat(getCharges.CFRF || 0);
-                                            setCharges({ ...getCharges, CFRF: formattedValue });
+                                            const formattedValue = parseFloat(getAppDetails.CFRF || 0);
+                                            setAppDetails({ ...getAppDetails, CFRF: formattedValue });
                                         }}
                                     />
                                 </div>
@@ -337,11 +345,11 @@ function Charges({ LoanAppId, data, User }) {
                                 <div className='w-[15rem]'>
                                     <Select
                                         className='w-[15rem]'
-                                        value={getAppDetails.Terms || data.loanTerms}
+                                        value={getAppDetails.loanTerms}  // Ensure it's always based on getAppDetails.loanTerms
                                         onChange={handleTermChange}
                                         placeholder="Select terms"
                                     >
-                                        {generateTermOptions()}
+                                        {generateTermOptions()}  // Generate options based on getAppDetails.loanTerms
                                     </Select>
                                 </div>
                             </Space>
@@ -349,7 +357,13 @@ function Charges({ LoanAppId, data, User }) {
                                 <div className='w-[10rem]'>Grace Period</div>
                                 <div className='w-[15rem]'>
                                     <Radio.Group
-                                        onChange={(e) => updateAppDetails({ name: 'GracePeriod', value: e.target.value })}
+                                        onChange={(e) => {
+                                            updateAppDetails({ name: 'GracePeriod', value: e.target.value });
+                                            setAppDetails((prevState) => ({
+                                                ...prevState,
+                                                GracePeriod: e.target.value, // Update local state as well
+                                            }));
+                                        }}
                                         value={getAppDetails.GracePeriod}
                                     >
                                         <Radio value={1}>Yes</Radio>
@@ -383,12 +397,17 @@ function Charges({ LoanAppId, data, User }) {
                                 <div className='w-[10rem]'>Charges Type</div>
                                 <div className='w-[15rem]'>
                                     <Radio.Group
-                                        onChange={(e) => updateAppDetails({ name: 'ChargeType', value: e.target.value })}
+                                        onChange={(e) => {
+                                            updateAppDetails({ name: 'ChargeType', value: e.target.value });
+                                            setAppDetails((prevState) => ({
+                                                ...prevState,
+                                                ChargeType: e.target.value, // Update local state as well
+                                            }));
+                                        }}
                                         value={getAppDetails.ChargeType}
                                     >
                                         <Radio value={1}>LTP</Radio>
                                         <Radio value={2}>Amortized</Radio>
-
                                     </Radio.Group>
                                 </div>
                             </Space>
@@ -399,46 +418,49 @@ function Charges({ LoanAppId, data, User }) {
                                 <div className='w-[10rem] '>Processing Fee</div>
                                 <div className='w-[15rem]'>
                                     <Input readOnly value={getAppDetails.ProcessingFee}
-                                     onChange={(e) => updateAppDetails({ name: 'ProcessingFee', value: e.target.value })} />
+                                        onChange={(e) => updateAppDetails({ name: 'ProcessingFee', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem] '>CRF</div>
                                 <div className='w-[15rem]'>
-                                    <Input readOnly value={getAppDetails.CRF}   onChange={(e) => updateAppDetails({ name: 'CRF', value: e.target.value })} />
+                                    <Input readOnly value={getAppDetails.CRF}
+                                        onChange={(e) => updateAppDetails({ name: 'CRF', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem]'>Notarial</div>
                                 <div className='w-[15rem]'>
-                                    <Input readOnly value={parseFloat(getAppDetails.Notatial).toFixed(2)} onChange={(e) => updateAppDetails({ name: 'Notatial', value: e.target.value })}/>
+                                    <Input readOnly value={parseFloat(getAppDetails.Notatial).toFixed(2)} onChange={(e) => updateAppDetails({ name: 'Notatial', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem] '>PN DST</div>
                                 <div className='w-[15rem]'>
-                                    <Input readOnly value={getAppDetails.PNDST} onChange={(e) => updateAppDetails({ name: 'PNDST', value: e.target.value })} />
+                                    <Input readOnly value={getAppDetails.PNDST} onChange={(e) =>
+                                        updateAppDetails({ name: 'PNDST', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem] '>Service Fee</div>
                                 <div className='w-[15rem]'>
-                                    <Input readOnly value={getAppDetails.ServiceFee} onChange={(e) => updateAppDetails({ name: 'ServiceFee', value: e.target.value })} />
+                                    <Input readOnly value={getAppDetails.ServiceFee}
+                                        onChange={(e) => updateAppDetails({ name: 'ServiceFee', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem]'>DocuSign</div>
                                 <div className='w-[15rem]'>
                                     <Input
-                                        value={getAppDetails.DocuSign || 300}
+                                        value={getAppDetails.DocuSign}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             const formattedValue = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
                                             updateAppDetails({ name: 'DocuSign', value: formattedValue });
                                         }}
                                         onBlur={() => {
-                                            const formattedValue = parseFloat(getCharges.DocuSign || 0).toFixed(2);
-                                            setCharges({ ...getCharges, DocuSign: formattedValue });
+                                            const formattedValue = parseFloat(getAppDetails.DocuSign || 0).toFixed(2);
+                                            setAppDetails({ ...getAppDetails, DocuSign: formattedValue });
                                         }}
                                     />
                                 </div>
@@ -447,15 +469,15 @@ function Charges({ LoanAppId, data, User }) {
                                 <div className='w-[10rem]'>IBFT Fee</div>
                                 <div className='w-[15rem]'>
                                     <Input
-                                        value={getAppDetails.IBFTFee || 300}
+                                        value={getAppDetails.IBFTFee}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             const formattedValue = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
                                             updateAppDetails({ name: 'IBFTFee', value: formattedValue });
                                         }}
                                         onBlur={() => {
-                                            const formattedValue = parseFloat(getCharges.IBFTFee || 0).toFixed(2);
-                                            setCharges({ ...getCharges, IBFTFee: formattedValue });
+                                            const formattedValue = parseFloat(getAppDetails.IBFTFee || 0).toFixed(2);
+                                            setAppDetails({ ...getAppDetails, IBFTFee: formattedValue });
                                         }}
                                     />
                                 </div>
@@ -469,10 +491,11 @@ function Charges({ LoanAppId, data, User }) {
                                             const value = e.target.value;
                                             const formattedValue = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
                                             updateAppDetails({ name: 'Others', value: formattedValue });
+                                            setAppDetails({ ...getAppDetails, Others: formattedValue });
                                         }}
                                         onBlur={() => {
-                                            const formattedValue = parseFloat(getCharges.Others || 0).toFixed(2);
-                                            setCharges({ ...getCharges, Others: formattedValue });
+                                            const formattedValue = parseFloat(getAppDetails.Others || 0).toFixed(2);
+                                            setAppDetails({ ...getAppDetails, Others: formattedValue });
                                         }}
                                     />
                                 </div>
@@ -481,13 +504,15 @@ function Charges({ LoanAppId, data, User }) {
                             <Space className='pt-6 w-full mb-2 justify-center items-center'>
                                 <div className='w-[10rem] '>Total Charges</div>
                                 <div className='w-[15rem]'>
-                                    <Input readOnly value={getAppDetails.TotalCharges} onChange={(e) => updateAppDetails({ name: 'TotalCharges', value: e.target.value })}/>
+                                    <Input readOnly value={getAppDetails.TotalCharges}
+                                        onChange={(e) => updateAppDetails({ name: 'TotalCharges', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem] '>PN Value</div>
                                 <div className='w-[15rem]'>
-                                    <Input readOnly value={getAppDetails.PNValue} onChange={(e) => updateAppDetails({ name: 'PNValue', value: e.target.value })}/>
+                                    <Input readOnly value={getAppDetails.PNValue}
+                                        onChange={(e) => updateAppDetails({ name: 'PNValue', value: e.target.value })} />
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 justify-center items-center">

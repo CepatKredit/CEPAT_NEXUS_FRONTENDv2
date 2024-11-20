@@ -34,6 +34,7 @@ import DatePickerOpt from '@components/optimized/DatePickerOpt';
 import { useDataContainer } from '@context/PreLoad';
 import SelectOpt from '@components/optimized/SelectOpt';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import InputOpt from '@components/optimized/InputOpt';
 
 
 function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, BorrowerId, addCoborrower }) {
@@ -73,7 +74,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     }
 
     const { GET_COUNTRY_LIST } = useDataContainer();
-    const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+    const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
     const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
 
     return (
@@ -84,7 +85,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
 
 
-                <LabeledInput_Fullname
+                <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>First Name <span className="text-red-500">*</span></>}
@@ -95,8 +96,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
+                    KeyName={'Default'}
                 />
-                <LabeledInput_NotRequired
+                <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={'Middle Name'}
@@ -106,8 +108,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
+                    rendered={false}
+                    KeyName={'Default'}
+                    required={false}
                 />
-                <LabeledInput_Fullname
+                <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Last Name <span className="text-red-500">*</span></>}
@@ -117,6 +122,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
+                    KeyName={'Default'}
                     rendered={rendered}
                 />
                 <LabeledSelect_Suffix
@@ -646,10 +652,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         value={data.ofwcountry}
                         receive={(e) => updateAppDetails({ name: 'ofwcountry', value: e })}
-                        //rendered={rendered}
+                        rendered={rendered}
                         showSearch
                         options={get_country_list}
-                        keyName={'ofwcountry'}
+                        KeyName={'ofwcountry'}
                         notValidMsg={'Country Required'}
                     />)}
                 {User === 'LC' ? (

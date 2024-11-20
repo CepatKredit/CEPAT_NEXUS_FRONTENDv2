@@ -104,7 +104,7 @@ function BatchList() {
     async function UpdateStatus(res,id,filename) {
         try {
             res.list.forEach(async (x) => {
-                await axios.post(`/GroupPost/P125USD/${x.id}/${jwtDecode(token).USRID}/${'0'}`);
+                await axios.post(`/GroupPost/P125USD/${x.id}/${jwtDecode(token).USRID}/${'0'}/${'0'}`);
             });
             await axios.post(`/GroupPost/P126UFB/${id}/${filename}`);
         } catch (error) {

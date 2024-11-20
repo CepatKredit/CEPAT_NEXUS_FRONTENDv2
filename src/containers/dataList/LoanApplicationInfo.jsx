@@ -211,8 +211,11 @@ function LoanApplicationInfo() {
                     OtherExposure: data?.LoanDetails?.otherExposure || '',
                     TotalExposure: data?.LoanDetails?.totalExposure || '',
                     CRORemarks: data?.LoanDetails?.croRemarks || '',
-                    RecBy: data?.LoanDetails?.recBy || '',
+                    ForApprovalBy: data?.LoanDetails?.forApprovalBy || '',
+                    ForApprovalDate: data?.LoanDetails?.forApprovalDate ? mmddyy(data.LoanDetails.forApprovalDate) : '',
                     CremanBy: data?.LoanDetails?.cremanBy || '',
+                    CremanDate: data?.LoanDetails?.cremanDate ? mmddyy(data.LoanDetails.cremanDate) : '',
+
                     // Present Address Tables
                     OfwPoBRemarks: data?.OfwPresAddress?.billingRemarks || '',
                     BenPoBRemarks: data?.BeneficiaryPresAddress?.billingRemarks || '',
