@@ -15,7 +15,7 @@ function AddressContainer({ data, receive, title, type, category, isEdit, presad
     const provinceList = useQuery({
         queryKey: ['ProvinceListQuery'],
         queryFn: async () => {
-            const result = await axios.get('/getProvinceList');
+            const result = await axios.get('/GroupGet/G23PL');
             return result.data.list;
         },
         refetchInterval: 15 * 1000,
@@ -36,7 +36,7 @@ function AddressContainer({ data, receive, title, type, category, isEdit, presad
                                 : null;
 
             if (!provCode) return [];
-            const result = await axios.get(`/getMuniArea/${provCode}`);
+            const result = await axios.get(`/GroupGet/G6MA/${provCode}`);
             return result.data.list;
         },
         refetchInterval: 15 * 1000,
@@ -56,7 +56,7 @@ function AddressContainer({ data, receive, title, type, category, isEdit, presad
                             : type === "beneficiary" && !data.bensameadd ? data.benpresmunicipality
                                 : null;
             if (!munCode) return [];
-            const result = await axios.get(`/getbarangaylist/${munCode}`);
+            const result = await axios.get(`/GroupGet/G7BL/${munCode}`);
             return result.data.list;
         },
         refetchInterval: 15 * 1000,

@@ -67,7 +67,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
     const fetchRelativesAndUpdateCount = async () => {
         if (BorrowerId) {
             try {
-                const result = await GET_LIST(`/getRelatives/${BorrowerId}`);
+                const result = await GET_LIST(`/GroupGet/G35R/${BorrowerId}`);
                 if (result?.list) {
                     const relativesCount = result.list.length;
                     setRelativesCount(relativesCount);
@@ -389,7 +389,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
         }
 
         if (value.ofwfname !== null || value.ofwlname !== null) {
-            await axios.post('/checkLoan', checkLoan)
+            await axios.post('/GroupPost/P47CL', checkLoan)
                 .then((result) => {
                     if (result.data.list != 0) {
                         api['info']({
@@ -421,7 +421,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             //Start to insert Acb and then update all
             console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
             try {
-                const result2 = await axios.post('/addAdditionalCoborrower', acb_data);
+                const result2 = await axios.post('/GroupPost/P43AACB', acb_data);
                 api[result2.data.status]({
                     message: result2.data.message,
                     description: result2.data.description
@@ -473,8 +473,9 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
         queryFn: async () => {
             if (!value || !value.VesselIMO || value.VesselIMO.length < 6) return null;
             try {
-                const result = await axios.get(`/shipvessel_Details/${value.VesselIMO}`);
-                updateAppDetails({ name: 'VesselInfo', value: result.data });
+
+                const result = await axios.get(`/GroupGet/G113SVD/${value.VesselIMO}`);
+                receive({ name: 'VesselInfo', value: result.data });
             } catch (error) {
                 updateAppDetails({ name: 'VesselInfo', value: 'No Gathered Data!' });
                 // console.log(error);

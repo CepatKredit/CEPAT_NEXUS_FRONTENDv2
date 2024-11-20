@@ -81,7 +81,7 @@ function BatchList() {
     const GetBatchList = useQuery({
         queryKey: ["GetBatchListQuery", jwtDecode(token).USRID],
         queryFn: async () => {
-            const result = await GET_LIST(`/getBatchList/${jwtDecode(token).USRID}`);
+            const result = await GET_LIST(`/GroupGet/G101BL/${jwtDecode(token).USRID}`);
             return result.list;
         },
         enabled: true,
@@ -103,10 +103,10 @@ function BatchList() {
     }
     async function UpdateStatus(res,id,filename) {
         try {
-            res.list.forEach(async (x) => {//                                              /use to escape params in backend 
-                await axios.post(`/updateStatDisbursement/${x.id}/${jwtDecode(token).USRID}/${'0'}/${'0'}`);
+            res.list.forEach(async (x) => {
+                await axios.post(`/GroupPost/P125USD/${x.id}/${jwtDecode(token).USRID}/${'0'}/${'0'}`);
             });
-            await axios.post(`/updateFileNameBatch/${id}/${filename}`);
+            await axios.post(`/GroupPost/P126UFB/${id}/${filename}`);
         } catch (error) {
             console.log(error)
         }
@@ -117,7 +117,7 @@ function BatchList() {
     async function genTextSBD(v,filename) {
         let result = [];
         try {
-            result = await GET_LIST(`/getBatchedDisbursement/${v.id}`);
+            result = await GET_LIST(`/GroupGet/G103BD/${v.id}`);
         } catch (error) {
             console.log('Catch ', error)
             return [];

@@ -141,9 +141,9 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
         }
 
         const requests = [
-            axios.post(`/getKaiser/`, data1),
-            axios.post(`/getKaiser/`, data2),
-            axios.post(`/getKaiser/`, data3)
+            axios.post(`/GroupGet/G18K/`, data1),
+            axios.post(`/GroupGet/G18K/`, data2),
+            axios.post(`/GroupGet/G18K/`, data3)
         ];
         try {
             const results = await Promise.allSettled(requests);
