@@ -15,6 +15,18 @@ const isValidDeployDate = (dateStr) => {
   return !(!dayjs().isBefore(dateStr,'day') && !dayjs().isSame(dayjs(dateStr),'day'));
 }
 
+export const CheckIncomeValid = (value) => {
+  return parseFloat(value? value.toString().replaceAll(',','') : 0) >= 25000;
+}
+
+export const CheckRentAmortValid = (value) => {
+  return parseFloat(value? value.toString().replaceAll(',','') : 0) >= 100;
+}
+
+export const CheckEmailValid = (input) =>{
+  return isValidEmail(input);
+}
+
 export const CheckDateValid = (dateValue) => {
   const date = dayjs(dateValue, 'MM-DD-YYYY', true); // `true` ensures strict parsing
   return date.isValid();

@@ -1,36 +1,45 @@
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
 import { debouncef } from '@utils/Debounce';
-import { DateFormat, Uppercase } from '@utils/Formatting';
-import { dateMessage } from '@utils/MessageValidationList';
-import { checkAgeisValid, CheckDateValid, checkDeployisValid } from '@utils/Validations';
+import { DateFormat, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
+import { dateMessage, inputMessage } from '@utils/MessageValidationList';
+import { checkAgeisValid, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
 import dayjs from 'dayjs';
 import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'react';
 
 
 function hookDateValid(KeyName, date) {
-  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') { return !checkDeployisValid(date) }
+  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep' || KeyName === 'ContractDate') { return !checkDeployisValid(date); }
   else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") { return !checkAgeisValid(date) }
   else { return CheckDateValid(date) }
 }
 
-function hookInputValid(KeyName, input){
-  if(KeyName === 'NotDefault' ){
-    return false;
-  }else if(KeyName === 'Default' && input !== ''){
-    return true;
+function hookInputValid(KeyName, input, comp_name, format) {
+  //LETTERS
+  if (KeyName === 'Email' && CheckEmailValid(input)) {//For Email
+    return { valid: true, value: input, errmsg: '' }; //As-is
+  } else if (KeyName === 'Uppercase' && input !== '') { //For letters / number
+    return { valid: true, value: Uppercase(input), errmsg: '' }; //Change format to uppercase
+  } else if (KeyName === 'Default' && input !== '') { //For No-case sensitive
+    return { valid: true, value: input, errmsg: '' }; //As-is
+  //CURRENCY
+  } else if (KeyName === 'Income' && input !== '' && CheckIncomeValid(input)) { // 25,000.00
+    return { valid: true, value: inputFormat(format, input), errmsg: '' };
+  } else if ((KeyName === 'Rent_Amort' || KeyName === 'Allotment' )&& input !== '' && CheckRentAmortValid(input)) { // 100.00
+    return { valid: true, value: inputFormat(format, input), errmsg: '' };
+  //NUMBER
+  
+  } else { //error
+    return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(KeyName, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name) };
   }
 }
 
-function hookInputFormat(KeyName, input) {
-  
-}
-
 export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered) {
-  const { getAppDetails } = useContext(LoanApplicationContext)
+  const { getAppDetails } = useContext(LoanApplicationContext);
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selected, setselected] = useState(value || '');
 
   const filteredOptions = useMemo(() => {
     if (KeyName === 'ofwcountry') {
@@ -57,6 +66,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     setRendered(true)
     setStatus(selectedValue ? '' : 'error');
     receive(selectedValue || undefined);
+    setselected(selectedValue)
   }, [receive]);
 
   const handleKeyDown = useCallback((event) => {
@@ -91,6 +101,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     handleKeyDown,
     dropdownOpen,
     setDropdownOpen,
+    selected,
   };
 }
 
@@ -118,7 +129,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
 
   const handleInputChange = (e, readOnly) => {
     if (readOnly) return;
-    if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') {
+    if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep' || KeyName === 'ContractDate') {
       setDatePickerValue('');
     } else {
       setDatePickerValue(CheckDateValid(e.target.value) ? dayjs(e.target.value) : '');
@@ -148,16 +159,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
           setRendered(true);
           setStatus('error');
           setValidationMessage(dateMessage(KeyName, 'Invalid'));
-          /*
-          if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") {
-            setValidationMessage('Age should be 20 to 65 years old only.');
-          }else if(KeyName === 'ContractDate'){
-            setValidationMessage('Invalid Contract Date')
-          }else {
-            setValidationMessage('Invalid Departure Date.');
-          }
-          updateAppDetails({ name: KeyName, value: '' })
-          */
+
         } else {
           setRendered(true);
           setIconVisible(true);
@@ -199,8 +201,9 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   }, []);
 
 
-  const handleBlur = () => {
-    if (debouncedInput.length === 10 && inputValue.isValid()) {
+  const handleBlur = (dat) => {
+    const date = dat.target.value;
+    if (debouncedInput.length === 10 && CheckDateValid(date)) { //Inputvalue is not defined after initilized
       if (hookDateValid(KeyName, date)) {
         setStatus('error');
         setValidationMessage(dateMessage(KeyName, 'Invalid'));
@@ -237,71 +240,77 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   };
 }
 
-export function InputComponentHook(initialValue, receive, rendered, KeyName) {
+export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format) {
   const [inputValue, setInputValue] = useState(initialValue || '');
+  const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const latestValueRef = useRef(initialValue);
   const delay_def = 1000;
 
-
   const debouncedReceive = useMemo(
-      () =>
-          debouncef((value, delay) => {
-              if (latestValueRef.current !== value) {
-                  receive(value);
-                  latestValueRef.current = value;
-              }
-          }), // The debounce function itself will handle the delay
-      [receive]
+    () =>
+      debouncef((value, delay) => {
+        if (latestValueRef.current !== value) {
+          receive(value);
+          latestValueRef.current = value;
+        }
+      }), // The debounce function itself will handle the delay
+    [receive]
   );
 
-  const statusValidation = (valid, update, val) =>{
+  const statusValidation = (valid, val, error, update) => {
     if (valid) {
-          setStatus('');
-          if (update){
-            setInputValue(val);
-            debouncedReceive(val, delay_def); // Pass the custom delay as 1sec
-          }
-      } else {
-          setStatus('error');
-          if (update){
-            setInputValue(val);
-            debouncedReceive(val, delay_def); // Pass the custom delay as 1sec
-          }
+      setStatus('');
+      setErrorMessage('')
+      if (update) {
+        setInputValue(val);
+        debouncedReceive(val, delay_def); // Pass the custom delay as 1sec
       }
-    
+    } else {
+      setStatus('error');
+      setErrorMessage(error)
+      if (update) {
+        setInputValue(val);
+        debouncedReceive('', delay_def); // Pass the custom delay as 1sec
+      }
+    }
   }
 
   const handleChange = (e) => {
-      const value = Uppercase(e.target.value);
-      statusValidation(hookInputValid(KeyName, value), true, value) // FORMATTING value here hookInputFormat(KeyName, value)
-  };
+    const value = e.target.value;
+    const res = hookInputValid(KeyName, value, comp_name, format);
+    statusValidation(res.valid, res.value, res.errmsg, true);
+  }
 
   const handleBlur = () => {
-      setIconVisible(true);
-      statusValidation(hookInputValid(KeyName, inputValue), true, inputValue) // FORMATTING value here
+    setIconVisible(true);
+    const res = hookInputValid(KeyName, inputValue, comp_name, format);
+    statusValidation(res.valid, res.value, res.errmsg, true);
   };
 
   useEffect(() => {
-      if (rendered) {
-        setIconVisible(true);
-        statusValidation(hookInputValid(KeyName, inputValue), false, inputValue) // FORMATTING value here
-      }
+    if (rendered) {
+      setIconVisible(true);
+      const res = hookInputValid(KeyName, inputValue, comp_name, format);
+      console.log( FormatCurrency(res.value.replaceAll(',','')))
+      statusValidation(res.valid, (format === 'Currency' ? (res.value? FormatCurrency(res.value.replaceAll(',','')) : '') : res.value ), res.errmsg, true);
+    }
   }, [rendered]);
 
   useEffect(() => {
-      return () => {
-          debouncedReceive.cancel();
-      };
+    return () => {
+      debouncedReceive.cancel();
+    };
   }, [debouncedReceive]);
 
   return {
-      inputValue,
-      status,
-      iconVisible,
-      handleChange,
-      handleBlur,
+    inputValue,
+    status,
+    iconVisible,
+    handleChange,
+    handleBlur,
+    errorMessage,
   };
 }
 

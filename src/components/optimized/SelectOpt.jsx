@@ -38,31 +38,32 @@ function SelectOpt({
         handleSelectChange,
         handleKeyDown,
         setDropdownOpen,
+        selected
     } = SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered);
 
     const newOptions = useMemo(() => {
         if (KeyName === 'ofwcountry') {
-          return filteredOptions.map((x) => {
-            const bgColor = x.negative === 1 ? 'bg-[#ff0000]' : '';
-            const textColor = x.negative === 0 ? 'text-black' : 'text-white';
-            return {
-              ...x,
-              label: (
-                <div
-                  className={`${bgColor} ${textColor} py-1 px-2 rounded-md h-7 text-sm`}
-                >
-                  {x.label}
-                </div>
-              ),
-            };
-          });
+            return filteredOptions.map((x) => {
+                const bgColor = x.negative === 1 ? 'bg-[#ff0000]' : '';
+                const textColor = x.negative === 0 ? 'text-black' : 'text-white';
+                return {
+                    ...x,
+                    label: (
+                        <div
+                            className={`${bgColor} ${textColor} py-1 px-2 rounded-md h-7 text-sm`}
+                        >
+                            {x.label}
+                        </div>
+                    ),
+                };
+            });
         } else {
-          return filteredOptions.map((x) => ({
-            ...x, 
-            label: x.label, 
-          }));
+            return filteredOptions.map((x) => ({
+                ...x,
+                label: x.label,
+            }));
         }
-      }, [KeyName, filteredOptions]);
+    }, [KeyName, filteredOptions]);
 
     const [dropdownOpen, setDropdownVisible] = useState(false);
 
@@ -89,49 +90,60 @@ function SelectOpt({
         <div className={className_dmain}>
             <label className={className_label}>{label}</label>
             <div className={className_dsub}>
-                <ConfigProvider theme={{
-                    components: {
-                        Select: {
-                            colorBgContainer: disabled ? '#f5f5f5' : '#ffffff',
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Select: {
+                                colorBgContainer: (() => {
+                                    if (KeyName === 'ofwcountry' && selected) {
+                                        const selectedOption = filteredOptions.find(x => x.value === selected);
+                                        if (selectedOption?.negative === 1) {
+                                            return '#ff0000'; // Negative case
+                                        }
+                                        return '#ffffff'; // Positive case
+                                    }
+                                    return disabled ? '#f5f5f5' : '#ffffff'; // Default cases
+                                })(),
+                            },
                         },
-                    },
-                }}>
-                    <Select
-                        ref={inputRef}
-                        className='text-left'
-                        options={newOptions}
-                        value={value || undefined}
-                        disabled={disabled}
-                        size='large'
-                        placeholder={placeHolder}
-                        onChange={handleSelectChange}
-                        onBlur={handleBlur}
-                        onFocus={() => setDropdownVisible(true)}
-                        showSearch={showSearch}
-                        filterOption={false}
-                        onSearch={handleSearch}
-                        onKeyDown={handleKeyDown}
-                        readOnly={readOnly}
-                        open={dropdownOpen}
-                        onDropdownVisibleChange={handleDropdownVisibleChange}
-                        status={!disabled && (required || required === undefined) ? status : false}
-                        style={{ width: '100%' }}
-                        suffixIcon={
-                            isRendered && !disabled && (required || required === undefined) && status === 'error' ? (
-                                <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
-                            ) : isRendered && !disabled && (required || required === undefined) && status === '' ? (
-                                <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
-                            ) : null
-                        }
-                    />
-                    {!disabled && (required || required === undefined) && status === 'error' && (
-                        <div className='text-xs text-red-500 pt-1 pl-2'>
-                            {notValidMsg || notValid}
-                        </div>
-                    )}
-                </ConfigProvider>
-            </div>
+                    }}
+                >
+                <Select
+                    ref={inputRef}
+                    className='text-left'
+                    options={newOptions}
+                    value={value || undefined}
+                    disabled={disabled}
+                    size='large'
+                    placeholder={placeHolder}
+                    onChange={handleSelectChange}
+                    onBlur={handleBlur}
+                    onFocus={() => setDropdownVisible(true)}
+                    showSearch={showSearch}
+                    filterOption={false}
+                    onSearch={handleSearch}
+                    onKeyDown={handleKeyDown}
+                    readOnly={readOnly}
+                    open={dropdownOpen}
+                    onDropdownVisibleChange={handleDropdownVisibleChange}
+                    status={!disabled && (required || required === undefined) ? status : false}
+                    style={{ width: '100%' }}
+                    suffixIcon={
+                        isRendered && !disabled && (required || required === undefined) && status === 'error' ? (
+                            <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
+                        ) : isRendered && !disabled && (required || required === undefined) && status === '' ? (
+                            <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
+                        ) : null
+                    }
+                />
+                {!disabled && (required || required === undefined) && status === 'error' && (
+                    <div className='text-xs text-red-500 pt-1 pl-2'>
+                        {notValidMsg || notValid}
+                    </div>
+                )}
+            </ConfigProvider>
         </div>
+        </div >
     );
 }
 

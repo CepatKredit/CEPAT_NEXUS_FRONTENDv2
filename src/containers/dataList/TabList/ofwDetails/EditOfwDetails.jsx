@@ -35,6 +35,7 @@ import { useDataContainer } from '@context/PreLoad';
 import SelectOpt from '@components/optimized/SelectOpt';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import InputOpt from '@components/optimized/InputOpt';
+import { Age } from '@utils/Calculations';
 
 
 function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, BorrowerId, addCoborrower }) {
@@ -43,6 +44,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const { TextArea } = Input;
     const [api, contextHolder] = notification.useNotification();
     const [relativesCount, setRelativesCount] = useState(0);
+
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
     }, []);
@@ -51,19 +53,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
         receive({ name: 'ofwdependents', value: Count - 1 });
     }, [Count]);
 
-    const [getAge,setAge] = useState(data.ofwbdate)
+    const [getAge, setAge] = useState(data.ofwbdate)
 
-    const calculateAge = (birthday) => {
-        const today = new Date();
-        const birthDate = new Date(birthday);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
-
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    };
     const rendered = true;
     function generateYearOptions(maxYears) {
         const options = [];
@@ -84,7 +75,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             {contextHolder}
             <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
 
-
                 <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
@@ -96,7 +86,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
-                    KeyName={'Default'}
+                    KeyName={'Uppercase'}
+                    compname={'First Name'}
                 />
                 <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -109,8 +100,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={false}
-                    KeyName={'Default'}
+                    KeyName={'Uppercase'}
                     required={false}
+                    compname={'Middle Name'}
                 />
                 <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -122,8 +114,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
-                    KeyName={'Default'}
+                    KeyName={'Uppercase'}
                     rendered={rendered}
+                    compname={'Last Name'}
                 />
                 <LabeledSelect_Suffix
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -144,7 +137,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     placeHolder='Enter Birthdate'
                     receive={(e) => {
                         updateAppDetails({ name: 'ofwbdate', value: e });
-                        setAge(e)
+                        setAge(Age(e))
                         //receive({ name: 'age', value: calculateAge(e) });
                     }}
                     value={data.ofwbdate}
@@ -156,15 +149,17 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     notValidMsg={'Birthdate Required'}
                 />
                 {User === 'Credit' && (
-                    <LabeledInput
+                    <LabeledInput //create default input field for display
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'Age'}
-                        value={calculateAge(getAge)}
+                        receive={(e) => updateAppDetails({ name: 'ofwage', value: e })}
+                        value={getAge? getAge : 0}
                         readOnly={true}
                         placeHolder='Age'
                         rendered={rendered}
                     />)}
+
                 <LabeledSelect
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
@@ -208,7 +203,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         required={false}
                     />)}
-                <LabeledInput_Email
+                <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Email Address <span className="text-red-500">*</span></>}
@@ -218,6 +213,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     category={'marketing'}
                     isEdit={isEdit}
                     rendered={rendered}
+                    KeyName={'Email'}
+
                 />
                 {User === 'Credit' ? (
                     <div className="mt-5 w-[18.75rem] h-[3.875rem">
@@ -246,7 +243,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     const formattedValue = inputValue.startsWith('https://')
                                         ? inputValue
                                         : `https://www.facebook.com/${inputValue}`;
-                                        updateAppDetails({ name: 'ofwfblink', value: formattedValue });
+                                    updateAppDetails({ name: 'ofwfblink', value: formattedValue });
                                 }
                             }}
                         />
@@ -269,7 +266,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput
+                    : (<InputOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
@@ -280,6 +277,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         readOnly={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
+                        KeyName={'Default'}
+                        compname={'Group Chat'}
                     />)}
                 {User === 'Credit' &&
                     (<LabeledSelect_Relationship
@@ -362,7 +361,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {(data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
                     User !== 'LC' && (
                         <>
-                            <LabeledInput_Fullname
+                            <InputOpt
                                 className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
                                 label={<>Spouse Name <span className="text-red-500">*</span></>}
@@ -373,6 +372,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 isEdit={isEdit}
                                 rendered={rendered}
                                 disabled={User === 'Credit' && data.MarriedPBCB}
+                                KeyName={'Uppercase'}
+                                compname={'Spouse Name'}
 
                             />
 
@@ -403,7 +404,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     rendered={rendered}
                                 />)}
                             {User === 'Credit' && (
-                                <LabeledInput_Salary
+                                //   <LabeledInput_Salary
+                                <InputOpt
                                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                     className_label={'font-bold'}
                                     label={<>Spouse Income <span className="text-red-500">*</span></>}
@@ -413,7 +415,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     receive={(e) => updateAppDetails({ name: 'SpIncome', value: e })}
                                     category={'direct'}
                                     rendered={rendered}
-                                    triggered={data.MarriedPBCB}
+                                    //triggered={data.MarriedPBCB}
+                                    KeyName={'Income'}
+                                    compname={'Spouse Income'}
+                                    format = {'Currency'}
                                 />)}
                         </>
                     )
@@ -469,9 +474,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     type={"present"}
                     disabled={isEdit}
                     category={"marketing"}
-                    className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${
-                        (User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
-                    } 3xl:w-[20.75rem] h-[3.875rem]`}
+                    className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                        } 3xl:w-[20.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     vertical_algin={true}
                     rendered={rendered}
@@ -489,7 +493,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     rendered={rendered}
                 />
                 {data.ofwresidences === 3 || data.ofwresidences === 2 ? (
-                    <LabeledCurrencyInput
+                    <InputOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>{data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
@@ -498,11 +502,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'direct'}
                         placeHolder={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         rendered={rendered}
+                        KeyName={'Rent_Amort'}
+                        format = {'Currency'}
+                        compname={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                     />
                 ) : null}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput_Fullname
+                    : (<InputOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Landmark <span className="text-red-500">*</span></>}
@@ -513,9 +520,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.landmark}
                         rendered={rendered}
                         receive={(e) => updateAppDetails({ name: 'landmark', value: e })}
+                        KeyName={'Uppercase'}
+                        compname={'Landmark'}
                     />)}
                 {User === 'Credit' && (
-                    <LabeledInput_Fullname
+                    <InputOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Proof of Billing Remarks <span className="text-red-500">*</span></>}
@@ -526,6 +535,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         value={data.OfwPoBRemarks}
                         receive={(e) => updateAppDetails({ name: 'OfwPoBRemarks', value: e })}
+                        KeyName={'Uppercase'}
+                        compname={'Proof of Billing Remarks'}
                     />)}
                 {User === 'LC'
                     ? (<></>)
@@ -574,9 +585,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"permanent"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${
-                            (User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
-                        } 3xl:w-[20.75rem] h-[3.875rem]`}                        
+                        className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                            } 3xl:w-[20.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}
@@ -597,9 +607,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"provincial"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${
-                            (User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
-                        } 3xl:w-[20.75rem] h-[3.875rem]`}
+                        className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                            } 3xl:w-[20.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}
@@ -626,7 +635,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput
+                    : (<InputOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'ID Number'}
@@ -637,6 +646,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         isEdit={isEdit}
                         rendered={rendered}
                         required={false}
+                        KeyName={'Uppercase'}
+                        compname={'ID Number'}
                     />)}
             </Flex>
             <SectionHeader title="Employment Details" />
@@ -711,7 +722,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                     />)}
                 {User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL') && (
-                    <LabeledInput_Fullname
+                    <InputOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Principal Employer <span className="text-red-500">*</span></>}
@@ -720,6 +731,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.PEmployer}
                         receive={(e) => updateAppDetails({ name: 'PEmployer', value: e })}
                         rendered={rendered}
+                        KeyName={'Uppercase'}
+                        compname={'Principal Employer'}
                     />)}
                 {(User !== 'Credit' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL'))) && (
                     User === 'LC'
@@ -754,7 +767,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         isEdit={isEdit}
                         rendered={rendered}
                     />)}
-                {User !== 'Credit' && (<LabeledInput_Salary
+                {User !== 'Credit' && 
+                (<InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Salary <span className="text-red-500">*</span></>}
@@ -764,6 +778,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => updateAppDetails({ name: 'ofwsalary', value: e })}
                     category={'direct'}
                     rendered={rendered}
+                    KeyName={'Income'}
+                    format='Currency'
+                    compname={'Salary'}
                 />)}
                 {/*User === 'Credit' && (
                         <LabeledInput
@@ -829,6 +846,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         notValidMsg={'Contract Date Required'}
                         KeyName={'ContractDate'}
+                        disabledate={disableDate_deployment}
 
                     />)}
                 {User === 'Credit' && (<>
@@ -905,7 +923,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'Credit' && (data.loanProd === '0303-VA' || data.loanProd === '0303-VL') && (
                     <>
-                        <LabeledInput_Fullname
+                        <InputOpt
                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>Name of Vessel <span className="text-red-500">*</span></>}
@@ -915,8 +933,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => updateAppDetails({ name: 'VesselName', value: e })}
                             category={'direct'}
                             rendered={rendered}
+                            KeyName={'Uppercase'}
+                            compname={'Name of Vessel'}
                         />
-                        <LabeledInput_Fullname
+                        <InputOpt
                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>IMO Vessel <span className="text-red-500">*</span></>}
@@ -926,6 +946,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => updateAppDetails({ name: 'VesselIMO', value: e })}
                             category={'direct'}
                             rendered={rendered}
+                            KeyName={'Uppercase'}
+                            compname={'IMO Vessel'}
                         />
                         {data.VesselIMO && (
                             <div className="mt-8">
@@ -946,12 +968,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                         style={{
                                             resize: 'none',
                                         }}
-                                        // readOnly={!isEdit}
+                                    // readOnly={!isEdit}
                                     />
                                 </ConfigProvider>
                             </div>
                         )}
-                        <LabeledInput
+                        <InputOpt
                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>Type of Vessel <span className="text-red-500">*</span></>}
@@ -961,12 +983,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => updateAppDetails({ name: 'VesselType', value: e })}
                             category={'direct'}
                             rendered={rendered}
+                            KeyName={'Uppercase'}
+                            compname={'Type of Vessel'}
                         />
 
                     </>
                 )}
                 {User === 'Credit' && data.loanProd === '0303-VA' && (
-                    <LabeledInput_NotRequired
+                    <InputOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Exact Location'}
@@ -975,9 +999,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.ExactLocation}
                         receive={(e) => updateAppDetails({ name: 'ExactLocation', value: e })}
                         category={'marketing'}
+                        KeyName={'Uppercase'}
+                        compname={'Exact Location'}
+                        required={false}
                     />)}
                 {User === 'Credit' && data.loanProd === '0303-WA' && (
-                    <LabeledInput_NotRequired
+                    <InputOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Possible Vacation'}
@@ -986,9 +1013,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.PossVacation}
                         receive={(e) => updateAppDetails({ name: 'PossVacation', value: e })}
                         category={'marketing'}
+                        KeyName={'Uppercase'}
+                        compname={'Possible Vacation'}
+                        required={false}
                     />)}
                 {User === 'Credit' && (
-                    <LabeledInput
+                    <InputOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={<>Beneficiary or Allotment Name <span className="text-red-500">*</span></>}
@@ -998,6 +1028,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         receive={(e) => updateAppDetails({ name: 'AllotName', value: e })}
                         category={'direct'}
                         rendered={rendered}
+                        KeyName={'Uppercase'}
+                        compname={'Beneficiary or Allotment Name'}
                     />)}
                 {/*User === 'Credit' &&  (
                             <LabeledSelect_Relationship
@@ -1013,7 +1045,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 rendered={rendered}
                             />)*/}
                 {User === 'Credit' && (
-                    <LabeledCurrencyInput
+                    <InputOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label="font-bold"
                         value={data.AllotAmount}
@@ -1022,6 +1054,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder={'Amount'}
                         category={'marketing'}
                         rendered={rendered}
+                        KeyName={'Allotment'}
+                        compname={'Remittance/Allotment Amount'}
+                        format='Currency'
                     />)}
                 {/*User === 'Credit' && (
                     <LabeledInput
@@ -1068,7 +1103,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             rendered={rendered}
                             showSearch={!isEdit}
                         />
-                        <LabeledInput_NotRequired
+                        <InputOpt
                             className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={'Course'}
@@ -1077,10 +1112,13 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             value={data.ofwcourse}
                             receive={(e) => { updateAppDetails({ name: 'ofwcourse', value: e }); }}
                             readOnly={isEdit}
+                            KeyName={'Uppercase'}
+                            compname={'Course'}
+                            required={false}
                         /> </>)}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput_NotRequired
+                    : (<InputOpt
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'School'}
@@ -1089,6 +1127,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.ofwschool}
                         receive={(e) => updateAppDetails({ name: 'ofwschool', value: e })}
                         category={'marketing'}
+                        KeyName={'Uppercase'}
+                        compname={'School'}
+                        required={false}
                     />)}
             </Flex>
         </div>

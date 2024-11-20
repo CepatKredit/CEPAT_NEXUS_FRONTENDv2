@@ -7,7 +7,7 @@ export const dateMessage = (keyName, state) => {
                 return 'Contract Date Required';
             }
             break;
-    
+
         case 'ofwDeptDate':
         case 'loanDateDep':
             if (state === 'Invalid') {
@@ -16,7 +16,7 @@ export const dateMessage = (keyName, state) => {
                 return 'Departure Date Required';
             }
             break;
-    
+
         case 'ofwbdate':
         case 'ofwspousebdate':
         case 'benbdate':
@@ -29,8 +29,34 @@ export const dateMessage = (keyName, state) => {
                 return 'Birthdate Required';
             }
             break;
-    
+
         default:
             return 'Not Valid';
+    }
+}
+
+export const inputMessage = (keyName, state, compname) => {
+    switch (keyName) {
+        case 'Email':
+            if (state === 'Invalid') {
+                return 'Invalid Email Address';
+            } else if (state === 'Empty') {
+                return 'Email Address Required';
+            }
+            break;
+        case 'Default':
+        case 'Uppercase':
+        case 'Income':
+        case 'Rent_Amort':
+        case 'Allotment':
+            if (compname && state === 'Invalid') {
+                return `Invalid ${compname}`;
+            } else if (compname && state === 'Empty') {
+                return `${compname} Required`;
+            }
+            break;
+
+        default:
+            return 'Invalid Component(No CompName / KeyName)';
     }
 }

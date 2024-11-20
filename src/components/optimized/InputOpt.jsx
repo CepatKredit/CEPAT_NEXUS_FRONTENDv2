@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input } from 'antd'
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { InputComponentHook } from '@hooks/ComponentHooks';
+import { FormatCurrency, inputFormat } from '@utils/Formatting';
 
 function InputOpt({
     rendered,
@@ -16,8 +17,10 @@ function InputOpt({
     className_label = '',
     className_dsub = '',
     KeyName,
+    compname,
+    format = '',
 }) {
-    const { inputValue, status, iconVisible, handleChange, handleBlur } = InputComponentHook(value, receive, rendered, KeyName);
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format);
 
     const isValidationEnabled = !readOnly && required;
 
@@ -36,7 +39,7 @@ function InputOpt({
                     placeholder={placeHolder}
                     autoComplete="off"
                     style={{ width: '100%' }}
-                    maxLength={80} // For name
+                    maxLength={80} // set logic by keynames
                     onBlur={handleBlur}
                     status={isValidationEnabled ? status : undefined}
                     suffix={
@@ -53,9 +56,7 @@ function InputOpt({
                 />
                 {isValidationEnabled && status === 'error' && (
                     <div className="text-xs text-red-500 pt-1 pl-2">
-                        {placeHolder !== 'FB Profile'
-                            ? `${placeHolder} Required`
-                            : `${placeHolder} Required (e.g. http://www.facebook.com/jdelacruz)`}
+                        {errorMessage}
                     </div>
                 )}
             </div>

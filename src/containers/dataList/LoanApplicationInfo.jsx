@@ -299,8 +299,6 @@ function LoanApplicationInfo() {
         enabled: true,
     });
 
-    console.log("HAAAA", ClientDataListQuery.data)
-
     const [getCRDValue, setCRDValue] = React.useState({
         TotalSalary: 0,
         OtherIncome: 0,
