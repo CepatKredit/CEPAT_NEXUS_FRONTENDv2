@@ -255,18 +255,22 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     disabled={isEdit}
                     rendered={rendered}
                 />
-                <LabeledInput_Email
-                    className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                <InputOpt
+                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
-                    className_dsub={''}
                     label={<>Email Address <span className="text-red-500">*</span></>}
                     placeHolder='Email Address'
-                    readOnly={isEdit}
                     value={data.benemail}
-                    receive={(e) => { updateAppDetails({ name: 'benemail', value: e }) }}
+                    receive={(e) => updateAppDetails({ name: 'benemail', value: e })}
                     category={'marketing'}
+                    isEdit={isEdit}
                     rendered={rendered}
+                    KeyName={'benemail'}
+                    group={'Email'}
+                    compname={'Email Address'}
+
                 />
+
                 <LabeledInput_Contact
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label={'font-bold'}
@@ -320,18 +324,22 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                 />
                 {(data.benmstatus === 2 || data.benmstatus === 5 || data.benmstatus === 6) ? (
                     <>
-                        <LabeledInput_Fullname
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                        <InputOpt
+                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={<>Spouse Name <span className="text-red-500">*</span></>}
                             placeHolder='Spouse Name'
                             readOnly={isEdit}
-                            category={'marketing'}
                             receive={(e) => updateAppDetails({ name: 'benspouse', value: e })}
                             value={data.benspouse}
+                            isEdit={isEdit}
                             rendered={rendered}
                             disabled={User === 'Credit' && data.MarriedPBCB}
+                            KeyName={'benspouse'}
+                            group={'Uppercase'}
+                            compname={'Spouse Name'}
                         />
+
                         <DatePickerOpt
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
@@ -356,15 +364,16 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 className_label={'font-bold'}
                                 label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Source of Income'
-                                disabled={isEdit}
                                 value={data.BenSpSrcIncome}
                                 data={SpouseSourceIncome()}
                                 receive={(e) => updateAppDetails({ name: 'BenSpSrcIncome', value: e })}
                                 rendered={rendered}
+                                disabled={User === 'Credit' && data.MarriedPBCB}
+
                             />)}
                         {User === 'Credit' && (
-                            <LabeledInput_Salary
-                                className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            <InputOpt
+                                className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
                                 label={<>Spouse Income <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Income'
@@ -373,7 +382,13 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 receive={(e) => updateAppDetails({ name: 'BenSpIncome', value: e })}
                                 category={'direct'}
                                 rendered={rendered}
-                            />)}
+                                KeyName={'BenSpIncome'}
+                                format={'Currency'}
+                                group={'Income'}
+                                compname={'Spouse Income'}
+                                disabled={User === 'Credit' && data.MarriedPBCB}
+                                />
+                        )}
                     </>
                 ) : null}
                 {User === 'Credit' ? (

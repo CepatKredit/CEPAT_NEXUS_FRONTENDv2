@@ -86,6 +86,7 @@ function TriggerFields(ROLE) {
         }
     }, [getAppDetails.ofwmstatus]);
 
+
     React.useEffect(() => {
         if (!getRendered) return;
 
@@ -129,8 +130,46 @@ function TriggerFields(ROLE) {
         }
     }, [getAppDetails.coborrowmstatus]);
 
+    //RELATIONSHIP
+    function getRelationship(MARITAL_STATUS) {
+        switch (MARITAL_STATUS) {
+            case 2:
+                return 37;
+            case 5:
+                return 24;
+            case 6:
+                return 9;
+            default:
+                return 0;
+        }
+    }
+    //MARITAL STATUS
+    function getMaritalStatus(RELATIONSHIP) {
+        console.log(RELATIONSHIP)
+        switch (RELATIONSHIP) {
+            case 37:
+                return 2;
+            case 24:
+                return 5;
+            case 9:
+                return 6;
+            default:
+                return 0;
+        }
+    }
 
+    /*
+    React.useEffect(() => {
+        if (!getRendered) return;
+        const updates = {
+            ofwmstatus: getMaritalStatus(getAppDetails.RelationshipBen),
+        }
 
+        Object.entries(updates).forEach(([name, value]) => {
+            updateAppDetails({ name, value });
+        });
+
+    }, [getAppDetails.RelationshipBen]) //OFW TO BENE
 
     React.useEffect(() => {
         if (!getRendered) return;
@@ -138,7 +177,7 @@ function TriggerFields(ROLE) {
         if (getAppDetails.MarriedPBCB) {
             const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
             const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
-            
+
             const updates = {
                 ofwspouse: spouseBenName,
                 ofwspousebdate: getAppDetails.benbdate,
@@ -147,8 +186,9 @@ function TriggerFields(ROLE) {
                 benspouse: spouseOfwName,
                 benspousebdate: getAppDetails.ofwbdate,
                 BenSpSrcIncome: 1,
-                BenSpIncome: '',
+                BenSpIncome: getAppDetails.PSalary,
                 benmstatus: getAppDetails.ofwmstatus,
+                benrelationship: getRelationship(getAppDetails.ofwmstatus),
             };
 
             Object.entries(updates).forEach(([name, value]) => {
@@ -167,6 +207,7 @@ function TriggerFields(ROLE) {
                 BenSpIncome: '',
                 BenSrcIncome: '',
                 BenIncome: '',
+                benrelationship: '',
             };
 
             Object.entries(updates).forEach(([name, value]) => {

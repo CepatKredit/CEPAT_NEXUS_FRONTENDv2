@@ -50,6 +50,10 @@ function LabeledSelect_Relationship({ rendered, showSearch, required, placeHolde
         }
     }, []);
 
+    React.useEffect(()=>{
+        setSelectedValue(value);
+    },[value])
+
     return (
         <div className={className_dmain}>
                 <div>

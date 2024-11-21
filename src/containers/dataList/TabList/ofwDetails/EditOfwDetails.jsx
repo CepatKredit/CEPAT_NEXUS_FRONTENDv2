@@ -287,20 +287,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         compname={'Group Chat'}
 
                     />)}
-                {User === 'Credit' &&
-                    (<LabeledSelect_Relationship
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                        className_label={'font-bold'}
-                        label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
-                        placeHolder='Relationship to the Beneficiary'
-                        value={data.RelationshipBen}
-                        receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
-                        category={'marketing'}
-                        disabled={isEdit}
-                        isEdit={isEdit}
-                        rendered={rendered}
-                        showSearch
-                    />)}
                 {(User === 'Credit' && addCoborrower) && (
                     <LabeledSelect_Relationship
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -430,7 +416,20 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         </>
                     )
                 )}
-
+                {User === 'Credit' &&
+                    (<LabeledSelect_Relationship
+                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_label={'font-bold'}
+                        label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
+                        placeHolder='Relationship to the Beneficiary'
+                        value={data.RelationshipBen}
+                        receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
+                        category={'marketing'}
+                        disabled={isEdit}
+                        isEdit={isEdit}
+                        rendered={rendered}
+                        showSearch
+                    />)}
                 {User !== 'LC' && (
                     <Form.Item
                         label="Dependents"
