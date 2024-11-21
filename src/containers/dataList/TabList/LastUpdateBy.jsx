@@ -93,6 +93,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         }
         return fullName.trim();
     };
+    
 
     const getRemarks = useQuery({
         queryKey: ['getRemarks'],
@@ -422,12 +423,28 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     }, [data.statusCraf, data.loanAppStat]);
     const shouldDisplayRequestType = data.loanAppStat === 'ON WAIVER' || getUpdate.Status === 'ON WAIVER'
 
+
+    function getRequesttype() {
+        const requestTypeHolder = RequestTypeDropdown().LPrequestType?.find(
+            (x) => x.value?.toString() === getUpdate?.UrgentApp?.toString()
+        );
+        return requestTypeHolder ? requestTypeHolder.value : null;
+    }
+
+    React.useEffect(() =>
+    {
+        setUpdate({ ...getUpdate, UrgentApp: isUrgentApp });
+        console.log('kkkkkkkkkkkkkkkkkkk', getRequesttype())
+    },[isUrgentApp])
+
+
+
     return (
         <div>
             {contextHolder}
             <div className='h-[55vh]'>
                 <div className="sticky top-0 z-10 bg-white">
-                    <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={handleUrgentApp} />
+                    <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={setUrgentApp} />
                 </div>
                 <center>
                     <div className='pt-[1.5rem] font-bold text-2xl'>
@@ -569,9 +586,13 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                                         value: x.value,
                                         label: x.label
                                     }))}
-                                    value={parseInt(isUrgentApp)}
-                                    onChange={(e) => { setUpdate({ ...getUpdate, UrgentApp: e }) }}
-                                    disabled={isDisabled}
+                                    value={getRequesttype()} // Dapat tugma ang `value` dito sa `UrgentApp`
+                                    onChange={(e) => {
+                                        console.log('Selected value:', e); // Debugging
+                                        setUpdate({ ...getUpdate, UrgentApp: e });
+                                      //  setUrgentApp(e); // Siguraduhin ito rin ay naa-update
+                                    }}
+                                    disabled={data.loanAppStat === 'ON WAIVER' || isDisabled}
                                 />
                             </div>
 
