@@ -1,9 +1,12 @@
 import React from "react";
 import { GetData } from "./UserData";
+import { LoanApplicationContext } from "@context/LoanApplicationContext";
 
-function TriggerFields({ getAppDetails, setAppDetails }) {
+function TriggerFields() {
     const [getRendered, setRendered] = React.useState(false)
     const skipRender = React.useRef(1); //use this
+    const { getAppDetails, setAppDetails, populateClientDetails } = React.useContext(LoanApplicationContext)
+
 
     function ClearFields(fields) {
         const updatedDetails = fields.reduce((acc, key) => {
@@ -45,8 +48,6 @@ function TriggerFields({ getAppDetails, setAppDetails }) {
         }
 
     }, [getAppDetails.loanProd])
-
-
 
     React.useEffect(() => {
         if (!getRendered) return;

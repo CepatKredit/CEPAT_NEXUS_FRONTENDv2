@@ -60,6 +60,7 @@ function LabeledInput_LengthStay({ label,placeHolder, value_year, value_month, r
             <Space.Compact>
                 <div>
                     <Input
+                    autoComplete="new-password"
                         addonBefore={'Months'}
                         size='large'
                         disabled={disabled}
@@ -71,6 +72,7 @@ function LabeledInput_LengthStay({ label,placeHolder, value_year, value_month, r
                 </div>
                 <div>
                     <Input
+                    autoComplete="new-password"
                         onChange={(e)=>onChangeValueYrs(e)}
                         addonBefore={'Years'}
                         size='large'

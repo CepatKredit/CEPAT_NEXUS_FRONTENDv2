@@ -4,22 +4,24 @@ import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import axios from 'axios';
+import { useDataContainer } from '@context/PreLoad';
 
 function LabeledSelect_CollectionArea({value_mun, value_prov, rendered, showSearch, required, placeHolder, label, value, receive, disabled, readOnly, className_dmain, className_label, className_dsub }) {
     const [status, setStatus] = React.useState('');
     const [icon, setIcon] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState(value ? value : '');
+    const {GET_COLLECTION_AREA_LIST} = useDataContainer();
 
-    const collectionArea = useQuery({
-        queryKey: ['collectionArea'],
-        queryFn: async () => {
-            const result = await axios.get('OFWDetails/getCollectionArea');
-            return result.data.list;
-        },
-        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
-        enabled: true,
-        retryDelay: 1000,
-    });
+    // const collectionArea = useQuery({
+    //     queryKey: ['collectionArea'],
+    //     queryFn: async () => {
+    //         const result = await axios.get('OFWDetails/getCollectionArea');
+    //         return result.data.list;
+    //     },
+    //     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    //     enabled: true,
+    //     retryDelay: 1000,
+    // });
 
 
 
@@ -40,8 +42,8 @@ function LabeledSelect_CollectionArea({value_mun, value_prov, rendered, showSear
 
     React.useEffect(() => {
         console.log(value_prov)
-        if (rendered && collectionArea.data) {
-            const filteredData = collectionArea.data.filter( 
+        if (rendered && GET_COLLECTION_AREA_LIST) {
+            const filteredData = GET_COLLECTION_AREA_LIST.filter( 
                 (y) => y.code !== '130100000'
             );
             const exists = filteredData.some(option => option.code === value_prov);
@@ -54,7 +56,7 @@ function LabeledSelect_CollectionArea({value_mun, value_prov, rendered, showSear
             }
         }
         
-    }, [collectionArea.data, value_prov,value_mun]);
+    }, [GET_COLLECTION_AREA_LIST, value_prov,value_mun]);
 
     React.useEffect(() => {
         if(rendered){
@@ -84,7 +86,7 @@ function LabeledSelect_CollectionArea({value_mun, value_prov, rendered, showSear
                 }}>
                     <Select
                         options={
-                            collectionArea.data ? collectionArea.data
+                            GET_COLLECTION_AREA_LIST ? GET_COLLECTION_AREA_LIST
                             .filter((y) =>
                                 y.code !== '130100000'
                             )
