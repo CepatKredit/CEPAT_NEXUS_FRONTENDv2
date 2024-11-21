@@ -169,7 +169,7 @@ function TriggerFields(ROLE) {
             updateAppDetails({ name, value });
         });
 
-    }, [getAppDetails.RelationshipBen]) //OFW TO BENE
+    }, [getAppDetails.RelationshipBen]) //OFW TO BENE*/
 
     React.useEffect(() => {
         if (!getRendered) return;
