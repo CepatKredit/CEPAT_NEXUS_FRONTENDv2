@@ -266,23 +266,28 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     }
 
     function DISABLE_STATUS(LOCATION, LoanStatus) {
-        if (!GetData('ROLE')) {
+        const userRole = GetData('ROLE').toString();
+        if (!userRole) {
             return !(LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
         }
-        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
-            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'].includes(LOCATION);
-        } else if (GetData('ROLE').toString() === '20') {
-            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/for-re-application', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
-        } else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
-            return ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
-        } else if (GetData('ROLE').toString() === '60') {
-            return ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
-        } else if (GetData('ROLE').toString() === '70') {
-            return ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
-        } else if (GetData('ROLE').toString() === '80') {
-            return ['/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        const roleConditions = {
+            '30': ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'],
+            '40': ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'],
+            '20': ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/for-re-application', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '50': ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '55': ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '60': ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/special-lane', '/ckfi/assessement/credit', '/ckfi/queue-bucket', '/ckfi/for-verification', '/ckfi/pre-check', '/ckfi/returned/marketing', '/ckfi/returned/credit-associate', '/ckfi/reassessed/credit-officer', '/ckfi/for-approval', '/ckfi/on-waiver', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '70': ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed' ,'/ckfi/undecided',
+                '/ckfi/returned/credit-officer' , '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
+            '80':['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed' ,'/ckfi/undecided',
+                '/ckfi/returned/credit-officer' , '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
+        };
+        
+        if (roleConditions[userRole]) {
+            return roleConditions[userRole].includes(LOCATION);
         }
-        return false;
+        
+        return false; 
     }
 
     const [getStatus, setStatus] = React.useState(false)

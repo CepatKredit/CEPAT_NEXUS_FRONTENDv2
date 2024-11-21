@@ -503,8 +503,6 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                             </div>
                         </div>
                     </div>
-                    
-                    {/* Navigation Anchor Section */}
                     <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80' 
                         ? 'h-[45vh] xs:h-[38vh] sm:h-[38vh] md:h-[40vh] lg:h-[42vh] xl:h-[44vh] 2xl:h-[50vh] 3xl:h-[59vh]' 
                         : 'h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]'}`}>
@@ -523,8 +521,6 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                         </ConfigProvider>
                     </div>
                 </div>
-                
-                {/* Save Button Section */}
                 <center className="flex justify-center items-center ">
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
                         {!DISABLE_STATUS(localStorage.getItem('SP')) && (

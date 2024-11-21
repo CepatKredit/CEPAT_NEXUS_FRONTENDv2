@@ -570,7 +570,6 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                                 <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
                             </div>
                         </div>
-        
                         <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${isEdit ? 'h-[40vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}>
                         <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
                                 <Anchor

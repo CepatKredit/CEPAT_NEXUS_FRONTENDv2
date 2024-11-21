@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Image, Empty, Tooltip, Space, Input, Select, Radio, Button, ConfigProvider, notification } from 'antd'
+import { Image, Empty, Tooltip, Space, Input, Select, Radio, Button, ConfigProvider, notification, Watermark } from 'antd'
 import {
     RotateLeftOutlined,
     RotateRightOutlined,
@@ -125,23 +125,23 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                 PRODID: 'FILE'
             }
             await axios.post('/updateFileStatus', dataContainer)
-            .then((result) => {
-                queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
-                queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
-                queryClient.invalidateQueries({ queryKey: ['ReleaseDocListQuery'] }, { exact: true })
-                queryClient.invalidateQueries({ queryKey: ['ReleaseFileListQuery'] }, { exact: true })
-                setFileData(FileList('IMG')[parseInt(getPointer) - 1]);
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description
+                .then((result) => {
+                    queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['ReleaseDocListQuery'] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['ReleaseFileListQuery'] }, { exact: true })
+                    setFileData(FileList('IMG')[parseInt(getPointer) - 1]);
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description
+                    })
                 })
-            })
-            .catch((error) => {
-                api['error']({
-                    message: 'Something went wrong',
-                    description: error.message
+                .catch((error) => {
+                    api['error']({
+                        message: 'Something went wrong',
+                        description: error.message
+                    })
                 })
-            })
         }
     })
 
@@ -180,79 +180,86 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                                                     },
                                                 }
                                             ) => (
-                                                <div className='flex flex-col p-4 rounded-lg bg-stone-100 shadow-2xl ring-2 ring-stone-600 ring-offset-0 z-50'>
-                                                    <center>
-                                                        <div className='invert text-base font-semibold pb-1'>{`${getPointer.toString()} / ${FileList('IMG').length.toString()}`}</div>
-                                                        <Space size={20} className="toolbar-wrapper invert">
-                                                            <Tooltip placement='top' title='Flip Bottom'>
-                                                                <SwapOutlined style={{ fontSize: '20px' }} rotate={90} onClick={onFlipY} />
-                                                            </Tooltip>
-                                                            <Tooltip placement='top' title='Flip Right'>
-                                                                <SwapOutlined style={{ fontSize: '20px' }} onClick={onFlipX} />
-                                                            </Tooltip>
-                                                            <Tooltip placement='top' title='Rotate Left'>
-                                                                <RotateLeftOutlined style={{ fontSize: '20px' }} onClick={onRotateLeft} />
-                                                            </Tooltip>
-                                                            <Tooltip placement='top' title='Rotate Right'>
-                                                                <RotateRightOutlined style={{ fontSize: '20px' }} onClick={onRotateRight} />
-                                                            </Tooltip>
-                                                            <Tooltip placement='top' title='Zoom Out'>
-                                                                <ZoomOutOutlined style={{ fontSize: '20px' }} disabled={scale === 1} onClick={onZoomOut} />
-                                                            </Tooltip>
-                                                            <Tooltip placement='top' title='Zoom In'>
-                                                                <ZoomInOutlined style={{ fontSize: '20px' }} disabled={scale === 50} onClick={onZoomIn} />
-                                                            </Tooltip>
-                                                            <Tooltip placement='top' title='Reset'>
-                                                                <UndoOutlined style={{ fontSize: '20px' }} onClick={onReset} />
-                                                            </Tooltip>
-                                                        </Space>
-                                                    </center>
-                                                    <div className='flex flex-row'>
-                                                        {isClient === 'USER' ? (<div className='flex flex-col mr-2'>
-                                                            <div className='mt-2 w-[15rem]'>
+                                                <Watermark content='NEXUS CKFI' >
+                                                    <div
+                                                        style={{
+                                                            height: 500,
+                                                        }}
+                                                    />
+                                                    <div className='flex flex-col p-4 rounded-lg bg-stone-100 shadow-2xl ring-2 ring-stone-600 ring-offset-0 z-50'>
+                                                        <center>
+                                                            <div className='invert text-base font-semibold pb-1'>{`${getPointer.toString()} / ${FileList('IMG').length.toString()}`}</div>
+                                                            <Space size={20} className="toolbar-wrapper invert">
+                                                                <Tooltip placement='top' title='Flip Bottom'>
+                                                                    <SwapOutlined style={{ fontSize: '20px' }} rotate={90} onClick={onFlipY} />
+                                                                </Tooltip>
+                                                                <Tooltip placement='top' title='Flip Right'>
+                                                                    <SwapOutlined style={{ fontSize: '20px' }} onClick={onFlipX} />
+                                                                </Tooltip>
+                                                                <Tooltip placement='top' title='Rotate Left'>
+                                                                    <RotateLeftOutlined style={{ fontSize: '20px' }} onClick={onRotateLeft} />
+                                                                </Tooltip>
+                                                                <Tooltip placement='top' title='Rotate Right'>
+                                                                    <RotateRightOutlined style={{ fontSize: '20px' }} onClick={onRotateRight} />
+                                                                </Tooltip>
+                                                                <Tooltip placement='top' title='Zoom Out'>
+                                                                    <ZoomOutOutlined style={{ fontSize: '20px' }} disabled={scale === 1} onClick={onZoomOut} />
+                                                                </Tooltip>
+                                                                <Tooltip placement='top' title='Zoom In'>
+                                                                    <ZoomInOutlined style={{ fontSize: '20px' }} disabled={scale === 50} onClick={onZoomIn} />
+                                                                </Tooltip>
+                                                                <Tooltip placement='top' title='Reset'>
+                                                                    <UndoOutlined style={{ fontSize: '20px' }} onClick={onReset} />
+                                                                </Tooltip>
+                                                            </Space>
+                                                        </center>
+                                                        <div className='flex flex-row'>
+                                                            {isClient === 'USER' ? (<div className='flex flex-col mr-2'>
+                                                                <div className='mt-2 w-[15rem]'>
+                                                                    <div>
+                                                                        <label className='invert'>Select File Type</label>
+                                                                    </div>
+                                                                    <div>
+                                                                        <Select style={{ width: '100%', zIndex: 100 }}
+                                                                            size='large'
+                                                                            placeholder={'Please Select...'}
+                                                                            allowClear
+                                                                            showSearch
+                                                                            value={getValue.fileName || undefined}
+                                                                            onChange={(e) => { setValue({ ...getValue, fileName: e }) }}
+                                                                            options={FilenameContainer().map((x) => ({ value: x.docsType, label: x.docsType }))}
+                                                                        // optionRender={(option) => (<span className='font-semibold '>     {option.data.value}   </span>)}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <Radio.Group value={getValue.status} onChange={(e) => { setValue({ ...getValue, status: e.target.value }) }} className='w-full mt-4'>
+                                                                    <Radio value={1}><span className='contrast-200'>Enable</span></Radio>
+                                                                    <Radio value={2}><span className='invert-0'>Disable</span></Radio>
+                                                                </Radio.Group>
+                                                            </div>) : (<></>)}
+                                                            <div className='mt-2 w-[25rem]'>
                                                                 <div>
-                                                                    <label className='invert'>Select File Type</label>
+                                                                    <label className='invert'>Remarks</label>
                                                                 </div>
                                                                 <div>
-                                                                    <Select style={{ width: '100%', zIndex: 100 }}
+                                                                    <Input.TextArea style={{ width: '100%', height: 90, resize: 'none' }}
                                                                         size='large'
-                                                                        placeholder={'Please Select...'}
+                                                                        value={getValue.remarks}
+                                                                        onChange={(e) => { setValue({ ...getValue, remarks: e.target.value }) }}
                                                                         allowClear
-                                                                        showSearch
-                                                                        value={getValue.fileName || undefined}
-                                                                        onChange={(e) => { setValue({ ...getValue, fileName: e }) }}
-                                                                        options={FilenameContainer().map((x) => ({ value: x.docsType, label: x.docsType }))}
-                                                                       // optionRender={(option) => (<span className='font-semibold '>     {option.data.value}   </span>)}
+                                                                        maxLength={250}
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            <Radio.Group value={getValue.status} onChange={(e) => { setValue({ ...getValue, status: e.target.value }) }} className='w-full mt-4'>
-                                                                <Radio value={1}><span className='contrast-200'>Enable</span></Radio>
-                                                                <Radio value={2}><span className='invert-0'>Disable</span></Radio>
-                                                            </Radio.Group>
-                                                        </div>) : (<></>)}
-                                                        <div className='mt-2 w-[25rem]'>
-                                                            <div>
-                                                                <label className='invert'>Remarks</label>
-                                                            </div>
-                                                            <div>
-                                                                <Input.TextArea style={{ width: '100%', height: 90, resize: 'none' }}
-                                                                    size='large'
-                                                                    value={getValue.remarks}
-                                                                    onChange={(e) => { setValue({ ...getValue, remarks: e.target.value }) }}
-                                                                    allowClear
-                                                                    maxLength={250}
-                                                                />
-                                                            </div>
                                                         </div>
+                                                        <center>
+                                                            <ConfigProvider theme={{ token: { colorPrimary: '#166534' } }}>
+                                                                <Button className='mt-2 bg-[#166534] w-[10rem]' type='primary'
+                                                                    onClick={() => { onClickSave() }} icon={<SaveOutlined />} loading={onClickSaveImg.isPending} >Save</Button>
+                                                            </ConfigProvider>
+                                                        </center>
                                                     </div>
-                                                    <center>
-                                                        <ConfigProvider theme={{ token: { colorPrimary: '#166534' } }}>
-                                                            <Button className='mt-2 bg-[#166534] w-[10rem]' type='primary'
-                                                                onClick={() => { onClickSave() }} icon={<SaveOutlined />} loading={onClickSaveImg.isPending} >Save</Button>
-                                                        </ConfigProvider>
-                                                    </center>
-                                                </div>
+                                                </Watermark>
                                             ),
                                         }}>
                                         <Tooltip placement='top' title={<div>
@@ -261,6 +268,7 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                                         </div>}>
                                             <Image className='rounded-md' key={i} height={'8rem'} width={'8rem'} src={FileList('IMG-LIST')[i]} />
                                         </Tooltip>
+
                                     </Image.PreviewGroup>
                                 </div>
                             ))

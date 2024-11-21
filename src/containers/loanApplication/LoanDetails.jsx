@@ -46,7 +46,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center mt-[2rem]">
+    <div className="flex flex-col justify-center items-center mt-[2rem]">
       <div className="flex flex-rows">
         <Checkbox
           name="chkBox_DataPrivacy"

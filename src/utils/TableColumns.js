@@ -22,6 +22,27 @@ export const ColumnList = (command) => {
       { title: 'Latest Internal Remarks', dataIndex: 'LIR', key: 'LIR', sorter: (a, b) => { return a?.LIR?.localeCompare(b.LIR) }, width: '500px', align: 'center' },
   ]
 
+      /*const column_Marketing = [
+        { title: '#', dataIndex: 'NO', key: 'NO', width: '40px', align: 'center', fixed: 'left' },
+        {
+            title: 'Loan Application Number', dataIndex: 'LAN', key: 'LAN', width: '150px', align: 'center', sorter: (a, b, c) => {
+                return a.LAN.props.children.localeCompare(b.LAN.props.children)
+            }, fixed: 'left'
+        },
+        { title: 'Date of Application', dataIndex: 'DOA', key: 'DOA', sorter: (a, b) => { return a.DOA.localeCompare(b.DOA) }, align: 'center' },
+        { title: 'Loan Product', dataIndex: 'LP', key: 'LP',  sorter: (a, b) => { return a.LP.localeCompare(b.LP) }, align: 'center' },
+        { title: 'OFW', dataIndex: 'OFW', key: 'OFW', sorter: (a, b) => { return a?.OFW?.localeCompare(b?.OFW) }, align: 'center' },
+        { title: 'OFW Departure Date', dataIndex: 'OFWDD', key: 'OFWDD', sorter: (a, b) => { return a?.OFWDD?.localeCompare(b?.OFWDD) }, align: 'center' },
+        { title: 'Co-Borrower', dataIndex: 'BENE', key: 'BENE',  sorter: (a, b) => { return a.BENE.localeCompare(b.BENE) }, align: 'center' },
+        { title: 'Additional Co-Borrower', dataIndex: 'ACB', key: 'ACB',  sorter: (a, b) => { return a?.ACB?.localeCompare(b?.ACB) }, align: 'center' },
+        { title: 'Loan Consultant', dataIndex: 'LC', key: 'LC', sorter: (a, b) => { return a?.LC?.localeCompare(b?.LC) }, align: 'center' },
+        { title: 'Loan Type', dataIndex: 'LT', key: 'LT',  sorter: (a, b) => { return a.LT.localeCompare(b.LT) }, align: 'center' },
+        { title: 'Loan Branch', dataIndex: 'LB', key: 'LB', sorter: (a, b) => { return a.LB.localeCompare(b.LB) }, align: 'center' },
+        { title: 'Status', dataIndex: 'STAT', key: 'STAT',  align: 'center'},
+        { title: 'Updated By', dataIndex: 'UB', key: 'UB', sorter: (a, b) => { return a?.UB?.localeCompare(b?.UB) }, align: 'center' },
+        { title: 'Latest Internal Remarks', dataIndex: 'LIR', key: 'LIR', sorter: (a, b) => { return a?.LIR?.localeCompare(b.LIR) }, align: 'center' },
+    ]*/
+
   const column_Cro = [
       { title: '#', dataIndex: 'NO', key: 'NO', width: '40px', align: 'center', fixed: 'left' },
       {

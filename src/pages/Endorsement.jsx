@@ -116,7 +116,7 @@ function Endorsement() {
             code={getDetails}
         />
         <div className="h-[67vh] overflow-y-auto">
-            <div className="flex items-center justify-center mx-auto mt-[2%] ">
+            <div className="flex items-center justify-center mx-auto ">
             <div className="flex flex-col items-center justify-center mx-auto mt-[2%]">
                 <div className="flex items-center justify-center w-[80vw] ">
                 <LoanDetails
