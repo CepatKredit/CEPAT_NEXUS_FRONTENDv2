@@ -34,12 +34,11 @@ function LoanApplicationInfo() {
     })
 
     const ClientDataListQuery = useQuery({
-        queryKey: ['ClientDataListQuery', localStorage.getItem('SIDC')],
+        queryKey: ['ClientDataListQuery', toDecrypt(localStorage.getItem('SIDC'))],
         queryFn: async () => {
             try {
                 const result = await GET_LIST(`/getClientDataList/${toDecrypt(localStorage.getItem('SIDC'))}`);
                 const data = result.list;
-                console.log('Get From API Data ',data)
                 setDetails({
                     ClientId: data?.LoanDetails?.loanAppId,
                     FileType: data?.LoanDetails?.productId,

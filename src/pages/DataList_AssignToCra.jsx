@@ -52,8 +52,6 @@ function DataList_AssignToCra() {
     staleTime: 5 * 1000,
   });
 
-  console.log(AppDataListQuery.data)
-
   React.useEffect(() => {
     CraListQuery.refetch();
   }, []);

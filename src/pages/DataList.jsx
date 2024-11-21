@@ -40,7 +40,6 @@ function DataList() {
     staleTime: 5 * 1000,
   });
 
-  console.log(AppDataListQuery.data)
 
   return (
     <div className='mx-[1%] my-[2%]'>

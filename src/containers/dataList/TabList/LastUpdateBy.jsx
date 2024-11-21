@@ -2,7 +2,7 @@ import LabeledTextArea from '@components/marketing/LabeledTextArea';
 import * as React from 'react';
 import { Button, Space, ConfigProvider, Input, Select, DatePicker, notification, Checkbox } from 'antd';
 import dayjs from 'dayjs';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import LabeledSelects from '@components/validation/LabeledSelect';
 import StatusRemarks from './StatusRemarks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -34,8 +34,9 @@ function LastUpdateBy({ isEdit, User, data }) {
     const [isShareLocationChecked, setShareLocationChecked] = React.useState(false);
     const [isAgencyVerificationChecked, setAgencyVerificationChecked] = React.useState(false);
     const [isUrgentApp, setUrgentApp] = React.useState();
+    const location = useLocation();
 
-    const { id } = useParams();
+    const { id, tabs } = useParams();
     const navigate = useNavigate();
 
     const approvedMessage = `CONGRATULATIONS! YOUR LOAN APPLICATION HAS BEEN APPROVED. PLEASE WAIT FOR A CALL FROM OUR TEAM TO FINALIZE THE PROCESS AND DISCUSS HOW YOU WILL RECEIVE THE LOAN PROCEEDS.`;
@@ -289,9 +290,10 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             description: result.data.description
                         });
                         queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
-                        navigate(`${localStorage.getItem('SP')}/${id}/last-update-by`);
+                        localStorage.setItem('activeTab', 'deduplication')
+                        navigate(`${localStorage.getItem('SP')}/1211010000070/${localStorage.getItem("activeTab")}`);
+                        console.log("INSIDE ", `${localStorage.getItem('SP')}/${id}/${localStorage.getItem("activeTab")}`);
                         setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
-
                         if (deletePN) {
                             await onClickDeleteXTable();
                         }
@@ -652,7 +654,9 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                             <div className='pt-[2rem]'>
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                                     <Button
-                                        onClick={() => { onClickUpdate() }}
+                                        onClick={() => { 
+                                            onClickUpdate();
+                                         }}
                                         className='bg-[#3b0764] w-[8rem]'
                                         type='primary'
                                         disabled={isDisabled || isDisableUpdateBtn}

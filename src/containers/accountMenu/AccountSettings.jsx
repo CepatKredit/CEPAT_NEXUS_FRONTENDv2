@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie';
 import { toDecrypt } from '@utils/Converter';
 import { useAuth } from '@auth/AuthProvider';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function AccountSettings() {
     const { logout } = useAuth();
+    const {resetAppDetails } = React.useContext(LoanApplicationContext)
 
     // const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
@@ -39,6 +41,7 @@ function AccountSettings() {
             // }
             onClick: () => {
                 logout(); 
+                resetAppDetails();
                 navigate('/'); 
             },
         },

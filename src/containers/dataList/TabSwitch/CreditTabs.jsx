@@ -412,11 +412,6 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                 });
         }
 
-        console.log('Update...')
-        console.log('LOAN', data_loan)
-        console.log('OFW', data_ofw)
-        console.log('BENE', data_bene)
-
         if (!sepcoborrowfname && !addCoborrower) { //if no add coborrow and showaddcoborrow is true
             //Start to insert Acb and then update all
             console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)

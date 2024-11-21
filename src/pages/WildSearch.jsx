@@ -1,27 +1,27 @@
-import React from 'react'
-import { Table, Divider, Tag, Button } from 'antd'; 
+import React, { useContext, useEffect } from 'react'
+import { Table, Divider, Tag, Button, ConfigProvider } from 'antd'; 
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { toEncrypt } from '@utils/Converter';
+import { toDecrypt, toEncrypt } from '@utils/Converter';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { jwtDecode } from 'jwt-decode';
 import { TileNumber } from '@utils/Conditions';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function WildSearch() {
     const { userID, searchValue } = useParams();
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient()
-    const navigate = useNavigate();
-  
-    // const searchValue = searchParams.get("searching");
+    const navigate = useNavigate();;
 
     const { data: getData = [], isFetching } = useQuery({
         queryKey: ["wildSearch", userID, searchValue],
         queryFn: async () => {
           const { data } = await axios.get(`/wild-search/${userID}/${searchValue}`);
           return data.map((item) => ({
-            key: item.loanAppId,
+            key: item.key,           
+            loanAppId: item.loanAppId,
             loanAppCode: item.loanAppCode,
             borrowersFullName: item.borrowersFullName,
             status: item.status,
@@ -29,7 +29,6 @@ function WildSearch() {
         },
         enabled: !!userID && !!searchValue
       });
-
 
       const columns = [
         {
@@ -39,9 +38,9 @@ function WildSearch() {
             render: (loanAppCode, record) => {
                 return (
                     <Button
-                        key={record.loanAppId}
+                    key={record.key}    
                         onClick={() => {
-                            localStorage.setItem("SIDC", toEncrypt(record.key));
+                                localStorage.setItem("SIDC", toEncrypt(record.loanAppId));
                             localStorage.setItem("activeTab", "deduplication");
                             navigate(`${localStorage.getItem("SP")}/${loanAppCode}/deduplication`);
                             queryClient.invalidateQueries({
@@ -80,10 +79,13 @@ function WildSearch() {
         },
     ];
 
+
   return (
+    <ConfigProvider theme={{ token: { colorPrimary: "rgb(86,191,84)"} }}>
     <div className="p-[2%] ">
-        <Table dataSource={getData} columns={columns} loading={isFetching} />;
+        <Table dataSource={getData} columns={columns} loading={isFetching} />
     </div>
+    </ConfigProvider>
   )
 }
 

@@ -45,7 +45,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                     file: file,
                     docsID: 'ID',
                     status: 'Please select status',
-                    remarks: 'Please input remarks',
+                    remarks: '',
                     docStatus: '1'
                 })
             }
@@ -54,7 +54,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                     file: file,
                     docsID: GetDocsCode('Others'),
                     status: 'Others',
-                    remarks: 'NO REMARKS',
+                    remarks: '',
                     docStatus: '1'
                 })
             }

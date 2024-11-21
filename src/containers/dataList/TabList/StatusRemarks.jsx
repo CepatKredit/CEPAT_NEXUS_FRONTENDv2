@@ -21,7 +21,6 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
             try {
                 const result = await axios.get(`/getRemarks/${data?.loanIdCode}`);
                 SetStatus(result.data.list[0].status)
-                console.log(localStorage.getItem('activeTab'));
                 if (localStorage.getItem('activeTab') === 'last-update-by')
                     setUrgentApp(result.data.list[0].urgentApp)
                 SET_LOADING_INTERNAL('StatusRemarks', false);
