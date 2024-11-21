@@ -1,24 +1,18 @@
 import React from "react";
-import { GetData } from "./UserData";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 
-function TriggerFields() {
+function TriggerFields(ROLE) {
     const [getRendered, setRendered] = React.useState(false)
     const skipRender = React.useRef(1); //use this
-    const { getAppDetails, setAppDetails, populateClientDetails } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
 
 
     function ClearFields(fields) {
-        const updatedDetails = fields.reduce((acc, key) => {
+        fields.forEach((key) => {
             if (getAppDetails.hasOwnProperty(key)) {
-                acc[key] = '';
+                updateAppDetails({ name: key, value: '' });
             }
-            return acc;
-        }, {});
-        setAppDetails((prevDetails) => ({
-            ...prevDetails,
-            ...updatedDetails
-        }));
+        });
     }
     /*
     React.useEffect(() => {
@@ -51,88 +45,101 @@ function TriggerFields() {
 
     React.useEffect(() => {
         if (!getRendered) return;
-        setAppDetails(prevDetails => ({
-            ...prevDetails,
+
+        const updates = {
             ofwSameAdd: false,
             ofwPermProv: '',
             ofwPermMunicipality: '',
             ofwPermBarangay: '',
             ofwPermStreet: '',
-
             ofwProvSameAdd: false,
             ofwprovProv: '',
             ofwprovMunicipality: '',
             ofwprovBarangay: '',
             ofwprovStreet: '',
-        }));
+        };
 
+        Object.entries(updates).forEach(([name, value]) => {
+            updateAppDetails({ name, value });
+        });
     }, [getAppDetails.ofwPresStreet]);
 
     React.useEffect(() => {
         if (!getRendered) return;
-        if ((GetData('ROLE').toString() !== '50' && GetData('ROLE').toString() !== '60') && (getAppDetails.ofwmstatus != 2 || getAppDetails.ofwmstatus != 5 || getAppDetails.ofwmstatus != 6)) {
-            setAppDetails(prev => ({
-                ...prev,
+
+        const isInvalidRole = (ROLE === 'CREDIT');
+        const isInvalidStatus = ![2, 5, 6].includes(getAppDetails.ofwmstatus);
+
+        if (isInvalidRole && isInvalidStatus) {
+            const updates = {
                 ofwspouse: '',
                 ofwspousebdate: '',
                 SpSrcIncome: '',
                 SpIncome: '',
-            }))
-        }else{
-            setAppDetails(prev => ({
-                ...prev,
-                MarriedPBCB: false,
-            }))
-        }
+            };
 
+            Object.entries(updates).forEach(([name, value]) => {
+                updateAppDetails({ name, value });
+            });
+        } else {
+            updateAppDetails({ name: 'MarriedPBCB', value: false });
+        }
     }, [getAppDetails.ofwmstatus]);
 
     React.useEffect(() => {
         if (!getRendered) return;
-        
-        if ((GetData('ROLE').toString() !== '50' && GetData('ROLE').toString() !== '60') && (getAppDetails.benmstatus != 2 || getAppDetails.benmstatus != 5 || getAppDetails.benmstatus != 6)) {
-            setAppDetails(prev => ({
-                ...prev,
+
+        const isInvalidRole = (ROLE === 'CREDIT');
+        const isInvalidStatus = ![2, 5, 6].includes(getAppDetails.benmstatus);
+        const isMarriedInvalidStatus = ![2, 5, 6].includes(getAppDetails.ofwmstatus) && getAppDetails.MarriedPBCB;
+
+        if (isInvalidRole && isInvalidStatus) {
+            const updates = {
                 benspouse: '',
                 benspousebdate: '',
                 BenSpSrcIncome: '',
                 BenSpIncome: '',
-            }))
-        }else{ //additional logic if status is married,live in, 
-            if(![2,5,6].includes(getAppDetails.ofwmstatus) &&  getAppDetails.MarriedPBCB){
-                setAppDetails(prev => ({
-                    ...prev,
-                    MarriedPBCB: false,
-                }))
-            }
-        }
+            };
 
+            Object.entries(updates).forEach(([name, value]) => {
+                updateAppDetails({ name, value });
+            });
+        } else if (isMarriedInvalidStatus) {
+            updateAppDetails({ name: 'MarriedPBCB', value: false });
+        }
     }, [getAppDetails.benmstatus]);
+
 
     React.useEffect(() => {
         if (!getRendered) return;
-        if ((getAppDetails.coborrowmstatus != 2 || getAppDetails.coborrowmstatus != 5 || getAppDetails.coborrowmstatus != 6)) {
-            setAppDetails(prev => ({
-                ...prev,
+
+        const isInvalidStatus = ![2, 5, 6].includes(getAppDetails.coborrowmstatus);
+
+        if (isInvalidStatus) {
+            const updates = {
                 coborrowerspousebdate: '',
                 coborrowspousename: '',
                 AcbSpSrcIncome: '',
                 AcbSpIncome: '',
-     
-            }))
-        }
+            };
 
+            Object.entries(updates).forEach(([name, value]) => {
+                updateAppDetails({ name, value });
+            });
+        }
     }, [getAppDetails.coborrowmstatus]);
+
 
 
 
     React.useEffect(() => {
         if (!getRendered) return;
+
         if (getAppDetails.MarriedPBCB) {
             const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
             const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
-            setAppDetails(prevs => ({
-                ...prevs,
+            
+            const updates = {
                 ofwspouse: spouseBenName,
                 ofwspousebdate: getAppDetails.benbdate,
                 SpSrcIncome: '',
@@ -141,16 +148,18 @@ function TriggerFields() {
                 benspousebdate: getAppDetails.ofwbdate,
                 BenSpSrcIncome: 1,
                 BenSpIncome: '',
-                benmstatus: getAppDetails.ofwmstatus, 
-            }))
+                benmstatus: getAppDetails.ofwmstatus,
+            };
+
+            Object.entries(updates).forEach(([name, value]) => {
+                updateAppDetails({ name, value });
+            });
         } else {
-            setAppDetails(prev => ({
-                ...prev,
+            const updates = {
                 ofwspouse: '',
                 ofwspousebdate: '',
                 SpSrcIncome: '',
                 SpIncome: '',
-
                 benmstatus: '',
                 benspouse: '',
                 benspousebdate: '',
@@ -158,33 +167,43 @@ function TriggerFields() {
                 BenSpIncome: '',
                 BenSrcIncome: '',
                 BenIncome: '',
-            }))
-        }
+            };
 
+            Object.entries(updates).forEach(([name, value]) => {
+                updateAppDetails({ name, value });
+            });
+        }
     }, [getAppDetails.MarriedPBCB]);
-    //Source of Income
+
+    // Source of Income
     React.useEffect(() => {
         if (!getRendered || !getAppDetails.MarriedPBCB) return;
-        setAppDetails(prevDetails => ({
-            ...prevDetails,
-            BenSrcIncome: getAppDetails.SpSrcIncome
-        }))
-    }, [getAppDetails.SpSrcIncome])
+
+        updateAppDetails({
+            name: 'BenSrcIncome',
+            value: getAppDetails.SpSrcIncome,
+        });
+    }, [getAppDetails.SpSrcIncome]);
+
     React.useEffect(() => {
         if (!getRendered || !getAppDetails.MarriedPBCB) return;
-        setAppDetails(prevDetails => ({
-            ...prevDetails,
-            SpSrcIncome: getAppDetails.BenSrcIncome
-        }))
-    }, [getAppDetails.BenSrcIncome])
-    //Spouse Income
+
+        updateAppDetails({
+            name: 'SpSrcIncome',
+            value: getAppDetails.BenSrcIncome,
+        });
+    }, [getAppDetails.BenSrcIncome]);
+
+    // Spouse Income
     React.useEffect(() => {
         if (!getRendered || !getAppDetails.MarriedPBCB) return;
-        setAppDetails(prevDetails => ({
-            ...prevDetails,
-            BenIncome: getAppDetails.SpIncome
-        }))
-    }, [getAppDetails.SpIncome])
+
+        updateAppDetails({
+            name: 'BenIncome',
+            value: getAppDetails.SpIncome,
+        });
+    }, [getAppDetails.SpIncome]);
+
     /*
     React.useEffect(() => {
         if (!getRendered || !getAppDetails.MarriedPBCB) return;

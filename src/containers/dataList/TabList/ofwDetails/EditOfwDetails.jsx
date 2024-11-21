@@ -86,7 +86,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
-                    KeyName={'Uppercase'}
+                    KeyName={'ofwfname'}
+                    group={'Uppercase'}
                     compname={'First Name'}
                 />
                 <InputOpt
@@ -100,8 +101,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={false}
-                    KeyName={'Uppercase'}
                     required={false}
+                    KeyName={'ofwmname'}
+                    group={'Uppercase'}
                     compname={'Middle Name'}
                 />
                 <InputOpt
@@ -114,8 +116,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
-                    KeyName={'Uppercase'}
                     rendered={rendered}
+                    KeyName={'ofwlname'}
+                    group={'Uppercase'}
                     compname={'Last Name'}
                 />
                 <LabeledSelect_Suffix
@@ -154,7 +157,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={'Age'}
                         receive={(e) => updateAppDetails({ name: 'ofwage', value: e })}
-                        value={getAge? getAge : 0}
+                        value={getAge ? getAge : 0}
                         readOnly={true}
                         placeHolder='Age'
                         rendered={rendered}
@@ -213,7 +216,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     category={'marketing'}
                     isEdit={isEdit}
                     rendered={rendered}
-                    KeyName={'Email'}
+                    KeyName={'ofwemail'}
+                    group={'Email'}
+                    compname={'Email Address'}
 
                 />
                 {User === 'Credit' ? (
@@ -277,8 +282,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         readOnly={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
-                        KeyName={'Default'}
+                        KeyName={'ofwgroupchat'}
+                        group={'Default'}
                         compname={'Group Chat'}
+
                     />)}
                 {User === 'Credit' &&
                     (<LabeledSelect_Relationship
@@ -372,9 +379,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 isEdit={isEdit}
                                 rendered={rendered}
                                 disabled={User === 'Credit' && data.MarriedPBCB}
-                                KeyName={'Uppercase'}
+                                KeyName={'ofwspouse'}
+                                group={'Uppercase'}
                                 compname={'Spouse Name'}
-
                             />
 
                             <DatePickerOpt
@@ -415,10 +422,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     receive={(e) => updateAppDetails({ name: 'SpIncome', value: e })}
                                     category={'direct'}
                                     rendered={rendered}
-                                    //triggered={data.MarriedPBCB}
-                                    KeyName={'Income'}
+                                    KeyName={'SpIncome'}
+                                    format={'Currency'}
+                                    group={'Rent_Amort'}
                                     compname={'Spouse Income'}
-                                    format = {'Currency'}
                                 />)}
                         </>
                     )
@@ -502,8 +509,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'direct'}
                         placeHolder={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         rendered={rendered}
-                        KeyName={'Rent_Amort'}
-                        format = {'Currency'}
+
+                        KeyName={'ofwrent'}
+                        format={'Currency'}
+                        group={'Rent_Amort'}
                         compname={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                     />
                 ) : null}
@@ -520,7 +529,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.landmark}
                         rendered={rendered}
                         receive={(e) => updateAppDetails({ name: 'landmark', value: e })}
-                        KeyName={'Uppercase'}
+
+                        KeyName={'landmark'}
+                        group={'Uppercase'}
                         compname={'Landmark'}
                     />)}
                 {User === 'Credit' && (
@@ -535,7 +546,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         value={data.OfwPoBRemarks}
                         receive={(e) => updateAppDetails({ name: 'OfwPoBRemarks', value: e })}
-                        KeyName={'Uppercase'}
+
+                        KeyName={'OfwPoBRemarks'}
+                        group={'Uppercase'}
                         compname={'Proof of Billing Remarks'}
                     />)}
                 {User === 'LC'
@@ -646,7 +659,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         isEdit={isEdit}
                         rendered={rendered}
                         required={false}
-                        KeyName={'Uppercase'}
+
+                        KeyName={'ofwidnumber'}
+                        group={'Uppercase'}
                         compname={'ID Number'}
                     />)}
             </Flex>
@@ -731,7 +746,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.PEmployer}
                         receive={(e) => updateAppDetails({ name: 'PEmployer', value: e })}
                         rendered={rendered}
-                        KeyName={'Uppercase'}
+
+                        KeyName={'PEmployer'}
+                        group={'Uppercase'}
                         compname={'Principal Employer'}
                     />)}
                 {(User !== 'Credit' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL'))) && (
@@ -767,21 +784,23 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         isEdit={isEdit}
                         rendered={rendered}
                     />)}
-                {User !== 'Credit' && 
-                (<InputOpt
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                    className_label={'font-bold'}
-                    label={<>Salary <span className="text-red-500">*</span></>}
-                    placeHolder='Salary'
-                    readOnly={isEdit}
-                    value={data.ofwsalary}
-                    receive={(e) => updateAppDetails({ name: 'ofwsalary', value: e })}
-                    category={'direct'}
-                    rendered={rendered}
-                    KeyName={'Income'}
-                    format='Currency'
-                    compname={'Salary'}
-                />)}
+                {User !== 'Credit' &&
+                    (<InputOpt
+                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_label={'font-bold'}
+                        label={<>Salary <span className="text-red-500">*</span></>}
+                        placeHolder='Salary'
+                        readOnly={isEdit}
+                        value={data.ofwsalary}
+                        receive={(e) => updateAppDetails({ name: 'ofwsalary', value: e })}
+                        category={'direct'}
+                        rendered={rendered}
+
+                        KeyName={'ofwsalary'}
+                        group={'Income'}
+                        compname={'Salary'}
+                        format='Currency'
+                    />)}
                 {/*User === 'Credit' && (
                         <LabeledInput
                             className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -933,7 +952,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => updateAppDetails({ name: 'VesselName', value: e })}
                             category={'direct'}
                             rendered={rendered}
-                            KeyName={'Uppercase'}
+
+                            KeyName={'VesselName'}
+                            group={'Uppercase'}
                             compname={'Name of Vessel'}
                         />
                         <InputOpt
@@ -946,7 +967,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => updateAppDetails({ name: 'VesselIMO', value: e })}
                             category={'direct'}
                             rendered={rendered}
-                            KeyName={'Uppercase'}
+
+                            KeyName={'VesselIMO'}
+                            group={'Uppercase'}
                             compname={'IMO Vessel'}
                         />
                         {data.VesselIMO && (
@@ -983,7 +1006,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => updateAppDetails({ name: 'VesselType', value: e })}
                             category={'direct'}
                             rendered={rendered}
-                            KeyName={'Uppercase'}
+
+                            KeyName={'VesselType'}
+                            group={'Uppercase'}
                             compname={'Type of Vessel'}
                         />
 
@@ -999,9 +1024,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.ExactLocation}
                         receive={(e) => updateAppDetails({ name: 'ExactLocation', value: e })}
                         category={'marketing'}
-                        KeyName={'Uppercase'}
-                        compname={'Exact Location'}
                         required={false}
+
+                        KeyName={'ExactLocation'}
+                        group={'Uppercase'}
+                        compname={'Exact Location'}
                     />)}
                 {User === 'Credit' && data.loanProd === '0303-WA' && (
                     <InputOpt
@@ -1013,9 +1040,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.PossVacation}
                         receive={(e) => updateAppDetails({ name: 'PossVacation', value: e })}
                         category={'marketing'}
-                        KeyName={'Uppercase'}
-                        compname={'Possible Vacation'}
                         required={false}
+
+                        KeyName={'PossVacation'}
+                        group={'Uppercase'}
+                        compname={'Possible Location'}
                     />)}
                 {User === 'Credit' && (
                     <InputOpt
@@ -1028,7 +1057,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         receive={(e) => updateAppDetails({ name: 'AllotName', value: e })}
                         category={'direct'}
                         rendered={rendered}
-                        KeyName={'Uppercase'}
+
+                        KeyName={'AllotName'}
+                        group={'Uppercase'}
                         compname={'Beneficiary or Allotment Name'}
                     />)}
                 {/*User === 'Credit' &&  (
@@ -1054,9 +1085,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder={'Amount'}
                         category={'marketing'}
                         rendered={rendered}
-                        KeyName={'Allotment'}
-                        compname={'Remittance/Allotment Amount'}
+
                         format='Currency'
+                        KeyName={'AllotAmount'}
+                        group={'Allotment'}
+                        compname={'Remittance/Allotment Amount'}
                     />)}
                 {/*User === 'Credit' && (
                     <LabeledInput
@@ -1112,9 +1145,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             value={data.ofwcourse}
                             receive={(e) => { updateAppDetails({ name: 'ofwcourse', value: e }); }}
                             readOnly={isEdit}
-                            KeyName={'Uppercase'}
-                            compname={'Course'}
                             required={false}
+
+                            KeyName={'ofwcourse'}
+                            group={'Uppercase'}
+                            compname={'Course'}
                         /> </>)}
                 {User === 'LC'
                     ? (<></>)
@@ -1127,9 +1162,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={data.ofwschool}
                         receive={(e) => updateAppDetails({ name: 'ofwschool', value: e })}
                         category={'marketing'}
-                        KeyName={'Uppercase'}
-                        compname={'School'}
                         required={false}
+
+                        KeyName={'ofwschool'}
+                        group={'Uppercase'}
+                        compname={'School'}
                     />)}
             </Flex>
         </div>

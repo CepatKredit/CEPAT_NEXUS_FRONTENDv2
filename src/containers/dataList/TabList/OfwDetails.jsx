@@ -166,11 +166,11 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     MunicipalityId: data.ofwPresMunicipality || '',
                     BarangayId: data.ofwPresBarangay || '',
                     Address1: data.ofwPresStreet || '',
-                    Ownership: data.ofwresidences || null,
+                    Ownership: data.ofwresidences || 0, //MUST 0 TO ESCAPE KEY MISSING
                     RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,
                     Landmark: data.landmark || '',
-                    StayYears: data.ofwlosMonth || 0,
-                    StayMonths: data.ofwlosYear || 0,
+                    StayYears: data.ofwlosYear || 0,
+                    StayMonths: data.ofwlosMonth || 0,
                     CollectionArea: data.collectionarea || '',
     
                     //set

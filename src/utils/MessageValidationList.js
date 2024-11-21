@@ -18,41 +18,40 @@ export const dateMessage = (keyName, state) => {
             break;
 
         case 'ofwbdate':
-        case 'ofwspousebdate':
         case 'benbdate':
-        case 'coborrowerspousebdate':
         case 'coborrowbdate':
-        case 'benspousebdate':
             if (state === 'Invalid') {
                 return 'Age should be 20 to 65 years old only';
             } else if (state === 'Empty') {
                 return 'Birthdate Required';
             }
             break;
-
+        case 'ofwspousebdate':
+        case 'coborrowerspousebdate':
+        case 'benspousebdate':
+            if (state === 'Invalid') {
+                return 'Age should be 20 to 65 years old only';
+            } else if (state === 'Empty') {
+                return 'Spouse Birthdate Required';
+            }
+            break;
         default:
             return 'Not Valid';
     }
 }
 
-export const inputMessage = (keyName, state, compname) => {
-    switch (keyName) {
+export const inputMessage = (group, state, comp_name) => {
+    switch (group) {
         case 'Email':
-            if (state === 'Invalid') {
-                return 'Invalid Email Address';
-            } else if (state === 'Empty') {
-                return 'Email Address Required';
-            }
-            break;
         case 'Default':
         case 'Uppercase':
         case 'Income':
         case 'Rent_Amort':
         case 'Allotment':
-            if (compname && state === 'Invalid') {
-                return `Invalid ${compname}`;
-            } else if (compname && state === 'Empty') {
-                return `${compname} Required`;
+            if (comp_name && state === 'Invalid') {
+                return `Invalid ${comp_name}`;
+            } else if (comp_name && state === 'Empty') {
+                return `${comp_name} Required`;
             }
             break;
 

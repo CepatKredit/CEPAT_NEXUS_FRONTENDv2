@@ -23,6 +23,7 @@ import LastUpdateBy from "../TabList/LastUpdateBy";
 import AuditTrail from "../TabList/AuditTrail";
 import { GetData } from "@utils/UserData";
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import TriggerFields from "@utils/TriggerFields";
 
 
 function MarketingTabs({
@@ -53,6 +54,8 @@ function MarketingTabs({
     navigate(`${localStorage.getItem("SP")}/${id}/${e}`);
   }
 
+  TriggerFields('MARKETING');
+  
   const TabsItems = [
     {
       label: (

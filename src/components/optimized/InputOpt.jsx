@@ -19,11 +19,13 @@ function InputOpt({
     KeyName,
     compname,
     format = '',
+    group,
 }) {
-    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format);
+
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group);
 
     const isValidationEnabled = !readOnly && required;
-
+   
     return (
         <div className={className_dmain}>
             {label && <label className={className_label}>{label}</label>}

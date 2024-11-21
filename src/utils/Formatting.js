@@ -5,6 +5,10 @@ function FormatWithComma(num) { //Comma
     return parts.join('.');
 }
 
+export function FormatComma(num){
+    return FormatWithComma(num);
+}
+
 export function FormatCurrency(num) { //Comma and Decimal
     const dec = parseFloat(num.replaceAll(',','')).toFixed(2)
     const parts = dec.toString().split('.');

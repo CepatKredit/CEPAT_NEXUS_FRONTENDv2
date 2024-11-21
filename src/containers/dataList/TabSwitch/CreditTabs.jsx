@@ -36,6 +36,7 @@ import { UpdateLoanDetails } from '@utils/LoanDetails';
 import StatusRemarks from '../TabList/StatusRemarks';
 import { FocusHook } from '@hooks/ComponentHooks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import TriggerFields from '@utils/TriggerFields';
 
 function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading,User }) {
     //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
@@ -517,6 +518,9 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             else { return false }
         }
     }
+
+    //Trigger Fields
+    TriggerFields('CREDIT');
 
     const TabsItems = [
         {

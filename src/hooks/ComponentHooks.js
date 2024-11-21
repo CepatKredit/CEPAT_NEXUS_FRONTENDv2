@@ -1,7 +1,7 @@
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
 import { debouncef } from '@utils/Debounce';
-import { DateFormat, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
+import { DateFormat, FormatComma, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
 import { dateMessage, inputMessage } from '@utils/MessageValidationList';
 import { checkAgeisValid, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
 import dayjs from 'dayjs';
@@ -14,23 +14,23 @@ function hookDateValid(KeyName, date) {
   else { return CheckDateValid(date) }
 }
 
-function hookInputValid(KeyName, input, comp_name, format) {
+function hookInputValid(KeyName, input, comp_name, format, group) {
   //LETTERS
-  if (KeyName === 'Email' && CheckEmailValid(input)) {//For Email
+  if (group === 'Email' && CheckEmailValid(input)) {//For Email
     return { valid: true, value: input, errmsg: '' }; //As-is
-  } else if (KeyName === 'Uppercase' && input !== '') { //For letters / number
+  } else if (group === 'Uppercase' && input !== '') { //For letters / number
     return { valid: true, value: Uppercase(input), errmsg: '' }; //Change format to uppercase
-  } else if (KeyName === 'Default' && input !== '') { //For No-case sensitive
+  } else if (group === 'Default' && input !== '') { //For No-case sensitive
     return { valid: true, value: input, errmsg: '' }; //As-is
   //CURRENCY
-  } else if (KeyName === 'Income' && input !== '' && CheckIncomeValid(input)) { // 25,000.00
+  } else if (group === 'Income' && input !== '' && CheckIncomeValid(input)) { // 25,000.00
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
-  } else if ((KeyName === 'Rent_Amort' || KeyName === 'Allotment' )&& input !== '' && CheckRentAmortValid(input)) { // 100.00
+  } else if ((group === 'Rent_Amort' || group === 'Allotment') && input !== '' && CheckRentAmortValid(input)) { // !0
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
   //NUMBER
-  
+
   } else { //error
-    return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(KeyName, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name) };
+    return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(group, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name) };
   }
 }
 
@@ -115,7 +115,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   const [debouncedInput, setDebouncedInput] = useState(inputValue);
   const [validationMessage, setValidationMessage] = useState('');
 
-  /*
+  /* affected all clearing
     useEffect(() => {
         setStatus("");
         setIconVisible(false)
@@ -135,8 +135,8 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
       setDatePickerValue(CheckDateValid(e.target.value) ? dayjs(e.target.value) : '');
     }
     const formattedValue = DateFormat(e.target.value);
-    debounceChange(formattedValue);
     setInputValue(formattedValue);
+    debounceChange(formattedValue);
   };
 
   const handleDateChange = (dateValue) => {
@@ -200,9 +200,33 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
     }
   }, []);
 
+  useEffect(() => {
+    if (KeyName === 'ofwspousebdate') {
+      if (getAppDetails.MarriedPBCB) {
+        // When MarriedPBCB is true, set the value from props and validate
+        setDatePickerValue(value ? dayjs(value) : '');
+        setInputValue(value ? dayjs(value).format('MM-DD-YYYY') : '');
+        if (hookDateValid(KeyName, value)) {
+          setStatus('error');
+          setValidationMessage(dateMessage(KeyName, 'Invalid'));
+        } else {
+          setStatus('');
+          setValidationMessage('');
+        }
+      } else {
+        // When MarriedPBCB is false, clear the date only if value is falsy
+        if (!CheckDateValid(dayjs(value).format('MM-DD-YYYY'))) {
+          setDatePickerValue('');
+          setInputValue('');
+          setStatus('error');
+          setValidationMessage(dateMessage(KeyName, 'Empty'));
+        }
+      }
+      setRendered(true); // Ensure it reflects the rendered state
+    }
+  }, [value, getAppDetails.MarriedPBCB, KeyName]);
 
-  const handleBlur = (dat) => {
-    const date = dat.target.value;
+  const handleBlur = (date) => {
     if (debouncedInput.length === 10 && CheckDateValid(date)) { //Inputvalue is not defined after initilized
       if (hookDateValid(KeyName, date)) {
         setStatus('error');
@@ -217,11 +241,9 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
     } else if (debouncedInput.length === 0) {
       setStatus('error');
       setValidationMessage(dateMessage(KeyName, 'Empty'));
-      // receive();
     } else {
       setStatus('error');
       setValidationMessage(dateMessage(KeyName, 'Invalid'));
-      // receive();
     }
   };
 
@@ -240,13 +262,12 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   };
 }
 
-export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format) {
+export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group) {
   const [inputValue, setInputValue] = useState(initialValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const latestValueRef = useRef(initialValue);
-  const delay_def = 1000;
 
   const debouncedReceive = useMemo(
     () =>
@@ -259,7 +280,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     [receive]
   );
 
-  const statusValidation = (valid, val, error, update) => {
+  const statusValidation = (valid, val, error, update,delay_def) => {
     if (valid) {
       setStatus('');
       setErrorMessage('')
@@ -279,24 +300,31 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
 
   const handleChange = (e) => {
     const value = e.target.value;
-    const res = hookInputValid(KeyName, value, comp_name, format);
-    statusValidation(res.valid, res.value, res.errmsg, true);
+    const res = hookInputValid(KeyName, value, comp_name, format, group);
+    statusValidation(res.valid, res.value, res.errmsg, true,800);
   }
 
   const handleBlur = () => {
     setIconVisible(true);
-    const res = hookInputValid(KeyName, inputValue, comp_name, format);
-    statusValidation(res.valid, res.value, res.errmsg, true);
+    const res = hookInputValid(KeyName, inputValue, comp_name, format, group);
+    statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
   };
 
-  useEffect(() => {
+  useEffect(() => { //INITIAL RELOAD
     if (rendered) {
       setIconVisible(true);
-      const res = hookInputValid(KeyName, inputValue, comp_name, format);
-      console.log( FormatCurrency(res.value.replaceAll(',','')))
-      statusValidation(res.valid, (format === 'Currency' ? (res.value? FormatCurrency(res.value.replaceAll(',','')) : '') : res.value ), res.errmsg, true);
+      const res = hookInputValid(KeyName, initialValue /* || inputValue */, comp_name, format, group);
+      statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
     }
   }, [rendered]);
+
+  useEffect(() => { //SPECIFIC FIELDS ONLY
+    if (comp_name === 'Spouse Name' || comp_name === 'Spouse Income') {
+      setIconVisible(true);
+      const res = hookInputValid(KeyName, initialValue /* || inputValue */, comp_name, format, group);
+      statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatComma(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
+    }
+  }, [initialValue])
 
   useEffect(() => {
     return () => {

@@ -20,7 +20,7 @@ export const CheckIncomeValid = (value) => {
 }
 
 export const CheckRentAmortValid = (value) => {
-  return parseFloat(value? value.toString().replaceAll(',','') : 0) >= 100;
+  return parseFloat(value? value.toString().replaceAll(',','') : 0) > 0;
 }
 
 export const CheckEmailValid = (input) =>{

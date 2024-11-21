@@ -24,12 +24,13 @@ import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
 import DatePickerOpt from '@components/optimized/DatePickerOpt';
 import { Age } from '@utils/Calculations';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import InputOpt from '@components/optimized/InputOpt';
 
 
 function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcoborrowfname, showCoBorrower, setShowCoBorrower, sepBenfname, User }) {
     const [isEdit, setEdit] = useState(false);
     const [triggerValidation, setTriggerValidation] = useState(false);
-    const [getAge, setAge] = useState(Age(data.benbdate));
+    const [getAge, setAge] = useState(Age(data.benbdate) || 0);
     const [showSaveButton, setShowSaveButton] = useState(true);
     const [api, contextHolder] = notification.useNotification();
     const token = localStorage.getItem('UTK')
@@ -135,7 +136,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
 
     useEffect(() => {
         if (data.benbdate) {
-            setAge(Age(data.benbdate));
+            setAge(Age(data.benbdate) || 0);
         }
     }, [data.benbdate]);
 
@@ -150,41 +151,61 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
         }
         return age;
     };
+
     return (
         <div className='h-[65vh]'>
             {contextHolder}
             <SectionHeader title="Personal Information" />
             <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
-                <LabeledInput_UpperCase
+                <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label='font-bold'
                     label={<>First Name <span className="text-red-500">*</span></>}
                     value={data.benfname}
                     placeHolder='First Name'
                     receive={(e) => updateAppDetails({ name: 'benfname', value: e })}
+                    category={'marketing'}
                     readOnly={isEdit}
+                    isEdit={isEdit}
                     rendered={rendered}
+                    KeyName={'benfname'}
+                    group={'Uppercase'}
+                    compname={'First Name'}
                 />
-                <LabeledInput_NotRequired
+
+                <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label='font-bold'
-                    label='Middle Name'
+                    label={<>Middle Name <span className="text-red-500">*</span></>}
                     value={data.benmname}
                     placeHolder='Middle Name'
                     receive={(e) => updateAppDetails({ name: 'benmname', value: e })}
+                    category={'marketing'}
                     readOnly={isEdit}
+                    isEdit={isEdit}
                     rendered={rendered}
+                    KeyName={'benmname'}
+                    group={'Uppercase'}
+                    compname={'Middle Name'}
+                    required={false}
                 />
-                <LabeledInput_UpperCase
+
+                <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label='font-bold'
                     label={<>Last Name <span className="text-red-500">*</span></>}
                     value={data.benlname}
                     placeHolder='Last Name'
                     receive={(e) => updateAppDetails({ name: 'benlname', value: e })}
+                    category={'marketing'}
                     readOnly={isEdit}
+                    isEdit={isEdit}
                     rendered={rendered}
+                    KeyName={'benlname'}
+                    group={'Uppercase'}
+                    compname={'Last Name'}
                 />
+
                 <LabeledSelect_Suffix
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label='font-bold'
@@ -852,7 +873,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         {User === 'Credit' ? (
                             <div className="mt-5 w-[18.75rem] h-[3.875rem">
                                 <label className="font-bold">Facebook Name / Profile <span className="text-red-500">*</span>
-                            </label>
+                                </label>
                                 <input
                                     type="text"
                                     className={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.coborrowfblink && data.coborrowfblink.startsWith('https://')
@@ -877,7 +898,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                             const formattedValue = inputValue.startsWith('https://')
                                                 ? inputValue
                                                 : `https://www.facebook.com/${inputValue}`;
-                                                updateAppDetails({ name: 'coborrowfblink', value: formattedValue });
+                                            updateAppDetails({ name: 'coborrowfblink', value: formattedValue });
                                         }
                                     }}
                                 />
@@ -1060,9 +1081,9 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
                                 label={<>
-                            {`${data.coborrowresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'} `}
-                            <span className="text-red-500">*</span>
-                        </>}
+                                    {`${data.coborrowresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'} `}
+                                    <span className="text-red-500">*</span>
+                                </>}
                                 value={data.AcbRentAmount}
                                 receive={(e) => { updateAppDetails({ name: 'AcbRentAmount', value: e }) }}
                                 category={'direct'}

@@ -10,6 +10,7 @@ import OfwDetails from '../TabList/OfwDetails';
 import UploadDocs from '../TabList/UploadDocs';
 import CharacterReference from '../TabList/CharacterReference';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import TriggerFields from '@utils/TriggerFields';
 
 function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, LoanStatus}) {
     const { id, tabs } = useParams();
@@ -54,6 +55,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
     function onChangeTab(e) {
         navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
     }
+    TriggerFields('LOAN_CONSULTANT');
     const TabsItems = [
         {
             label: <div className='flex flex-rows'>

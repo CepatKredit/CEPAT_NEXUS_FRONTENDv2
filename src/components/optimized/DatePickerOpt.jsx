@@ -51,16 +51,16 @@ function DatePickerOpt({
     ) : null;
 
   const suffix = (
-    <>
-      <CalendarOutlined
-        style={{
-          color: "#1890ff",
-          fontSize: "16px",
-          marginLeft: 8,
-          cursor: "pointer",
-        }}
-        onClick={toggleDatePicker}
-      />
+    <>{!disabled? (<CalendarOutlined
+      style={{
+        color: "#1890ff",
+        fontSize: "16px",
+        marginLeft: 8,
+        cursor: "pointer",
+      }}
+      onClick={toggleDatePicker}
+    />):null }
+      
       {isRendered && (required || required === undefined) && iconVisible && icon}
     </>
   );
@@ -79,7 +79,7 @@ function DatePickerOpt({
             placeholder={placeHolder}
             value={inputValue}
             onChange={(e) => handleInputChange(e, readOnly)}
-            onBlur={handleBlur}
+            onBlur={(e)=>{handleBlur(e.target.value)}}
             disabled={disabled}
             readOnly={readOnly}
             status={isRendered && (required || required === undefined) && status}
@@ -100,7 +100,7 @@ function DatePickerOpt({
             value={datePickerValue}
             onChange={handleDateChange}
             onOpenChange={setDatePickerOpen}
-            onBlur={handleBlur}
+            onBlur={(e)=>{handleBlur(e.target.value)}}
             disabled={disabled}
             inputReadOnly
             disabledDate={disabledate}
