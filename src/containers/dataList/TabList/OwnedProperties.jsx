@@ -390,9 +390,9 @@ function OwnedProperties({ data, User }) {
     const edit = (record) => {
         form.setFieldsValue({
             key: record.key,
-            Properties: record.properties,
-            Location: record.location,
-            Remarks: record.remarks,
+            properties: record.properties,
+            location: record.location,
+            remarks: record.remarks,
         })
         setEditingKey(record.key);
     };

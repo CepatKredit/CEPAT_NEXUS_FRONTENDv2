@@ -298,6 +298,10 @@ function LoanApplicationInfo() {
         enabled: true,
     });
 
+    React.useEffect(() => {
+        console.log('CLientdatalist', ClientDataListQuery.data)
+    },[])
+
     const [getCRDValue, setCRDValue] = React.useState({
         TotalSalary: 0,
         OtherIncome: 0,

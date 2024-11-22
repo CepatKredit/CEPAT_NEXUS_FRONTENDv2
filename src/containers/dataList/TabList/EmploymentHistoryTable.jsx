@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Form, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import { WorkEducStatusOption } from '@utils/FixedData';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
@@ -23,6 +23,7 @@ function EmploymentHistory({ data, User }) {
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
     const [editingKey, setEditingKey] = React.useState('');
+    const [deletingKey, setDeletingKey] = React.useState(null);
     const [getInfo, setInfo] = React.useState({
         LoanAppId: '',
         key: '',
@@ -99,53 +100,66 @@ function EmploymentHistory({ data, User }) {
         setStat(false);
 
         const row = await form.validateFields();
-        const data = {
-            LoanappId: toDecrypt(localStorage.getItem('SIDC')),
-            Agency: row.agency,
-            Position: row.position,
-            StartDate: row.startdate,
-            EndDate: row.enddate,
-            RecUser: jwtDecode(token).USRID
-        }
-
-
-        await axios.post('/addEmploymentHistory', data)
-            .then((result) => {
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description,
-                });
-                if (result.data.status === 'success') {
-                    queryClient.invalidateQueries({ queryKey: ['getEmploymentHistory'] }, { exact: true });
-                    setStat(true);
-                    setAddStat(false);
-                    setEditingKey('');
-                    setInfo({
-                        Agency: '',
-                        Position: '',
-                        StartDate: '',
-                        EndDate: '',
-                    });
-                }
-            })
-            .catch((error) => {
-                api['error']({
-                    message: 'Something went wrong',
-                    description: error.message,
-                });
-
-            })
+        onClickSaveData.mutate(row);
+        
 
     }
+
+
+    const onClickSaveData = useMutation({
+        mutationFn: async (row) => {
+            const data = {
+                LoanappId: toDecrypt(localStorage.getItem('SIDC')),
+                Agency: row.agency,
+                Position: row.position,
+                StartDate: row.startdate,
+                EndDate: row.enddate,
+                RecUser: jwtDecode(token).USRID
+            }
+    
+    
+            await axios.post('/addEmploymentHistory', data)
+                .then((result) => {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description,
+                    });
+                    if (result.data.status === 'success') {
+                        queryClient.invalidateQueries({ queryKey: ['getEmploymentHistory'] }, { exact: true });
+                        setStat(true);
+                        setAddStat(false);
+                        setEditingKey('');
+                        setInfo({
+                            Agency: '',
+                            Position: '',
+                            StartDate: '',
+                            EndDate: '',
+                        });
+                    }
+                })
+                .catch((error) => {
+                    api['error']({
+                        message: 'Something went wrong',
+                        description: error.message,
+                    });
+    
+                })
+        }
+    })
 
 
 
 
     async function onClickEdit() {
+        const row = await form.validateFields();
+        onClickEdiData.mutate(row);
+       
+    }
 
-
+const onClickEdiData = useMutation({
+    mutationFn: async (row) => {
         try {
-            const row = await form.validateFields();
+           
             const data = {
                 Id: editingKey,
                 Agency: row.agency,
@@ -183,23 +197,35 @@ function EmploymentHistory({ data, User }) {
             });
         }
     }
+})
 
 
-    async function onClickDelete(e) {
-        try {
-            const result = await axios.post(`/DeleteEmploymentHistory/${e}`);
-            queryClient.invalidateQueries({ queryKey: ['getEmploymentHistory'] }, { exact: true });
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description
-            });
-        } catch (error) {
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message
-            });
+async function onClickDelete(e) {
+    setDeletingKey(e); // Set the key of the row being deleted
+    onClickDeleteData.mutate(e, {
+        onSettled: () => {
+            setDeletingKey(null); // Reset the deletingKey when the mutation completes
+        },
+    });
+}
+
+    const onClickDeleteData = useMutation({
+        mutationFn: async (e) => {
+            try {
+                const result = await axios.post(`/DeleteEmploymentHistory/${e}`);
+                queryClient.invalidateQueries({ queryKey: ['getEmploymentHistory'] }, { exact: true });
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description
+                });
+            } catch (error) {
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message
+                });
+            }
         }
-    }
+    })
     function DISABLE_STATUS(LOCATION) {
         if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
             {
@@ -329,7 +355,7 @@ function EmploymentHistory({ data, User }) {
                         <Space>
                             <Tooltip title="Save">
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
-                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
+                                    <Button loading={onClickSaveData.isPending} icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
                                 </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
@@ -352,7 +378,7 @@ function EmploymentHistory({ data, User }) {
                         <Space>
                             <Tooltip title="Save">
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
-                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]' />
+                                    <Button loading={onClickEdiData.isPending} icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]' />
                                 </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
@@ -389,7 +415,7 @@ function EmploymentHistory({ data, User }) {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
+                                    <Button  loading={deletingKey === record.key} disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>

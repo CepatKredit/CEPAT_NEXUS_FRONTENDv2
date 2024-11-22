@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, message, Spin, Form } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -26,6 +26,7 @@ function OwnedAsset({ data, User }) {
     const { GetStatus } = ApplicationStatus();
     const [editingKey, setEditingKey] = React.useState('');
     const saveButtonRef = useRef(null);
+    const [deleteKey, setDeleteKey] = React.useState(null);
     const [getInfo, setInfo] = React.useState({
         LoanAppId: '',
         key: '',
@@ -99,100 +100,122 @@ function OwnedAsset({ data, User }) {
     const [getAddStat, setAddStat] = React.useState(false)
 
     async function onClickSave() {
-
         setStat(false);
-
         const row = await form.validateFields();
-        const data = {
-            LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
-            Category: GetAssetsOption(),
-            Make: row.make,
-            YearModel: row.yearModel,
-            PlateNo: row.plateNo,
-            RecUser: jwtDecode(token).USRID
+        onClickSaveData.mutate(row);
+    }
+
+
+    const onClickSaveData = useMutation({
+        mutationFn: async (row) => {
+            const data = {
+                LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
+                Category: GetAssetsOption(),
+                Make: row.make,
+                YearModel: row.yearModel,
+                PlateNo: row.plateNo,
+                RecUser: jwtDecode(token).USRID
+            }
+            await axios.post('/addOwnAsset', data)
+                .then((result) => {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description,
+                    });
+                    if (result.data.status === 'success') {
+                        queryClient.invalidateQueries({ queryKey: ['getOwnedAssets'] }, { exact: true });
+                        setStat(true);
+                        setAddStat(false);
+                        setEditingKey('');
+                        setInfo({
+                            Category: '',
+                            Make: '',
+                            YearModel: '',
+                            PlateNo: '',
+                        });
+                    }
+                })
+                .catch((error) => {
+                    api['error']({
+                        message: 'Something went wrong',
+                        description: error.message,
+                    });
+                })
+            saveButtonRef.current?.focus();
         }
-        await axios.post('/addOwnAsset', data)
-            .then((result) => {
+    })
+    async function onClickEdit() {
+        const row = await form.validateFields();
+        onClickEditData.mutate(row);
+    }
+
+    const onClickEditData = useMutation({
+        mutationFn: async (row) => {
+            try {
+                const data = {
+                    Id: editingKey,
+                    Category: GetAssetsOption(),
+                    Make: row.make,
+                    YearModel: row.yearModel,
+                    PlateNo: row.plateNo,
+                    ModUser: jwtDecode(token).USRID
+                };
+                console.log('Data to be sent to the server:', data);
+                const result = await axios.post('/editOwnedAssets', data);
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description,
                 });
+
                 if (result.data.status === 'success') {
                     queryClient.invalidateQueries({ queryKey: ['getOwnedAssets'] }, { exact: true });
                     setStat(true);
                     setAddStat(false);
                     setEditingKey('');
                     setInfo({
+                        key: '',
                         Category: '',
                         Make: '',
                         YearModel: '',
                         PlateNo: '',
                     });
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 api['error']({
                     message: 'Something went wrong',
                     description: error.message,
                 });
-            })
-        saveButtonRef.current?.focus();
-    }
-
-    async function onClickEdit() {
-        try {
-            const row = await form.validateFields();
-            const data = {
-                Id: editingKey,
-                Category: GetAssetsOption(),
-                Make: row.make,
-                YearModel: row.yearModel,
-                PlateNo: row.plateNo,
-                ModUser: jwtDecode(token).USRID
-            };
-            console.log('Data to be sent to the server:', data);
-            const result = await axios.post('/editOwnedAssets', data);
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description,
-            });
-
-            if (result.data.status === 'success') {
-                queryClient.invalidateQueries({ queryKey: ['getOwnedAssets'] }, { exact: true });
-                setStat(true);
-                setAddStat(false);
-                setEditingKey('');
-                setInfo({
-                    key: '',
-                    Category: '',
-                    Make: '',
-                    YearModel: '',
-                    PlateNo: '',
-                });
             }
-        } catch (error) {
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message,
-            });
         }
-    }
+    })
 
     async function onClickDelete(e) {
-        try {
-            const result = await axios.post(`/DeleteOwnedAssets/${e}`);
-            queryClient.invalidateQueries({ queryKey: ['getOwnedAssets'] }, { exact: true });
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description
-            });
-        } catch (error) {
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message
-            });
-        }
+        setDeleteKey(e);
+        onClickDeleteData.mutate(e, {
+            onSettled: () => {
+                setDeleteKey(null);
+            },
+        });
     }
+
+    const onClickDeleteData = useMutation({
+        mutationFn: async (e) => {
+            try {
+                const result = await axios.post(`/DeleteOwnedAssets/${e}`);
+                queryClient.invalidateQueries({ queryKey: ['getOwnedAssets'] }, { exact: true });
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description
+                });
+            } catch (error) {
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message
+                });
+            }
+        }
+    })
+
     function DISABLE_STATUS(LOCATION) {
         if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
             if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
@@ -333,7 +356,7 @@ function OwnedAsset({ data, User }) {
                         <Space>
                             <Tooltip title="Save">
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
-                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
+                                    <Button loading={onClickSaveData.isPending} icon={<SaveOutlined />} type='primary' onClick={onClickSave} className='bg-[#2b972d]' />
                                 </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
@@ -355,7 +378,7 @@ function OwnedAsset({ data, User }) {
                         <Space>
                             <Tooltip title="Save">
                                 <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
-                                    <Button icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]' />
+                                    <Button loading={onClickEditData.isPending} icon={<SaveOutlined />} type='primary' onClick={onClickEdit} className='bg-[#2b972d]' />
                                 </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
@@ -392,7 +415,7 @@ function OwnedAsset({ data, User }) {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
+                                    <Button loading={deleteKey === record.key} disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>

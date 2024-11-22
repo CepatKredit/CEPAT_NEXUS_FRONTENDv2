@@ -20,7 +20,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
-    const [contactError, setContactError] = React.useState('')
+    const [contactError, setContactError] = React.useState('');
+    const [deleteKey, setDeleteKey] = React.useState(null);
     const [getInfo, setInfo] = React.useState({
         key: '',
         name: '',
@@ -262,7 +263,12 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     })
 
     async function onClickDelete(e) {
-        onClickDeteleData.mutate(e);
+        setDeleteKey(e);
+        onClickDeteleData.mutate(e, {
+            onSettled: () => {
+                setDeleteKey(null);
+            },
+        });
     }
 
     function DISABLE_STATUS(LOCATION, LoanStatus) {
@@ -459,8 +465,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                                         icon={<DeleteOutlined />}
                                         type="primary"
                                         danger
-                                        loading={onClickDeteleData.isPending}
                                         disabled={editingKey !== ''}
+                                        loading={deleteKey === record.key}
                                     />
                                 </Popconfirm>
                             </Tooltip>
