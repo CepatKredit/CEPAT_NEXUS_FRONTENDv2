@@ -1,5 +1,4 @@
-import * as React from "react";
-import { Checkbox, Divider, Input, ConfigProvider, Select } from "antd";
+import { Radio, notification, Checkbox, Input, ConfigProvider } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -13,12 +12,13 @@ import { Suffix, MaritalStatus, Residences } from "@utils/FixedData";
 import LabeledInput_Numeric from "@components/loanApplication/LabeledInput_Numeric";
 import LabeledSelect_Suffix from "@components/loanApplication/LabeledSelect_Suffix";
 import LabeledCurrencyInput from "@components/loanApplication/LabeledCurrencyInput";
+import React from "react";
+import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { toUpperText } from "@utils/Converter";
 import GenderRadioGroup from "@components/loanApplication/GenderRadioGroup";
 import DatePickerOpt from "@components/optimized/DatePickerOpt";
 import SelectOpt from "@components/optimized/SelectOpt";
 import { useDataContainer } from "@context/PreLoad";
-import { LoanApplicationContext } from "@context/LoanApplicationContext";
-import { toUpperText } from "@utils/Converter";
 
 dayjs.extend(customParseFormat);
 
@@ -35,11 +35,9 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
 
   return (
     <>
-      <h2 className="mb-[2%] text-xl">
+      <h2 className="mb-[2%]">
         <b>PERSONAL INFO</b>
       </h2>
-
-      {/* First Name */}
       <LabeledInput_Fullname
         className_dmain={classname_main}
         className_label={className_label}
@@ -55,8 +53,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
       />
-
-      {/* Middle Name */}
       <div className={`${classname_main} flex items-center space-x-2`}>
         <label className="mb-5 sm:mb-5 sm:mr-4 w-full sm:w-[200px]">
           Middle Name
@@ -84,7 +80,9 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
                 });
               }}
               value={getAppDetails["ofwmname"]}
-              disabled={getAppDetails.withOfwMName || !getAppDetails.dataPrivacy}
+              disabled={
+                getAppDetails.withOfwMName || !getAppDetails.dataPrivacy
+              }
               addonAfter={
                 <Checkbox
                   checked={getAppDetails.withOfwMName}
@@ -110,8 +108,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
           </div>
         </ConfigProvider>
       </div>
-
-      {/* Last Name */}
       <LabeledInput_Fullname
         className_dmain={classname_main}
         className_label={className_label}
@@ -127,8 +123,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
       />
-
-      {/* Suffix */}
       <SelectOpt
         className_dmain={classname_main}
         className_label={className_label}
@@ -157,8 +151,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         }))}
         rendered={ofwrendered}
       />
-
-      {/* Birth Date */}
       <DatePickerOpt
         className_dmain={classname_main}
         className_label={className_label}
@@ -181,9 +173,8 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         disabled={false || !getAppDetails.dataPrivacy}
         KeyName={"ofwbdate"}
         rendered={ofwrendered}
+        // disabledate={disableDate_deployment}
       />
-
-      {/* Gender */}
       <GenderRadioGroup
         classname_main={classname_main}
         className_label={className_label}
@@ -193,8 +184,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         rendered={ofwrendered}
         disabled={!direct && !getAppDetails.dataPrivacy}
       />
-
-      {/* Marital Status */}
       <SelectOpt
         className_dmain={classname_main}
         className_label={className_label}
@@ -224,7 +213,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         rendered={ofwrendered}
       />
 
-      {/* Dependents */}
       <LabeledInput_Numeric
         className_dmain={classname_main}
         className_label={className_label}
@@ -235,14 +223,19 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
           </>
         }
         fieldName="ofwdependents"
+        // value={getAppDetails.ofwdependents}
+        // receive={(e) => {
+        //     receive({
+        //         name: 'ofwdependents',
+        //         value: e
+        //     })
+        // }}
         disabled={!direct && !getAppDetails.dataPrivacy}
         category={"direct"}
-        digits={2}
+        digits={2} //Max of digits allowd to input
         placeHolder={"No. of Dependents"}
         rendered={ofwrendered}
       />
-
-      {/* Email Address */}
       <LabeledInput_Email
         className_dmain={classname_main}
         className_label={className_label}
@@ -252,6 +245,13 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
             Email Address <span className="text-red-500">*</span>
           </>
         }
+        // receive={(e) => {
+        //     receive({
+        //         name: 'ofwemail',
+        //         value: e
+        //     })
+        // }}
+        // value={getAppDetails.ofwemail}
         fieldName="ofwemail"
         category={"direct"}
         placeHolder={"Email Address"}
@@ -259,7 +259,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         rendered={ofwrendered}
       />
 
-      {/* Mobile Number */}
       <LabeledInput_OfwContact
         className_dmain={classname_main}
         className_label={className_label}
@@ -271,12 +270,18 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         }
         fieldName="ofwmobile"
         placeHolder={"Mobile Number"}
+        // receive={(e) => {
+        //     receive({
+        //         name: 'ofwmobile',
+        //         value: e
+        //     })
+        // }}
+        // value={getAppDetails.ofwmobile}
         category={"direct"}
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
       />
 
-      {/* Facebook Profile/Name */}
       <LabeledInput
         className_dmain={classname_main}
         className_label={className_label}
@@ -287,13 +292,19 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
           </>
         }
         placeHolder={"Facebook Profile/Name"}
+        // receive={(e) => {
+        //     receive({
+        //         name: 'ofwfblink',
+        //         value: e
+        //     })
+        // }}
+        // value={getAppDetails.ofwfblink}
         fieldName="ofwfblink"
         disabled={!direct && !getAppDetails.dataPrivacy}
         category={"direct"}
         rendered={ofwrendered}
       />
 
-      {/* Type of Residences */}
       <SelectOpt
         className_dmain={classname_main}
         className_label={className_label}
@@ -323,8 +334,8 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         rendered={ofwrendered}
       />
 
-      {/* Rent Amount or Monthly Amortization */}
-      {(getAppDetails.ofwresidences === 3 || getAppDetails.ofwresidences === 2) && (
+      {(getAppDetails.ofwresidences === 3 ||
+        getAppDetails.ofwresidences === 2) && (
         <LabeledCurrencyInput
           className_dmain={classname_main}
           className_label={className_label}

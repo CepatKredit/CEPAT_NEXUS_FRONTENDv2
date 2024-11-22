@@ -15,7 +15,8 @@ import axios from "axios";
 import FullScreenBackground from "@assets/images/LoginBG.jpg";
 import LoginBackground from "@assets/images/side.jpg";
 import { useNavigate, useLocation } from "react-router-dom";
-import Logo from "@assets/images/WHITE.svg";
+//import Logo from "@assets/images/WHITE.svg";
+import Logo from "@assets/images/Nexus_v3a.png"
 import Datos from "@assets/images/datos.png";
 import ResponsiveModal from "@components/global/ResponsiveModal";
 import {
@@ -54,7 +55,7 @@ function PortalLogin() {
     PasswordMatch,
     PasswordNotMatch,
     getModalResetStatus,
-    setModalResetStatus, 
+    setModalResetStatus,
   } = useAuth();
   document.title = "CKFI";
   const [api, contextHolder] = notification.useNotification();
@@ -111,171 +112,171 @@ function PortalLogin() {
   const setUnlockStatus = viewUnlockAccountModal((state) => state.setStatus);
   // const [getAccessList, setAccessList] = React.useState()
 
-//   const onClickLogin = useMutation({
-//     mutationFn: async () => {
-//       if (getAccount.Username === "" || getAccount.Password === "") {
-//         api["info"]({
-//           message: "Invalid input",
-//           description: "Please input your username and password to login.",
-//         });
-//       } else {
-//         await axios
-//           .post("/login", getAccount)
-//           .then((result) => {
-//             console.log(
-//               decode(result.data.userData.password) === getAccount.Password
-//             );
-//             console.log("Received response:", result.data);
-//             if (
-//               result.data.message === "Account not found" ||
-//               result.data.message === "Account disabled" ||
-//               result.data.message === "Account for approval" ||
-//               result.data.message === "Account rejected"
-//             ) {
-//               api[result.data.status]({
-//                 message: result.data.message,
-//                 description: result.data.description,
-//               });
-//             } else {
-//               if (
-//                 decode(result.data.userData.password) === getAccount.Password
-//               ) {
-//                 PasswordMatch.mutate();
-//                 resetAppDetails();
-//               } else {
-//                 PasswordNotMatch.mutate();
-//               }
-//             }
-//           })
-//           .catch((error) => {
-//             api["error"]({
-//               message: "Something went wrong",
-//               description: error.message,
-//             });
-//           });
-//       }
-//     },
-//   });
+  //   const onClickLogin = useMutation({
+  //     mutationFn: async () => {
+  //       if (getAccount.Username === "" || getAccount.Password === "") {
+  //         api["info"]({
+  //           message: "Invalid input",
+  //           description: "Please input your username and password to login.",
+  //         });
+  //       } else {
+  //         await axios
+  //           .post("/login", getAccount)
+  //           .then((result) => {
+  //             console.log(
+  //               decode(result.data.userData.password) === getAccount.Password
+  //             );
+  //             console.log("Received response:", result.data);
+  //             if (
+  //               result.data.message === "Account not found" ||
+  //               result.data.message === "Account disabled" ||
+  //               result.data.message === "Account for approval" ||
+  //               result.data.message === "Account rejected"
+  //             ) {
+  //               api[result.data.status]({
+  //                 message: result.data.message,
+  //                 description: result.data.description,
+  //               });
+  //             } else {
+  //               if (
+  //                 decode(result.data.userData.password) === getAccount.Password
+  //               ) {
+  //                 PasswordMatch.mutate();
+  //                 resetAppDetails();
+  //               } else {
+  //                 PasswordNotMatch.mutate();
+  //               }
+  //             }
+  //           })
+  //           .catch((error) => {
+  //             api["error"]({
+  //               message: "Something went wrong",
+  //               description: error.message,
+  //             });
+  //           });
+  //       }
+  //     },
+  //   });
 
-//   const PasswordMatch = useMutation({
-//     mutationFn: async () => {
-//       await axios
-//         .post("/verifiedAccount", getAccount)
-//         .then((result) => {
-//           if (result.data.status === "warning") {
-//             api[result.data.status]({
-//               message: result.data.message,
-//               description: result.data.description,
-//             });
-//           } else if (result.data.status === "info") {
-//             setModalResetStatus(true);
-//             const data = {
-//               id: result.data.container.id,
-//               username: result.data.container.username,
-//               password: getAccount.Password,
-//             };
-//             setAccountId(data);
-//             setAccount({
-//               Username: "",
-//               Password: "",
-//             });
-//             api[result.data.status]({
-//               message: result.data.message,
-//               description: result.data.description,
-//             });
-//           } else {
-//             let AccessPath = "";
-//             result.data.access?.map((x) => {
-//               if (AccessPath === "") {
-//                 AccessPath += x.accessPath;
-//               } else {
-//                 AccessPath += "," + x.accessPath;
-//               }
-//             });
+  //   const PasswordMatch = useMutation({
+  //     mutationFn: async () => {
+  //       await axios
+  //         .post("/verifiedAccount", getAccount)
+  //         .then((result) => {
+  //           if (result.data.status === "warning") {
+  //             api[result.data.status]({
+  //               message: result.data.message,
+  //               description: result.data.description,
+  //             });
+  //           } else if (result.data.status === "info") {
+  //             setModalResetStatus(true);
+  //             const data = {
+  //               id: result.data.container.id,
+  //               username: result.data.container.username,
+  //               password: getAccount.Password,
+  //             };
+  //             setAccountId(data);
+  //             setAccount({
+  //               Username: "",
+  //               Password: "",
+  //             });
+  //             api[result.data.status]({
+  //               message: result.data.message,
+  //               description: result.data.description,
+  //             });
+  //           } else {
+  //             let AccessPath = "";
+  //             result.data.access?.map((x) => {
+  //               if (AccessPath === "") {
+  //                 AccessPath += x.accessPath;
+  //               } else {
+  //                 AccessPath += "," + x.accessPath;
+  //               }
+  //             });
 
-// //expirationInHours is set on seconds for testing purposes.
-//             if (result.data.department === "LC") {
-//               axios
-//                 .post(
-//                   `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
-//                 )
-//                 .then(function (response) {
-//                     const accessToken = response.data.accessToken;
-//                     const refreshToken = response.data.refreshToken;
-//                     const refreshExpiresIn = response.data.refreshExpiresIn; // In seconds
-              
-//                     // Store tokens
-//                     localStorage.setItem("ACCESS TOKEN", accessToken);
-//                     setCookie("REFRESH TOKEN", refreshToken, {
-//                       secure: true,
-//                       sameSite: "strict",
-//                       maxAge: refreshExpiresIn, // Expiration in seconds
-//                     });
-              
-//                     // Alert before the cookie expires (5 seconds before expiration for demonstration)
-//                     // const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
-//                     // const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
-              
-//                     // setTimeout(() => {
-//                     //   alert("Your session is about to expire. Please refresh or re-login.");
-//                     // }, alertTimeout);
-//                 })
-//                 .catch(function (error) {
-//                   console.error(error);
-//                   throw new Error("Token generation failed.");
-//                 });
-//               localStorage.setItem("UTK", result.data.eeyyy);
-//               localStorage.setItem("UPTH", toEncrypt(AccessPath));
-//               localStorage.setItem("SP", "/ckfi/dashboard");
-//               localStorage.setItem("USRFN", toEncrypt(result.data.fn));
-//               localStorage.setItem(
-//                 "USRDT",
-//                 toEncrypt(
-//                   `${result.data.department}?${result.data.role}?${result.data.branch}`
-//                 )
-//               );
-//               navigate("/ckfi/dashboard");
-//               setCookie("SESSION_ID", result.data.eeyyy, {
-//                 secure: true,
-//                 sameSite: "strict",
-//               });
-//               api[result.data.status]({
-//                 message: result.data.message,
-//                 description: result.data.description,
-//               });
-//             } else {
-//               setAccessList(AccessPath);
-//               setOTPStatus(true);
-//             }
-//           }
-//         })
-//         .catch((error) => {
-//           api["error"]({
-//             message: "Something went wrong",
-//             description: error.message,
-//           });
-//         });
-//     },
-//   });
+  // //expirationInHours is set on seconds for testing purposes.
+  //             if (result.data.department === "LC") {
+  //               axios
+  //                 .post(
+  //                   `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
+  //                 )
+  //                 .then(function (response) {
+  //                     const accessToken = response.data.accessToken;
+  //                     const refreshToken = response.data.refreshToken;
+  //                     const refreshExpiresIn = response.data.refreshExpiresIn; // In seconds
 
-//   const PasswordNotMatch = useMutation({
-//     mutationFn: async () => {
-//       await axios
-//         .post("/passwordAttempt", getAccount)
-//         .then((result) => {
-//           api[result.data.status]({
-//             message: result.data.message,
-//             description: result.data.description,
-//           });
-//         })
-//         .catch((error) => {
-//           api["error"]({
-//             message: "Something went wrong",
-//             description: error.message,
-//           });
-//         });
-//     },
-//   });
+  //                     // Store tokens
+  //                     localStorage.setItem("ACCESS TOKEN", accessToken);
+  //                     setCookie("REFRESH TOKEN", refreshToken, {
+  //                       secure: true,
+  //                       sameSite: "strict",
+  //                       maxAge: refreshExpiresIn, // Expiration in seconds
+  //                     });
+
+  //                     // Alert before the cookie expires (5 seconds before expiration for demonstration)
+  //                     // const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
+  //                     // const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
+
+  //                     // setTimeout(() => {
+  //                     //   alert("Your session is about to expire. Please refresh or re-login.");
+  //                     // }, alertTimeout);
+  //                 })
+  //                 .catch(function (error) {
+  //                   console.error(error);
+  //                   throw new Error("Token generation failed.");
+  //                 });
+  //               localStorage.setItem("UTK", result.data.eeyyy);
+  //               localStorage.setItem("UPTH", toEncrypt(AccessPath));
+  //               localStorage.setItem("SP", "/ckfi/dashboard");
+  //               localStorage.setItem("USRFN", toEncrypt(result.data.fn));
+  //               localStorage.setItem(
+  //                 "USRDT",
+  //                 toEncrypt(
+  //                   `${result.data.department}?${result.data.role}?${result.data.branch}`
+  //                 )
+  //               );
+  //               navigate("/ckfi/dashboard");
+  //               setCookie("SESSION_ID", result.data.eeyyy, {
+  //                 secure: true,
+  //                 sameSite: "strict",
+  //               });
+  //               api[result.data.status]({
+  //                 message: result.data.message,
+  //                 description: result.data.description,
+  //               });
+  //             } else {
+  //               setAccessList(AccessPath);
+  //               setOTPStatus(true);
+  //             }
+  //           }
+  //         })
+  //         .catch((error) => {
+  //           api["error"]({
+  //             message: "Something went wrong",
+  //             description: error.message,
+  //           });
+  //         });
+  //     },
+  //   });
+
+  //   const PasswordNotMatch = useMutation({
+  //     mutationFn: async () => {
+  //       await axios
+  //         .post("/passwordAttempt", getAccount)
+  //         .then((result) => {
+  //           api[result.data.status]({
+  //             message: result.data.message,
+  //             description: result.data.description,
+  //           });
+  //         })
+  //         .catch((error) => {
+  //           api["error"]({
+  //             message: "Something went wrong",
+  //             description: error.message,
+  //           });
+  //         });
+  //     },
+  //   });
 
 
   async function onClickCancelOTP() {
@@ -294,7 +295,7 @@ function PortalLogin() {
 
   return (
     <div
-      className="flex flex-wrap bg-cover bg-no-repeat h-[100vh] w-[100vw]"
+      className="flex flex-wrap bg-cover bg-no-repeat h-screen w-full"
       style={{ backgroundImage: `url(${FullScreenBackground})` }}
     >
       {contextHolder}
@@ -398,21 +399,21 @@ function PortalLogin() {
           PasswordNotMatch.isPending
         }
       />
-      <div className="h-[100%] w-[67%]">
-        <div className="pt-[3%] ml-[3%] w-[150px]">
+      <div className="h-full xs:h-[10%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] w-full xs:w-[100%] sm:w-[70%] md:w-[60%] lg:w-[67%] xl:w-[67%] 2xl:w-[67%] 3xl:w-[70%]">
+        <div className="pt-3 xs:pt-3 md:pt-3 ml-3  xs:ml-5 md:ml-3 w-full xs:w-[80px] sm:w-[90px] md:w-[100px] lg:w-[110px] xl:w-[120px] 2xl:w-[150px] 3xl:w-[160px]">
           <a
             href="https://secure.trust-provider.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=POSDV&v_search=https://ckfi.live/cepat-portal/index.php&x=6&y=5"
             target="_blank"
           >
             <img
-              className="w-[150px]"
+              className="w-full xs:w-[80px] sm:w-[90px] md:w-[100px] lg:w-[110px] xl:w-[120px] 2xl:w-[150px] 3xl:w-[160px]"
               src="https://www.positivessl.com/images/seals/positivessl_trust_seal_sm_124x32.png"
             />
           </a>
         </div>
         <center>
-          <img src={Logo} alt="logo" className="h-[60px] mt-[8%]" />
-          <div className="font-sans font-bold text-6xl text-stone-100 drop-shadow-[0_5px_5px_rgba(0,0,0,.7)] pt-[5%]">
+          <img src={Logo} alt="logo" className="h-[60px] xs:h-[40px] sm:h-[50px] md:h-[60px] lg:h-[70px] xl:h-[80px] 2xl:h-[90px] mt-[8%] xs:mt-[3%] sm:mt-[4%] md:mt-[5%] lg:mt-[6%] xl:mt-[8%] mx-auto" />
+          <div className="font-sans font-bold text-4xl xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-stone-100 drop-shadow-[0_5px_5px_rgba(0,0,0,.7)] pt-[5%] text-center">
             <span>Cepat Kredit Portal</span>
           </div>
           <div>
@@ -427,7 +428,7 @@ function PortalLogin() {
               }}
             >
               <Button
-                className="mt-8 text-3xl font-semibold w-[400px] h-[50px] bg-[#3b0764]"
+                className="mt-8 xs:mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-8 text-2xl xs:text-sm sm:text-sm md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-semibold w-full xs:w-[200px] sm:w-[200px] md:w-[250px] lg:w-[300px] xl:w-[350px] 2xl:w-[400px] 3xl:w-[500px] h-[50px] xs:h-[30px] sm:h-[35px] md:h-[40px] lg:h-[45px] xl:h-[50px] bg-[#3b0764]"
                 size="large"
                 type="primary"
                 onClick={() => {
@@ -454,7 +455,7 @@ function PortalLogin() {
               }}
             >
               <Button
-                className="mt-5 text-2xl font-semibold text-black w-[400px] h-[50px] bg-[#ffffff]"
+                className="mt-5 xs:mt-2 sm:mt-2 md:mt-3 lg:mt-4 xl:mt-5 text-2xl text-2xl xs:text-xs sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-semibold text-black w-full xs:w-[200px] sm:w-[200px] md:w-[250px] lg:w-[300px] xl:w-[350px] 2xl:w-[400px] 3xl:w-[500px] h-[50px] xs:h-[30px] sm:h-[35px] md:h-[40px] lg:h-[45px] xl:h-[50px] bg-[#ffffff]"
                 size="large"
                 type="primary"
                 onClick={() => {
@@ -471,17 +472,17 @@ function PortalLogin() {
         </center>
       </div>
       <div
-        className="h-[100%] w-[30%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
+        className="h-full xs:h-[30%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] w-full xs:w-[100%] sm:w-[100%] md:w-[35%] lg:w-[30%] xl:w-[25%] 2xl:w-[30%] 3xl:w-[35%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
         style={{ backgroundImage: `url(${LoginBackground})` }}
       >
         <div className="h-[100%] w-[100%] bg-stone-800/70">
           <center>
-            <div className="pt-[50%] h-[500px]">
-              <div className="text-2xl font-normal text-stone-100">
+            <div className="pt-[50%] xs:pt-[10%] sm:pt-[20%] md:pt-[30%] lg:pt-[40%] xl:pt-[62%] h-[500px]">
+              <div className="text-2xl xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-normal text-stone-100">
                 <div>For registered personnel and</div>
                 <div>loan consultants, please log in below:</div>
               </div>
-              <div className="w-[90%] pt-2">
+              <div className="w-full xs:w-[60%] sm:w-[65%] md:w-[70%] lg:w-[75%] xl:w-[80%] 2xl:w-[90%] 3xl:w-[95%]  pt-2">
                 <div className="pt-2">
                   <ConfigProvider
                     theme={{
@@ -504,7 +505,7 @@ function PortalLogin() {
                       autoComplete="off"
                       value={getAccount.Username}
                       onChange={handleChange}
-                      className="h-[50px]"
+                      className="h-[50px] xs:h-[35px] sm:h-[35px] md:h-[40px] lg:h-[45px] xl:h-[50px]"
                     />
                   </ConfigProvider>
                 </div>
@@ -535,7 +536,7 @@ function PortalLogin() {
                       autoComplete="off"
                       onChange={handleChange}
                       value={getAccount.Password}
-                      className="h-[50px]"
+                      className="h-[50px] xs:h-[35px] sm:h-[35px] md:h-[40px] lg:h-[45px] xl:h-[50px] "
                       onKeyDown={handleKeyDown}
                     />
                   </ConfigProvider>
@@ -547,7 +548,7 @@ function PortalLogin() {
                       setUnlockStatus(true);
                     }}
                   >
-                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base">
+                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs:text-xs sm:text-sm md:text-md lg:text-md xl:text-md 2xl:text-base">
                       Unlock Account
                     </span>
                   </div>
@@ -557,7 +558,7 @@ function PortalLogin() {
                       setForgotStatus(true);
                     }}
                   >
-                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base">
+                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs:text-xs sm:text-sm md:text-md lg:text-md xl:text-md 2xl:text-base">
                       Forgot Password?
                     </span>
                   </div>
@@ -574,7 +575,7 @@ function PortalLogin() {
                     }}
                   >
                     <Button
-                      className="text-2xl font-semibold w-[200px] h-[50px] bg-[#31b234]"
+                      className="text-2xl xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-semibold w-full xs:w-[150px] sm:w-[150px] md:w-[200px] lg:w-[200px] xl:w-[200px] 2xl:w-[200px] 3xl:w-[250px] h-[50px] xs:h-[30px] sm:h-[35px] md:h-[40px] lg:h-[45px] xl:h-[40px] bg-[#31b234]"
                       onClick={() => {
                         onClickLogin.mutate(navigate);
                       }}
@@ -593,11 +594,12 @@ function PortalLogin() {
           </center>
         </div>
       </div>
-      <div className="flex flex-wrap w-[100%] mt-[-180px]">
+      <div className="flex flex-wrap w-full mt-[-180px] xs:mt-[-500px] sm:mt-[-150px] md:mt-[-120px] lg:mt-[-180px]">
         <div className="pl-[3%]">
-          <img src={Datos} alt="datos" height={70} width={70} />
-        </div>
-        <div className="pl-[3%] text-white w-[30%]" style={{ fontSize: 8 }}>
+          <img
+            src={Datos} alt="datos" className="w-[70px] xs:w-[50px] sm:w-[60px] md:w-[70px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs:h-[70px] sm:h-[60px] md:h-[70px] lg:h-[80px] xl:h-[90px] 2xl:h-[150px]"/>       
+          </div>
+          <div className="pl-[3%] text-white w-full sm:w-[30%]" style={{ fontSize: '8px' }}>
           <strong>
             <h5>CEPAT KREDIT FINANCING INC.</h5>
             <br />
@@ -626,12 +628,13 @@ function PortalLogin() {
             </article>
           </strong>
         </div>
-        <ConfigProvider
-          theme={{ token: { colorSplit: "#ffffff", lineWidth: 2 } }}
-        >
-          <Divider className="h-[135px]" type="vertical" />
+        <ConfigProvider theme={{ token: { colorSplit: "#ffffff", lineWidth: 2 } }}>
+          <Divider
+            className="h-[135px] hidden xs:hidden sm:hidden md:block lg:h-[60px] xl:h-[135px]"
+            type="vertical"
+          />
         </ConfigProvider>
-        <div className="pl-[1%] text-white w-[30%]" style={{ fontSize: 10 }}>
+        <div className="pl-[1%] text-white w-full sm:w-[30%]" style={{ fontSize: '10px' }}>
           <strong>
             <h5>CONTACT DETAILS</h5>
             <br />
@@ -644,9 +647,7 @@ function PortalLogin() {
                 </span>
               </div>
               <div className="flex">
-                <span className="pt-[2px] pr-[5px]">
-                  {<BsFillTelephoneFill />}
-                </span>
+                <span className="pt-[2px] pr-[5px]">{<BsFillTelephoneFill />}</span>
                 <span>
                   <div> +63 917 822 7598 </div>
                   <div> +63 919 059 9599 </div>
