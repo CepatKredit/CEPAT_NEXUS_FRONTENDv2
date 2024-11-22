@@ -636,8 +636,11 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                 {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={
                     dataIndex === 'contactNo'
                         ? [
-                            { required: true, message: `Please input ${title}` },
-                            { pattern: /^09\d{9}$/, message: 'Must start with "09" and be 11 digits' }
+                            {
+                                pattern: /^09\d{9}$/,
+                                message: 'Must start with "09" and be 11 digits',
+                                validateTrigger: ['onChange', 'onBlur'],
+                            },
                         ]
                         : dataIndex === 'suffix'
                             ? [] // No validation for 'suffix'
