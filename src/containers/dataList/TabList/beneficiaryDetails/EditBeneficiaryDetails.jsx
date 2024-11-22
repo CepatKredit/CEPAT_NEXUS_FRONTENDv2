@@ -182,7 +182,7 @@ const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label
                 <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label='font-bold'
-                    label={<>Middle Name <span className="text-red-500">*</span></>}
+                    label= "Middle Name" 
                     value={data.benmname}
                     placeHolder='Middle Name'
                     receive={(e) => updateAppDetails({ name: 'benmname', value: e })}

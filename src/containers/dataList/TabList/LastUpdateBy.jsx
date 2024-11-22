@@ -447,9 +447,8 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         <div>
             {contextHolder}
             <div className='h-[55vh]'>
-                <div className="sticky top-0 z-10 bg-white">
-                    <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={setUrgentApp} />
-                </div>
+            <StatusRemarks isEdit={isEdit} User={User} data={data} setUrgentApp={setUrgentApp} />
+                <div className=" overflow-y-auto">
                 <center>
                     <div className='pt-[1.5rem] font-bold text-2xl'>
                         Update Status
@@ -693,6 +692,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         </center>
                     </div>
                 </center>
+                </div>
             </div>
         </div>
     );

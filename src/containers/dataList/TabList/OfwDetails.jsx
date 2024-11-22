@@ -131,7 +131,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                         message: result.data.message,
                         description: result.data.description,
                     });
-                    queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
                     setEdit(!isEdit);
                 } else {
                     api['warning']({
@@ -209,7 +209,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                         message: result.data.message,
                         description: result.data.description,
                     });
-                    queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
                     setEdit(!isEdit);
                 }
                 else if (result.data.status === "info") {
@@ -217,7 +217,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                         message: result.data.message,
                         description: result.data.description,
                     });
-                    queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
                     setEdit(!isEdit);
                 } else {
                     api['warning']({
