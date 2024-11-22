@@ -305,7 +305,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                         <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                             <Tooltip title="Add">
                                 <Button
-                                    className="ml-2 bg-[#3b0764]"
+                                    className="mr-2 xs:mr-3 md:ml-2 lg:ml-2 bg-[#3b0764]"
                                     type="primary"
                                     icon={<PlusOutlined style={{ fontSize: '15px' }} />}
                                     onClick={() => {
@@ -633,34 +633,38 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                 </div>
                 <div className='mt-[0rem]'>
                     <Form form={form} component={false}>
-                        <Table
-                            columns={mergedColumns}
-                            dataSource={
-                                getStat === false
-                                    ? getCharacterRef.data?.map((x) => ({
-                                        key: x.key,
-                                        no: x.no,
-                                        name: x.name,
-                                        conNum: x.conNum,
-                                        relShip: x.relShip,
-                                        prov: x.prov,
-                                        remarks: x.remarks
-                                    }))
-                                    : dataOnly?.map((x) => ({
-                                        key: x.key,
-                                        no: x.no,
-                                        name: x.name,
-                                        conNum: x.conNum,
-                                        relShip: x.relShip,
-                                        prov: x.prov,
-                                        remarks: x.remarks
-                                    }))
-                            }
-                            components={{ body: { cell: EditableCell } }}
-                            rowClassName='editable-row'
-                            pagination={false}
-                            scroll={{ y: User === 'Credit' || User === 'Lp' ? 200 : 300 }}
-                        />
+                        <div className="overflow-x-auto">
+                            <Table
+                                columns={mergedColumns}
+                                dataSource={
+                                    getStat === false
+                                        ? getCharacterRef.data?.map((x) => ({
+                                            key: x.key,
+                                            no: x.no,
+                                            name: x.name,
+                                            conNum: x.conNum,
+                                            relShip: x.relShip,
+                                            prov: x.prov,
+                                            remarks: x.remarks
+                                        }))
+                                        : dataOnly?.map((x) => ({
+                                            key: x.key,
+                                            no: x.no,
+                                            name: x.name,
+                                            conNum: x.conNum,
+                                            relShip: x.relShip,
+                                            prov: x.prov,
+                                            remarks: x.remarks
+                                        }))
+                                }
+                                components={{ body: { cell: EditableCell } }}
+                                rowClassName="editable-row"
+                                pagination={false}
+                                scroll={{ x: 'max-content', y: User === 'Credit' || User === 'Lp' ? 200 : 300 }}
+                                className="table-auto"
+                                responsive={{ xs: true }}
+                            />
+                        </div>
                     </Form>
                 </div>
             </div>

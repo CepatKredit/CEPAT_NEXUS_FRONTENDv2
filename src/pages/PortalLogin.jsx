@@ -399,7 +399,7 @@ function PortalLogin() {
           PasswordNotMatch.isPending
         }
       />
-      <div className="h-full xs:h-[10%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%]  w-full xs:w-[100%] sm:w-[70%] md:w-[67%] lg:w-[70%] xl:w-[67%] 2xl:w-[67%] 3xl:w-[70%]">
+      <div className="h-full xs:h-[22%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%]  w-full xs:w-[100%] sm:w-[70%] md:w-[67%] lg:w-[70%] xl:w-[67%] 2xl:w-[67%] 3xl:w-[70%]">
         <div className="pt-3 xs:pt-3 md:pt-3 ml-3  xs:ml-5 md:ml-3 w-full xs:w-[80px] sm:w-[90px] md:w-[100px] lg:w-[110px] xl:w-[120px] 2xl:w-[150px] 3xl:w-[160px]">
           <a
             href="https://secure.trust-provider.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=POSDV&v_search=https://ckfi.live/cepat-portal/index.php&x=6&y=5"
@@ -472,12 +472,12 @@ function PortalLogin() {
         </center>
       </div>
       <div
-        className="h-full xs:h-[30%] sm:h-[70%] md:h-[55%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] w-full xs:w-[100%] sm:w-[100%] md:w-[31%] lg:w-[28%] xl:w-[28%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
+        className="h-full xs:h-[27%] sm:h-[70%] md:h-[55%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] w-full xs:w-[100%] sm:w-[100%] md:w-[31%] lg:w-[28%] xl:w-[28%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
         style={{ backgroundImage: `url(${LoginBackground})` }}
       >
         <div className="h-[100%] w-[100%] bg-stone-800/70">
           <center>
-            <div className="pt-[50%] xs:pt-[10%] sm:pt-[20%] md:pt-[30%] lg:pt-[40%] xl:pt-[62%] h-[500px]">
+            <div className="pt-[50%] xs:pt-[4%] sm:pt-[20%] md:pt-[30%] lg:pt-[40%] xl:pt-[62%] h-[500px]">
               <div className="text-2xl xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-normal text-stone-100">
                 <div>For registered personnel and</div>
                 <div>loan consultants, please log in below:</div>
@@ -594,12 +594,12 @@ function PortalLogin() {
           </center>
         </div>
       </div>
-      <div className="flex flex-wrap w-full mt-[-180px] xs:mt-[-500px] sm:mt-[-150px] md:mt-[-420px] lg:mt-[-630px] xl:mt-[-180px] 2xl:mt-[-180px]">
+      <div className="flex flex-wrap w-full mt-[-180px] xs:mt-[-18px] sm:mt-[-150px] md:mt-[-420px] lg:mt-[-630px] xl:mt-[-180px] 2xl:mt-[-180px]">
         <div className="pl-[3%]">
           <img
-            src={Datos} alt="datos" className="w-[70px] xs:w-[50px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs:h-[70px] sm:h-[60px] md:h-[140px] lg:h-[150px] xl:h-[90px] 2xl:h-[150px]"/>       
+            src={Datos} alt="datos" className="w-[70px] xs:w-[50px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs:h-[80px] sm:h-[60px] md:h-[140px] lg:h-[150px] xl:h-[90px] 2xl:h-[150px]"/>       
           </div>
-          <div className="pl-[3%] text-white w-full xs:w-[25%] sm:w-[25%] md:w-[50%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%]" style={{ fontSize: '8px' }}>
+          <div className="pl-[3%] text-white w-full xs:w-[100%] sm:w-[25%] md:w-[50%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%] " style={{ fontSize: '8px' }}>
           <strong>
             <h5>CEPAT KREDIT FINANCING INC.</h5>
             <br />
@@ -634,7 +634,7 @@ function PortalLogin() {
             type="vertical"
           />
         </ConfigProvider>
-        <div className="pl-[1%] text-white w-full sm:w-[30%]" style={{ fontSize: '10px' }}>
+        <div className="pl-[1%] text-white w-full xs:w-[100%] sm:w-[25%] md:w-[30%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%] " style={{ fontSize: '10px' }}>
           <strong>
             <h5>CONTACT DETAILS</h5>
             <br />
