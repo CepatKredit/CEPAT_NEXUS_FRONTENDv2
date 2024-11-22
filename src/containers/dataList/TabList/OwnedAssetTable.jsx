@@ -19,7 +19,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function OwnedAsset({ data, User }) {
-    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -83,11 +83,9 @@ function OwnedAsset({ data, User }) {
     });
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
             SET_LOADING_INTERNAL('AssetTABLE', true)
             getOwnedAssets.refetch();
-        }
-    }, [data]);
+    }, [getAppDetails]);
 
     function GetAssetsOption() {
         const categoryValue = form.getFieldValue('category');

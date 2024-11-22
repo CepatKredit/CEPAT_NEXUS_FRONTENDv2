@@ -17,7 +17,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function OtherLoanHistory({ data, User }) {
-    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -81,11 +81,9 @@ function OtherLoanHistory({ data, User }) {
 
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
             SET_LOADING_INTERNAL('CreditHistoryTABLE', true)
             getOtherLoanHistory.refetch();
-        }
-    }, [data]);
+    }, [getAppDetails]);
 
 
     const [getAddStat, setAddStat] = React.useState(false)

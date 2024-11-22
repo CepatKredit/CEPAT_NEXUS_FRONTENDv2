@@ -14,8 +14,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data }) {
-    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
-    const { getAppDetails } = React.useContext(LoanApplicationContext)
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext)
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -78,10 +77,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     })
 
     React.useEffect(() => {
-        if (!getAppDetails.loanIdCode) {
-            SET_LOADING_INTERNAL('CharRefTABLE', true)
-            getCharacterRef.refetch();
-        }
+        SET_LOADING_INTERNAL('CharRefTABLE', true)
+        getCharacterRef.refetch();
     }, [getAppDetails]);
 
     const getRelationshipList = useQuery({
@@ -283,17 +280,17 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             '50': ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
             '55': ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
             '60': ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/special-lane', '/ckfi/assessement/credit', '/ckfi/queue-bucket', '/ckfi/for-verification', '/ckfi/pre-check', '/ckfi/returned/marketing', '/ckfi/returned/credit-associate', '/ckfi/reassessed/credit-officer', '/ckfi/for-approval', '/ckfi/on-waiver', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
-            '70': ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed' ,'/ckfi/undecided',
-                '/ckfi/returned/credit-officer' , '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
-            '80':['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed' ,'/ckfi/undecided',
-                '/ckfi/returned/credit-officer' , '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
+            '70': ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed', '/ckfi/undecided',
+                '/ckfi/returned/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
+            '80': ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed', '/ckfi/undecided',
+                '/ckfi/returned/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
         };
-        
+
         if (roleConditions[userRole]) {
             return roleConditions[userRole].includes(LOCATION);
         }
-        
-        return false; 
+
+        return false;
     }
 
     const [getStatus, setStatus] = React.useState(false)

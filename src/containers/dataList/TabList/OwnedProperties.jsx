@@ -18,7 +18,7 @@ import { toUpperText } from '@utils/Converter';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function OwnedProperties({ data, User }) {
-    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext);
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -75,11 +75,9 @@ function OwnedProperties({ data, User }) {
 
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
-            SET_LOADING_INTERNAL('PropertiesTABLE', true)
-            getOwnedProperties.refetch();
-        }
-    }, [data]);
+        SET_LOADING_INTERNAL('PropertiesTABLE', true)
+        getOwnedProperties.refetch();
+    }, [getAppDetails]);
 
 
     function GetPropertiesOption() {

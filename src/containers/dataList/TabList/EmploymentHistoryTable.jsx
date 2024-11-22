@@ -17,7 +17,7 @@ import { GetData } from '@utils/UserData';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function EmploymentHistory({ data, User }) {
-    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext)
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
@@ -83,11 +83,9 @@ function EmploymentHistory({ data, User }) {
 
 
     React.useEffect(() => {
-        if (!data.loanIdCode !== "") {
             SET_LOADING_INTERNAL('EmploymentHistoryTABLE', true)
             getEmploymentHistory.refetch();
-        }
-    }, [data.loanIdCode]);
+    }, [getAppDetails]);
 
     const [getAddStat, setAddStat] = React.useState(false)
 

@@ -17,7 +17,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function Relatives({ BorrowerId, onUpdateCount, User, data }) {
-    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext);
     const suffixRef = React.useRef();
     const { setCount } = getDependentsCount();
     const saveButtonRef = React.useRef();
@@ -92,11 +92,10 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
     });
 
     React.useEffect(() => {
-        if (!data.loanIdCode) {
+     
             SET_LOADING_INTERNAL('DependentsTABLE', true)
             getRelatives.refetch();
-        }
-    }, [data]);
+    }, [getAppDetails]);
 
 
     const [getReshipList, setReshipList] = React.useState()
