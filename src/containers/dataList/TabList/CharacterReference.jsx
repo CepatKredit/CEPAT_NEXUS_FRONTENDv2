@@ -32,7 +32,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     })
     React.useEffect(() => { getCharacterRef.refetch() }, [BorrowerId])
     const [getStat, setStat] = React.useState(true)
-    const role = GetData('ROLE') ? GetData('ROLE').toString() : null;
+    const role = GetData('ROLE') ? GetData('ROLE').toString() : "";
 
     React.useEffect(() => { getCharacterRef.refetch() }, [getAppDetails.loanIdCode]);
 
@@ -272,7 +272,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     }
 
     function DISABLE_STATUS(LOCATION, LoanStatus) {
-        const userRole = GetData('ROLE').toString();
+        const userRole = GetData('ROLE') ? GetData('ROLE').toString() : "";
         if (!userRole) {
             return !(LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
         }

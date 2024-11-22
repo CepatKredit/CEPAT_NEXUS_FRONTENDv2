@@ -625,6 +625,11 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
         },
     ].filter(Boolean);
 
+    React.useEffect(() => {
+        setActiveKey(tabs || 'deduplication');
+        console.log("HALAAA", tabs)
+    }, [tabs]);
+
     return (
         <div>
             {contextHolder}

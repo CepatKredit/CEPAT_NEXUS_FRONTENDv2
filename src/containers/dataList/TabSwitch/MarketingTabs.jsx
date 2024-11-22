@@ -45,7 +45,6 @@ function MarketingTabs({
   );
   const { updateAppDetails } = React.useContext(LoanApplicationContext)
 
-
   function onChangeTab(e) {
     //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
     //if(validate)
@@ -222,10 +221,15 @@ function MarketingTabs({
     },
   ];
 
+  React.useEffect(() => {
+    setActiveKey(tabs || 'deduplication');
+    console.log("HALAAA", tabs)
+}, [tabs]);
+
   return (
     <>
       <Tabs
-        // activeKey={activeKey}
+        activeKey={activeKey}
         onChange={onChangeTab}
         tabPosition="top"
         defaultActiveKey={tabs}

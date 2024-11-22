@@ -2,7 +2,7 @@ import LabeledTextArea from '@components/marketing/LabeledTextArea';
 import * as React from 'react';
 import { Button, Space, ConfigProvider, Input, Select, DatePicker, notification, Checkbox } from 'antd';
 import dayjs from 'dayjs';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, redirect } from 'react-router-dom';
 import LabeledSelects from '@components/validation/LabeledSelect';
 import StatusRemarks from './StatusRemarks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -34,7 +34,6 @@ function LastUpdateBy({ isEdit, User, data }) {
     const [isShareLocationChecked, setShareLocationChecked] = React.useState(false);
     const [isAgencyVerificationChecked, setAgencyVerificationChecked] = React.useState(false);
     const [isUrgentApp, setUrgentApp] = React.useState();
-    const location = useLocation();
 
     const { id, tabs } = useParams();
     const navigate = useNavigate();
@@ -61,6 +60,7 @@ TRANSACTION REFERENCE: [REFERENCE NUMBER, IF APPLICABLE]
 
 IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTACT US.
 `;
+    const ROLE = GetData('ROLE') ? GetData('ROLE') : "" ;
 
     const handleUrgentApp = (key) => {
         setUrgentApp(key);
@@ -94,7 +94,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         return fullName.trim();
     };
     
-
     const getRemarks = useQuery({
         queryKey: ['getRemarks'],
         queryFn: async () => {
@@ -292,8 +291,16 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         });
                         queryClient.invalidateQueries({ queryKey: ['getRemarks', data?.loanIdCode] }, { exact: true });
                         localStorage.setItem('activeTab', 'deduplication')
-                        navigate(`${localStorage.getItem('SP')}/1211010000070/${localStorage.getItem("activeTab")}`);
-                        console.log("INSIDE ", `${localStorage.getItem('SP')}/${id}/${localStorage.getItem("activeTab")}`);
+                        if((getUpdate.Status === 'SCREENING' || getUpdate.Status === 'FOR CALLBACK' || 
+                                getUpdate.Status === 'INTERVIEW')) {
+                            console.log("Dumaan ditoooooo")
+                            localStorage.setItem('SP', '/ckfi/ckfi/queue-bucket')
+                            navigate(`/${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
+                        } else {
+                            navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
+                        }
+                        // navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
+                        console.log("INSIDE ", `${localStorage.getItem('SP')}/${id}/${localStorage.getItem("activeTab")}`, "TAB", tabs);
                         setIsDisabled(DISABLE_STATUS(localStorage.getItem('SP')));
                         if (deletePN) {
                             await onClickDeleteXTable();
@@ -352,19 +359,16 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         else if (GetData('ROLE').toString() === '60') {
             if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
                 || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
-                console.log('CRO')
                 return true
             }
             else { return false }
         }
         else if (GetData('ROLE').toString() === '70') {
-            console.log('LPA')
             if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
             else { return false }
         }
         else if (GetData('ROLE').toString() === '80') {
-            console.log('LPO')
             if (LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
             else { return false }

@@ -200,7 +200,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/on-waiver' 
                || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-verification'
                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
-               console.log('CRO')
                return true
            }
            else { return false }

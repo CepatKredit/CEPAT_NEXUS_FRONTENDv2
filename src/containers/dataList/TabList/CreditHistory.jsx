@@ -220,7 +220,6 @@ function OtherLoanHistory({ data, User }) {
             if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/approved'
                 || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled'
                 || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/for-re-application' || LOCATION === '/ckfi/assessement/credit') {
-                console.log('MA')
                 return true
             }
             else { return false }
@@ -230,7 +229,6 @@ function OtherLoanHistory({ data, User }) {
                 if (LOCATION === '/ckfi/credit-list' || LOCATION === '/ckfi/under-credit' || LOCATION === '/ckfi/for-approval'
                     || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp' || LOCATION === '/ckfi/for-re-application'
                     || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
-                    console.log('LC')
                     return true
                 }
                 else { return false }
@@ -240,7 +238,6 @@ function OtherLoanHistory({ data, User }) {
             {
                 if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
                     || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
-                    console.log('CRA')
                     return true
                 }
                 else { return false }
@@ -252,20 +249,17 @@ function OtherLoanHistory({ data, User }) {
                 || LOCATION === '/ckfi/for-verification' || LOCATION === '/ckfi/pre-check' || LOCATION === '/ckfi/returned/marketing'
                 || LOCATION === '/ckfi/returned/credit-associate' || LOCATION === '/ckfi/reassessed/credit-officer' || LOCATION === '/ckfi/for-approval'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
-                console.log('CRO')
                 return true
             }
             else { return false }
         }
         else if (GetData('ROLE').toString() === '70') {
-            console.log('LPA')
             if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/returned/credit-associate' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/confirmation' || LOCATION === '/ckfi/confirmed' || LOCATION === '/ckfi/undecided'
                 || LOCATION === '/ckfi/returned/credit-officer' || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }
             else { return false }
         }
         else if (GetData('ROLE').toString() === '80') {
-            console.log('LPO')
             if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/returned/credit-associate' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/confirmation' || LOCATION === '/ckfi/confirmed' || LOCATION === '/ckfi/undecided'
                 || LOCATION === '/ckfi/returned/credit-officer' || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') { return true }

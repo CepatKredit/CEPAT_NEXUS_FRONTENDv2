@@ -287,10 +287,21 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
             children: <LastUpdateBy isEdit={true} data={value} />,
         },
     ];
+    React.useEffect(() => {
+        setActiveKey(tabs || 'deduplication');
+        console.log("HALAAA", tabs)
+    }, [tabs]);
+    
 
     return (
         <>
-            <Tabs defaultActiveKey={tabs} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
+            <Tabs 
+            activeKey={activeKey}
+            defaultActiveKey={tabs} 
+            type="card" 
+            size="middle" 
+            onChange={onChangeTab} 
+            items={TabsItems} />
         </>
     );
 }
