@@ -40,10 +40,11 @@ export const DateFormat = (date) => {
 
 export const Uppercase = (container) => {
     if (container) {
-        const text = container;
-        return text.toUpperCase();
+        const text = String(container); // Ensure the value is converted to a string
+        return text ? text.toUpperCase() : '';
     }
-}
+    return ''; // Handle the case where container is undefined or null
+};
 
 export const inputFormat = (format, input) => {
     if (format === 'Currency') {

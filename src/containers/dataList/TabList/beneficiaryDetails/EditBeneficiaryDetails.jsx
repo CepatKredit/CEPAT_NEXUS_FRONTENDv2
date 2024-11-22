@@ -25,6 +25,8 @@ import DatePickerOpt from '@components/optimized/DatePickerOpt';
 import { Age } from '@utils/Calculations';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import InputOpt from '@components/optimized/InputOpt';
+import SelectOpt from '@components/optimized/SelectOpt';
+import { useDataContainer } from '@context/PreLoad';
 
 
 function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcoborrowfname, showCoBorrower, setShowCoBorrower, sepBenfname, User }) {
@@ -48,7 +50,11 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
     }, [Sepcoborrowfname]);
 
     let rendered = sepBenfname ? true : false;
-    let rendered_add = Sepcoborrowfname ? true : false;
+   // let rendered_add = Sepcoborrowfname ? true : false;
+
+//Preload Selects   
+const { GET_RELATIONSHIP_LIST } = useDataContainer();
+const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
 
     /*const handleAddCoborrower = async () => {
          setTriggerValidation(true);
@@ -387,7 +393,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 group={'Income'}
                                 compname={'Spouse Income'}
                                 disabled={User === 'Credit' && data.MarriedPBCB}
-                                />
+                            />
                         )}
                     </>
                 ) : null}
@@ -454,19 +460,25 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     />)*/}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledSelect_Relationship
-                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                        className_label={'font-bold'}
-                        label={<>Relationship to the OFW <span className="text-red-500">*</span></>}
-                        placeHolder='Relationship to the OFW'
-                        value={data.benrelationship}
-                        receive={(e) => updateAppDetails({ name: 'benrelationship', value: e })}
-                        category={'marketing'}
-                        disabled={isEdit}
-                        isEdit={isEdit}
-                        rendered={rendered}
-                        showSearch
-                    />)}
+                    : (
+                        <SelectOpt
+                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_label={'font-bold'}
+                            label={<>Relationship to the OFW <span className="text-red-500">*</span></>}
+                            value={data.benrelationship}
+                            rendered={rendered}
+                            placeHolder='Relationship to the OFW'
+                            category={'marketing'}
+                            disabled={data.MarriedPBCB}
+                            isEdit={isEdit}
+                            receive={(e) => updateAppDetails({ name: 'benrelationship', value: e })}
+                            options={GET_RELATIONSHIP}
+                            notValidMsg={'Relationship to the OFW Required'}
+                            KeyName={'benrelationship'}
+                            group={'Default'}
+                            showSearch
+                        />
+                    )}
                 {User === 'Credit' && (
                     <LabeledSelect
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'

@@ -86,6 +86,11 @@ function SelectOpt({
         }
     };
 
+    // Trigger `handleSelectChange` when `value` changes externally
+    useEffect(() => {
+        handleSelectChange(value);
+    }, [value, handleSelectChange]);
+
     return (
         <div className={className_dmain}>
             <label className={className_label}>{label}</label>
@@ -108,42 +113,42 @@ function SelectOpt({
                         },
                     }}
                 >
-                <Select
-                    ref={inputRef}
-                    className='text-left'
-                    options={newOptions}
-                    value={value || undefined}
-                    disabled={disabled}
-                    size='large'
-                    placeholder={placeHolder}
-                    onChange={handleSelectChange}
-                    onBlur={handleBlur}
-                    onFocus={() => setDropdownVisible(true)}
-                    showSearch={showSearch}
-                    filterOption={false}
-                    onSearch={handleSearch}
-                    onKeyDown={handleKeyDown}
-                    readOnly={readOnly}
-                    open={dropdownOpen}
-                    onDropdownVisibleChange={handleDropdownVisibleChange}
-                    status={!disabled && (required || required === undefined) ? status : false}
-                    style={{ width: '100%' }}
-                    suffixIcon={
-                        isRendered && !disabled && (required || required === undefined) && status === 'error' ? (
-                            <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
-                        ) : isRendered && !disabled && (required || required === undefined) && status === '' ? (
-                            <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
-                        ) : null
-                    }
-                />
-                {!disabled && (required || required === undefined) && status === 'error' && (
-                    <div className='text-xs text-red-500 pt-1 pl-2'>
-                        {notValidMsg || notValid}
-                    </div>
-                )}
-            </ConfigProvider>
+                    <Select
+                        ref={inputRef}
+                        className='text-left'
+                        options={newOptions}
+                        value={value || undefined}
+                        disabled={disabled}
+                        size='large'
+                        placeholder={placeHolder}
+                        onChange={handleSelectChange}
+                        onBlur={handleBlur}
+                        onFocus={() => setDropdownVisible(true)}
+                        showSearch={showSearch}
+                        filterOption={false}
+                        onSearch={handleSearch}
+                        onKeyDown={handleKeyDown}
+                        readOnly={readOnly}
+                        open={dropdownOpen}
+                        onDropdownVisibleChange={handleDropdownVisibleChange}
+                        status={!disabled && (required || required === undefined) ? status : false}
+                        style={{ width: '100%' }}
+                        suffixIcon={
+                            isRendered && (required || required === undefined) && status === 'error' ? (
+                                <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
+                            ) : isRendered && (required || required === undefined) && status === '' ? (
+                                <CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />
+                            ) : null
+                        }
+                    />
+                    {!disabled && (required || required === undefined) && status === 'error' && (
+                        <div className='text-xs text-red-500 pt-1 pl-2'>
+                            {notValidMsg || notValid}
+                        </div>
+                    )}
+                </ConfigProvider>
+            </div>
         </div>
-        </div >
     );
 }
 

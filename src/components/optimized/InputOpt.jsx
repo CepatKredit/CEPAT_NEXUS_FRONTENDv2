@@ -22,10 +22,10 @@ function InputOpt({
     group,
 }) {
 
-    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group);
+    const { MaxChar, inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled);
 
     const isValidationEnabled = !readOnly && required;
-   
+
     return (
         <div className={className_dmain}>
             {label && <label className={className_label}>{label}</label>}
@@ -36,12 +36,12 @@ function InputOpt({
                     className={`w-full ${readOnly ? 'bg-[#f5f5f5]' : 'bg-[#ffffff]'}`}
                     readOnly={readOnly}
                     value={inputValue}
-                    onChange={handleChange}
+                    onChange={(e) => { handleChange(e.target.value, true) }}
                     size="large"
                     placeholder={placeHolder}
                     autoComplete="off"
                     style={{ width: '100%' }}
-                    maxLength={80} // set logic by keynames
+                    maxLength={100}
                     onBlur={handleBlur}
                     status={isValidationEnabled ? status : undefined}
                     suffix={

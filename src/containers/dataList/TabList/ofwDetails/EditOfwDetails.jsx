@@ -64,9 +64,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
         return options;
     }
 
-    const { GET_COUNTRY_LIST } = useDataContainer();
+    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST } = useDataContainer();
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
+    const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
     const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
+    const JOB_CATEGORY =  JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
+    const JOB_TITLE = JobTitle(data.JobCategory)? JobTitle(data.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
 
     return (
         <div>
@@ -288,19 +291,24 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
                     />)}
                 {(User === 'Credit' && addCoborrower) && (
-                    <LabeledSelect_Relationship
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    <SelectOpt
+                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Relationship to Additional <span className="text-red-500">*</span></>}
+                        value={data.benrelationship}
+                        rendered={rendered}
                         placeHolder='Relationship to Additional'
-                        value={data.RelationshipAdd}
-                        receive={(e) => updateAppDetails({ name: 'RelationshipAdd', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
-                        rendered={rendered}
-                        showSearch
-                    />)}
+                        receive={(e) => updateAppDetails({ name: 'RelationshipAdd', value: e })}
+                        options={GET_RELATIONSHIP}
+                        notValidMsg={'Relationship to Additional Required'}
+                        KeyName={'RelationshipAdd'}
+                        group={'Default'}
+                    />
+
+                )}
                 {User === 'Credit' && (
                     <LabeledSelect
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -417,19 +425,24 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     )
                 )}
                 {User === 'Credit' &&
-                    (<LabeledSelect_Relationship
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    (<SelectOpt
+                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
-                        placeHolder='Relationship to the Beneficiary'
                         value={data.RelationshipBen}
-                        receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
-                        category={'marketing'}
-                        disabled={isEdit}
-                        isEdit={isEdit}
                         rendered={rendered}
+                        placeHolder='Relationship to the Beneficiary'
+                        category={'marketing'}
+                        disabled={data.MarriedPBCB}
                         showSearch
-                    />)}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
+                        options={GET_RELATIONSHIP}
+                        notValidMsg={'Relationship to Beneficiary Required'}
+                        KeyName={'RelationshipBen'}
+                        group={'Default'}
+                    />
+                    )}
                 {User !== 'LC' && (
                     <Form.Item
                         label="Dependents"
@@ -687,16 +700,23 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     <></>
                 ) : (
                     User === 'Credit' ? (
-                        <LabeledSelect
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+
+                         <SelectOpt
+                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             label={<>Job Category <span className="text-red-500">*</span></>}
-                            placeHolder='Job Category'
-                            data={JobCategory()}
                             value={data.JobCategory}
-                            receive={(e) => updateAppDetails({ name: 'JobCategory', value: e })}
-                            disabled={isEdit}
                             rendered={rendered}
+                            placeHolder='Job Category'
+                            category={'marketing'}
+                            disabled={isEdit}
+                            isEdit={isEdit}
+                            receive={(e) => updateAppDetails({ name: 'JobCategory', value: e })}
+                            options={JOB_CATEGORY}
+                            notValidMsg={'Job Category Required'}
+                            KeyName={'JobCategory'}
+                            group={'Default'}
+                            showSearch
                         />
                     ) : (
                         <LabeledInput_Fullname
@@ -711,17 +731,24 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             rendered={rendered}
                         />))}
                 {User === 'Credit' && (
-                    <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                        className_label={'font-bold'}
-                        label={<>Position <span className="text-red-500">*</span></>}
-                        placeHolder='Position'
-                        data={JobTitle(data.JobCategory)}
-                        value={data.ofwjobtitle}
-                        receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
-                        disabled={isEdit}
-                        rendered={rendered}
-                    />)}
+                    <SelectOpt
+                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_label={'font-bold'}
+                            label={<>Position <span className="text-red-500">*</span></>}
+                            value={data.ofwjobtitle}
+                            rendered={rendered}
+                            placeHolder='Position'
+                            category={'marketing'}
+                            disabled={isEdit}
+                            isEdit={isEdit}
+                            receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
+                            options={JOB_TITLE}
+                            notValidMsg={'Position Required'}
+                            KeyName={'ofwjobtitle'}
+                            group={'Default'}
+                            showSearch
+                        />
+                    )}
                 {User === 'Credit' && (
                     <LabeledSelect
                         className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}

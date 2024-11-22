@@ -16,6 +16,18 @@ export function ComponentPreloads() {
     retryDelay: 1000,
   });
 
+  const [getRelationship, setRelationship] = React.useState([])
+  useQuery({
+    queryKey: ["RelationshipList"],
+    queryFn: async () => {
+      const result = await GET_LIST("/getListRelationship");
+      setRelationship(result.list)
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
   const [getCountryList, setCountryList] = React.useState([]);
   useQuery({
     queryKey: ["CountryList"],
@@ -85,21 +97,6 @@ export function ComponentPreloads() {
       return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
-    retryDelay: 1000,
-  });
-
-  const [getRelationship, setRelationship] = React.useState([])
-  useQuery({
-    queryKey: ["getRelationship"],
-    queryFn: async () => {
-      const result = await GET_LIST("/getListRelationship");
-      setRelationship(result.list)
-      return result.list;
-    },
-    refetchInterval: (data) => {
-      data?.length === 0 ? 500 : false;
-    },
-    enabled: true,
     retryDelay: 1000,
   });
 

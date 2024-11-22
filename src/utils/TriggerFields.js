@@ -6,6 +6,44 @@ function TriggerFields(ROLE) {
     const skipRender = React.useRef(1); //use this
     const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
 
+    //MARITAL STATUS TO RELATIONSHIP
+    function getRelationship(MARITAL_STATUS) {
+        switch (MARITAL_STATUS) {
+            case 2:
+                return 37;
+            case 5:
+                return 24;
+            case 6:
+                return 9;
+            default:
+                return 0;
+        }
+    }
+    //RELATIONSHIP TO MARITAL STATUS
+    function getMaritalStatus(RELATIONSHIP) {
+        console.log(RELATIONSHIP)
+        switch (RELATIONSHIP) {
+            case 37:
+                return 2;
+            case 24:
+                return 5;
+            case 9:
+                return 6;
+            default:
+                return 0;
+        }
+    }
+
+    //RELATIONSHIP TO RELATIONSHIP
+    function getRelationshipConv(RELATIONSHIP) {
+        console.log(RELATIONSHIP)
+        switch (RELATIONSHIP) {
+            case 37:
+                return 2;
+            default:
+                return 0;
+        }
+    }
 
     function ClearFields(fields) {
         fields.forEach((key) => {
@@ -14,19 +52,6 @@ function TriggerFields(ROLE) {
             }
         });
     }
-    /*
-    React.useEffect(() => {
-        if (getRendered) {
-            if(getAppDetails.JobCategory){
-                receive({
-                    name: 'ofwjobtitle',
-                    getAppDetails: '',
-                })
-            }
-        } else {
-            getRendered = true;
-        }
-    }, [getAppDetails.JobCategory])*/
 
     React.useEffect(() => {
         if (!getRendered) return;
@@ -86,30 +111,25 @@ function TriggerFields(ROLE) {
         }
     }, [getAppDetails.ofwmstatus]);
 
-
-    React.useEffect(() => {
-        if (!getRendered) return;
-
-        const isInvalidRole = (ROLE === 'CREDIT');
-        const isInvalidStatus = ![2, 5, 6].includes(getAppDetails.benmstatus);
-        const isMarriedInvalidStatus = ![2, 5, 6].includes(getAppDetails.ofwmstatus) && getAppDetails.MarriedPBCB;
-
-        if (isInvalidRole && isInvalidStatus) {
-            const updates = {
-                benspouse: '',
-                benspousebdate: '',
-                BenSpSrcIncome: '',
-                BenSpIncome: '',
-            };
-
-            Object.entries(updates).forEach(([name, value]) => {
-                updateAppDetails({ name, value });
-            });
-        } else if (isMarriedInvalidStatus) {
-            updateAppDetails({ name: 'MarriedPBCB', value: false });
-        }
-    }, [getAppDetails.benmstatus]);
-
+    /*
+        React.useEffect(() => {
+            if (!getRendered) return;
+    
+            const isInvalidRole = (ROLE === 'CREDIT');
+            const isInvalidStatus = ![2, 5, 6].includes(getAppDetails.benmstatus);
+    
+            if (isInvalidRole && isInvalidStatus) {
+                const updates = {
+                    MarriedPBCB: '',
+                };
+                Object.entries(updates).forEach(([name, value]) => {
+                    updateAppDetails({ name, value });
+                });
+            }else{
+                //Trigger Case Match Relationship
+            }
+        }, [getAppDetails.benmstatus]);
+    */
 
     React.useEffect(() => {
         if (!getRendered) return;
@@ -130,33 +150,12 @@ function TriggerFields(ROLE) {
         }
     }, [getAppDetails.coborrowmstatus]);
 
-    //RELATIONSHIP
-    function getRelationship(MARITAL_STATUS) {
-        switch (MARITAL_STATUS) {
-            case 2:
-                return 37;
-            case 5:
-                return 24;
-            case 6:
-                return 9;
-            default:
-                return 0;
+    React.useEffect(() => { //need to enhance this, temporary only(problem in dev but not in deployment)
+        if (!getRendered) return;
+        if (getAppDetails.ofwjobtitle !== '' && !!getAppDetails.JobCategory ) {
+            updateAppDetails({ name: 'ofwjobtitle', value: '' });
         }
-    }
-    //MARITAL STATUS
-    function getMaritalStatus(RELATIONSHIP) {
-        console.log(RELATIONSHIP)
-        switch (RELATIONSHIP) {
-            case 37:
-                return 2;
-            case 24:
-                return 5;
-            case 9:
-                return 6;
-            default:
-                return 0;
-        }
-    }
+    }, [getAppDetails.JobCategory]);
 
     /*
     React.useEffect(() => {
@@ -188,6 +187,7 @@ function TriggerFields(ROLE) {
                 BenSpSrcIncome: 1,
                 BenSpIncome: getAppDetails.PSalary,
                 benmstatus: getAppDetails.ofwmstatus,
+                RelationshipBen: getRelationship(getAppDetails.ofwmstatus),
                 benrelationship: getRelationship(getAppDetails.ofwmstatus),
             };
 
@@ -208,6 +208,7 @@ function TriggerFields(ROLE) {
                 BenSrcIncome: '',
                 BenIncome: '',
                 benrelationship: '',
+                RelationshipBen: '',
             };
 
             Object.entries(updates).forEach(([name, value]) => {

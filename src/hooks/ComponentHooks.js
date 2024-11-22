@@ -22,12 +22,12 @@ function hookInputValid(KeyName, input, comp_name, format, group) {
     return { valid: true, value: Uppercase(input), errmsg: '' }; //Change format to uppercase
   } else if (group === 'Default' && input !== '') { //For No-case sensitive
     return { valid: true, value: input, errmsg: '' }; //As-is
-  //CURRENCY
+    //CURRENCY
   } else if (group === 'Income' && input !== '' && CheckIncomeValid(input)) { // 25,000.00
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
   } else if ((group === 'Rent_Amort' || group === 'Allotment') && input !== '' && CheckRentAmortValid(input)) { // !0
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
-  //NUMBER
+    //NUMBER
 
   } else { //error
     return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(group, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name) };
@@ -40,6 +40,11 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selected, setselected] = useState(value || '');
+  const [debouncedInput, setDebouncedInput] = useState(selected);
+
+  const debounceChange = useCallback((formattedValue) => {
+    setDebouncedInput(formattedValue);
+  }, []);
 
   const filteredOptions = useMemo(() => {
     if (KeyName === 'ofwcountry') {
@@ -53,21 +58,26 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     }
   }, [search, options]);
 
+  /*
   useEffect(() => { //Should place to another file?
     setStatus("")
-  }, [!getAppDetails.dataPrivacy])
+  }, [!getAppDetails.dataPrivacy])*/
 
   useEffect(() => {
     setHighlightedIndex(0);
   }, [search]);
 
+  useEffect(() => {
+    setStatus(debouncedInput ? '' : 'error');
+    receive(debouncedInput);
+  }, [debouncedInput])
+
   const handleSelectChange = useCallback((selectedValue) => {
     setDropdownOpen(false)
     setRendered(true)
-    setStatus(selectedValue ? '' : 'error');
-    receive(selectedValue || undefined);
+    debounceChange(selectedValue || undefined);
     setselected(selectedValue)
-  }, [receive]);
+  }, [receive]); //Need monitor in this value
 
   const handleKeyDown = useCallback((event) => {
     if (!filteredOptions.length) return;
@@ -262,12 +272,13 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   };
 }
 
-export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group) {
+export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group, isDisabled) {
   const [inputValue, setInputValue] = useState(initialValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const latestValueRef = useRef(initialValue);
+  const [MaxChar, setMaxChar] = useState(250);
 
   const debouncedReceive = useMemo(
     () =>
@@ -280,34 +291,32 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     [receive]
   );
 
-  const statusValidation = (valid, val, error, update,delay_def) => {
+  const statusValidation = (valid, val, error, update, delay_def) => {
     if (valid) {
       setStatus('');
-      setErrorMessage('')
-      if (update) {
-        setInputValue(val);
-        debouncedReceive(val, delay_def); // Pass the custom delay as 1sec
-      }
+      setErrorMessage('');
+      setInputValue(val); // Keep the valid value in the input field
+      debouncedReceive(val, delay_def); // Pass the custom delay
     } else {
       setStatus('error');
-      setErrorMessage(error)
+      setErrorMessage(error);
+      setInputValue(val); // Keep the valid value in the input field
       if (update) {
-        setInputValue(val);
-        debouncedReceive('', delay_def); // Pass the custom delay as 1sec
+        debouncedReceive('', delay_def); // Pass an empty string only to the receiver
       }
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const value = e.target.value;
+    const value = e;
     const res = hookInputValid(KeyName, value, comp_name, format, group);
-    statusValidation(res.valid, res.value, res.errmsg, true,800);
+    statusValidation(res.valid, res.value, res.errmsg, true, 800);
   }
 
   const handleBlur = () => {
     setIconVisible(true);
     const res = hookInputValid(KeyName, inputValue, comp_name, format, group);
-    statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
+    statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, false, 100);
   };
 
   useEffect(() => { //INITIAL RELOAD
@@ -318,13 +327,33 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     }
   }, [rendered]);
 
-  useEffect(() => { //SPECIFIC FIELDS ONLY
-    if (comp_name === 'Spouse Name' || comp_name === 'Spouse Income') {
-      setIconVisible(true);
-      const res = hookInputValid(KeyName, initialValue /* || inputValue */, comp_name, format, group);
-      statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatComma(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
+  useEffect(() => {
+    if(isDisabled || initialValue === ''){
+        handleChange(initialValue);    
     }
+    /*
+    const Decimal = initialValue? ['.'].includes(Uppercase(initialValue)) : false;
+    switch(group){
+      case 'Uppercase' :
+          setMaxChar(80);
+      case 'Currency':
+          setMaxChar(Decimal? 10 : 13);
+      default:
+          setMaxChar(250);
+  }
+          */
   }, [initialValue])
+
+
+  /*
+    useEffect(() => { //SPECIFIC FIELDS ONLY
+      if (comp_name === 'Spouse Name' || comp_name === 'Spouse Income') {
+        setIconVisible(true);
+        const res = hookInputValid(KeyName, initialValue , comp_name, format, group);
+        statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatComma(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
+      }
+    }, [initialValue])
+    */
 
   useEffect(() => {
     return () => {
@@ -333,6 +362,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   }, [debouncedReceive]);
 
   return {
+    MaxChar,
     inputValue,
     status,
     iconVisible,
