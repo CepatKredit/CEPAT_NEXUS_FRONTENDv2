@@ -115,7 +115,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
         principalBorrower: '',
         coBorrower: '',
         additionalCoBorrower: '',
-        UrgentApp: undefined,
+        UrgentApp: 0,
         SoaDate: undefined
     });
 
@@ -187,7 +187,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
             }
 
             if (getUpdate.Status === 'PRE-CHECK' || getUpdate.Status === 'FOR APPROVAL') {
-                console.log('ito ang checkboxes update update', getUpdate.Status)
+                //console.log('ito ang checkboxes update update', getUpdate.Status)
                 const checkListData = {
                     loanAppId: toDecrypt(localStorage.getItem('SIDC')),
                     status: getUpdate.Status === 'PRE-CHECK' ? 21 : 7,
@@ -236,7 +236,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
                         LAN: id,
                         Status: GetStatusCode(),
-                        UrgentApp: getUpdate.UrgentApp,
+                        UrgentApp: getUpdate.UrgentApp || 0,
                         RemarksIn: getUpdate.RemarksIn,
                         RemarksEx: getUpdate.RemarksEx,
                         ModUser: jwtDecode(token).USRID
@@ -245,7 +245,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         LoanAppId: toDecrypt(localStorage.getItem('SIDC')),
                         LAN: id,
                         Status: GetStatusCode(),
-                        UrgentApp: getUpdate.UrgentApp,
+                        UrgentApp: getUpdate.UrgentApp || 0,
                         RemarksIn: getUpdate.RemarksIn,
                         RemarksEx: getUpdate.RemarksEx,
                         SoaDate: yymmdd(getUpdate.SoaDate),
@@ -434,7 +434,7 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
     React.useEffect(() =>
     {
         setUpdate({ ...getUpdate, UrgentApp: isUrgentApp });
-        console.log('kkkkkkkkkkkkkkkkkkk', getRequesttype())
+       // console.log('kkkkkkkkkkkkkkkkkkk', getRequesttype())
     },[isUrgentApp])
 
 
