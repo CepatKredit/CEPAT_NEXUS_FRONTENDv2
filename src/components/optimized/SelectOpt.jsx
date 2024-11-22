@@ -88,8 +88,10 @@ function SelectOpt({
 
     // Trigger `handleSelectChange` when `value` changes externally
     useEffect(() => {
-        handleSelectChange(value);
-    }, [value, handleSelectChange]);
+        if(rendered){
+            handleSelectChange(value);
+        }
+    }, [value]);
 
     return (
         <div className={className_dmain}>
@@ -131,7 +133,7 @@ function SelectOpt({
                         readOnly={readOnly}
                         open={dropdownOpen}
                         onDropdownVisibleChange={handleDropdownVisibleChange}
-                        status={!disabled && (required || required === undefined) ? status : false}
+                        status={isRendered && !disabled && (required || required === undefined) ? status : false}
                         style={{ width: '100%' }}
                         suffixIcon={
                             isRendered && (required || required === undefined) && status === 'error' ? (
@@ -141,7 +143,7 @@ function SelectOpt({
                             ) : null
                         }
                     />
-                    {!disabled && (required || required === undefined) && status === 'error' && (
+                    {isRendered &&!disabled && (required || required === undefined) && status === 'error' && (
                         <div className='text-xs text-red-500 pt-1 pl-2'>
                             {notValidMsg || notValid}
                         </div>
