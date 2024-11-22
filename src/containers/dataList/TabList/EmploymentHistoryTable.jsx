@@ -428,8 +428,8 @@ async function onClickDelete(e) {
             key: record.key,
             agency: record.agency,
             position: record.position,
-            startdate: dayjs(record.startdate),
-            enddate: dayjs(record.enddate),
+            startdate: record.startdate ? dayjs(record.startdate) : null,
+            enddate: record.enddate ? dayjs(record.enddate) : null,
         });
         setEditingKey(record.key);
     };
