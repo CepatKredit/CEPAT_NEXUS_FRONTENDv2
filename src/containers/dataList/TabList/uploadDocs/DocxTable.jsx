@@ -6,6 +6,7 @@ import { viewPDFView, viewModalUploadDocx } from '@hooks/ModalController';
 import ViewPdf from './pdfToolbar/ViewPdf';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { toDecrypt } from '@utils/Converter';
 
 function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uploader, FileType, LoanStatus }) {
 
@@ -321,6 +322,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                         queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
                         queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
                         queryClient.invalidateQueries({queryKey: ["ClientDataQuery"]}, {exact: true})
+                        queryClient.invalidateQueries(["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))], { exact: true });
                     })
                     .catch((error) => {
                         api['error']({
@@ -340,6 +342,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
             .then((result) => {
                 //WORKING
                 queryClient.invalidateQueries({queryKey: ["ClientDataQuery"]}, {exact: true})
+                queryClient.invalidateQueries(["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))], { exact: true });
             })
             .catch((error) => {
                 api['error']({
