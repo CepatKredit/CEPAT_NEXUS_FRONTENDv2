@@ -35,11 +35,66 @@ function TriggerFields(ROLE) {
     }
 
     //RELATIONSHIP TO RELATIONSHIP
-    function getRelationshipConv(RELATIONSHIP) {
+    function getRelationshipConv(RELATIONSHIP, GENDER) {
         console.log(RELATIONSHIP)
         switch (RELATIONSHIP) {
-            case 37:
+            case 14: //Aunt
+                return GENDER === 1 ? 17 : 16;
+            case 18: //brother
+                return 1 ? 18 : 19;
+            case 12: //bro-in-law/sis-in-law
+                return 12;
+            case 24: //common-in-law spouse
+                return 24;
+            case 15: //couse
+                return 15;
+            case 26: //daugther
+                return 20;
+            case 11: //Pa/MA in law
+                return 27;
+            case 9: //fiance
+                return 9;
+            case 1: //friend
+                return 1;
+            case 28: //grandchild
+                return 21;
+            case 21: //grandparent
+                return 28;
+            case 36: //grandparent-in-law
+                return 28;
+            case 35: //half-siblings
+                return 35;
+
+            case 29: //legal guardian
+                return 0;
+            case 2: //neighbor
                 return 2;
+            case 17: //nephew
+                return GENDER === 1 ? 13 : 14;
+            case 16: //niece
+                return GENDER === 1 ? 13 : 14;
+            case 39: //officemate
+                return 39;
+            case 20: //parent
+                return 0;
+            case 19: //sister
+                return 0;
+            case 38: //son
+                return 0;
+            case 27: //Son-in-law / Daughter-in-la
+                return 0;
+            case 37: //spouse
+                return 37;
+            case 31: //step child
+                return 0;
+            case 30: //Step-grandparent
+                return 28;
+            case 32: //Step-parent
+                return 0;
+            case 34: //Step-sibling
+                return 0;
+            case 13: //uncle
+                return GENDER === 1 ? 17 : 16
             default:
                 return 0;
         }
