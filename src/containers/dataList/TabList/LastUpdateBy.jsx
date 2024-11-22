@@ -293,9 +293,9 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         localStorage.setItem('activeTab', 'deduplication')
                         if((getUpdate.Status === 'SCREENING' || getUpdate.Status === 'FOR CALLBACK' || 
                                 getUpdate.Status === 'INTERVIEW')) {
-                            console.log("Dumaan ditoooooo")
-                            localStorage.setItem('SP', '/ckfi/ckfi/queue-bucket')
-                            navigate(`/${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
+                            localStorage.setItem('SP', '/ckfi/queue-bucket')
+                            console.log("INSIDE IF", `${localStorage.getItem('SP')}/${id}/${localStorage.getItem("activeTab")}`, "TAB", tabs);
+                            navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
                         } else {
                             navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
                         }

@@ -176,10 +176,10 @@ export function AuthProvider({ children }) {
                                 navigate('/ckfi/dashboard')
                             }
                             setCookie('SESSION_ID', result.data.eeyyy, { secure: true, sameSite: 'strict' });
-                            api[result.data.status]({
-                                message: result.data.message,
-                                description: result.data.description
-                            })
+                            // api[result.data.status]({
+                            //     message: result.data.message,
+                            //     description: result.data.description
+                            // })
                         }
                         else {
                             setAccessList(AccessPath)

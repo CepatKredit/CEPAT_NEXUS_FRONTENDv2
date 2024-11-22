@@ -134,6 +134,11 @@ function LoanApplicationTracker({ data }) {
   }, [getAppDetails.ofwresidences]);
 
   React.useEffect(() => {
+    console.log("STATUS", getAppDetails.loanStatus, "DATAA",getRemarks.data)
+    ClientData.refetch();
+  }, [])
+
+  React.useEffect(() => {
     if (skipRender.current) {
       setAppDetails((prevDetails) => {
         let updatedFields = {};

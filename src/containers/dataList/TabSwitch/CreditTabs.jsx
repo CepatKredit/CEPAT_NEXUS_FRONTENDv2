@@ -621,7 +621,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
         {
             label: <div className='flex flex-row'><MdOutlineUpdate style={{ fontSize: '20px', marginRight: 5 }} /><span>Update Status</span></div>,
             key: 'last-update-by',
-            children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} /></div>,
+            children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} setActiveKey={setActiveKey}/></div>,
         },
     ].filter(Boolean);
 

@@ -320,6 +320,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                         setModalStatus(false)
                         queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
                         queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
+                        queryClient.invalidateQueries({queryKey: ["ClientDataQuery"]}, {exact: true})
                     })
                     .catch((error) => {
                         api['error']({
@@ -338,6 +339,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
         await axios.post(`/UpdateLackOfDocs/${ClientId}/${Uploader}`)
             .then((result) => {
                 //WORKING
+                queryClient.invalidateQueries({queryKey: ["ClientDataQuery"]}, {exact: true})
             })
             .catch((error) => {
                 api['error']({

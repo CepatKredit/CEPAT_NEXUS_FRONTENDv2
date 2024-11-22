@@ -95,12 +95,6 @@ function SideNav() {
     return () => window.removeEventListener("resize", updateButtonPosition);
   }, []);
 
-  const [options, setOptions] = React.useState([
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-    { label: "Option 3", value: "option3" },
-  ]);
-
   return (
     <SessionTimeout>
       <Layout>
