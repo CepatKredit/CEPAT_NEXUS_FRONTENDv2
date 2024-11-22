@@ -345,7 +345,7 @@ function Charges({ LoanAppId, data, User, }) {
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 mt-2 justify-center items-center">
-                                <div className='w-[10rem]'>Grace Period</div>
+                                <div className='w-[10rem]'>Grace Period<span className="text-red-500">*</span></div>
                                 <div className='w-[15rem]'>
                                     <Radio.Group
                                         onChange={(e) => {
@@ -385,7 +385,7 @@ function Charges({ LoanAppId, data, User, }) {
                             </Space>
 
                             <Space className="w-full mb-2 mt-2 justify-center items-center">
-                                <div className='w-[10rem]'>Charges Type</div>
+                                <div className='w-[10rem]'>Charges Type<span className="text-red-500">*</span></div>
                                 <div className='w-[15rem]'>
                                     <Radio.Group
                                         onChange={(e) => {
