@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { debouncef } from "./Debounce";
 
 function TriggerFields(ROLE) {
     const [getRendered, setRendered] = React.useState(false)
     const skipRender = React.useRef(1); //use this
     const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
+    const delay_def = 500; //ms
+
+    const latestValueRef = React.useRef(null);
+
+    //DEBOUNCE UPDATE TO CONTEXT
+    const debouncedReceive = useMemo(
+        () =>
+            debouncef((field, value, delay) => {
+                if (latestValueRef.current !== value) {
+                    updateAppDetails({ name: field, value: value });
+                    latestValueRef.current = value; // Update `latestValueRef` after applying the update
+                }
+            }), 
+        [updateAppDetails]
+    );
+
+    React.useEffect(() => {
+        return () => {
+            debouncedReceive.cancel();
+        };
+    }, [debouncedReceive]);
 
     //MARITAL STATUS TO RELATIONSHIP
     function getRelationship(MARITAL_STATUS) {
@@ -36,7 +58,6 @@ function TriggerFields(ROLE) {
 
     //RELATIONSHIP TO RELATIONSHIP
     function getRelationshipConv(RELATIONSHIP, GENDER) {
-        console.log(RELATIONSHIP)
         switch (RELATIONSHIP) {
             case 14: //Aunt
                 return GENDER === 1 ? 17 : 16;
@@ -166,7 +187,21 @@ function TriggerFields(ROLE) {
         }
     }, [getAppDetails.ofwmstatus]);
 
+    const relationshipBen = React.useMemo(() => getAppDetails.RelationshipBen, [getAppDetails.RelationshipBen]);
+    React.useEffect(() => {
+        if (!getRendered) return;
+        if (relationshipBen !== '') {
+            console.log('TEST ', relationshipBen)
+            debouncedReceive('benrelationship', getRelationshipConv(getAppDetails.RelationshipBen, getAppDetails.ofwgender), delay_def); // Pass the custom delay
+        }
+    }, [relationshipBen])
+    
+
     /*
+
+     
+
+
         React.useEffect(() => {
             if (!getRendered) return;
     
@@ -207,7 +242,7 @@ function TriggerFields(ROLE) {
 
     React.useEffect(() => { //need to enhance this, temporary only(problem in dev but not in deployment)
         if (!getRendered) return;
-        if (getAppDetails.ofwjobtitle !== '' && !!getAppDetails.JobCategory ) {
+        if (getAppDetails.ofwjobtitle !== '' && !!getAppDetails.JobCategory) {
             updateAppDetails({ name: 'ofwjobtitle', value: '' });
         }
     }, [getAppDetails.JobCategory]);
@@ -319,5 +354,6 @@ function TriggerFields(ROLE) {
             }
         }
     }, [getAppDetails.loanIdCode])
+
 }
 export default TriggerFields;

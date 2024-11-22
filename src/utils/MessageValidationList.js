@@ -42,12 +42,11 @@ export const dateMessage = (keyName, state) => {
 
 export const inputMessage = (group, state, comp_name) => {
     switch (group) {
-        case 'Email':
-        case 'Default':
-        case 'Uppercase':
-        case 'Income':
-        case 'Rent_Amort':
-        case 'Allotment':
+        case 'Email'://
+        case 'Default'://
+        case 'Uppercase'://
+        case 'Income'://
+        case 'Rent_Amort'://
             if (comp_name && state === 'Invalid') {
                 return `Invalid ${comp_name}`;
             } else if (comp_name && state === 'Empty') {

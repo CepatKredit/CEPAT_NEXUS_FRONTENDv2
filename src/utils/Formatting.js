@@ -5,12 +5,12 @@ function FormatWithComma(num) { //Comma
     return parts.join('.');
 }
 
-export function FormatComma(num){
+export function FormatComma(num) {
     return FormatWithComma(num);
 }
 
 export function FormatCurrency(num) { //Comma and Decimal
-    const dec = parseFloat(num.replaceAll(',','')).toFixed(2)
+    const dec = parseFloat(num.replaceAll(',', '')).toFixed(2)
     const parts = dec.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas
     return parts.join('.');
@@ -48,10 +48,26 @@ export const Uppercase = (container) => {
 
 export const inputFormat = (format, input) => {
     if (format === 'Currency') {
-        const result =input? input.toString().replace(/[^0-9.]/g, '') : ''; //number only
+        const result = input ? input.toString().replace(/[^0-9.]/g, '') : ''; //number only
         const res = DecimalLimit(result); //decimal trigger
         return (FormatWithComma(res ? res.replaceAll(',', '') : '')); //format with comma(s)
     } else {
         return input;
+    }
+}
+
+export const CharacterLimit = (Group) => { //Decimal places will be disregard
+    switch (Group) {
+        case 'Rent_Amort':
+        case 'Income':
+            return 10; // till 99,999,999
+        case 'Number':
+            return 2;
+        case 'Email':
+        case 'Uppercase':
+        case 'Default':
+            return 80; // freehand Name/Email.. etc.
+        default:
+            return 250; //If not declared
     }
 }

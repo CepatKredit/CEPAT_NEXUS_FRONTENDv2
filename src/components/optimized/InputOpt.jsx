@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react'
 import { Input } from 'antd'
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { InputComponentHook } from '@hooks/ComponentHooks';
-import { FormatCurrency, inputFormat } from '@utils/Formatting';
 
 function InputOpt({
     rendered,
@@ -22,7 +20,7 @@ function InputOpt({
     group,
 }) {
 
-    const { MaxChar, inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled);
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled);
 
     const isValidationEnabled = !readOnly && required;
 
@@ -41,7 +39,7 @@ function InputOpt({
                     placeholder={placeHolder}
                     autoComplete="off"
                     style={{ width: '100%' }}
-                    maxLength={100}
+                    maxLength={100} //Initial
                     onBlur={handleBlur}
                     status={isValidationEnabled ? status : undefined}
                     suffix={

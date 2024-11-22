@@ -1,7 +1,7 @@
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
 import { debouncef } from '@utils/Debounce';
-import { DateFormat, FormatComma, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
+import { CharacterLimit, DateFormat, FormatComma, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
 import { dateMessage, inputMessage } from '@utils/MessageValidationList';
 import { checkAgeisValid, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
 import dayjs from 'dayjs';
@@ -22,12 +22,12 @@ function hookInputValid(KeyName, input, comp_name, format, group) {
     return { valid: true, value: Uppercase(input), errmsg: '' }; //Change format to uppercase
   } else if (group === 'Default' && input !== '') { //For No-case sensitive
     return { valid: true, value: input, errmsg: '' }; //As-is
-    //CURRENCY
+  //CURRENCY
   } else if (group === 'Income' && input !== '' && CheckIncomeValid(input)) { // 25,000.00
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
   } else if ((group === 'Rent_Amort' || group === 'Allotment') && input !== '' && CheckRentAmortValid(input)) { // !0
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
-    //NUMBER
+  //NUMBER
 
   } else { //error
     return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(group, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name) };
@@ -42,6 +42,8 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
   const [selected, setselected] = useState(value || '');
   const [debouncedInput, setDebouncedInput] = useState(selected);
 
+
+  //Fix tomorrow
   const debounceChange = useCallback((formattedValue) => {
     setDebouncedInput(formattedValue);
   }, []);
@@ -278,7 +280,6 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const latestValueRef = useRef(initialValue);
-  const [MaxChar, setMaxChar] = useState(250);
 
   const debouncedReceive = useMemo(
     () =>
@@ -308,8 +309,13 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   };
 
   const handleChange = (e) => {
-    const value = e;
-    const res = hookInputValid(KeyName, value, comp_name, format, group);
+    let value = e;
+    const maxchar = CharacterLimit(group);
+    if (maxchar && value.length > maxchar) {
+      value = value.slice(0, maxchar);
+    }
+
+    const res = hookInputValid(KeyName, value , comp_name, format, group);
     statusValidation(res.valid, res.value, res.errmsg, true, 800);
   }
 
@@ -330,18 +336,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   useEffect(() => {
     if(isDisabled || initialValue === ''){
         handleChange(initialValue);    
-    }
-    /*
-    const Decimal = initialValue? ['.'].includes(Uppercase(initialValue)) : false;
-    switch(group){
-      case 'Uppercase' :
-          setMaxChar(80);
-      case 'Currency':
-          setMaxChar(Decimal? 10 : 13);
-      default:
-          setMaxChar(250);
-  }
-          */
+    }    
   }, [initialValue])
 
 
@@ -362,7 +357,6 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   }, [debouncedReceive]);
 
   return {
-    MaxChar,
     inputValue,
     status,
     iconVisible,

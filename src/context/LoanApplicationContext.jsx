@@ -33,17 +33,31 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     }));
   };
 
-  const updateAppDetails = React.useCallback((e) => {
-    if (!e || !e.name) return;
+  const updateAppDetails = React.useCallback((updates) => {
+    if (!updates || (Array.isArray(updates) && updates.length === 0)) return;
+
     setAppDetails((prevDetails) => {
-      const newValue = e.value;
-      if (prevDetails[e.name] === newValue) {
-        return prevDetails;
+      let hasChanged = false;
+
+      // Normalize single update vs batch updates
+      const updatesArray = Array.isArray(updates) ? updates : [updates];
+
+      const newDetails = { ...prevDetails };
+
+      updatesArray.forEach(({ name, value }) => {
+        if (name && newDetails[name] !== value) {
+          newDetails[name] = value;
+          hasChanged = true;
+        }
+      });
+
+      if (hasChanged) {
+        console.log("Monitor Update Context:", updatesArray);
+        return newDetails;
       }
-      return {
-        ...prevDetails,
-        [e.name]: newValue,
-      };
+
+      // Return previous details if no changes occurred
+      return prevDetails;
     });
   }, []);
 
@@ -209,11 +223,11 @@ export const LoanApplicationProvider = ({ children, direct }) => {
 
   const SET_LOADING_INTERNAL = (POINTER, STATUS) => { setLoading({ ...getLoading, [POINTER]: STATUS }) }
   const GET_LOADING_INTERNAL = () => {
-    if (getLoading.Deduplication === true || getLoading.EmploymentHistoryTABLE === true || getLoading.LoanInfo === true || 
-      getLoading.NDIOFW === true || getLoading.KaiserOFW === true || getLoading.FinancialChecker === true || getLoading.UploadDocs === true || 
-      getLoading.BorrowerNDI === true || getLoading.ACBNDI === true || getLoading.StatusRemarks === true || getLoading.ReleaseFile === true || 
+    if (getLoading.Deduplication === true || getLoading.EmploymentHistoryTABLE === true || getLoading.LoanInfo === true ||
+      getLoading.NDIOFW === true || getLoading.KaiserOFW === true || getLoading.FinancialChecker === true || getLoading.UploadDocs === true ||
+      getLoading.BorrowerNDI === true || getLoading.ACBNDI === true || getLoading.StatusRemarks === true || getLoading.ReleaseFile === true ||
       getLoading.CharRefTABLE === true || getLoading.CreditHistoryTABLE === true || getLoading.AssetTABLE === true || getLoading.PropertiesTABLE === true ||
-    getLoading.DependentsTABLE === true) { return true }
+      getLoading.DependentsTABLE === true) { return true }
     else { return false }
     /* const LOAD_DATA = Object.values(getLoading).some(value => value === true)
      return LOAD_DATA*/
@@ -227,7 +241,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
   //     try {
   //       const result = await GET_LIST(`/getClientDataList/${toDecrypt(localStorage.getItem('SIDC'))}`);
   //       const data = result.list;
-        
+
   //       // Populate app details and old client data when data is fetched
   //       setAppDetails(prevDetails => ({
   //         ...prevDetails,
