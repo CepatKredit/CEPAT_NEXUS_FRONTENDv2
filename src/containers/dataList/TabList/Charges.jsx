@@ -34,150 +34,157 @@ function Charges({ LoanAppId, data, User, }) {
     }
 
 
-    React.useEffect(() => {
-        // Set temporary default values for PFR, CFRF, and InterestRate based on loanType and loanProd
-        if (
-            !getAppDetails?.PFR &&
-            !getAppDetails?.CFRF &&
-            !getAppDetails?.InterestRate &&
-            !getAppDetails?.DocuSign &&
-            !getAppDetails?.IBFTFee &&
-            !getAppDetails?.Notarial
-        ) {
-            let defaultPFR = '';
-            let defaultCFRF = '';
-            let defaultInterestRate = '';
-            let defaultDocuSign = 300;  // Default value for DocuSign
-            let defaultIBFTFee = 300;   // Default value for IBFTFee
-            let defaultNotarial = 300;
+        React.useEffect(() => {
 
-            // Default value for PFR based on loanType
-            if (data.loanType === 1) {
-                defaultPFR = 5.50; // Default PFR for loanType 1
-            } else if (data.loanType === 2) {
-                defaultPFR = 4.5; // Default PFR for loanType 2
+            if (!getAppDetails?.ApprvAmount) {
+                setAppDetails((prevState) => ({
+                    ...prevState,
+                    ApprvAmount: 0, // Default value for ApprvAmount
+                }));
+            }
+            // Set temporary default values for PFR, CFRF, and InterestRate based on loanType and loanProd
+            if (
+                !getAppDetails?.PFR &&
+                !getAppDetails?.CFRF &&
+                !getAppDetails?.InterestRate &&
+                !getAppDetails?.DocuSign &&
+                !getAppDetails?.IBFTFee &&
+                !getAppDetails?.Notarial
+            ) {
+                let defaultPFR = '';
+                let defaultCFRF = '';
+                let defaultInterestRate = '';
+                let defaultDocuSign = 300;  // Default value for DocuSign
+                let defaultIBFTFee = 300;   // Default value for IBFTFee
+                let defaultNotarial = 300;
+
+                // Default value for PFR based on loanType
+                if (data.loanType === 1) {
+                    defaultPFR = 5.50; // Default PFR for loanType 1
+                } else if (data.loanType === 2) {
+                    defaultPFR = 4.5; // Default PFR for loanType 2
+                }
+
+                // Additional condition for PFR if loanProd is DH or DHW
+                if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
+                    defaultPFR = 5.5; // Set PFR for DH or DHW loanProd
+                }
+
+
+                // Set default value for CFRF based on loanType
+                if (data.loanType === 1) {
+                    defaultCFRF = 2.50; // Default CFRF for loanType 1
+                } else if (data.loanType === 2) {
+                    defaultCFRF = 2; // Default CFRF for loanType 2
+                }
+
+                // Additional condition for CFRF if loanProd is DH or DHW
+                if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
+                    defaultCFRF = 3; // Set CFRF for DH or DHW loanProd
+                }
+
+                // Set default value for InterestRate if not already set
+                if (!getAppDetails.InterestRate) {
+                    defaultInterestRate = 2.50; // Default InterestRate
+                }
+
+
+                // Set PFR, CFRF, and InterestRate values in the state
+                setAppDetails((prevState) => ({
+                    ...prevState,
+                    PFR: defaultPFR, // Set temporary PFR value
+                    CFRF: defaultCFRF, // Set temporary CFRF value
+                    InterestRate: defaultInterestRate, // Set temporary InterestRate value
+                    DocuSign: defaultDocuSign,  // Set temporary DocuSign value
+                    IBFTFee: defaultIBFTFee,
+                    Notarial: defaultNotarial,
+                }));
             }
 
-            // Additional condition for PFR if loanProd is DH or DHW
-            if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
-                defaultPFR = 5.5; // Set PFR for DH or DHW loanProd
+            // Compute processingFee based on the approvedAmount and PFR
+            const approvedAmount = parseFloat(getAppDetails.ApprvAmount);
+            const PFR = getAppDetails.PFR; // Use PFR from the state or defaultPFR
+            const CFRF = getAppDetails?.CFRF;
+            const terms = parseFloat(getAppDetails.loanTerms);
+            const gracePeriod = getAppDetails.GracePeriod;
+            const others = parseFloat(getAppDetails.Others);
+            const chargetype = getAppDetails.ChargeType;
+
+            const processingFee = ((parseFloat(PFR) / 100) * approvedAmount).toFixed(2);
+            const crf = ((parseFloat(CFRF) / 100) * approvedAmount).toFixed(2);
+            const pndst = ((approvedAmount / 200) * (terms / 12) * 1.5).toFixed(2);
+
+
+
+
+            let serviceFee = '';
+            if (gracePeriod === 2) {
+                serviceFee = (terms * 25 + 100).toFixed(2);
+            } else if (gracePeriod === 1) {
+                serviceFee = ((terms - 1) * 25 + 100).toFixed(2);
+            } else {
+                serviceFee = '0.00'; // Default value if no valid grace period
+            }
+
+            const totalCharges = others > 0
+                ? (parseFloat(processingFee) + parseFloat(others)).toFixed(2)
+                : "0.00";
+
+            // Default value for PNValue calculation
+            let pnValue = 0;
+            const interestRate = parseFloat(getAppDetails.InterestRate) || 0;
+            const ibftFee = parseFloat(getAppDetails.IBFTFee);
+
+            if (chargetype === 1) {
+                pnValue = (approvedAmount * terms * (interestRate / 100)) + approvedAmount;
+            } else if (chargetype === 2) {
+                const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
+                pnValue = (baseAmount * terms * (interestRate / 100)) + baseAmount;
+            }
+
+            // Compute netProceeds based on ChargeType
+            let netProceeds = 0;
+
+            if (chargetype === 1) {
+                netProceeds = parseFloat(totalCharges) > 0
+                    ? approvedAmount + parseFloat(totalCharges)
+                    : approvedAmount; // If TotalCharges is 0, only use ApprovedAmount
+            } else if (chargetype === 2) {
+                netProceeds = parseFloat(others) > 0
+                    ? approvedAmount + parseFloat(others)
+                    : approvedAmount; // If Others is 0, only use ApprovedAmount
             }
 
 
-            // Set default value for CFRF based on loanType
-            if (data.loanType === 1) {
-                defaultCFRF = 2.50; // Default CFRF for loanType 1
-            } else if (data.loanType === 2) {
-                defaultCFRF = 2; // Default CFRF for loanType 2
-            }
-
-            // Additional condition for CFRF if loanProd is DH or DHW
-            if (['0303-DH', '0303-DHW'].includes(getAppDetails?.loanProd)) {
-                defaultCFRF = 3; // Set CFRF for DH or DHW loanProd
-            }
-
-            // Set default value for InterestRate if not already set
-            if (!getAppDetails.InterestRate) {
-                defaultInterestRate = 2.50; // Default InterestRate
+            // Computation for monthly amortization
+            let monthlyAmortization = 0;
+            if (chargetype === 1 && gracePeriod === 2) {
+                monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + (approvedAmount / terms);
+            } else if (chargetype === 1 && gracePeriod === 1) {
+                monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + (approvedAmount / terms) - 1;
+            } else if (chargetype === 2 && gracePeriod === 2) {
+                const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
+                monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + (baseAmount / terms);
+            } else if (chargetype === 2 && gracePeriod === 1) {
+                const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
+                monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + (baseAmount / terms) - 1;
             }
 
 
-            // Set PFR, CFRF, and InterestRate values in the state
+
+            // Optionally, you can set the processingFee in the state as well
             setAppDetails((prevState) => ({
                 ...prevState,
-                PFR: defaultPFR, // Set temporary PFR value
-                CFRF: defaultCFRF, // Set temporary CFRF value
-                InterestRate: defaultInterestRate, // Set temporary InterestRate value
-                DocuSign: defaultDocuSign,  // Set temporary DocuSign value
-                IBFTFee: defaultIBFTFee,
-                Notarial: defaultNotarial,
+                ProcessingFee: processingFee, // Set computed processingFee
+                CRF: crf,
+                PNDST: pndst,
+                ServiceFee: serviceFee,
+                TotalCharges: totalCharges,
+                PNValue: pnValue.toFixed(2),
+                NetProceeds: netProceeds.toFixed(2),
+                MonthlyAmortization: monthlyAmortization.toFixed(2),
             }));
-        }
-
-        // Compute processingFee based on the approvedAmount and PFR
-        const approvedAmount = parseFloat(getAppDetails.ApprvAmount);
-        const PFR = getAppDetails.PFR; // Use PFR from the state or defaultPFR
-        const CFRF = getAppDetails?.CFRF;
-        const terms = parseFloat(getAppDetails.loanTerms);
-        const gracePeriod = getAppDetails.GracePeriod;
-        const others = parseFloat(getAppDetails.Others);
-        const chargetype = getAppDetails.ChargeType;
-
-        const processingFee = ((parseFloat(PFR) / 100) * approvedAmount).toFixed(2);
-        const crf = ((parseFloat(CFRF) / 100) * approvedAmount).toFixed(2);
-        const pndst = ((approvedAmount / 200) * (terms / 12) * 1.5).toFixed(2);
-
-
-
-
-        let serviceFee = '';
-        if (gracePeriod === 2) {
-            serviceFee = (terms * 25 + 100).toFixed(2);
-        } else if (gracePeriod === 1) {
-            serviceFee = ((terms - 1) * 25 + 100).toFixed(2);
-        } else {
-            serviceFee = '0.00'; // Default value if no valid grace period
-        }
-
-        const totalCharges = others > 0
-            ? (parseFloat(processingFee) + parseFloat(others)).toFixed(2)
-            : "0.00";
-
-        // Default value for PNValue calculation
-        let pnValue = 0;
-        const interestRate = parseFloat(getAppDetails.InterestRate) || 0;
-        const ibftFee = parseFloat(getAppDetails.IBFTFee);
-
-        if (chargetype === 1) {
-            pnValue = (approvedAmount * terms * (interestRate / 100)) + approvedAmount;
-        } else if (chargetype === 2) {
-            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-            pnValue = (baseAmount * terms * (interestRate / 100)) + baseAmount;
-        }
-
-        // Compute netProceeds based on ChargeType
-        let netProceeds = 0;
-
-        if (chargetype === 1) {
-            netProceeds = parseFloat(totalCharges) > 0
-                ? approvedAmount + parseFloat(totalCharges)
-                : approvedAmount; // If TotalCharges is 0, only use ApprovedAmount
-        } else if (chargetype === 2) {
-            netProceeds = parseFloat(others) > 0
-                ? approvedAmount + parseFloat(others)
-                : approvedAmount; // If Others is 0, only use ApprovedAmount
-        }
-
-
-        // Computation for monthly amortization
-        let monthlyAmortization = 0;
-        if (chargetype === 1 && gracePeriod === 2) {
-            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + (approvedAmount / terms);
-        } else if (chargetype === 1 && gracePeriod === 1) {
-            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + (approvedAmount / terms) - 1;
-        } else if (chargetype === 2 && gracePeriod === 2) {
-            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + (baseAmount / terms);
-        } else if (chargetype === 2 && gracePeriod === 1) {
-            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + (baseAmount / terms) - 1;
-        }
-
-
-
-        // Optionally, you can set the processingFee in the state as well
-        setAppDetails((prevState) => ({
-            ...prevState,
-            ProcessingFee: processingFee, // Set computed processingFee
-            CRF: crf,
-            PNDST: pndst,
-            ServiceFee: serviceFee,
-            TotalCharges: totalCharges,
-            PNValue: pnValue.toFixed(2),
-            NetProceeds: netProceeds.toFixed(2),
-            MonthlyAmortization: monthlyAmortization.toFixed(2),
-        }));
-    }, [data.loanType, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.Terms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
+        }, [data.loanType, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.Terms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
 
 
 
@@ -477,7 +484,7 @@ function Charges({ LoanAppId, data, User, }) {
                                 <div className='w-[10rem]'>Others</div>
                                 <div className='w-[15rem]'>
                                     <Input
-                                        value={parseFloat(getAppDetails.Others).toFixed(2)}
+                                        value={getAppDetails.Others}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             const formattedValue = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
