@@ -99,7 +99,7 @@ export function AuthProvider({ children }) {
             }
         }
     })
-
+    let tokenGenerated = false;
     const PasswordMatch = useMutation({
         mutationFn: async (navigate) => {
             await axios.post('/verifiedAccount', getAccount)
@@ -139,8 +139,9 @@ export function AuthProvider({ children }) {
                         })
 
                         if (result.data.department === 'LC') {
+                            //expiration nakaseconds for testing
                             // axios.post(
-                            //   `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
+                            //   `verify/access-token/${result.data.eeyyy}?expirationInHours=20`
                             // )
                             // .then(function (response) {
                             //     const accessToken = response.data.accessToken;
@@ -156,17 +157,52 @@ export function AuthProvider({ children }) {
                             //     });
                           
                             //     // Alert before the cookie expires (5 seconds before expiration for demonstration)
-                            //     // const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
-                            //     // const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
+                            //     const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
+                            //     const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
                           
-                            //     // setTimeout(() => {
-                            //     //   alert("Your session is about to expire. Please refresh or re-login.");
-                            //     // }, alertTimeout);
+                            //     setTimeout(() => {
+                            //       alert("Your session is about to expire. Please refresh or re-login.");
+                            //     }, alertTimeout);
                             // })
                             // .catch(function (error) {
                             //   console.error(error);
                             //   throw new Error("Token generation failed.");
                             // });
+                            
+                            //NEW UPDATE SA REFRESH TOKENS 11/25/2024 NICO
+                            // const generateTokens = async () => {
+                            //     try {
+
+                            //         if (tokenGenerated) {
+                            //             console.log('generateTokens already ran. Skipping...');
+                            //             return; // Prevent repeated execution
+                            //         }
+                                 
+                            //         const response = await axios.post(`verify/access-token/${result.data.eeyyy}?expirationInHours=20`);
+                            //         const { accessToken, refreshToken } = response.data;
+                            //         // const refreshExpiresIn = 20
+    
+                            //         // Store tokens
+                            //         localStorage.setItem('ACCESS TOKEN', accessToken);
+                            //         setCookie('REFRESH TOKEN', refreshToken, {
+                            //             secure: true,
+                            //             sameSite: 'strict',
+                            //             maxAge: 20 // Expiry in seconds for testing
+                            //         });
+                            //         tokenGenerated = true;
+                            //         console.log('Tokens generated successfully.');
+                            
+    
+                            //         // Automatically refresh tokens 5 seconds before expiration
+                            //         const refreshBuffer = 5; // Buffer time before expiry in seconds
+                            //         setTimeout(generateTokens, (20 - refreshBuffer) * 1000);
+                            //     } catch (error) {
+                            //         console.error('Token generation failed:', error);
+                            //     }
+                            // };
+    
+                            // generateTokens();
+
                             localStorage.setItem('UTK', result.data.eeyyy);
                             localStorage.setItem('UPTH', toEncrypt(AccessPath));
                             localStorage.setItem('SP', '/ckfi/dashboard')
