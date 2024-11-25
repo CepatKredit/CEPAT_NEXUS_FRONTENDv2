@@ -4,7 +4,7 @@ import LabeledInput from '@components/marketing/LabeledInput'
 import ResponsiveTable from '@components/validation/ResponsiveTable'
 import StatusRemarks from './StatusRemarks';
 import SectionHeader from '@components/validation/SectionHeader'
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { mmddyy, toDecrypt } from '@utils/Converter';
 import dayjs from 'dayjs';
@@ -121,59 +121,65 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
     })
 
     async function getKaiser() {
-        const data1 = {
-            FullName: `${data.ofwfname} ${data.ofwlname}`,
-            IsOfw: 1,
-            LoanAppId: data.loanIdCode,
-            ModUser: USRNAME,
-        }
-        const data2 = {
-            FullName: `${data.benfname} ${data.benlname}`,
-            IsOfw: 2,
-            LoanAppId: data.loanIdCode,
-            ModUser: USRNAME,
-        }
-        const data3 = {
-            FullName: `${data.coborrowfname} ${data.coborrowlname}`,
-            IsOfw: 3,
-            LoanAppId: data.loanIdCode,
-            ModUser: USRNAME,
-        }
-
-        const requests = [
-            axios.post(`/getKaiser/`, data1),
-            axios.post(`/getKaiser/`, data2),
-            axios.post(`/getKaiser/`, data3)
-        ];
-        try {
-            const results = await Promise.allSettled(requests);
-            console.log(results[0], results[1], results[2])
-            const ofwData = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data.list : [];
-            const beneficiaryData = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data.list : [];
-            const coborrowData = results[2].status === 'fulfilled' && !results[2].value.error ? results[2].value.data.list : [];
-            console.log('Done Fetching Kaiser API...')
-            set(prevState => ({
-                ...prevState,
-                ofw: ofwData,
-                beneficiary: beneficiaryData,
-                coborrow: coborrowData,
-            }));
-            settrigger(false);
-            SET_LOADING_INTERNAL('KaiserOFW', false);
-            return {
-                ofw: ofwData,
-                beneficiary: beneficiaryData,
-                coborrow: coborrowData,
-            };
-        } catch (error) {
-            console.log(error)
-            return {
-                ofw: [],
-                beneficiary: [],
-                coborrow: [],
-            };
-        }
+       onClickKaiser.mutate();
     }
+
+    const onClickKaiser = useMutation({
+        mutationFn: async () => {
+            const data1 = {
+                FullName: `${data.ofwfname} ${data.ofwlname}`,
+                IsOfw: 1,
+                LoanAppId: data.loanIdCode,
+                ModUser: USRNAME,
+            }
+            const data2 = {
+                FullName: `${data.benfname} ${data.benlname}`,
+                IsOfw: 2,
+                LoanAppId: data.loanIdCode,
+                ModUser: USRNAME,
+            }
+            const data3 = {
+                FullName: `${data.coborrowfname} ${data.coborrowlname}`,
+                IsOfw: 3,
+                LoanAppId: data.loanIdCode,
+                ModUser: USRNAME,
+            }
+    
+            const requests = [
+                axios.post(`/getKaiser/`, data1),
+                axios.post(`/getKaiser/`, data2),
+                axios.post(`/getKaiser/`, data3)
+            ];
+            try {
+                const results = await Promise.allSettled(requests);
+                console.log(results[0], results[1], results[2])
+                const ofwData = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data.list : [];
+                const beneficiaryData = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data.list : [];
+                const coborrowData = results[2].status === 'fulfilled' && !results[2].value.error ? results[2].value.data.list : [];
+                console.log('Done Fetching Kaiser API...')
+                set(prevState => ({
+                    ...prevState,
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                }));
+                settrigger(false);
+                SET_LOADING_INTERNAL('KaiserOFW', false);
+                return {
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                };
+            } catch (error) {
+                console.log(error)
+                return {
+                    ofw: [],
+                    beneficiary: [],
+                    coborrow: [],
+                };
+            }
+        }
+    })
 
     function genKaiser() {
         if (data.loanIdCode !== '') {
@@ -196,7 +202,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
             children: (<>
                 <center>
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                        <Button  size='large' className='mb-2 bg-[#3b0764]' type='primary' onClick={() => { genKaiser() }}  >Load Kaiser</Button>
+                        <Button  loading={onClickKaiser.isPending} size='large' className='mb-2 bg-[#3b0764]' type='primary' onClick={() => { genKaiser() }}  >Load Kaiser</Button>
                     </ConfigProvider>
                 </center>
                 {
