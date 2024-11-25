@@ -54,7 +54,6 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
 
     React.useEffect(() => {
         SET_LOADING_INTERNAL('UploadDocs', true)
-        DocListQuery.refetch();
         FileListQuery.refetch();
     }, [getAppDetails]);
 
@@ -232,7 +231,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 }
                 <div className={classname}>
                     <div className="mr-[.5rem]">
-                        <Collapse items={DocListQuery.isFetched && FileListQuery.isFetched ? CollapseList() : null} />
+                        <Collapse items={CollapseList()} />
                     </div>
                 </div>
             </div>

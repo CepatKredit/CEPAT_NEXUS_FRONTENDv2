@@ -120,7 +120,7 @@ export default function SessionTimeout({ children }) {
     ///////////END OF THE CODE
 
 ///tunay
-    React.useEffect(() => {
+    /*React.useEffect(() => {
         if (ExemptedRoutes.includes(location.pathname)) {
             clearTimeout(timeoutRef.current);
             return;
@@ -152,7 +152,7 @@ export default function SessionTimeout({ children }) {
             window.removeEventListener('click', handleWindowEvents);
             window.removeEventListener('scroll', handleWindowEvents);
         }
-    }, [navigate, location.pathname])
+    }, [navigate, location.pathname])*/
 
     return children
 }
