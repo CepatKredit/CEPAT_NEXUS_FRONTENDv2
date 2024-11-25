@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { useDataContainer } from '@containers/PreLoad';
+import { useDataContainer } from '@context/PreLoad';
+import { CHECK_TILE_NAME } from '@utils/Conditions';
 import { Card, Tooltip } from 'antd'
 import { useNavigate } from "react-router-dom";
 import { motion } from 'framer-motion'
@@ -30,283 +31,267 @@ import { MdEditDocument } from "react-icons/md";
 import { MdCancel } from "react-icons/md";
 import { FaThumbsDown } from "react-icons/fa";
 import { BiRedo } from 'react-icons/bi';
+import { BiSolidCreditCardAlt } from "react-icons/bi";
+import { AiOutlineRollback } from "react-icons/ai";
+import { MdOutlineAssignmentReturn } from "react-icons/md";
+import { MdOutlineAssessment } from "react-icons/md";
+import { GiReceiveMoney } from "react-icons/gi";
+import { MdOutlineConfirmationNumber } from "react-icons/md";
+import { MdApproval } from "react-icons/md";
+import { AiOutlineSignature } from "react-icons/ai";
+import { TbArrowBackUpDouble } from "react-icons/tb";
+import { LuDatabaseBackup } from "react-icons/lu";
+
 
 function MiniAnimatedCard({ path }) {
 
     const { GET_DATA_COUNTER } = useDataContainer()
-    const colorList = ['#283618', '#29274c', '#FF8C00', '#3bceac', '#532b88',
-        '#DB7093', '#8B4513', '#006d77', '#B8860B', '#008B8B',
-        '#293241', '#00a6fb', '#003566', '#4a4e69', '#0f4c5c',
-        '#3d5a80', '#7B68EE', '#2d6a4f', '#6d597a', '#2f2f2f',
-        '#008080', '#20B2AA', '#90EE90', '#FFD700', '#228B22',
-        '#32CD32', '#F08080', '#2E8B57', '#006400', '#FF7F50',
-        '#1c1c1c', '#FF0000', '#708090']
+    const colorList = ['#283618', 
+        '#29274c', '#FF8C00', '#3bceac', '#532b88','#DB7093',
+        '#8B4513', '#006d77', '#ff5400', '#003566', 
+        '#B8860B', '#b5179e', '#4a4e69', '#80b918','#3d5a80',
+        '#7B68EE', '#2d6a4f', '#6d597a', '#720026','#ff0054',
+        '#20B2AA', '#2196f3', '#FFD700', '#d4af37','#32CD32',
+        '#c77dff', '#cd5c5c', '#006400', '#FF7F50','#1c1c1c',
+        '#FF0000', '#708090']
     const navigate = useNavigate()
     function Data() {
         if (path.loc === '/ckfi/under-marketing') {
             let value = {
                 icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[0],
-                count: GET_DATA_COUNTER[28].statusCount.toString() //UNDER MARKETING
+                color: colorList[0]
             }
             return value
         }
         else if (path.loc === '/ckfi/received') {
             let value = {
                 icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[1],
-                count: GET_DATA_COUNTER[27].statusCount.toString()
+                color: colorList[1]
             }
             return value
         }
         else if (path.loc === '/ckfi/lack-of-documents/complied') {
             let value = {
                 icon: <FaFileCircleQuestion style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[2],
-                count: GET_DATA_COUNTER[26].statusCount.toString()
+                color: colorList[2]
             }
             return value
         }
         else if (path.loc === '/ckfi/walk-in') {
             let value = {
                 icon: <FaPersonWalking style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[3],
-                count: GET_DATA_COUNTER[25].statusCount.toString()
+                color: colorList[3]
             }
             return value
         }
-        else if (path.loc === '/ckfi/for-initial-interview') {
+        else if (path.loc === '/ckfi/initial-interview') {
             let value = {
                 icon: <FaPersonWalkingDashedLineArrowRight style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[4],
-                count: GET_DATA_COUNTER[24].statusCount.toString()
+                color: colorList[4]
             }
             return value
         }
-        else if (path.loc === '/ckfi/reassessed-to-marketing') {
+        else if (path.loc === '/ckfi/reassessed/marketing') {
             let value = {
-                icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[5],
-                count: GET_DATA_COUNTER[28].statusCount.toString() //REASSESSED TO MARKETING
+                icon: <TbArrowBackUpDouble  style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[5]
             }
             return value
         }
         else if (path.loc === '/ckfi/lack-of-documents') {
             let value = {
                 icon: <FaFileCircleExclamation style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[6],
-                count: GET_DATA_COUNTER[22].statusCount.toString()
+                color: colorList[6]
             }
             return value
         }
-        else if (path.loc === '/ckfi/credit-assessment-list') {
+        else if (path.loc === '/ckfi/credit-list') {
             let value = {
                 icon: <FaRegCreditCard style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[7],
-                count: GET_DATA_COUNTER[23].statusCount.toString() //CREDIT ASSESSMENT MIX SPECIAL AND NORMAL
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/credit-assessment/special-lane') {
-            let value = {
-                icon: <MdLabelImportant style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[8],
-                count: GET_DATA_COUNTER[23].statusCount.toString() //CREDIT ASSESSMENT SPECIAL
-            } 
-            return value
-        }
-        else if (path.loc === '/ckfi/credit-assessment') {
-            let value = {
-                icon: <RxEnter style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[9],
-                count: GET_DATA_COUNTER[23].statusCount.toString() //CREDIT ASSESSMENT NORMAL
+                color: colorList[7]
             }
             return value
         }
         else if (path.loc === '/ckfi/under-credit') {
             let value = {
-                icon: <FaRegCreditCard style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[10],
-                count: GET_DATA_COUNTER[23].statusCount.toString() //UNDER CREDIT
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/queue-bucket') {
-            let value = {
-                icon: <HiMiniQueueList style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[11],
-                count: GET_DATA_COUNTER[28].statusCount.toString() // QUEUE BUCKET
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/for-verification') {
-            let value = {
-                icon: <FaFileShield style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[12],
-                count: GET_DATA_COUNTER[5].statusCount.toString()
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/pre-check') {
-            let value = {
-                icon: <FaFileSignature style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[13],
-                count: GET_DATA_COUNTER[6].statusCount.toString()
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/return/credit-associate') {
-            let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[14],
-                count: GET_DATA_COUNTER[3].statusCount.toString()
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/return/credit-officer') {
-            let value = {
-                icon: <MdOutlineSevereCold style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[15],
-                count: GET_DATA_COUNTER[9].statusCount.toString()
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/reassessed/credit-officer') {
-            let value = {
-                icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[16],
-                count: GET_DATA_COUNTER[10].statusCount.toString()
-            }
-            return value
-        }
-        else if (path.loc === '/ckfi/for-approval') {
-            let value = {
-                icon: <IoMdCheckmarkCircleOutline style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[17],
-                count: GET_DATA_COUNTER[7].statusCount.toString()
+                icon: <BiSolidCreditCardAlt style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[10]
             }
             return value
         }
         else if (path.loc === '/ckfi/approved') {
             let value = {
                 icon: <RxExit style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[18],
-                count: GET_DATA_COUNTER[11].statusCount.toString()
+                color: colorList[11]
             }
             return value
         }
-        else if (path.loc === '/ckfi/under-loan-processor') {
+        else if (path.loc === '/ckfi/special-lane') {
             let value = {
-                icon: <LuClipboardCheck style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[19],
-                count: GET_DATA_COUNTER[12].statusCount.toString() // UNDER LOAN PROCESSOR
+                icon: <MdLabelImportant style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[8]
             }
             return value
         }
-        else if (path.loc === '/ckfi/for-docusign') {
+        else if (path.loc === '/ckfi/assessement/credit') {
             let value = {
-                icon: <MdEditDocument style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[20],
-                count: GET_DATA_COUNTER[13].statusCount.toString()
+                icon: <MdOutlineAssessment style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[9]
             }
             return value
         }
-        else if (path.loc === '/ckfi/ok/for-docusign') {
+        else if (path.loc === '/ckfi/queue-bucket') {
             let value = {
-                icon: <MdEditDocument style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[21],
-                count: GET_DATA_COUNTER[14].statusCount.toString()
+                icon: <HiMiniQueueList style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[12]
             }
             return value
         }
-        else if (path.loc === '/ckfi/tagged-for-release') {
+        else if (path.loc === '/ckfi/for-verification') {
             let value = {
-                icon: <FaBoxOpen style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[22],
-                count: GET_DATA_COUNTER[15].statusCount.toString()
+                icon: <FaFileShield style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[13]
+            }
+            return value
+        }
+        else if (path.loc === '/ckfi/pre-check') {
+            let value = {
+                icon: <FaFileSignature style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[14]
+            }
+            return value
+        }
+
+        //RETURNED FROM MARKETING
+        else if (path.loc === '/ckfi/returned/marketing') {
+            let value = {
+                icon: <MdOutlineAssignmentReturn  style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[15]
+            }
+            return value
+        }
+
+        else if (path.loc === '/ckfi/returned/credit-associate') {
+            let value = {
+                icon: <AiOutlineRollback style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[16]
+            }
+            return value
+        }
+
+        //REASSESSED TO CREDIT ASSOCIATE
+        else if (path.loc === '/ckfi/reassessed/credit-associate') {
+            let value = {
+                icon: <TbFileIsr style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[17]
+            }
+            return value
+        }
+
+        else if (path.loc === '/ckfi/returned/credit-officer') {
+            let value = {
+                icon: <MdOutlineSevereCold style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[18]
+            }
+            return value
+        }
+        else if (path.loc === '/ckfi/reassessed/credit-officer') {
+            let value = {
+                icon: <LuDatabaseBackup style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[19]
+            }
+            return value
+        }
+        else if (path.loc === '/ckfi/for-approval') {
+            let value = {
+                icon: <MdApproval style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[20]
             }
             return value
         }
         else if (path.loc === '/ckfi/on-waiver') {
             let value = {
-                icon: <FaFileSignature style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[23],
-                count: GET_DATA_COUNTER[17].statusCount.toString()
+                icon: <AiOutlineSignature  style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[21]
+            }
+            return value
+        }
+        else if (path.loc === '/ckfi/under-lp') {
+            let value = {
+                icon: <GiReceiveMoney  style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[22]
             }
             return value
         }
         else if (path.loc === '/ckfi/confirmation') {
             let value = {
-                icon: <GiConfirmed style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[24],
-                count: GET_DATA_COUNTER[18].statusCount.toString()
+                icon: <MdOutlineConfirmationNumber style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[23]
             }
             return value
         }
         else if (path.loc === '/ckfi/confirmed') {
             let value = {
                 icon: <GiConfirmed style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[25],
-                count: GET_DATA_COUNTER[19].statusCount.toString()
+                color: colorList[24]
             }
             return value
         }
-        else if (path.loc === '/ckfi/undecided') {
+        else if (path.loc === '/ckfi/for-docusign') {
             let value = {
-                icon: <BsPersonFillExclamation style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[26],
-                count: GET_DATA_COUNTER[20].statusCount.toString()
+                icon: <MdEditDocument style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[25]
             }
             return value
         }
         else if (path.loc === '/ckfi/for-disbursement') {
             let value = {
                 icon: <FaRegMoneyBillAlt style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[27],
-                count: GET_DATA_COUNTER[16].statusCount.toString()
+                color: colorList[26]
             }
             return value
         }
         else if (path.loc === '/ckfi/released') {
             let value = {
                 icon: <LuFileBox style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[28],
-                count: GET_DATA_COUNTER[21].statusCount.toString()
+                color: colorList[27]
             }
             return value
         }
-        else if (path.loc === '/ckfi/return/loan-processor') {
+        else if (path.loc === '/ckfi/undecided') {
             let value = {
-                icon: <PiKeyReturnBold style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[29],
-                count: GET_DATA_COUNTER[12].statusCount.toString()
+                icon: <BsPersonFillExclamation style={{ fontSize: '40px', color: '#ffffff' }} />,
+                color: colorList[28]
             }
             return value
         }
         else if (path.loc === '/ckfi/cancelled') {
             let value = {
                 icon: <MdCancel style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[30],
-                count: GET_DATA_COUNTER[1].statusCount.toString()
+                color: colorList[29]
             }
             return value
         }
         else if (path.loc === '/ckfi/declined') {
             let value = {
                 icon: <FaThumbsDown style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[31],
-                count: GET_DATA_COUNTER[0].statusCount.toString()
+                color: colorList[30]
             }
             return value
         }
         else {
             let value = {
                 icon: <BiRedo style={{ fontSize: '40px', color: '#ffffff' }} />,
-                color: colorList[32],
-                count: GET_DATA_COUNTER[29].statusCount.toString()
+                color: colorList[31]
             }
             return value
         }
+    }
+
+    function LOAD_COUNT() {
+        let count = '0'
+        GET_DATA_COUNTER?.filter((x) => x.status.includes(CHECK_TILE_NAME(path.loc))).map((x) => { count = x.statusCount.toString(); })
+        return count
     }
 
     return (
@@ -331,7 +316,7 @@ function MiniAnimatedCard({ path }) {
                         </div>
                     </div>
                     <div className='flex flex-col absolute text-right bottom-2 right-5'>
-                        <p className='text-lg text-white font-bold'>{Data().count}</p>
+                        <p className='text-lg text-white font-bold'>{LOAD_COUNT()}</p>
                         <p className='pt-[5px] text-[8px] text-white font-bold'>{path.label}</p>
                     </div>
                 </Card>
