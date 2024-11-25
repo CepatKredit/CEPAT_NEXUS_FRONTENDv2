@@ -48,7 +48,7 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
     const fetchRelativesAndUpdateCount = async () => {
         if (BorrowerId) {
             try {
-                const result = await GET_LIST(`/getRelatives/${BorrowerId}`);
+                const result = await GET_LIST(`/GET/G35R/${BorrowerId}`);
                 if (result?.list) {
                     const relativesCount = result.list.length;
                     setRelativesCount(relativesCount);

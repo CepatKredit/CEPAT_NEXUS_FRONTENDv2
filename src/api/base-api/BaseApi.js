@@ -49,7 +49,7 @@ export async function POST_DATA(path, data) {
 
 export async function GetBranchCode(data) {
     return new Promise((resolve, reject) => {
-        axios.get('/getBranchList')
+        axios.get('/GET/G10BL')
             .then((res) => {
                 res.data.list?.map((x) => {
                     if (x.code === data || x.name === data) { resolve(x.code) }
@@ -63,7 +63,7 @@ export async function GetBranchCode(data) {
 
 export async function GetPurposeId(data) {
     return new Promise((resolve, reject) => {
-        axios.get('/getLoanPurpose')
+        axios.get('/GET/G20LP')
             .then((res) => {
                 res.data.list?.map((x) => {
                     if (x.id === data || x.purpose === data) { resolve(x.id) }
@@ -77,7 +77,7 @@ export async function GetPurposeId(data) {
 
 export async function GetLoanProduct(data) {
     return new Promise((resolve, reject) => {
-        axios.get('/getListLoanProduct')
+        axios.get('/GET/G19LLP')
             .then((res) => {
                 res.data.list?.map((x) => {
                     if (x.code === data || x.description === data) { resolve(x.description) }
@@ -91,7 +91,7 @@ export async function GetLoanProduct(data) {
 
 export async function GetLoanPurpose(data) {
     return new Promise((resolve, reject) => {
-        axios.get('/getLoanPurpose')
+        axios.get('/GET/G20LP')
             .then((res) => {
                 res.data.list?.map((x) => {
                     if (x.id === data || x.purpose === data) { resolve(x.purpose) }

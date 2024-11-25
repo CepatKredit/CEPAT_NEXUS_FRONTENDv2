@@ -12,7 +12,7 @@ function LabeledSelect_Suffix({rendered, showSearch, required, placeHolder, labe
     const { data: IDtypeOption } = useQuery({
         queryKey: ['getValidIdSelect'],
         queryFn: async () => {
-            const result = await GET_LIST('/OFWDetails/getIDtype');
+            const result = await GET_LIST('/GET/G27IT');
             return result.list;
         },
         refetchInterval: 30 * 1000,

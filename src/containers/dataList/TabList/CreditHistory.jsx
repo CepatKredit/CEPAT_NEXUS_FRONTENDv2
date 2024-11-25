@@ -44,7 +44,7 @@ function OtherLoanHistory({ data, User }) {
             const sidcDecrypted = toDecrypt(localStorage.getItem('SIDC'));
             //  console.log("Decrypted SIDC:", sidcDecrypted);
             try {
-                const result = await axios.get(`/getOtherLoanHistory/${toDecrypt(localStorage.getItem('SIDC'))}`);
+                const result = await axios.get(`/GET/G9OLH/${toDecrypt(localStorage.getItem('SIDC'))}`);
                 // console.log("Other Loan HIstory:", result);
                 let dataList = [{
                     key: 0,
@@ -111,7 +111,7 @@ function OtherLoanHistory({ data, User }) {
                 RecUser: jwtDecode(token).USRID
             }
             //   console.log(data)
-            await axios.post('/addLoanHistory', data)
+            await axios.post('/POST/P55ALH', data)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,
@@ -159,7 +159,7 @@ function OtherLoanHistory({ data, User }) {
                     ModUser: jwtDecode(token).USRID
                 };
                 //  console.log('Data to be sent to the server:', data);
-                const result = await axios.post('/editOtherLoanHistory', data);
+                const result = await axios.post('/POST/P56UOLH', data);
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description,
@@ -199,7 +199,7 @@ function OtherLoanHistory({ data, User }) {
     const onClickDeleteData = useMutation({
         mutationFn: async (e) => {
             try {
-                const result = await axios.post(`/DeleteOtherLoanHistory/${e}`);
+                const result = await axios.post(`/POST/P57DOLH/${e}`);
                 queryClient.invalidateQueries({ queryKey: ['getOtherLoanHistory'] }, { exact: true });
                 api[result.data.status]({
                     message: result.data.message,

@@ -20,7 +20,7 @@ export const BarangayList = (type, data) => {
       queryKey: ['getBarangayFromMunCode', munCode],
       queryFn: async () => {
           if (!munCode) return [];
-          const result = await GET_LIST(`/getbarangaylist/${munCode}`);
+          const result = await GET_LIST(`/GET/G7BL/${munCode}`);
           setBarangayList(result.list);
           return result.list;
       },

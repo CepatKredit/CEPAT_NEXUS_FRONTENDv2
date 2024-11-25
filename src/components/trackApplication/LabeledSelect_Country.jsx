@@ -27,7 +27,7 @@ const { updateAppDetails } = React.useContext(LoanApplicationContext)
   const getCountrySelect = useQuery({
     queryKey: ["getCountrySelects"],
     queryFn: async () => {
-      const result = await GET_LIST("/OFWDetails/getCountry");
+      const result = await GET_LIST("/GET/G26C");
       return result.list;
     },
     refetchInterval: 30 * 1000,

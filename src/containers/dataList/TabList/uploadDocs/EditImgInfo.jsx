@@ -71,7 +71,7 @@ function EditImgInfo({ data, FileListName, Display  }) {
             PRODID: 'FILE'
         }
 
-        await axios.post('/updateFileStatus', dataContainer)
+        await axios.post('/POST/P68FS', dataContainer)
             .then((result) => {
                 setModalStatus(false)
                 queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })

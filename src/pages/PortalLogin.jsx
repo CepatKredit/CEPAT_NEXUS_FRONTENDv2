@@ -281,7 +281,7 @@ function PortalLogin() {
 
   async function onClickCancelOTP() {
     await axios
-      .post(`/cancelOtp/${getAccount.Username}`)
+      .post(`/POST/P89CO/${getAccount.Username}`)
       .then((result) => {
         setOTPStatus(false);
       })

@@ -7,7 +7,7 @@ export function LoanPurposeList() {
   useQuery({
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanPurpose");
+      const result = await GET_LIST("/GET/G20LP");
       setLoanPurpose(result.list)
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),

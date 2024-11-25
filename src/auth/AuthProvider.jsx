@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
                 })
             }
             else {
-                await axios.post('/login', getAccount)
+                await axios.post('/POST/P85L', getAccount)
                     .then(result => {
                         if (result.data.message === 'Account not found' ||
                             result.data.message === 'Account disabled' ||
@@ -102,7 +102,7 @@ export function AuthProvider({ children }) {
     let tokenGenerated = false;
     const PasswordMatch = useMutation({
         mutationFn: async (navigate) => {
-            await axios.post('/verifiedAccount', getAccount)
+            await axios.post('/POST/P87VA', getAccount)
                 .then((result) => {
                     if (result.data.status === 'warning') {
                         api[result.data.status]({
@@ -234,7 +234,7 @@ export function AuthProvider({ children }) {
 
     const PasswordNotMatch = useMutation({
         mutationFn: async () => {
-            await axios.post('/passwordAttempt', getAccount)
+            await axios.post('/POST/P86PA', getAccount)
                 .then((result) => {
                     api[result.data.status]({
                         message: result.data.message,

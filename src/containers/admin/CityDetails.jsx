@@ -53,7 +53,7 @@ function CityDetails({ option }) {
     const provinceList = useQuery({
         queryKey: ['ProvinceListQuery'],
         queryFn: async () => {
-            const result = await axios.get('/getProvinceList');
+            const result = await axios.get('/GET/G23PL');
             return result.data.list;
         },
         refetchInterval: (data) => {
@@ -75,7 +75,7 @@ function CityDetails({ option }) {
         };
 
         try {
-            const result = await axios.post('/addMunicipality', data);
+            const result = await axios.post('/POST/P72AM', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -112,7 +112,7 @@ function CityDetails({ option }) {
         };
 
         try {
-            const result = await axios.post('/editMunicipality', data);
+            const result = await axios.post('/POST/P73UM', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description

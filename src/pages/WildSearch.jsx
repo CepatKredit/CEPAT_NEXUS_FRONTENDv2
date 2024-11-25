@@ -44,7 +44,7 @@ function WildSearch() {
                             localStorage.setItem("activeTab", "deduplication");
                             navigate(`${localStorage.getItem("SP")}/${loanAppCode}/deduplication`);
                             queryClient.invalidateQueries({
-                                queryKey: ["getRemarks", loanAppCode],
+                                queryKey: ["GET/G37R", loanAppCode],
                                 exact: true,
                             });
                         }}

@@ -12,7 +12,7 @@ function SelectIncome({ data, event, excludeItems }) {
     const NDIIncomeListQuery = useQuery({
         queryKey: ['NDIIncomeList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getNDI/${parseInt(23)}`);
+            const result = await GET_LIST(`/GET/G24N/${parseInt(23)}`);
             return result.list;
         },
         refetchInterval: (data) => {
@@ -26,7 +26,7 @@ function SelectIncome({ data, event, excludeItems }) {
     const token = localStorage.getItem('UTK');
     const onClickAdd = useMutation({
         mutationFn: async () => {
-            await axios.post(`/addNDISelection/${parseInt(21)}/${newValue}/${jwtDecode(token).USRID}`)
+            await axios.post(`/POST/P74ANS/${parseInt(21)}/${newValue}/${jwtDecode(token).USRID}`)
                 .then((result) => {
                     setValue('');
                     NDIIncomeListQuery.refetch();

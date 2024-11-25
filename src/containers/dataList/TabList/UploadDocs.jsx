@@ -25,21 +25,21 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     const DocListQuery = useQuery({
         queryKey: ['DocListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${FileType}`)
+            const result = await GET_LIST(`/GET/G16FT/${FileType}`)
+            //console.log('jjjjjjjjj', result.list)
             return result.list
         },
-        enabled: true,
+        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
-        staleTime: 5 * 1000
     })
-
     const token = localStorage.getItem('UTK');
     const FileListQuery = useQuery({
         queryKey: ['FileListQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${Uploader}`)
                 SET_LOADING_INTERNAL('UploadDocs', false);
+                console.log('si Rex ba ito.....')
                 return result.list
             } catch (error) {
                 console.error(error);
@@ -47,16 +47,10 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 return [];
             }
         },
-        enabled: true,
-        retryDelay: 1000,
-        staleTime: 5 * 1000
+       enabled:true
     })
 
-    React.useEffect(() => {
-        SET_LOADING_INTERNAL('UploadDocs', true)
-        DocListQuery.refetch();
-        FileListQuery.refetch();
-    }, [getAppDetails]);
+
 
     function GetFile(id, command) {
         let count = 0;

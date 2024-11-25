@@ -242,7 +242,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                         message: result.data.message,
                         description: result.data.description,
                     });
-                    const result2 = await axios.post('/addAdditionalCoborrower', dataHolder);
+                    const result2 = await axios.post('/POST/P43AACB', dataHolder);
                     api[result2.data.status]({
                         message: result2.data.message,
                         description: result2.data.description

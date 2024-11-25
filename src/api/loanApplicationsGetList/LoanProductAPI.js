@@ -7,7 +7,7 @@ export function LoanProductList () {
     useQuery({
         queryKey: ['LoanProductList'],
         queryFn: async () => {
-            const result = await GET_LIST('/getListLoanProduct');
+            const result = await GET_LIST('/GET/G19LLP');
             setLoanProdList(result.list)
             return result.list;
         },

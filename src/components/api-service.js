@@ -8,7 +8,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["LoanProductList"],
     queryFn: async () => {
-      const result = await GET_LIST("/getListLoanProduct");
+      const result = await GET_LIST("/GET/G19LLP");
       setLoanProdList(result.list);
       return result.list;
     },
@@ -20,7 +20,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["RelationshipList"],
     queryFn: async () => {
-      const result = await GET_LIST("/getListRelationship");
+      const result = await GET_LIST("/GET/G33RR");
       setRelationship(result.list)
       return result.list;
     },
@@ -32,7 +32,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["CountryList"],
     queryFn: async () => {
-      const result = await GET_LIST("/OFWDetails/getCountry");
+      const result = await GET_LIST("/GET/G26C");
       setCountryList(result.list);
       return result.list;
     },
@@ -44,7 +44,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["ProvinceList"],
     queryFn: async () => {
-      const result = await GET_LIST("/getProvinceList");
+      const result = await GET_LIST("/GET/G23PL");
       setProvinceList(result.list);
       return result.list;
     },
@@ -56,7 +56,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanPurpose");
+      const result = await GET_LIST("/GET/G20LP");
       setLoanPurpose(result.list);
       return result.list;
     },
@@ -68,7 +68,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["BranchListQuery"],
     queryFn: async () => {
-      const result = await GET_LIST("/getBranchList");
+      const result = await GET_LIST("/GET/G10BL");
       setBranchList(result.list);
       return result.list;
     },
@@ -80,7 +80,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getSuffix"],
     queryFn: async () => {
-      const result = await GET_LIST("/OFWDetails/GetSuffix");
+      const result = await GET_LIST("/GET/G28S");
       setSuffix(result.list);
       return result.list;
     },
@@ -92,7 +92,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["getValidIdSelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/OFWDetails/getIDtype");
+      const result = await GET_LIST("/GET/G27IT");
       setValidId(result.list);
       return result.list;
     },
@@ -104,7 +104,7 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ['getCurrency'],
     queryFn: async () => {
-        const result = await GET_LIST('/getCurrencyList');
+        const result = await GET_LIST('/GET/G105CL');
         setCurrency(result.list)
         return result.list;
     },
@@ -116,7 +116,7 @@ const [getCollectionArea, setCollectionArea] = React.useState([])
 const collectionArea = useQuery({
   queryKey: ['collectionArea'],
   queryFn: async () => {
-      const result = await GET_LIST('OFWDetails/getCollectionArea');
+      const result = await GET_LIST('GET/G29CA');
       setCollectionArea(result.list)
       return result.list;
   },

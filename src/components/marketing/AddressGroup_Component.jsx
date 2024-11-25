@@ -71,7 +71,7 @@ function AddressContainer({
     queryFn: async () => {
       const provCode = getProvCode(type, data);
       if (!provCode) return [];
-      const result = await axios.get(`/getMuniArea/${provCode}`);
+      const result = await axios.get(`/GET/G6MA/${provCode}`);
       return result.data.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -107,7 +107,7 @@ function AddressContainer({
     queryFn: async () => {
       const munCode = getMunicipalityCode(type, data);
       if (!munCode) return [];
-      const result = await axios.get(`/getbarangaylist/${munCode}`);
+      const result = await axios.get(`/GET/G7BL/${munCode}`);
       return result.data.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),

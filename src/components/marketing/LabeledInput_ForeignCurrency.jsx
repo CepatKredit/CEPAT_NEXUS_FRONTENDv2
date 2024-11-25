@@ -46,7 +46,7 @@ function LabeledInput_ForeignCurrency({
   const getCurrencyList = useQuery({
     queryKey: ['getCurrencyList'],
     queryFn: async () => {
-      const result = await GET_LIST('/getCurrencyList');
+      const result = await GET_LIST('/GET/G105CL');
       return result.list;
     },
     refetchInterval: (data) => {

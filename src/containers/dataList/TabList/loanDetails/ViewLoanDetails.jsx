@@ -8,7 +8,7 @@ function ViewLoanDetails({ data, User }) {
   const loanProducts = useQuery({
     queryKey: ["getProductSelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/getListLoanProduct");
+      const result = await GET_LIST("/GET/G19LLP");
       return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -19,7 +19,7 @@ function ViewLoanDetails({ data, User }) {
   const loanPurpose = useQuery({
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanPurpose");
+      const result = await GET_LIST("/GET/G20LP");
       return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -39,7 +39,7 @@ function ViewLoanDetails({ data, User }) {
   const consultantData = useQuery({
     queryKey: ["getLoanConsultant"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanConsultant");
+      const result = await GET_LIST("/GET/G21LC");
       return result.list;
     },
     refetchInterval: 30 * 1000,
