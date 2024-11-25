@@ -50,11 +50,11 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
     }, [Sepcoborrowfname]);
 
     let rendered = sepBenfname ? true : false;
-   // let rendered_add = Sepcoborrowfname ? true : false;
+    // let rendered_add = Sepcoborrowfname ? true : false;
 
-//Preload Selects   
-const { GET_RELATIONSHIP_LIST } = useDataContainer();
-const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+    //Preload Selects   
+    const { GET_RELATIONSHIP_LIST } = useDataContainer();
+    const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
 
     /*const handleAddCoborrower = async () => {
          setTriggerValidation(true);
@@ -182,7 +182,7 @@ const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label
                 <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label='font-bold'
-                    label= "Middle Name" 
+                    label="Middle Name"
                     value={data.benmname}
                     placeHolder='Middle Name'
                     receive={(e) => updateAppDetails({ name: 'benmname', value: e })}
@@ -629,26 +629,41 @@ const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label
                 />
                 {User === 'Credit' && (
                     <>
-                        <LabeledInput_UpperCase
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+
+                        <InputOpt
+                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={<>Landmark <span className="text-red-500">*</span></>}
                             placeHolder='Landmark'
+                            isEdit={isEdit}
+                            category={'marketing'}
                             readOnly={isEdit}
                             value={data.BenLandMark}
-                            receive={(e) => updateAppDetails({ name: 'BenLandMark', value: e })}
                             rendered={rendered}
+                            receive={(e) => updateAppDetails({ name: 'BenLandMark', value: e })}
+
+                            KeyName={'BenLandMark'}
+                            group={'Uppercase'}
+                            compname={'Landmark'}
                         />
-                        <LabeledInput_UpperCase
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+
+                        <InputOpt
+                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={<>Proof of Billing Remarks <span className="text-red-500">*</span></>}
                             placeHolder='Remarks'
+                            isEdit={isEdit}
+                            category={'marketing'}
                             readOnly={isEdit}
                             rendered={rendered}
                             value={data.BenPoBRemarks}
                             receive={(e) => updateAppDetails({ name: 'BenPoBRemarks', value: e })}
+
+                            KeyName={'BenPoBRemarks'}
+                            group={'Uppercase'}
+                            compname={'Proof of Billing Remarks'}
                         />
+
                     </>
                 )}
             </Flex>

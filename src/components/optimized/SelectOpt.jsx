@@ -22,6 +22,10 @@ function SelectOpt({
     notValidMsg,
     KeyName,
     rendered,
+
+    compname,
+    InvalidMsg='Selected Item is Not Valid',
+    EmptyMsg= `${compname} Required`,
 }) {
     const [search, setSearchInput] = useState('');
     const [isRendered, setRendered] = useState(rendered !== undefined ? rendered : true);//make sure rendered has a value
@@ -38,8 +42,9 @@ function SelectOpt({
         handleSelectChange,
         handleKeyDown,
         setDropdownOpen,
-        selected
-    } = SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered);
+        selected,
+        //ErrMessage,
+    } = SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered, InvalidMsg, EmptyMsg);
 
     const newOptions = useMemo(() => {
         if (KeyName === 'ofwcountry') {
@@ -88,7 +93,7 @@ function SelectOpt({
 
     // Trigger `handleSelectChange` when `value` changes externally
     useEffect(() => {
-        if(rendered){
+        if (rendered) {
             handleSelectChange(value);
         }
     }, [value]);
@@ -143,7 +148,7 @@ function SelectOpt({
                             ) : null
                         }
                     />
-                    {isRendered &&!disabled && (required || required === undefined) && status === 'error' && (
+                    {isRendered && !disabled && (required || required === undefined) && status === 'error' && (
                         <div className='text-xs text-red-500 pt-1 pl-2'>
                             {notValidMsg || notValid}
                         </div>

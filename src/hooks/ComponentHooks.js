@@ -9,8 +9,8 @@ import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'r
 
 
 function hookDateValid(KeyName, date) {
-  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep' || KeyName === 'ContractDate') { return !checkDeployisValid(date); }
-  else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") { return !checkAgeisValid(date) }
+  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep' ) { return !checkDeployisValid(date); }
+  else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate" ) { return !checkAgeisValid(date) }
   else { return CheckDateValid(date) }
 }
 
@@ -27,6 +27,7 @@ function hookInputValid(KeyName, input, comp_name, format, group) {
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
   } else if ((group === 'Rent_Amort' || group === 'Allotment') && input !== '' && CheckRentAmortValid(input)) { // !0
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
+
   //NUMBER
 
   } else { //error
@@ -322,14 +323,14 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   const handleBlur = () => {
     setIconVisible(true);
     const res = hookInputValid(KeyName, inputValue, comp_name, format, group);
-    statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, false, 100);
+    statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(Uppercase(res.value).replaceAll(',', '')) : '') : res.value), res.errmsg, false, 100);
   };
 
   useEffect(() => { //INITIAL RELOAD
     if (rendered) {
       setIconVisible(true);
       const res = hookInputValid(KeyName, initialValue /* || inputValue */, comp_name, format, group);
-      statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
+      statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(Uppercase(res.value).replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
     }
   }, [rendered]);
 

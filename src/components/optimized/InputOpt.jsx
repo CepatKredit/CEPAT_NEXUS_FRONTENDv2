@@ -14,13 +14,17 @@ function InputOpt({
     className_dmain = '',
     className_label = '',
     className_dsub = '',
+
     KeyName,
-    compname,
     format = '',
     group,
+    CustomLength = 13,
+    compname,
+    InvalidMsg='Input is not Valid',
+    EmptyMsg= `${compname} Required`,
 }) {
 
-    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled);
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, InvalidMsg, EmptyMsg, CustomLength);
 
     const isValidationEnabled = !readOnly && required;
 

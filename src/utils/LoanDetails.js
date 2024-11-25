@@ -399,7 +399,7 @@ export const UpdateLoanDetails = async ({
         ModUser: ModUser,
     }
 
-    console.log(data)
+    //console.log(data)
     let fresult = null;
 
     const checkLoan = {
@@ -425,6 +425,7 @@ export const UpdateLoanDetails = async ({
 
         console.log(check)
     }
+    /*
     //check if fullname is changed, update kaiser no display
     if ((ofwfname && (ofwfname === FirstName)) || (ofwlname && (ofwlname === LastName))) {
         console.log('Update OFW Kaiser...')
@@ -434,7 +435,7 @@ export const UpdateLoanDetails = async ({
     }
     if ((acbfname && (acbfname === FirstName)) || (acblname && (acblname === LastName))) {
         console.log('Update Additional Co-Borrower Kaiser...')
-    }
+    }*/
 
     if (check === 0) {
         await axios.post('/updateDetails', data)

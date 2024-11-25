@@ -14,7 +14,7 @@ function TriggerFields(ROLE) {
     const debouncedReceive = useMemo(
         () =>
             debouncef((field, value, delay) => {
-                if (latestValueRef.current !== value) {
+                if (latestValueRef.current !== value) { //Block the same values in delay
                     updateAppDetails({ name: field, value: value });
                     latestValueRef.current = value; // Update `latestValueRef` after applying the update
                 }
@@ -191,7 +191,6 @@ function TriggerFields(ROLE) {
     React.useEffect(() => {
         if (!getRendered) return;
         if (relationshipBen !== '') {
-            console.log('TEST ', relationshipBen)
             debouncedReceive('benrelationship', getRelationshipConv(getAppDetails.RelationshipBen, getAppDetails.ofwgender), delay_def); // Pass the custom delay
         }
     }, [relationshipBen])

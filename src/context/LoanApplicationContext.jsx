@@ -33,31 +33,44 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     }));
   };
 
-  const updateAppDetails = React.useCallback((updates) => {
-    if (!updates || (Array.isArray(updates) && updates.length === 0)) return;
+  const updateAppDetails = React.useCallback((e) => {
+    if (!e || !e.name) return;
+    setAppDetails((prevDetails) => {
+      const newValue = e.value;
+      if (prevDetails[e.name] === newValue) {
+        return prevDetails;
+      }
+      return {
+        ...prevDetails,
+        [e.name]: newValue,
+      };
+    });
+  }, []);
+
+  const queryDetails = React.useCallback((updates) => {
+    if (!updates) return;
+
+    // Normalize single update vs batch updates
+    const updatesArray = Array.isArray(updates) ? updates : [updates];
 
     setAppDetails((prevDetails) => {
-      let hasChanged = false;
+      // Filter out updates that don't actually change the state
+      const filteredUpdates = updatesArray.filter(
+        ({ name, value }) => name && prevDetails[name] !== value
+      );
 
-      // Normalize single update vs batch updates
-      const updatesArray = Array.isArray(updates) ? updates : [updates];
-
-      const newDetails = { ...prevDetails };
-
-      updatesArray.forEach(({ name, value }) => {
-        if (name && newDetails[name] !== value) {
-          newDetails[name] = value;
-          hasChanged = true;
-        }
-      });
-
-      if (hasChanged) {
-        console.log("Monitor Update Context:", updatesArray);
-        return newDetails;
+      if (filteredUpdates.length === 0) {
+        // No changes detected, return previous state
+        return prevDetails;
       }
 
-      // Return previous details if no changes occurred
-      return prevDetails;
+      // Apply changes to the new state
+      const newDetails = filteredUpdates.reduce((details, { name, value }) => {
+        details[name] = value;
+        return details;
+      }, { ...prevDetails });
+
+      return newDetails;
     });
   }, []);
 
@@ -505,6 +518,7 @@ export const LoanApplicationProvider = ({ children, direct }) => {
         populateClientDetails,
         GET_LOADING_INTERNAL,
         SET_LOADING_INTERNAL,
+        queryDetails,
       }}
     >
       {contextHolder}

@@ -135,9 +135,9 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             ] : []),
 
         ].some(field => {
-            console.log(`field: ${field}, value:`, value[field]);
+           // console.log(`field: ${field}, value:`, value[field]);
             const condition = value[field] === undefined || value[field] === '' || value[field] === false;
-            console.log(`result field ${field}:`, condition);
+            //console.log(`result field ${field}:`, condition);
             return condition;
         });
     };
@@ -415,7 +415,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
 
         if (!sepcoborrowfname && !addCoborrower) { //if no add coborrow and showaddcoborrow is true
             //Start to insert Acb and then update all
-            console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
+         //   console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
             try {
                 const result2 = await axios.post('/addAdditionalCoborrower', acb_data);
                 api[result2.data.status]({
@@ -442,9 +442,9 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                 });
 
             } else {
-                console.log('log in loan', resLoan)
-                console.log('log in ofw', resOFW)
-                console.log('log in bene & add', resBene)
+             //   console.log('log in loan', resLoan)
+             //   console.log('log in ofw', resOFW)
+             //   console.log('log in bene & add', resBene)
                 api['warning']({
                     message: 'Update Failed.',
                     description: "Something went wrong.",
@@ -627,7 +627,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
 
     React.useEffect(() => {
         setActiveKey(tabs || 'deduplication');
-        console.log("HALAAA", tabs)
+        //console.log("HALAAA", tabs)
     }, [tabs]);
 
     return (

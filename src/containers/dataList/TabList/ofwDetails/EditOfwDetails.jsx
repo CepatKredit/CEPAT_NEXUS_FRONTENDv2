@@ -405,7 +405,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     rendered={rendered}
                                 />)}
                             {User === 'Credit' && (
-                                //   <LabeledInput_Salary
                                 <InputOpt
                                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                     className_label={'font-bold'}
@@ -419,7 +418,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     KeyName={'SpIncome'}
                                     format={'Currency'}
                                     group={'Rent_Amort'}
-                                    compname={'Spouse Income'}
+                                    compname={'Spouse Income'} 
                                 />)}
                         </>
                     )
@@ -891,7 +890,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         notValidMsg={'Contract Date Required'}
                         KeyName={'ContractDate'}
-                        disabledate={disableDate_deployment}
+                       // disabledate={disableDate_deployment}
 
                     />)}
                 {User === 'Credit' && (<>

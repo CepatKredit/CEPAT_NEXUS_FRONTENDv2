@@ -19,9 +19,13 @@ function DatePickerOpt({
   KeyName,
   notValidMsg,
   disabledate,
-  SkipRender
+
+  group,
+  compname,
+  InvalidMsg = 'Date is not Valid',
+  EmptyMsg = `${compname} Required`,
 }) {
-  const [isRendered, setRendered] = useState(rendered !== undefined? rendered : true);//make sure rendered has a value
+  const [isRendered, setRendered] = useState(rendered !== undefined ? rendered : true);//make sure rendered has a value
 
   const {
     status,
@@ -35,7 +39,7 @@ function DatePickerOpt({
     setDatePickerOpen,
     validationMessage,
     handleBlur,
-  } = DateComponentHook(value, rendered, receive, KeyName, notValidMsg, setRendered);
+  } = DateComponentHook(value, rendered, receive, KeyName, notValidMsg, setRendered, InvalidMsg, EmptyMsg);
 
   const inputRef = useRef(null);
   const { setfocus } = useContext(LoanApplicationContext)
@@ -51,7 +55,7 @@ function DatePickerOpt({
     ) : null;
 
   const suffix = (
-    <>{!disabled? (<CalendarOutlined
+    <>{!disabled ? (<CalendarOutlined
       style={{
         color: "#1890ff",
         fontSize: "16px",
@@ -59,8 +63,8 @@ function DatePickerOpt({
         cursor: "pointer",
       }}
       onClick={toggleDatePicker}
-    />):null }
-      
+    />) : null}
+
       {isRendered && (required || required === undefined) && iconVisible && icon}
     </>
   );
@@ -79,7 +83,7 @@ function DatePickerOpt({
             placeholder={placeHolder}
             value={inputValue}
             onChange={(e) => handleInputChange(e, readOnly)}
-            onBlur={(e)=>{handleBlur(e.target.value)}}
+            onBlur={(e) => { handleBlur(e.target.value) }}
             disabled={disabled}
             readOnly={readOnly}
             status={isRendered && (required || required === undefined) && status}
@@ -100,7 +104,7 @@ function DatePickerOpt({
             value={datePickerValue}
             onChange={handleDateChange}
             onOpenChange={setDatePickerOpen}
-            onBlur={(e)=>{handleBlur(e.target.value)}}
+            onBlur={(e) => { handleBlur(e.target.value) }}
             disabled={disabled}
             inputReadOnly
             disabledDate={disabledate}
