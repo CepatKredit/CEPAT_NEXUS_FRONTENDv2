@@ -9,8 +9,8 @@ import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'r
 
 
 function hookDateValid(KeyName, date) {
-  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep' ) { return !checkDeployisValid(date); }
-  else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate" ) { return !checkAgeisValid(date) }
+  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') { return !checkDeployisValid(date); }
+  else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") { return !checkAgeisValid(date) }
   else { return CheckDateValid(date) }
 }
 
@@ -22,13 +22,13 @@ function hookInputValid(KeyName, input, comp_name, format, group) {
     return { valid: true, value: Uppercase(input), errmsg: '' }; //Change format to uppercase
   } else if (group === 'Default' && input !== '') { //For No-case sensitive
     return { valid: true, value: input, errmsg: '' }; //As-is
-  //CURRENCY
+    //CURRENCY
   } else if (group === 'Income' && input !== '' && CheckIncomeValid(input)) { // 25,000.00
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
   } else if ((group === 'Rent_Amort' || group === 'Allotment') && input !== '' && CheckRentAmortValid(input)) { // !0
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
 
-  //NUMBER
+    //NUMBER
 
   } else { //error
     return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(group, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name) };
@@ -36,7 +36,6 @@ function hookInputValid(KeyName, input, comp_name, format, group) {
 }
 
 export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered) {
-  const { getAppDetails } = useContext(LoanApplicationContext);
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -308,7 +307,6 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
       }
     }
   };
-
   const handleChange = (e) => {
     let value = e;
     const maxchar = CharacterLimit(group);
@@ -316,7 +314,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
       value = value.slice(0, maxchar);
     }
 
-    const res = hookInputValid(KeyName, value , comp_name, format, group);
+    const res = hookInputValid(KeyName, value, comp_name, format, group);
     statusValidation(res.valid, res.value, res.errmsg, true, 800);
   }
 
@@ -335,21 +333,14 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   }, [rendered]);
 
   useEffect(() => {
-    if(isDisabled || initialValue === ''){
-        handleChange(initialValue);    
-    }    
+    if (isDisabled || initialValue === '') {
+      handleChange(initialValue);
+    }
   }, [initialValue])
 
-
-  /*
-    useEffect(() => { //SPECIFIC FIELDS ONLY
-      if (comp_name === 'Spouse Name' || comp_name === 'Spouse Income') {
-        setIconVisible(true);
-        const res = hookInputValid(KeyName, initialValue , comp_name, format, group);
-        statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatComma(res.value.replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
-      }
-    }, [initialValue])
-    */
+  useEffect(() => {
+    handleBlur();
+  }, []);
 
   useEffect(() => {
     return () => {

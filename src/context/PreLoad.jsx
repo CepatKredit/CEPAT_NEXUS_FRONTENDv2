@@ -60,6 +60,7 @@ function PreLoad({ children }) {
     queryKey: ["PRELOAD_DISBURSEMENT", GET_LOAN_APPLICATION_NUMBER],
     queryFn: async () => {
       let total = 0;
+      if(GET_LOAN_APPLICATION_NUMBER === '') return [];
       const result = await GET_LIST(
         `/getDisbursementList/${GET_LOAN_APPLICATION_NUMBER}/${"NP"}`
       );

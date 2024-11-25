@@ -1,11 +1,8 @@
 import createInitialAppDetails from "@utils/IntialValues";
 import { getBeneficiaryAddressUpdatedFields, getLoanDetailUpdatedFields, getOfwAddressUpdatedFields } from "@utils/Validations";
-import React, { useRef } from "react";
+import React from "react";
 import { notification } from 'antd'
 import { FocusHook } from "@hooks/ComponentHooks";
-import { mmddyy, toDecrypt } from "@utils/Converter";
-import { useQuery } from "@tanstack/react-query";
-import { GET_LIST } from "@api/base-api/BaseApi";
 
 export const LoanApplicationContext = React.createContext();
 
@@ -20,7 +17,29 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     Suffix: "",
     Birthday: "",
   });
+/*
+  // Ref to store the previous value of getAppDetails
+  const prevAppDetailsRef = React.useRef(getAppDetails);
 
+  React.useEffect(() => {
+    const prevAppDetails = prevAppDetailsRef.current;
+
+    // Find the updated keys and log the changes
+    const updatedData = Object.keys(getAppDetails).reduce((acc, key) => {
+      if (getAppDetails[key] !== prevAppDetails[key]) {
+        acc[key] = { oldValue: prevAppDetails[key], newValue: getAppDetails[key] };
+      }
+      return acc;
+    }, {});
+
+    if (Object.keys(updatedData).length > 0) {
+      console.log("Updated data:", updatedData);
+    }
+
+    // Update the ref to the current state
+    prevAppDetailsRef.current = getAppDetails;
+  }, [getAppDetails]);
+*/
   const setOldClientNameAndBDay = (result) => {
     const ofwDetails = result?.data?.list?.OfwDetails || {};
 

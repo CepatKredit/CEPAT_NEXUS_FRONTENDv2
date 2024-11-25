@@ -67,7 +67,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST } = useDataContainer();
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
     const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
-    const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails, queryDetails } = useContext(LoanApplicationContext)
     const JOB_CATEGORY =  JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
     const JOB_TITLE = JobTitle(data.JobCategory)? JobTitle(data.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
 
@@ -537,7 +537,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         isEdit={isEdit}
                         category={'marketing'}
                         readOnly={isEdit}
-                        value={data.landmark}
+                        value={getAppDetails.landmark}
                         rendered={rendered}
                         receive={(e) => updateAppDetails({ name: 'landmark', value: e })}
 
