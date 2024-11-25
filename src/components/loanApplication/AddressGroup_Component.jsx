@@ -190,44 +190,39 @@ function AddressContainer({
   return (
     <>
       {type === "permanent" ? (
-        <div className="mb-[2%] mt-[2%]">
-          <Checkbox
-            disabled={disabled ? true : disabled == undefined ? true : false}
-            className="text-xs"
-            checked={data.ofwSameAdd}
-            onClick={() => {
-              const newSameAddValue = !data.ofwSameAdd;
-              if (
-                newSameAddValue == 1 &&
-                (!data.ofwPresBarangay || !data.ofwPresStreet)
-              ) {
-                // api["warning"]({
-                //   message: "Incomplete Present Address",
-                //   description: "Please Complete the Present Address!",
-                // });
-                api.warning({
-                  message: "Incomplete Present Address",
-                  description: "Please Complete the Present Address!",
-                });
-              } else {
-                // receive({
-                //   name: "ofwSameAdd",
-                //   value: newSameAddValue,
-                // }); 
-                updateAppDetails({ name: "ofwSameAdd", value: newSameAddValue });
-                handleAddressCases({
+        <div className="mb-2 mt-2 w-full xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[53%] 3xl:w-[40%] mx-auto">
+        <Checkbox
+          disabled={disabled ? true : disabled === undefined ? true : false}
+          className="text-xs "
+          checked={data.ofwSameAdd}
+          onClick={() => {
+            const newSameAddValue = !data.ofwSameAdd;
+            if (
+              newSameAddValue == 1 &&
+              (!data.ofwPresBarangay || !data.ofwPresStreet)
+            ) {
+              api.warning({
+                message: "Incomplete Present Address",
+                description: "Please Complete the Present Address!",
+              });
+            } else {
+              updateAppDetails({ name: "ofwSameAdd", value: newSameAddValue });
+              handleAddressCases(
+                {
                   name: newSameAddValue ? "ofwPerm" : "ofwSameAdd",
                   value: null,
-                }, type);
-              }
-            }}
-          >
-            <b>
-              Please check if the Present Address is the same as the Permanent
-              Address.
-            </b>
-          </Checkbox>
-        </div>
+                },
+                type
+              );
+            }
+          }}
+        >
+          <b>
+            Please check if the Present Address is the same as the Permanent
+            Address.
+          </b>
+        </Checkbox>
+      </div>
       ) : type === "beneficiary" ? (
         <div className="mb-[2%] mt-[2%]">
           <Checkbox

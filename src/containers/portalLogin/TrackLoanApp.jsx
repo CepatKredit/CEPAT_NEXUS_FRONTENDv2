@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import { FaGear } from "react-icons/fa6";
-import Logo from "@assets/images/logo.png";
+import Logo from "@assets/images/Nexus_v3a.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toEncrypt } from "@utils/Converter";
@@ -81,14 +81,14 @@ function TrackLoanApp() {
 
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center w-full px-4">
       {/* {contextHolder} */}
-      <div className="flex flex-col justify-center items-center w-[400px]">
-        <img src={Logo} alt="logo" className="h-[50px]" />
-        <Typography.Title level={2} className="my-[10%] font-sans">
+      <div className="flex flex-col justify-center items-center w-full sm:w-[400px]">
+        <img src={Logo} alt="logo" className="h-[50px] mx-auto" />
+        <Typography.Title level={2} className="my-8 font-sans text-center">
           Track Your Loan Application
         </Typography.Title>
-        <div className="w-[100%] mt-[8%]">
+        <div className="w-full mt-4 sm:mt-[8%]">
           <Input
             size="large"
             placeholder="Loan Application No."
@@ -104,11 +104,11 @@ function TrackLoanApp() {
             }}
           />
         </div>
-        <div className="flex flex-rows mt-3 w-[420px] mb-1">
-          <label className="ml-[3%] mt-[7px] w-[120px] font-bold">
+        <div className="flex flex-col sm:flex-row mt-3 w-full mb-1">
+          <label className="ml-0 sm:ml-[3%] mt-[7px] w-full sm:w-[120px] font-bold">
             OFW Birth Date
           </label>
-          <div className="mx-[2%] w-[300px]">
+          <div className="mx-0 sm:mx-[2%] w-full sm:w-[300px]">
             <DatePickerOpt
               placeHolder="MM-DD-YYYY"
               value={getAppDetails.ofwbdate}
@@ -117,19 +117,19 @@ function TrackLoanApp() {
               disabled={false}
               receive={(e) => {
                 setAppDetails((prevState) => ({
-                    ...prevState,
-                    ofwbdate: e,
-                  }));
-                }}
+                  ...prevState,
+                  ofwbdate: e,
+                }));
+              }}
               KeyName={"ofwbdate"}
               rendered={false}
             />
           </div>
         </div>
-        <div className="text-center mt-5 w-[100%]">
+        <div className="text-center mt-5 w-full">
           <ConfigProvider theme={{ token: { colorPrimary: "#6b21a8" } }}>
             <Button
-              className="bg-[#3b0764] w-full"
+              className="bg-[#3b0764] w-full sm:w-[100%]"
               size="large"
               type="primary"
               onClick={trackOnClick}

@@ -16,7 +16,7 @@ import FullScreenBackground from "@assets/images/LoginBG.jpg";
 import LoginBackground from "@assets/images/side.jpg";
 import { useNavigate, useLocation } from "react-router-dom";
 //import Logo from "@assets/images/WHITE.svg";
-import Logo from "@assets/images/Nexus_v3a.png"
+import Logo from "@assets/images/Nexus_v3a.png";
 import Datos from "@assets/images/datos.png";
 import ResponsiveModal from "@components/global/ResponsiveModal";
 import {
@@ -399,7 +399,7 @@ function PortalLogin() {
           PasswordNotMatch.isPending
         }
       />
-      <div className="h-full xs:h-[22%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%]  w-full xs:w-[100%] sm:w-[70%] md:w-[67%] lg:w-[70%] xl:w-[67%] 2xl:w-[67%] 3xl:w-[70%]">
+      <div className="h-full xs:h-[22%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%]  w-full xs:w-[100%] sm:w-[55%] md:w-[67%] lg:w-[70%] xl:w-[67%] 2xl:w-[67%] 3xl:w-[70%]">
         <div className="pt-3 xs:pt-3 md:pt-3 ml-3  xs:ml-5 md:ml-3 w-full xs:w-[80px] sm:w-[90px] md:w-[100px] lg:w-[110px] xl:w-[120px] 2xl:w-[150px] 3xl:w-[160px]">
           <a
             href="https://secure.trust-provider.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=POSDV&v_search=https://ckfi.live/cepat-portal/index.php&x=6&y=5"
@@ -472,17 +472,17 @@ function PortalLogin() {
         </center>
       </div>
       <div
-        className="h-full xs:h-[27%] sm:h-[70%] md:h-[55%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] w-full xs:w-[100%] sm:w-[100%] md:w-[31%] lg:w-[28%] xl:w-[28%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
+        className="h-full xs:h-[27%] sm:h-[65%] md:h-[70%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] w-full xs:w-full sm:w-[42%] md:w-[31%] lg:w-[28%] xl:w-[28%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
         style={{ backgroundImage: `url(${LoginBackground})` }}
       >
-        <div className="h-[100%] w-[100%] bg-stone-800/70">
+        <div className="h-full w-full bg-stone-800/70">
           <center>
-            <div className="pt-[50%] xs:pt-[4%] sm:pt-[20%] md:pt-[30%] lg:pt-[40%] xl:pt-[62%] h-[500px]">
+            <div className="pt-[50%] xs:pt-[4%] sm:pt-[36%] md:pt-[30%] lg:pt-[40%] xl:pt-[62%] h-[500px] w-full">
               <div className="text-2xl xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-normal text-stone-100">
                 <div>For registered personnel and</div>
                 <div>loan consultants, please log in below:</div>
               </div>
-              <div className="w-full xs:w-[60%] sm:w-[65%] md:w-[85%] lg:w-[75%] xl:w-[80%] 2xl:w-[90%] 3xl:w-[95%]  pt-2">
+              <div className="w-full xs:w-[60%] sm:w-[80%] md:w-[85%] lg:w-[75%] xl:w-[80%] 2xl:w-[90%] 3xl:w-[95%] pt-2">
                 <div className="pt-2">
                   <ConfigProvider
                     theme={{
@@ -498,7 +498,7 @@ function PortalLogin() {
                       name="Username"
                       placeholder="Email Address"
                       prefix={
-                        <Space.Compact className="px-2 w-[40px]  text-stone-400">
+                        <Space.Compact className="px-2 w-[40px] text-stone-400">
                           <IoMail style={{ fontSize: 20 }} />
                         </Space.Compact>
                       }
@@ -536,7 +536,7 @@ function PortalLogin() {
                       autoComplete="off"
                       onChange={handleChange}
                       value={getAccount.Password}
-                      className="h-[50px] xs:h-[35px] sm:h-[35px] md:h-[35px] lg:h-[45px] xl:h-[50px] "
+                      className="h-[50px] xs:h-[35px] sm:h-[35px] md:h-[35px] lg:h-[45px] xl:h-[50px]"
                       onKeyDown={handleKeyDown}
                     />
                   </ConfigProvider>
@@ -548,7 +548,7 @@ function PortalLogin() {
                       setUnlockStatus(true);
                     }}
                   >
-                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs:text-xs sm:text-sm md:text-xs lg:text-md xl:text-md 2xl:text-base">
+                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs:text-xs sm:text-xs md:text-xs lg:text-md xl:text-md 2xl:text-base">
                       Unlock Account
                     </span>
                   </div>
@@ -558,7 +558,7 @@ function PortalLogin() {
                       setForgotStatus(true);
                     }}
                   >
-                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs:text-xs sm:text-sm md:text-xs lg:text-md xl:text-md 2xl:text-base">
+                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs:text-xs sm:text-xs md:text-xs lg:text-md xl:text-md 2xl:text-base">
                       Forgot Password?
                     </span>
                   </div>
@@ -594,12 +594,12 @@ function PortalLogin() {
           </center>
         </div>
       </div>
-      <div className="flex flex-wrap w-full mt-[-180px] xs:mt-[-18px] sm:mt-[-150px] md:mt-[-420px] lg:mt-[-630px] xl:mt-[-180px] 2xl:mt-[-180px]">
+      <div className="flex flex-wrap w-full mt-[-180px] xs:mt-[-18px] sm:mt-[-150px] md:mt-[-220px] lg:mt-[-630px] xl:mt-[-180px] 2xl:mt-[-180px]">
         <div className="pl-[3%]">
           <img
-            src={Datos} alt="datos" className="w-[70px] xs:w-[50px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs:h-[80px] sm:h-[60px] md:h-[140px] lg:h-[150px] xl:h-[90px] 2xl:h-[150px]"/>       
-          </div>
-          <div className="pl-[3%] text-white w-full xs:w-[100%] sm:w-[25%] md:w-[50%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%] " style={{ fontSize: '8px' }}>
+            src={Datos} alt="datos" className="w-[70px] xs:w-[50px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs:h-[80px] sm:h-[85px] md:h-[140px] lg:h-[150px] xl:h-[90px] 2xl:h-[150px]" />
+        </div>
+        <div className="pl-[3%] text-white w-full xs:w-[100%] sm:w-[50%] md:w-[50%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%] " style={{ fontSize: '8px' }}>
           <strong>
             <h5>CEPAT KREDIT FINANCING INC.</h5>
             <br />
@@ -630,7 +630,7 @@ function PortalLogin() {
         </div>
         <ConfigProvider theme={{ token: { colorSplit: "#ffffff", lineWidth: 2 } }}>
           <Divider
-            className="h-[135px] hidden xs:hidden sm:hidden md:block lg:h-[170px] xl:h-[135px] 2xl:h-[135px] 3xl:h-[135px]"
+            className="h-[150px] hidden xs:hidden sm:block md:block lg:h-[170px] xl:h-[135px] 2xl:h-[135px] 3xl:h-[135px]"
             type="vertical"
           />
         </ConfigProvider>

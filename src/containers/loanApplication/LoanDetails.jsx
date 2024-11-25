@@ -33,9 +33,9 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
   const [readMore, setReadMore] = React.useState(false);
 
   const classname_main =
-    "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
-  const className_label = "mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[200px]";
-  const className_dsub = "w-full sm:w-[400px]";
+    "flex flex-col xs:flex-col 2xl:flex-row mt-2 xs:mt-3 2xl:mt-2 w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs:h-auto 2xl:h-[60px]";
+  const className_label = "mb-2 xs:mb-0 xs:mr-4 w-full xs:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
+  const className_dsub = "w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[400px]";
 
   React.useEffect(() => {
     setloanrendered(true);
@@ -47,10 +47,14 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
 
   return (
     <div className="flex flex-col justify-center items-center mt-[2rem]">
-      <div className="flex flex-rows">
+      <div
+  className={`flex flex-row w-full 
+    ${GetData('ROLE') && GetData('ROLE').toString() === '20' ? 'xs:w-[35%] sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] 2xl:w-[80%] 3xl:w-[70%]' : 'xs:w-[85%]'} 
+    sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] 2xl:w-[70%] 3xl:w-[70%] justify-between items-center`}
+>
         <Checkbox
           name="chkBox_DataPrivacy"
-          className="h-[10%]"
+          className="h-auto"
           checked={getAppDetails.dataPrivacy}
           onClick={() =>
             updateAppDetails({
@@ -76,7 +80,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
         </div>
       </div>
       <Divider className="mt-[3%]" />
-      <div className="flex flex-col justify-center items-center w-[850px]">
+      <div className="flex flex-col justify-center items-center w-[850px] ">
         {!direct ? (
           <>
             <h2 className="mb-[2%] text-xl">
@@ -131,8 +135,8 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           rendered={loanrendered}
         />
         {getAppDetails.loanProd === "0303-DHW" ||
-        getAppDetails.loanProd === "0303-VL" ||
-        getAppDetails.loanProd === "0303-WL" ? (
+          getAppDetails.loanProd === "0303-VL" ||
+          getAppDetails.loanProd === "0303-WL" ? (
           <>
             <DatePickerOpt
               className_dmain={classname_main}
@@ -157,7 +161,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
               KeyName={"loanDateDep"}
               disabledate={disableDate_deployment}
               rendered={false}
-              //SkipRender={false}
+            //SkipRender={false}
             />
           </>
         ) : (
@@ -270,7 +274,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
         <div className="flex flex-col justify-center items-center w-[850px] mt-[2%]">
           {GetData("ROLE") !== null ? (
             GetData("ROLE").toString() === "30" ||
-            GetData("ROLE").toString() === "40" ? (
+              GetData("ROLE").toString() === "40" ? (
               <LabeledSelect_Consultant
                 className_dmain={classname_main}
                 className_label={
@@ -354,7 +358,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
               className_dsub={className_dsub}
               label={
                 <>
-                  Loan Consultant Number <span className="text-red-500">*</span>
+                  Loan Consultant Number<span className="text-red-500">*</span>
                 </>
               }
               fieldName="consultNumber"
@@ -387,8 +391,8 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           </div>
           {GetData("ROLE") !== null ? (
             GetData("ROLE").toString() === "30" ||
-            GetData("ROLE").toString() === "40" ? (
-              <div className="flex flex-col justify-center items-center w-[850px]">
+              GetData("ROLE").toString() === "40" ? (
+              <div className="flex flex-col justify-center items-center w-[850px] ">
                 <SelectOpt
                   className_dmain={classname_main}
                   className_label={className_label}
@@ -427,7 +431,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
           )}
         </>
       ) : (
-        <div className="flex flex-col justify-center items-center w-[850px] mt-[3%]">
+        <div className="flex flex-col justify-center items-center w-[850px] ">
           {[10, 15, 6].includes(getAppDetails.hckfi) ? (
             <SelectOpt
               className_dmain={classname_main}
@@ -464,33 +468,33 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
 
           {getAppDetails.hckfi === 14 ? (
             <SelectOpt
-            className_dmain={classname_main}
-            className_label={className_label}
-            className_dsub={className_dsub}
-            label={
-              <>
-                Referred By <span className="text-red-500">*</span>
-              </>
-            }
-            value={getAppDetails.loanReferredBy}
-            disabled={!getAppDetails.dataPrivacy}
-            placeHolder={"Please select..."}
-            required={true}
-            showSearch
-            notValidMsg={"This field is required."}
-            KeyName={"loanReferredBy"}
-            receive={(e) => {
-              updateAppDetails({
-                name: "loanReferredBy",
-                value: e,
-              });
-            }}
-            options={ReferredBy()?.map((item) => ({
-              value: item.value,
-              label: item.label.toString(),
-            }))}
-            rendered={loanrendered}
-          />
+              className_dmain={classname_main}
+              className_label={className_label}
+              className_dsub={className_dsub}
+              label={
+                <>
+                  Referred By <span className="text-red-500">*</span>
+                </>
+              }
+              value={getAppDetails.loanReferredBy}
+              disabled={!getAppDetails.dataPrivacy}
+              placeHolder={"Please select..."}
+              required={true}
+              showSearch
+              notValidMsg={"This field is required."}
+              KeyName={"loanReferredBy"}
+              receive={(e) => {
+                updateAppDetails({
+                  name: "loanReferredBy",
+                  value: e,
+                });
+              }}
+              options={ReferredBy()?.map((item) => ({
+                value: item.value,
+                label: item.label.toString(),
+              }))}
+              rendered={loanrendered}
+            />
           ) : (
             <></>
           )}

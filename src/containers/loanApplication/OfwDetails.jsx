@@ -15,17 +15,17 @@ function OfwDetails({
 }) {
   const { getAppDetails } = React.useContext(LoanApplicationContext);
   const classname_main =
-    "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
-  const className_label = "mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[200px]";
-  const className_dsub = "w-full sm:w-[400px]";
+  "flex flex-col xs:flex-col 2xl:flex-row mt-2 xs:mt-3 2xl:mt-2 w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs:h-auto 2xl:h-[60px]";
+  const className_label = "mb-2 xs:mb-0 xs:mr-4 w-full xs:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
+  const className_dsub = "w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[600px] 3xl:w-[400px]";
   React.useEffect(() => {
     setofwrendered(true);
   }, [setofwrendered]); // Added setloanrendered to the dependency array
 
   return (
-    <div className="flex flex-col justify-center mt-[2%]">
+    <div className="flex flex-col justify-center items-center mt-[2%]">
       <div ref={stepperView}></div>
-      <div className="flex flex-col justify-center items-center w-[850px]">
+      <div className="flex flex-col justify-center items-center w-[850px] ">
         {!direct ? (
           <>
             <Divider></Divider>

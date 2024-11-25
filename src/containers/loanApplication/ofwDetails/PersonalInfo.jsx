@@ -26,11 +26,10 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
   const { getAppDetails, handleAddressCases, updateAppDetails } =
     React.useContext(LoanApplicationContext);
   const { GET_OFW_SUFFIX } = useDataContainer();
-
   const classname_main =
-    "flex flex-col sm:flex-row mt-2 w-full sm:w-[500px] h-auto sm:h-[60px]";
-  const className_label = "mb-2 sm:mb-0 sm:mr-4 w-full sm:w-[200px]";
-  const className_dsub = "w-full sm:w-[400px]";
+  "flex flex-col xs:flex-col 2xl:flex-row mt-2 xs:mt-3 2xl:mt-2 w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs:h-auto 2xl:h-[60px]";
+  const className_label = "mb-2 xs:mb-0 xs:mr-4 w-full xs:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
+  const className_dsub = "w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[600px] 3xl:w-[400px]";
   const [getRentRender, setRentRender] = React.useState(ofwrendered);
 
   return (
@@ -53,8 +52,8 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         disabled={!direct && !getAppDetails.dataPrivacy}
         rendered={ofwrendered}
       />
-      <div className={`${classname_main} flex items-center space-x-2`}>
-        <label className="mb-5 sm:mb-5 sm:mr-4 w-full sm:w-[200px]">
+      <div className={`${classname_main} flex items-center `}>
+        <label className="mb-5 xs:mb-1 sm:mb-5 xs:mr-1 sm:mr-4 w-full sm:w-[200px]">
           Middle Name
         </label>
         <ConfigProvider
@@ -66,7 +65,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
             },
           }}
         >
-          <div className="relative flex items-center w-full sm:w-[420px] mb-5">
+          <div className="relative flex items-center w-full sm:w-[420px] mb-5 xs:mb-1 sm:mb-5">
             <Input
               className="w-full"
               fieldName="ofwmname"
