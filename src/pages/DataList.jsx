@@ -20,19 +20,26 @@ function DataList() {
   const token = localStorage.getItem('UTK')
   const queryClient = useQueryClient()
 
-  React.useEffect(() => { AppDataListQuery.refetch() }, [localStorage.getItem('SP')])
+  React.useEffect(() => { AppDataListQuery.refetch() }, [localStorage.getItem('SP')]);
   const AppDataListQuery = useQuery({
     queryKey: ['AppDataListQuery'],
     queryFn: async () => {
+      try {
       const result = await GET_LIST(`/getAppDataList/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
       setLoading(false);
       return result.list;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false); 
+      return []; 
+    }
     },
     enabled: true,
     refetchInterval: 60 * 1000,
     retryDelay: 1000,
-    staleTime: 5 * 1000
+    staleTime: 5 * 1000,
   });
+
 
   return (
     <div className='mx-[1%] my-[2%]'>
@@ -42,47 +49,56 @@ function DataList() {
       </div>
       <Divider />
       <Button type='primary' onClick={() => { navigate(`${localStorage.getItem('SP')}/12/tab=1`) }} hidden>TEST</Button>
-      <div className='pb-2 min-w-[25%] float-end'>
-        <Input addonAfter={<SearchOutlined />} placeholder='Search' size='large'
-          onChange={(e) => { setSearch(e.target.value.toUpperCase()) }}
-          value={getSearch} />
+      <div className="flex justify-between items-center mb-1">
+        <div></div>
+        <div className="w-[400px]">
+          <Input
+            addonAfter={<SearchOutlined />}
+            placeholder="Search"
+            size="large" 
+            className="w-full h-[50px] px-4" 
+            onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
+            value={getSearch}
+          />
+        </div>
       </div>
       <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                    <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-      <ResponsiveTable columns={ColumnList(3)} height={'calc(100vh - 505px)'} width={'100%'}
-        rows={AppDataListQuery.data?.filter((x) =>
-          x.loanAppCode.includes(getSearch) ||
-          x.recDate.includes(getSearch) ||
-          x.loanProduct.toUpperCase().includes(getSearch) ||
-          x.borrowersFullName.toUpperCase().includes(getSearch) ||
-          x.departureDate.includes(getSearch) ||
-          x.beneficiaryFullName.toUpperCase().includes(getSearch) ||
-          x.consultant.toUpperCase().includes(getSearch) ||
-          x.loanType.toUpperCase().includes(getSearch) ||
-          x.branch.toUpperCase().includes(getSearch)
-        )
-          .map((x, i) => ({
-            key: i,
-            NO: i + 1,
-            LAN: <Button key={i} onClick={() => {
-              localStorage.setItem('SIDC', toEncrypt(x.loanAppId));
-              navigate(`${localStorage.getItem('SP')}/${x.loanAppCode}/deduplication`)
-              queryClient.invalidateQueries({ queryKey: ['getRemarks', x.loanAppCode] }, { exact: true })
-            }} type='link'>{x.loanAppCode}</Button>,
-            DOA: moment(x.recDate).format('MM/DD/YYYY'),
-            LP: x.loanProduct,
-            OFW: x.borrowersFullName,
-            OFWDD: x.departureDate,
-            BENE: x.beneficiaryFullName,
-            LC: x.consultant,
-            LT: x.loanType,
-            LB: x.branch,
-            STAT: x.status,
-            UB: x.modUser,
-            LIR: x.remarksIn
-          }))} />
-          </Spin>
-          </ConfigProvider>
+        <Spin spinning={AppDataListQuery.isFetching} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center" size='large'>
+          <ResponsiveTable columns={ColumnList(3, AppDataListQuery)} height={'calc(95vh - 505px)'} width={'100%'}
+            rows={AppDataListQuery.data?.filter((x) =>
+              x.loanAppCode.includes(getSearch) ||
+              x.recDate.includes(getSearch) ||
+              x.loanProduct.toUpperCase().includes(getSearch) ||
+              x.borrowersFullName.toUpperCase().includes(getSearch) ||
+              x.departureDate.includes(getSearch) ||
+              x.beneficiaryFullName.toUpperCase().includes(getSearch) ||
+              x.consultant.toUpperCase().includes(getSearch) ||
+              x.loanType.toUpperCase().includes(getSearch) ||
+              x.branch.toUpperCase().includes(getSearch)
+            )
+              .map((x, i) => ({
+                key: i,
+                NO: i + 1,
+                LAN: <Button key={i} onClick={() => {
+                  localStorage.setItem('SIDC', toEncrypt(x.loanAppId));
+                  localStorage.setItem('activeTab', 'deduplication')
+                  navigate(`${localStorage.getItem('SP')}/${x.loanAppCode}/deduplication`)
+                  queryClient.invalidateQueries({ queryKey: ['getRemarks', x.loanAppCode] }, { exact: true })
+                }} type='link'>{x.loanAppCode}</Button>,
+                DOA: moment(x.recDate).format('MM/DD/YYYY'),
+                LP: x.loanProduct,
+                OFW: x.borrowersFullName,
+                OFWDD: x.departureDate,
+                BENE: x.beneficiaryFullName,
+                LC: x.consultant,
+                LT: x.loanType,
+                LB: x.branch,
+                STAT: x.status,
+                UB: x.modUser,
+                LIR: x.remarksIn
+              }))} />
+        </Spin>
+      </ConfigProvider>
     </div>
   )
 }

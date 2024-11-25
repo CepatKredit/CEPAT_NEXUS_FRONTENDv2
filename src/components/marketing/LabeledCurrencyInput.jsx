@@ -15,15 +15,19 @@ function LabeledCurrencyInput({
     className_label,
     className_dsub,
     rendered,
-    required
+    required,
+    calculated_val,
 }) {
     const [getStatus, setStatus] = React.useState('');
     const [getIcon, setIcon] = React.useState(false);
-    const [getItem, setItem] = React.useState(value?value.toString() : '');
+    const [getItem, setItem] = React.useState(value ? value.toString() : '0.00');
 
-    const debreceive = React.useCallback(debounce((newValue) => {
-        receive(newValue);
-    }, 300), [receive]);
+    const debreceive = React.useCallback(
+        debounce((newValue) => {
+            receive(newValue);
+        }, 300),
+        [receive]
+    );
 
     function formatNumberWithCommas(num) {
         if (!num) return '';
@@ -37,13 +41,14 @@ function LabeledCurrencyInput({
     }
 
     function formatToTwoDecimalPlaces(num) {
-        if (!num) return '';
+        if (!num) return '0.00';
         return parseFloat(num).toFixed(2);
     }
 
     function onChange(e) {
         let num = e.target.value.replace(/[^0-9.]/g, '');
         const periodCount = num.split('.').length - 1;
+        
         if (periodCount > 1) {
             num = num.slice(0, -1);
         } else if (periodCount === 1) {
@@ -53,22 +58,25 @@ function LabeledCurrencyInput({
             }
             num = parts.join('.');
         }
+
+        // If the current display is "0.00" and the user starts typing, clear it
         const plainNum = removeCommas(num);
         const parsedNum = parseFloat(plainNum);
-        const formattedValue = formatNumberWithCommas(plainNum);
+        const formattedValue = plainNum ? formatNumberWithCommas(plainNum) : '';
 
         setItem(formattedValue);
         if (placeHolder === 'Enter Interest Rate') {
-            if (parsedNum < 1.99 || parsedNum > 2.5) {
+            debreceive(formattedValue);
+            if ((required || required === undefined) && (num === '' || plainNum < 0)) {
                 setStatus('error');
                 setIcon(true);
-                debreceive();
+                //debreceive();
             } else {
                 setStatus('');
                 setIcon(true);
-                debreceive(formattedValue);
+                //debreceive(formattedValue);
             }
-        } else if (placeHolder !== 'Rent Amount' && placeHolder !== 'Monthly Amortization' && placeHolder !== 'Calculated Total Exposure' && placeHolder !== 'Calculated Monthly Amortization') {
+        } else if ((required || required === undefined) && (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure')) {
             if (!plainNum || parsedNum < 30000) {
                 setStatus('error');
                 setIcon(true);
@@ -89,28 +97,26 @@ function LabeledCurrencyInput({
         setIcon(true);
         const plainNum = removeCommas(getItem);
         const parsedNum = parseFloat(plainNum);
-
         if (placeHolder === 'Enter Interest Rate') {
-            if (parsedNum < 1.99 || parsedNum > 2.5) {
+            if ((!plainNum || !getItem) && parsedNum < 0 ) {
                 setStatus('error');
             } else {
-                setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
                 setStatus('');
             }
-        } else if (placeHolder !== 'Rent Amount' && placeHolder !== 'Monthly Amortization' && placeHolder !== 'Calculated Total Exposure' && placeHolder !== 'Calculated Monthly Amortization') {
+        } else if (placeHolder !== 'Rent Amount' &&  placeHolder !== 'Monthly Amortization' &&  placeHolder !== 'Calculated Total Exposure' &&  placeHolder !== 'Calculated Monthly Amortization' &&  placeHolder !== 'Enter Other Exposure') {
             if (!plainNum || parsedNum < 30000) { 
                 setStatus('error');
             } else {
-                setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
                 setStatus('');
             }
         } else { if (!plainNum){ 
             setStatus('error');
         }else{
-            setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
             setStatus('');
             }
         }
+        setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(parsedNum)));
+
     }
 
     React.useEffect(() => {
@@ -118,12 +124,17 @@ function LabeledCurrencyInput({
             onBlur();
         }
     }, []);
-    React.useEffect(() => {
-       setItem(value?value.toString(): '')
-       if (rendered) {
-        onBlur();
-    }
-    }, [value]);
+
+    React.useEffect(() => { 
+        if (rendered && calculated_val !== undefined) {
+            setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(calculated_val ? calculated_val.toString() : '0.00')));
+            if (calculated_val === 0 || calculated_val && (placeHolder === 'Calculated Monthly Amortization' || placeHolder === 'Calculated Total Exposure')) {
+                setStatus('');
+            } else {
+                setStatus('error');
+            }
+        }
+    }, [calculated_val]);
 
     return (
         <div className={className_dmain}>
@@ -136,14 +147,14 @@ function LabeledCurrencyInput({
             ) : null}
 
             <div className={className_dsub}>
-            <Input
+                <Input
                     value={getItem}
                     disabled={disabled}
                     className={`w-full ${readOnly ? 'bg-[#f5f5f5]' : 'bg-[#ffffff]'}`}
                     size="large"
                     placeholder={placeHolder}
-                    onChange={(e) => onChange(e)}
-                    onBlur={(e) => onBlur(e)}
+                    onChange={onChange}
+                    onBlur={onBlur}
                     readOnly={readOnly}
                     status={(required || required === undefined) ? getStatus : false}
                     style={{ width: '100%' }}
@@ -166,9 +177,7 @@ function LabeledCurrencyInput({
                             ? 'Interest rate must be between 1.99% and 2.5%'
                             : placeHolder !== 'Rent Amount' && placeHolder !== 'Monthly Amortization' && placeHolder !== 'Calculated Monthly Amortization' && placeHolder !== 'Calculated Total Exposure' && label !== 'Other Exposure'
                                 ? `${placeHolder} Required (Min. amount of 30,000.00)`
-                                : (placeHolder === 'Rent Amount' || placeHolder === 'Monthly Amortization' || label === 'Other Exposure')
-                                    ? `${placeHolder} is Required`
-                                    : ''
+                                : `${placeHolder} is Required`
                         }
                     </div>
                 )}

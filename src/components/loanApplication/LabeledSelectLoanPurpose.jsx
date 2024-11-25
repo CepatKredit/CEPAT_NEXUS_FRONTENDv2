@@ -29,7 +29,6 @@ const { getStatus, getIcon, onChange, onBlur } = useSelectValidation(getAppDetai
     queryKey: ["getLoanPurpose"],
     queryFn: async () => {
       const result = await GET_LIST("/getLoanPurpose");
-      console.log("HELLO ", result)
       return result.list;
     },
     refetchInterval: (data) => {
