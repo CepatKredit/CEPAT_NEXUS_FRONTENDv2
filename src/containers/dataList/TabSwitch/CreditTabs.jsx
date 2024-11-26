@@ -406,7 +406,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                 .catch((error) => {
                     console.log(error);
                     api['warning']({
-                        message: 'Error: Failed API',
+                        message: 'Error Check Duplicate: Failed API',
                         description: "Failed to Connect into API",
                     });
                     return; //stop the process
@@ -417,7 +417,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             //Start to insert Acb and then update all
          //   console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
             try {
-                const result2 = await axios.post('/POST/AddAdditionalCoborrower', acb_data);
+                const result2 = await axios.post('/POST/P43AACB', acb_data);
                 api[result2.data.status]({
                     message: result2.data.message,
                     description: result2.data.description
@@ -426,7 +426,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             } catch (error) {
                 console.log('Error ', error)
                 api['warning']({
-                    message: 'Error: Failed API',
+                    message: 'Error Insert ACB: Failed API',
                     description: "Failed to Connect into API",
                 });
                 return; //Important !!!
@@ -442,9 +442,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                 });
 
             } else {
-             //   console.log('log in loan', resLoan)
-             //   console.log('log in ofw', resOFW)
-             //   console.log('log in bene & add', resBene)
+
                 api['warning']({
                     message: 'Update Failed.',
                     description: "Something went wrong.",

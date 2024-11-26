@@ -269,24 +269,31 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                         columns={columns}
                                         height={300}
                                         width={400}
-                                        rows={get.ofw ? get.ofw.map((x, i) => ({
-                                            key: generateKey(),
-                                            num: i + 1,
-                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                            score: x.score || 'NO RECORDS FOUND',
-                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                            ckby: x.checkedBy || USRNAME,
-                                            ckdate: x.checkedDate || mmddyy(dayjs()),
-                                        }))
+                                        rows={get.ofw ? get.ofw
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
                                             : []}
                                         locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
                                     />
@@ -313,24 +320,31 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                         columns={columns}
                                         height={300}
                                         width={400}
-                                        rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
-                                            key: generateKey(),
-                                            num: i + 1,
-                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                            score: x.score || 'NO RECORDS FOUND',
-                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                            ckby: x.checkedBy || USRNAME,
-                                            ckdate: x.checkedDate || mmddyy(dayjs()),
-                                        }))
+                                        rows={get.beneficiary ? get.beneficiary
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
                                             : []}
                                         locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
                                     />
@@ -354,24 +368,31 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                         columns={columns}
                                         height={300}
                                         width={400}
-                                        rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
-                                            key: generateKey(),
-                                            num: i + 1,
-                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                            score: x.score || 'NO RECORDS FOUND',
-                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                            ckby: x.checkedBy || USRNAME,
-                                            ckdate: x.checkedDate || mmddyy(dayjs()),
-                                        }))
+                                        rows={get.beneficiary ? get.beneficiary
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
                                             : []}
                                         locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
                                     />
@@ -393,24 +414,31 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                         loading={onClickKaiser.isPending}
                                         height={300}
                                         width={400}
-                                        rows={get.ofw ? get.ofw.map((x, i) => ({
-                                            key: generateKey(),
-                                            num: i + 1,
-                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                            score: x.score || 'NO RECORDS FOUND',
-                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                            ckby: x.checkedBy || USRNAME,
-                                            ckdate: x.checkedDate || mmddyy(dayjs()),
-                                        }))
+                                        rows={get.ofw ? get.ofw
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
                                             : []}
                                         locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
                                     />
@@ -435,24 +463,31 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 loading={onClickKaiser.isPending}
                                 height={300}
                                 width={400}
-                                rows={get.coborrow ? get.coborrow.map((x, i) => ({
-                                    key: generateKey(),
-                                    num: i + 1,
-                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                    score: x.score || 'NO RECORDS FOUND',
-                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                    ckby: x.checkedBy || USRNAME,
-                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                }))
+                                rows={get.coborrow ? get.coborrow
+                                    .sort((a, b) => {
+                                        // Sorting by lastname alphabetically
+                                        const lnameA = a.firstname?.toUpperCase() || "";
+                                        const lnameB = b.firstname?.toUpperCase() || "";
+                                        return lnameA.localeCompare(lnameB);
+                                    })
+                                    .map((x, i) => ({
+                                        key: generateKey(),
+                                        num: i + 1,
+                                        fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                        mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                        lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                        suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                        bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                        deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                        category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                        urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                        dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                        subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                        score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                        jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                        ckby: x.checkedBy || USRNAME,
+                                        ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                    }))
                                     : []}
                                 locale={get.coborrow && get.coborrow.length === 0 ? { emptyText: 'No Record Found' } : {}}
                             />

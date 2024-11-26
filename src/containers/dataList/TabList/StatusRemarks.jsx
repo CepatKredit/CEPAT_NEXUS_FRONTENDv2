@@ -6,20 +6,22 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
-    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext);
     const { TextArea } = Input;
     const { SetStatus } = ApplicationStatus()
 
     React.useEffect(() => {
         SET_LOADING_INTERNAL('UploadDocs', true);
         getRemarks.refetch()
-    }, [data?.loanIdCode]);
+
+    }, [getAppDetails.loanIdCode]);
 
     const getRemarks = useQuery({
-        queryKey: ['getRemarks', data?.loanIdCode],
+        queryKey: ['getRemarks', getAppDetails?.loanIdCode],
         queryFn: async () => {
             try {
-                const result = await axios.get(`/GET/G37R/${data?.loanIdCode}`);
+                if (getAppDetails.loanIdCode == '' || getAppDetails.loanIdCode == undefined) { SET_LOADING_INTERNAL('StatusRemarks', false); return null; }
+                const result = await axios.get(`/GET/G37R/${getAppDetails?.loanIdCode}`);
                 SetStatus(result.data.list[0].status)
                 if (localStorage.getItem('activeTab') === 'last-update-by')
                     setUrgentApp(result.data.list[0].urgentApp)
@@ -107,9 +109,9 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
         <div className={isEdit ? 'h-[5rem]' : ''}>
             <div className="w-full mx-auto">
                 <Space className="w-full flex justify-center">
-                {isEdit && User !== 'LC' && (
+                    {isEdit && User !== 'LC' && (
                         <div className="relative mb-3 flex justify-start xs:left-1 sm:left-1 md:left-1 lg:right-3">
-                            <div 
+                            <div
                                 className={`inline-flex font-bold items-center 
                                             px-6 xs:px-5 sm:px-4 md:px-6 lg:px-6 xl:px-8 2xl:px-10
                                             py-1 xs:py-1 sm:py-1 md:py-2 lg:py-2 xl:py-2
