@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Modal, Upload, Button, ConfigProvider, notification, Form, Image, Input, Popconfirm, Table, Select } from 'antd';
+import { Modal, Upload, Button, ConfigProvider, notification, Form, Image, Input, Popconfirm, Table, Select, Progress } from 'antd';
 import { UploadOutlined, SaveOutlined } from '@ant-design/icons';
 import { FileUpload } from '@hooks/FileController';
 import { viewPDFView, viewModalUploadDocx } from '@hooks/ModalController';
@@ -14,6 +14,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
     const { fileList, addFile, updateFile, removeFile, clearList } = FileUpload()
     const { modalStatus, setStatus, storeData } = viewPDFView()
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
+    const [getFileList, setFileList] = React.useState([]);
     const queryClient = useQueryClient()
 
     let checkFiles = true
@@ -21,11 +22,21 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
     else { checkFiles = false }
 
     function handleRemove(file) {
+        setFileList((prev) => prev.filter((item) => item.uid !== file.uid));
         removeFile(file)
         CheckList.refetch()
     }
 
     async function handleBeforeUpload(file) {
+        const MAX_FILES = 20;
+        if (fileList.length >= MAX_FILES) {
+            api['error']({
+                message: 'File limit exceeded',
+                description: `You can only upload a maximum of ${MAX_FILES} files.`,
+            });
+            return Upload.LIST_IGNORE;
+        }
+        
         let checkType
         if (file.name.match(/\.(jpeg|jpg|png|gif|pdf)$/) !== null) {
             checkType = true
@@ -38,30 +49,33 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 description: `${file.name} is not allowed to upload in the system. 
                 Please contact the System Administrator.`
             });
+            return Upload.LIST_IGNORE;
+        }
 
+        if (Display === 'USER') {
+            addFile({
+                file: file,
+                docsID: 'ID',
+                status: 'Please select status',
+                remarks: '',
+                docStatus: '1',
+            });
+        } else {
+            addFile({
+                file: file,
+                docsID: GetDocsCode('Others'),
+                status: 'Others',
+                remarks: '',
+                docStatus: '1',
+            });
         }
-        else {
-            if (Display === 'USER') {
-                addFile({
-                    file: file,
-                    docsID: 'ID',
-                    status: 'Please select status',
-                    remarks: '',
-                    docStatus: '1'
-                })
-            }
-            else {
-                addFile({
-                    file: file,
-                    docsID: GetDocsCode('Others'),
-                    status: 'Others',
-                    remarks: '',
-                    docStatus: '1'
-                })
-            }
-            CheckList.refetch()
-        }
-        return checkType || Upload.LIST_IGNORE;
+    
+        setFileList((prev) => [
+            ...prev,
+            { uid: file.uid, name: file.name, status: 'uploading' },
+        ]);
+        CheckList.refetch();
+        return checkType || Upload.LIST_IGNORE; 
     }
 
     function GetDocsCode(data) {
@@ -269,10 +283,12 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
         mutationFn: async () => {
             const formData = new FormData();
             var MAX_LIMIT = 0
+            const MAX_FILES = 20;
             let status_list = ''
             let docsID_list = ''
             let remarks_list = ''
             let docStatus_list = ''
+
             fileList.map((x) => {
                 if (status_list === '') {
                     status_list += x.status
@@ -299,6 +315,13 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 MAX_LIMIT += x.file.size
                 formData.append('files', x.file);
             })
+
+            if (fileList.length > MAX_FILES) {
+                api['warning']({
+                    message: 'Number of files limit',
+                    description: `Only the first ${MAX_FILES} files were uploaded. ${fileList.length - MAX_FILES} files were not processed.`,
+                });
+            }
 
             if (MAX_LIMIT >= 40000000) {
                 api['warning']({
@@ -367,7 +390,14 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
             }} />
 
             <Modal
-                title={'Upload Document'}
+                title={
+                    <>
+                        <h1 className="text-2xl font-semibold">Upload Document</h1>
+                        <span className="text-xs text-red-600">
+                            upload maximum of 40 MB and 20 files only at a time.
+                        </span>
+                    </>
+                }
                 centered
                 open={showModal}
                 onCancel={closeModal}
