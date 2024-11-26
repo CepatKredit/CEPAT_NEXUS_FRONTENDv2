@@ -8,6 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import { warning } from "framer-motion";
 import LabeledTextArea_Street from "./LabeledTextArea_Street";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
+import { ProvinceList } from "@api/addressGetList/ProvinceAPI";
+import { MunicipalityList } from "@api/addressGetList/MunicipalityAreaAPI";
+import { BarangayList } from "@api/addressGetList/BarangayAPI";
+import { useDataContainer } from "@context/PreLoad";
+import { ChangeText } from "@utils/Converter";
 function AddressContainer({
   rendered,
   // api,
@@ -24,6 +29,7 @@ function AddressContainer({
 }) {
   const { api, updateAppDetails, handleAddressCases } = React.useContext(LoanApplicationContext);
 
+  const {GET_PROVINCE_LIST} = useDataContainer()
 
   let getStreet =
     type === "present"
@@ -37,18 +43,18 @@ function AddressContainer({
       : type === "coborrow"
       ? data.coborrowStreet
       : "";
-  const provinceList = useQuery({
-    queryKey: ["ProvinceListQuery"],
-    queryFn: async () => {
-      const result = await axios.get("/getProvinceList");
-      return result.data.list;
-    },
-    refetchInterval: (data) => {
-      data?.length === 0 ? 500 : false;
-    },
-    enabled: true,
-    retryDelay: 1000,
-  });
+  // const provinceList = useQuery({
+  //   queryKey: ["ProvinceListQuery"],
+  //   queryFn: async () => {
+  //     const result = await axios.get("/getProvinceList");
+  //     return result.data.list;
+  //   },
+  //   refetchInterval: (data) => {
+  //     data?.length === 0 ? 500 : false;
+  //   },
+  //   enabled: true,
+  //   retryDelay: 1000,
+  // });
 
   const getMunFromProvCode = useQuery({
     queryKey: [
@@ -146,47 +152,77 @@ function AddressContainer({
     retryDelay: 1000,
   });
 
+
+// const provinceList = ProvinceList() || [];
+
+// const getMunFromProvCode = MunicipalityAreaList(type, {
+//   ofwPresProv: data.ofwPresProv,
+//   ofwPermProv: data.ofwPermProv,
+//   benpresprov: data.benpresprov,
+//   ofwprovProv: data.ofwprovProv,
+//   coborrowProv: data.coborrowProv,
+//   ofwSameAdd: data.ofwSameAdd,
+//   bensameadd: data.bensameadd,
+//   ofwProvSameAdd: data.ofwProvSameAdd,
+//   coborrowSameAdd: data.coborrowSameAdd
+// });
+
+// const getBarangayFromProvCode = BarangayList(type, {
+//   ofwPresMunicipality: data.ofwPresMunicipality,
+//   ofwPermMunicipality: data.ofwPermMunicipality,
+//   benpresmunicipality: data.benpresmunicipality,
+//   ofwprovMunicipality: data.ofwprovMunicipality,
+//   coborrowMunicipality: data.coborrowMunicipality,
+//   ofwSameAdd: data.ofwSameAdd,
+//   bensameadd: data.bensameadd,
+//   ofwProvSameAdd: data.ofwProvSameAdd,
+//   coborrowSameAdd: data.coborrowSameAdd
+// });  
+
+// console.log("PROVINCE", provinceList)
+
+// console.log("MUNI", getMunFromProvCode)
+
+// console.log("BARANGAY", getBarangayFromProvCode)
+// const municipalityList = MunicipalityList(type, data);
+// const barangayList = BarangayList(type, data)
+
   return (
     <>
       {type === "permanent" ? (
-        <div className="mb-[2%] mt-[2%]">
-          <Checkbox
-            disabled={disabled ? true : disabled == undefined ? true : false}
-            className="text-xs"
-            checked={data.ofwSameAdd}
-            onClick={() => {
-              const newSameAddValue = !data.ofwSameAdd;
-              if (
-                newSameAddValue == 1 &&
-                (!data.ofwPresBarangay || !data.ofwPresStreet)
-              ) {
-                // api["warning"]({
-                //   message: "Incomplete Present Address",
-                //   description: "Please Complete the Present Address!",
-                // });
-                api.warning({
-                  message: "Incomplete Present Address",
-                  description: "Please Complete the Present Address!",
-                });
-              } else {
-                // receive({
-                //   name: "ofwSameAdd",
-                //   value: newSameAddValue,
-                // }); 
-                updateAppDetails({ name: "ofwSameAdd", value: newSameAddValue });
-                handleAddressCases({
+        <div className="mb-2 mt-2 w-full xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[53%] 3xl:w-[40%] mx-auto">
+        <Checkbox
+          disabled={disabled ? true : disabled === undefined ? true : false}
+          className="text-xs "
+          checked={data.ofwSameAdd}
+          onClick={() => {
+            const newSameAddValue = !data.ofwSameAdd;
+            if (
+              newSameAddValue == 1 &&
+              (!data.ofwPresBarangay || !data.ofwPresStreet)
+            ) {
+              api.warning({
+                message: "Incomplete Present Address",
+                description: "Please Complete the Present Address!",
+              });
+            } else {
+              updateAppDetails({ name: "ofwSameAdd", value: newSameAddValue });
+              handleAddressCases(
+                {
                   name: newSameAddValue ? "ofwPerm" : "ofwSameAdd",
                   value: null,
-                }, type);
-              }
-            }}
-          >
-            <b>
-              Please check if the Present Address is the same as the Permanent
-              Address.
-            </b>
-          </Checkbox>
-        </div>
+                },
+                type
+              );
+            }
+          }}
+        >
+          <b>
+            Please check if the Present Address is the same as the Permanent
+            Address.
+          </b>
+        </Checkbox>
+      </div>
       ) : type === "beneficiary" ? (
         <div className="mb-[2%] mt-[2%]">
           <Checkbox
@@ -327,11 +363,11 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Area / Province"}
+          label={<>Area / Province <span className="text-red-500">*</span></>}
           placeHolder={"Select Area/Province"}
           rendered={rendered}
           data={data}
-          type={type}
+          // type={type}
           receive={(e) => {
             // Existing logic to handle the change of province, municipality or barangay
             updateAppDetails({
@@ -379,7 +415,7 @@ function AddressContainer({
               : null) ||
             (disabled ? true : disabled == undefined ? true : false)
           }
-          options={provinceList.data?.map((x) => ({
+          options={GET_PROVINCE_LIST.map((x) => ({
             value: x.provinceCode,
             label: x.provinceDescription.toUpperCase(),
           }))}
@@ -401,7 +437,7 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"City / Municipality"}
+          label={<>City / Municipality <span className="text-red-500">*</span></>}
           placeHolder={"Select City/Municipality"}
           rendered={rendered}
           data={data}
@@ -478,7 +514,7 @@ function AddressContainer({
           className_dmain={className_dmain}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={"Barangay"}
+          label={<>Barangay <span className="text-red-500">*</span></>}
           placeHolder={"Select Barangay"}
           rendered={rendered}
           data={data}
@@ -587,7 +623,7 @@ function AddressContainer({
               });
             }}
             placeHolder={"Block / Unit / Street"}
-            label={"Block / Unit / Street"}
+            label={<>Block / Unit / Street <span className="text-red-500">*</span></>}
             disabled={disabled}
             className_dmain={className_dmain}
             className_label={className_label}
@@ -635,7 +671,7 @@ function AddressContainer({
                       : type === "coborrow"
                       ? "coborrowStreet"
                       : "",
-                  value: e.target.value.toUpperCase(),
+                  value: ChangeText(e.target.value.toUpperCase()),
                 });
               }
             }}
