@@ -7,7 +7,7 @@ import axios from 'axios';
 import { AvailableModal } from "@hooks/ModalController";
 import { AvailableDisbursementList } from '@hooks/DisbursementData';
 import { jwtDecode } from 'jwt-decode';
-import { useDataContainer } from '@containers/PreLoad';
+import { useDataContainer } from '@context/PreLoad';
 import ResponsiveModal from '@components/global/ResponsiveModal';
 import AvailableList from '@containers/bankGeneration/AvailableList';
 import { render } from 'react-dom';
@@ -158,9 +158,9 @@ function BatchedDisbursement({ BID, Data, FileName }) {
 
     async function UpdateStatus(id, status, lan) {
         if (!status) return setEditingKey('');
-
+        console.log('check ', lan, id)
         //console.log(`/updateStatDisbursement/${id}/${jwtDecode(token).USRID}/${status}`)
-        await axios.post(`/updateStatDisbursement/${id}/${jwtDecode(token).USRID}/${status}`)
+        await axios.post(`/updateStatDisbursement/${id}/${jwtDecode(token).USRID}/${status}/${lan}`)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -172,45 +172,45 @@ function BatchedDisbursement({ BID, Data, FileName }) {
             .catch((error) => {
                 console.log(error)
             })
-/*
-        await axios.post(`/getDisbursementList/${lan}/NP`)
-            .then((result) => {
-                result.data?.every((x) => x.status === "POSTED")
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description
-                })
-                queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
-                setEditingKey('')
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-        if(getDisbursementList.data?.every((x) => x.status === "POSTED") || false){
-            const data ={
-                LAN: '',
-                LoanAppId:'',
-                Status: 22, //RELEASE
-                UrgentApp: '',
-                RemarksIn: '',
-                RemarksEx: '',
-                SoaDate: '',
-                ModUser: jwtDecode(token).USRID,
-            }
-            await axios.post(`/updateApplicationStatus`,data)
-            .then((result) => {
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description
-                })
-                queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
-                setEditingKey('')
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-        }
-        */
+        /*
+                await axios.post(`/getDisbursementList/${lan}/NP`)
+                    .then((result) => {
+                        result.data?.every((x) => x.status === "POSTED")
+                        api[result.data.status]({
+                            message: result.data.message,
+                            description: result.data.description
+                        })
+                        queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
+                        setEditingKey('')
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                if(getDisbursementList.data?.every((x) => x.status === "POSTED") || false){
+                    const data ={
+                        LAN: '',
+                        LoanAppId:'',
+                        Status: 22, //RELEASE
+                        UrgentApp: '',
+                        RemarksIn: '',
+                        RemarksEx: '',
+                        SoaDate: '',
+                        ModUser: jwtDecode(token).USRID,
+                    }
+                    await axios.post(`/updateApplicationStatus`,data)
+                    .then((result) => {
+                        api[result.data.status]({
+                            message: result.data.message,
+                            description: result.data.description
+                        })
+                        queryClient.invalidateQueries({ queryKey: ['BatchedDisbursementListQuery', BID] }, { exact: true })
+                        setEditingKey('')
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                }
+                */
     }
 
     const [editingKey, setEditingKey] = React.useState('');
@@ -326,23 +326,16 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                                         <Tooltip title="Save">
                                             <Popconfirm
                                                 title="Are you sure you want to cancel the edit?"
-                                                onConfirm={() => { UpdateStatus(record.key, getStat, record.lan) }}
+                                                onConfirm={() => { UpdateStatus(record.key, getStat, record.ln) }}
                                                 okText="Yes"
                                                 cancelText="Cancel"
                                             >
                                                 <Button icon={<SaveOutlined />} type='primary' />
                                             </Popconfirm>
                                         </Tooltip>
-                                        <Tooltip title="Cancel">
-                                            <Popconfirm
-                                                title="Are you sure you want to cancel the edit?"
-                                                onConfirm={() => { setEditingKey('') }}
-                                                okText="Yes"
-                                                cancelText="Cancel"
-                                            >
-                                                <Button icon={<CloseOutlined />} type='primary' danger />
-                                            </Popconfirm>
-                                        </Tooltip>
+
+                                        <Button icon={<CloseOutlined />} type='primary' onClick={() => { setEditingKey('') }} danger />
+
                                     </Space>)
                                     : (<></>)
                     }
@@ -402,28 +395,34 @@ function BatchedDisbursement({ BID, Data, FileName }) {
                 <div>
                     <div className='w-[12rem]'>Company Code</div>
                     <div className='w-[12rem]'>
-                        <Input disabled={FileName} className='w-full' value={getBatchInfo.CC} onChange={(e) => { setBatchInfo({ ...getBatchInfo, CC: e.target.value }) }} />
+                        {/* <Input disabled={FileName} className='w-full' value={getBatchInfo.CC} onChange={(e) => { setBatchInfo({ ...getBatchInfo, CC: e.target.value }) }} /> */}
+                        <h1><strong>CEPAT</strong></h1>
                     </div>
                 </div>
                 <div>
                     <div className='w-[12rem]'>Company Name</div>
                     <div className='w-[12rem]'>
-                        <Input disabled={FileName} className='w-full' value={Data?.CN} readOnly />
+                        {/* <Input disabled={FileName} className='w-full' value={Data?.CN} readOnly /> */}
+                        <h1><strong>CEPAT KREDIT FINANCING INC</strong></h1>
                     </div>
                 </div>
                 <div>
-                    <div className='w-[20rem]'>Funding Account Number</div>
-                    <div className='w-[20rem]'>
-                        <Input disabled={FileName} className='w-full' value={getBatchInfo?.FAN} onChange={(e) => { setBatchInfo({ ...getBatchInfo, FAN: e.target.value }) }} />
+                    <div className='w-[12rem]'>Funding Account Number</div>
+                    <div className='w-[12rem]'>
+                        {/* <Input disabled={FileName} className='w-full' value={getBatchInfo?.FAN} onChange={(e) => { setBatchInfo({ ...getBatchInfo, FAN: e.target.value }) }} /> */}
+                        <h1><strong>0000-057309-503</strong></h1>
                     </div>
                 </div>
-                <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => { updateBatch(); LoadData() }}>Update</Button>
-                <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => {
-                    LoadData()
-                    SetTotalAmount(parseFloat(getTotal.Amount))
-                    SetTotalCount(parseInt(getTotal.Count))
-                    setStatus(true)
-                }}>Add Disburse</Button>
+                {/*UPDATE BUTTON */}
+                {/* <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => { updateBatch(); LoadData() }}>Update</Button> */}
+                <div>
+                    <Button disabled={FileName} className='mt-[1.4rem]' type='primary' onClick={() => {
+                        LoadData()
+                        SetTotalAmount(parseFloat(getTotal.Amount))
+                        SetTotalCount(parseInt(getTotal.Count))
+                        setStatus(true)
+                    }}>Add Disburse</Button>
+                </div>
             </div>
             <Table
                 dataSource={getDisbursementList.data?.map((x) => ({

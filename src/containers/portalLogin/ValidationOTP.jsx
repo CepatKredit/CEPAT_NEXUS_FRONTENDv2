@@ -48,6 +48,12 @@ function ValidationOTP({ username, accessList }) {
         setOTP(e)
     }
 
+    function keydown(e) {
+        if (e.key === 'Enter') onClickValidate.mutate();
+        if (e.key === 'Tab') e.preventDefault();
+
+    }
+
     React.useEffect(() => {
         setTime(300)
         setStartTime(Date.now())
@@ -81,6 +87,36 @@ function ValidationOTP({ username, accessList }) {
                     const { status, message, description } = result.data;
                     if (status === 'success') {
                         // Reset OTPLock on success
+                        ///FOR REFRESH TOKEN 
+                        // axios.post(
+                        //     `verify/access-token/${result.data.eeyyy}?expirationInHours=60`
+                        //   )
+                        //   .then(function (response) {
+                        //       const accessToken = response.data.accessToken;
+                        //       const refreshToken = response.data.refreshToken;
+                        //       const refreshExpiresIn = response.data.refreshExpiresIn; // In seconds
+                        
+                        //       // Store tokens
+                        //       localStorage.setItem("ACCESS TOKEN", accessToken);
+                        //       setCookie("REFRESH TOKEN", refreshToken, {
+                        //         secure: true,
+                        //         sameSite: "strict",
+                        //         maxAge: refreshExpiresIn, // Expiration in seconds
+                        //       });
+                        
+                        //       // Alert before the cookie expires (5 seconds before expiration for demonstration)
+                        //       // const alertBeforeExpiry = 5; // Adjust the time before expiry to show alert (in seconds)
+                        //       // const alertTimeout = (refreshExpiresIn - alertBeforeExpiry) * 1000; // Convert to milliseconds
+                        
+                        //       // setTimeout(() => {
+                        //       //   alert("Your session is about to expire. Please refresh or re-login.");
+                        //       // }, alertTimeout);
+                        //   })
+                        //   .catch(function (error) {
+                        //     console.error(error);
+                        //     throw new Error("Token generation failed.");
+                        //   });
+                            ///FOR REFRESH TOKEN 
                         localStorage.setItem('UTK', result.data.eeyyy);
                         localStorage.setItem('UPTH', toEncrypt(accessList));
                         localStorage.setItem('SP', '/ckfi/dashboard');
@@ -137,13 +173,26 @@ function ValidationOTP({ username, accessList }) {
                         )}
 
                         <span className='text-2xl font-bold'>OTP Verification</span>
-                    </div> 
+                    </div>
                     <div className='pb-4'>
                         <span className='text-sm'>Enter the OTP sent to your&nbsp;
                             <span className='font-bold'>{maskEmail(username)}</span>
                         </span>
                     </div>
-                    <Input.OTP value={getOTP} formatter={(str) => str.replace(/[^0-9]/g, '')} onChange={(e) => onChangeOTP(e)} disabled={isLocked} onKeyDown={(e) => { if (e.key === 'Enter') onClickValidate.mutate() }} />
+                    <Input.OTP
+                        value={getOTP}
+                        formatter={(str) => str.replace(/[^0-9]/g, '')}
+                        onChange={(e) => onChangeOTP(e)}
+                        disabled={isLocked}
+                        onKeyDown={(e) => {
+                            if ((e.key && !/[0-9]/.test(e.key) && e.key !== 'Backspace')|| e.key === 'Tab') {
+                                e.preventDefault();
+                            }else if(e.key === 'Enter'){
+                                onClickValidate.mutate();
+                            }
+                            keydown(e);
+                        }}
+                    />
                     <div className='pt-1'>
                         {
                             time === 0

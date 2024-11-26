@@ -87,6 +87,10 @@ function LabeledSelec_ValidId({
           disabled={disabled}
           size="large"
           placeholder={placeHolder}
+          showSearch
+          filterOption={(input, option) =>
+              option?.label.toLowerCase().includes(input.toLowerCase())
+          }
           onChange={(e) => {
             onChange(e);
           }}
