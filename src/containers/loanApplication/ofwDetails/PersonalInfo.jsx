@@ -310,7 +310,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         className_dsub={className_dsub}
         label={
           <>
-            Type of Residences <span className="text-red-500">*</span>
+            Type of Residence <span className="text-red-500">*</span>
           </>
         }
         value={getAppDetails.ofwresidences}

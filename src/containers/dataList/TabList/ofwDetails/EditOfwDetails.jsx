@@ -501,8 +501,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 <LabeledSelect
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
-                    label={<>Type of Residences <span className="text-red-500">*</span></>}
-                    placeHolder='Type of Residences'
+                    label={<>Type of Residence <span className="text-red-500">*</span></>}
+                    placeHolder='Type of Residence'
                     disabled={isEdit}
                     receive={(e) => updateAppDetails({ name: 'ofwresidences', value: e })}
                     data={Residences()}

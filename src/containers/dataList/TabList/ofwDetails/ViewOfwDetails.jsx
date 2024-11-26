@@ -100,7 +100,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         (User === 'Credit' || User === 'Lp') && { key: '16', label: <span className={`font-semibold ${data.PEP ? 'text-black' : 'text-red-600'}`}>PEP</span>, children: Overseas().find(ofwPEP => ofwPEP.value === data.PEP)?.label || '' },
         { key: '17', label: <span className="font-semibold text-black">Dependents</span>, children: data.ofwdependents !== undefined ? data.ofwdependents : '' },
         { key: '18', label: <span className={`font-semibold ${data.ofwmstatus ? 'text-black' : 'text-red-600'}`}>Marital Status</span>, children: MaritalStatus().find(status => status.value === data.ofwmstatus)?.label || '' },
-        { key: '23', label: <span className={`font-semibold ${data.ofwresidences ? 'text-black' : 'text-red-600'}`}>Type of Residences</span>, children: Residences().find(residence => residence.value === data.ofwresidences)?.label || '' },
+        { key: '23', label: <span className={`font-semibold ${data.ofwresidences ? 'text-black' : 'text-red-600'}`}>Type of Residence</span>, children: Residences().find(residence => residence.value === data.ofwresidences)?.label || '' },
     ];
 
     if (data.ofwresidences === 3) {

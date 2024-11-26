@@ -147,6 +147,10 @@ function SideNav() {
                   }))}
                 />
               </ConfigProvider>
+
+              <div className=" text-center p-2 fixed bottom-0 w-[12vw]">
+                <span className="text-xs text-gray-600">v2.0.1</span>
+              </div>
             </div>
           </div>
         </Sider>

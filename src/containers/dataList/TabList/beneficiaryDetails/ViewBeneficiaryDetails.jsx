@@ -83,7 +83,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         { key: '28', label: <span className={`font-semibold ${data.benpresbarangayname ? 'text-black' : 'text-red-600'}`}>Present Barangay</span>, children: data.benpresbarangayname || '' },
         { key: '29', label: <span className={`font-semibold ${data.benpresstreet ? 'text-black' : 'text-red-600'}`}>Present Street</span>, children: data.benpresstreet || '' },
         { key: '30', label: (<span className={`font-semibold ${data.benstaymonths || data.benstayyears ? 'text-black' : 'text-red-600'}`}> Length of Stay</span> ),children: `${data.benstayyears > 0 ? `${data.benstayyears} Year(s)` : ''} ${data.benstayyears > 0 && data.benstaymonths > 0 ? ' / ' : ''}  ${data.benstaymonths > 0 ? `${data.benstaymonths} Month(s)` : ''}`},
-        { key: '31', label: <span className={`font-semibold ${data.benresidences ? 'text-black' : 'text-red-600'}`}>Type of Residences</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
+        { key: '31', label: <span className={`font-semibold ${data.benresidences ? 'text-black' : 'text-red-600'}`}>Type of Residence</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
         (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className={`font-semibold ${data.BenLandMark ? 'text-black' : 'text-red-600'}`}>Landmark</span>, children: data.BenLandMark || '' },
         (User === 'Credit' || User === 'Lp') && { key: '34', label: <span className={`font-semibold ${data.BenPoBRemarks ? 'text-black' : 'text-red-600'}`}>Proof of Billing Remarks</span>, children: data.BenPoBRemarks || '' },     
     ].filter(Boolean);
@@ -153,7 +153,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         { key: '31', label: (<span className='font-semibold text-black'> Length of Stay</span> ),children: `${ data.AcbStayYears > 0 ? `${data.AcbStayYears} Year(s)` :`` } ${(data.AcbStayYears > 0 && data.AcbStayMonths >= 1 ) ? ' / ' : ``} ${data.AcbStayMonths > 0 ? `${data.AcbStayMonths} Month(s)` : ``}` },
         (User === 'Credit' || User === 'Lp') && { key: '32', label: <span className='font-semibold text-black'>Landmark</span>, children: data.AcbLandMark || '' },
         (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className='font-semibold text-black'>Proof of Billing Remarks</span>, children: data.AcbPoBRemarks || '' },
-        { key: '34', label: <span className='font-semibold text-black'>Type of Residences</span>, children: Residences().find(residence => residence.value === data.coborrowresidences)?.label || '' },
+        { key: '34', label: <span className='font-semibold text-black'>Type of Residence</span>, children: Residences().find(residence => residence.value === data.coborrowresidences)?.label || '' },
         data.coborrowresidences === 3 && { key: '35', label: <span className='font-semibold text-black'>Rent Amount</span>, children: data.AcbRentAmount? formatNumberWithCommas(formatToTwoDecimalPlaces(data.AcbRentAmount.toString().replaceAll(',',''))).toString(): '' },
 
     ];

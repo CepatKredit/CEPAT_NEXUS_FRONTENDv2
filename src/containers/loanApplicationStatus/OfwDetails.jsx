@@ -220,7 +220,7 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
       key: "13",
       label: (
         <span className="font-semibold text-black whitespace-nowrap">
-          Type Of Residences
+          Type Of Residence
         </span>
       ),
       children:
@@ -701,8 +701,8 @@ function OfwDetails({ data, receive, presaddress, OldData }) {
               <LabeledSelect
                 className_dmain="w-full h-[3.5rem] mt-5"
                 className_label={"font-bold"}
-                label={"Type of Residences"}
-                placeHolder="Type of Residences"
+                label={"Type of Residence"}
+                placeHolder="Type of Residence"
                 value={getAppDetails.ofwresidences}
                 fieldName={"ofwresidences"}
                 // receive={(e) => receive({ name: "ofwresidences", value: e })}

@@ -594,8 +594,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label={'font-bold'}
                     className_dsub={''}
-                    label={<>Type of Residences <span className="text-red-500">*</span></>}
-                    placeHolder='Type Of Residences'
+                    label={<>Type of Residence <span className="text-red-500">*</span></>}
+                    placeHolder='Type Of Residence'
                     disabled={isEdit}
                     receive={(e) => { updateAppDetails({ name: 'benresidences', value: e }) }}
                     data={Residences()}
@@ -1108,8 +1108,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={<>Type of Residences <span className="text-red-500">*</span></>}
-                            placeHolder='Type Of Residences'
+                            label={<>Type of Residence <span className="text-red-500">*</span></>}
+                            placeHolder='Type Of Residence'
                             disabled={isEdit}
                             receive={(e) => { updateAppDetails({ name: 'coborrowresidences', value: e }) }}
                             data={Residences()}
