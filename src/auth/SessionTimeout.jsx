@@ -3,6 +3,7 @@ import * as React from 'react'
 import { useCookies } from 'react-cookie'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+//hindi kasama sa logic na path
 const ExemptedRoutes = ['/', '/loan-application']
 export default function SessionTimeout({ children }) {
 
@@ -13,55 +14,58 @@ export default function SessionTimeout({ children }) {
     // const refreshTimeoutRef = React.useRef();
     // const alertTimeoutRef = React.useRef();
     // const [cookies, setCookie, removeCookie] = useCookies(['REFRESH TOKEN'])
+    // const [isUserActive, setIsUserActive] = React.useState(false);
+
+    // //trigger ko kapag hindi na gumagalaw si user
+    // const checkUserActivity = () => {
+    //     setIsUserActive(true);
+    //     setTimeout(() => setIsUserActive(false), 10 * 1000);
+    // };
 
     // const refreshToken = async () => {
-    //     try {
-    //         const currentRefreshToken = document.cookie
-    //             .split('; ')
-    //             .find(row => row.startsWith('REFRESH TOKEN='))
-    //             ?.split('=')[1];
-
-    //             if (!currentRefreshToken) {
-    //                 console.log('No refresh token found. Aborting refresh.');
-    //                 clearTimeout(refreshTimeoutRef.current); // Stop scheduled refresh
-    //                 clearTimeout(alertTimeoutRef.current);   // Stop alert
-    //                 return; // Exit early if no refresh token
-    //             }
-
-    //         const response = await axios.post(`verify/access-token/${currentRefreshToken}?expirationInHours=20`);
-    //         const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-    //         const refreshExpiresIn = 20
-    //         // Update tokens
-    //         localStorage.setItem('ACCESS TOKEN', accessToken);
-    //         setCookie('REFRESH TOKEN', newRefreshToken, {
-    //             secure: true,
-    //             sameSite: 'strict',
-    //             maxAge: refreshExpiresIn // Update expiry in seconds
-    //         });
-
-    //         console.log('Token refreshed successfully.');
-
+    //     const currentRefreshToken = document.cookie
+    //         .split('; ')
+    //         .find(row => row.startsWith('REFRESH TOKEN='))
+    //         ?.split('=')[1];
+    
+    //     if (!currentRefreshToken) {
+    //         console.log('No refresh token found. Aborting refresh.');
     //         clearTimeout(refreshTimeoutRef.current);
     //         clearTimeout(alertTimeoutRef.current);
-
-    //         // Schedule alert and next refresh
-    //         alertTimeoutRef.current = setTimeout(() => {
-    //             if (cookies['REFRESH TOKEN']) {
-    //                 alert('Your session is about to expire.');
-    //             } else {
-    //                 console.log('No refresh token found. Stopping alert.');
-    //                 clearTimeout(alertTimeoutRef.current); // Stop the alert
-    //             }
-    //         }, (refreshExpiresIn - 10) * 1000);
-
-    //         // Set up next refresh
-    //         const refreshBuffer = 5; // Time before expiry to refresh
-    //         refreshTimeoutRef.current = setTimeout(refreshToken, (20 - refreshBuffer) * 1000);
-    //     } catch (error) {
-    //         console.error('Failed to refresh token:', error);
-    //         clearSession();
+    //         return;
     //     }
+    
+    //     if (!isUserActive) {
+    //         console.log('User inactive. Skipping token refresh.');
+    //         return;
+    //     }
+    
+    //     const response = await axios.post(
+    //         `http://localhost:5209/api/CKFI_Portal/verify/access-token/${currentRefreshToken}?expirationInHours=20`
+    //     );
+    
+    //     const { accessToken, refreshToken: newRefreshToken } = response.data;
+    
+    //     // Store the new tokens
+    //     localStorage.setItem('ACCESS TOKEN', accessToken);
+    //     setCookie('REFRESH TOKEN', newRefreshToken, {
+    //         secure: true,
+    //         sameSite: 'strict',
+    //         maxAge: 20, // Refresh token expiry in seconds
+    //     });
+    
+    //     console.log('Token refreshed successfully.');
+    
+    //     // Schedule a warning alert 3 seconds before expiry
+    //     alertTimeoutRef.current = setTimeout(() => {
+    //         if (document.cookie.includes('REFRESH TOKEN')) {
+    //             console.log('Triggering session expiry alert.');
+    //             alert('Your session is about to expire.');
+    //         }
+    //     }, (20 - 3) * 1000); // 3 seconds before expiry
+    
+    //     // Schedule the next token refresh
+    //     refreshTimeoutRef.current = setTimeout(refreshToken, (20 - 5) * 1000); // Refresh 5 seconds before expiry
     // };
 
     // const clearSession = () => {
@@ -105,6 +109,10 @@ export default function SessionTimeout({ children }) {
     //     window.addEventListener('click', resetExpiryOnActivity);
     //     window.addEventListener('scroll', resetExpiryOnActivity);
 
+    //     //user activity
+    //     window.addEventListener('mousemove', checkUserActivity);
+    //     window.addEventListener('keydown', checkUserActivity);
+
     //     // Initialize timers
     //     resetExpiryOnActivity();
 
@@ -113,6 +121,9 @@ export default function SessionTimeout({ children }) {
     //         window.removeEventListener('keydown', resetExpiryOnActivity);
     //         window.removeEventListener('click', resetExpiryOnActivity);
     //         window.removeEventListener('scroll', resetExpiryOnActivity);
+
+    //         window.removeEventListener('mousemove', checkUserActivity);
+    //         window.removeEventListener('keydown', checkUserActivity);
     //         clearTimeout(timeoutRef.current);
     //         clearTimeout(refreshTimeoutRef.current);
     //     };

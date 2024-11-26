@@ -17,6 +17,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
     const [getFileList, setFileList] = React.useState([]);
     const queryClient = useQueryClient()
+    const [getFileProgress, setFileProgress] = React.useState({})
 
     let checkFiles = true
     if (fileList.length === 0) { checkFiles = true }
@@ -94,6 +95,18 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 key: 'fl',
                 ellipsis: true,
             },
+            // {
+            //     title: 'Progress',
+            //     dataIndex: 'progress',
+            //     key: 'progress',
+            //     render: (text, record) => (
+            //         <Progress
+            //             percent={getFileProgress[record.fl] || 0}
+            //             size="small"
+            //             status={getFileProgress[record.fl] === 100 ? 'success' : 'active'}
+            //         />
+            //     ),
+            // },
             {
                 title: 'Document Type',
                 dataIndex: 'docxType',
@@ -334,7 +347,11 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 await axios.post(`/POST/P66UFR`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
-                    }
+                    },
+                    // onUploadProgress: (progressEvent) => {
+                    //     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    //     console.log(progressEvent);
+                    // },
                 })
                     .then((result) => {
                         api[result.data.status]({
