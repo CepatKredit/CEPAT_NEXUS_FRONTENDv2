@@ -119,9 +119,57 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
         beneficiary: null,
         coborrow: null,
     })
+    // FETCH KAISER FROM DB
+    const FetchKaiser = useQuery({
+        queryKey: ['FetchKaiser'],
+        queryFn: async () => {
+            try {
+                const req = [
+                    axios.get(`/GET/G148GK/${data.loanIdCode}/${1}`),
+                    axios.get(`/GET/G148GK/${data.loanIdCode}/${2}`),
+                    axios.get(`/GET/G148GK/${data.loanIdCode}/${3}`)
+                ]
+                const results = await Promise.allSettled(req);
+                const ofwData = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data.list : [];
+                const beneficiaryData = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data.list : [];
+                const coborrowData = results[2].status === 'fulfilled' && !results[2].value.error ? results[2].value.data.list : [];
+
+                set(prevState => ({
+                    ...prevState,
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                }));
+                SET_LOADING_INTERNAL('KaiserOFW', false);
+                return {
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                };
+            } catch (err) {
+                console.log(err)
+                return {
+                    ofw: [],
+                    beneficiary: [],
+                    coborrow: [],
+                };
+            }
+        }
+    })
+    React.useEffect(() => {
+        if (data.loanIdCode != '' && gettrigger) {
+            set({
+                ofw: null,
+                beneficiary: null,
+                coborrow: null,
+            })
+            FetchKaiser.refetch();
+            settrigger(false);
+        }
+    }, [data.loanIdCode])
 
     async function getKaiser() {
-       onClickKaiser.mutate();
+        onClickKaiser.mutate();
     }
 
     const onClickKaiser = useMutation({
@@ -144,26 +192,23 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                 LoanAppId: data.loanIdCode,
                 ModUser: USRNAME,
             }
-    
+
             const requests = [
-                axios.post(`/GET/G18K/`, data1),
-                axios.post(`/GET/G18K/`, data2),
-                axios.post(`/GET/G18K/`, data3)
+                axios.post(`/POST/P69GK`, data1),
+                axios.post(`/POST/P69GK`, data2),
+                axios.post(`/POST/P69GK`, data3)
             ];
             try {
                 const results = await Promise.allSettled(requests);
-                console.log(results[0], results[1], results[2])
                 const ofwData = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data.list : [];
                 const beneficiaryData = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data.list : [];
                 const coborrowData = results[2].status === 'fulfilled' && !results[2].value.error ? results[2].value.data.list : [];
-                console.log('Done Fetching Kaiser API...')
                 set(prevState => ({
                     ...prevState,
                     ofw: ofwData,
                     beneficiary: beneficiaryData,
                     coborrow: coborrowData,
                 }));
-                settrigger(false);
                 SET_LOADING_INTERNAL('KaiserOFW', false);
                 return {
                     ofw: ofwData,
@@ -202,7 +247,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
             children: (<>
                 <center>
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                        <Button  loading={onClickKaiser.isPending} size='large' className='mb-2 bg-[#3b0764]' type='primary' onClick={() => { genKaiser() }}  >Load Kaiser</Button>
+                        <Button loading={onClickKaiser.isPending} size='large' className='mb-2 bg-[#3b0764]' type='primary' onClick={() => { genKaiser() }}  >Load Kaiser</Button>
                     </ConfigProvider>
                 </center>
                 {
@@ -220,6 +265,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                             <div className='h-[400px]' key={generateKey()}>
                                 <div className='mt-2 px-2 w-full'>
                                     <ResponsiveTable
+                                        loading={onClickKaiser.isPending}
                                         columns={columns}
                                         height={300}
                                         width={400}
@@ -263,6 +309,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                             <div className='h-[400px]' key={generateKey()}>
                                 <div className='mt-2 w-full px-2'>
                                     <ResponsiveTable
+                                        loading={onClickKaiser.isPending}
                                         columns={columns}
                                         height={300}
                                         width={400}
@@ -303,6 +350,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                             <div className='h-[400px]' key={generateKey()}>
                                 <div className='mt-2 w-full px-2'>
                                     <ResponsiveTable
+                                        loading={onClickKaiser.isPending}
                                         columns={columns}
                                         height={300}
                                         width={400}
@@ -342,6 +390,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 <div className='mt-2 w-full px-2'>
                                     <ResponsiveTable
                                         columns={columns}
+                                        loading={onClickKaiser.isPending}
                                         height={300}
                                         width={400}
                                         rows={get.ofw ? get.ofw.map((x, i) => ({
@@ -383,6 +432,7 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                         <div className='mt-2 w-full px-2'>
                             <ResponsiveTable
                                 columns={columns}
+                                loading={onClickKaiser.isPending}
                                 height={300}
                                 width={400}
                                 rows={get.coborrow ? get.coborrow.map((x, i) => ({
