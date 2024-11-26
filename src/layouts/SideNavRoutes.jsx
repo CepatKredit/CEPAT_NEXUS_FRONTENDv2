@@ -53,7 +53,7 @@ function SideNavRoutes() {
         label: 'Dashboard',
     })
 
-    if (GetData('ROLE').toString() === '20' || GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+    if (GetData('ROLE')?.toString() === '20' || GetData('ROLE')?.toString() === '30' || GetData('ROLE')?.toString() === '40') {
         PageAccess.push({
             key: '/ckfi/endorsement',
             icon: <FaHandshake  style={{ fontSize: '18px' }} />,

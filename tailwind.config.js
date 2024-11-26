@@ -6,7 +6,9 @@ export default {
   ],
   theme: {
     screens: {
-      'xs': '320px',      // Extra small devices (phones)
+      'xs1': '320px',      // Extra small devices (phones)
+      'xs2': '360px',      // Extra small devices (phones)
+      'xs': '390px',      // Extra small devices (phones)
       'sm': '640px',      // Small devices (tablets)
       'md': '740px',      // Medium devices (small laptops)
       'lg': '1024px',     // Large devices (laptops/desktops)
