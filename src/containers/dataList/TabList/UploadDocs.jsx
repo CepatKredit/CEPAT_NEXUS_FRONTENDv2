@@ -25,12 +25,11 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     const DocListQuery = useQuery({
         queryKey: ['DocListQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${FileType}`)
+            const result = await GET_LIST(`/GET/G16FT/${FileType}`)
             return result.list
         },
-        enabled: true,
+        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
-        staleTime: 5 * 1000
     })
 
     const token = localStorage.getItem('UTK');
@@ -38,7 +37,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
         queryKey: ['FileListQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${Uploader}`)
                 SET_LOADING_INTERNAL('UploadDocs', false);
                 return result.list
             } catch (error) {
@@ -47,15 +46,13 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 return [];
             }
         },
-        enabled: true,
-        retryDelay: 1000,
-        staleTime: 5 * 1000
+        enabled: true
     })
 
-    React.useEffect(() => {
-        SET_LOADING_INTERNAL('UploadDocs', true)
-        FileListQuery.refetch();
-    }, [getAppDetails]);
+    /* React.useEffect(() => {
+         SET_LOADING_INTERNAL('UploadDocs', true)
+         FileListQuery.refetch();
+     }, [getAppDetails]);*/
 
     function GetFile(id, command) {
         let count = 0;
@@ -231,7 +228,14 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 }
                 <div className={classname}>
                     <div className="mr-[.5rem]">
-                        <Collapse items={CollapseList()} />
+                        <Collapse items={DocListQuery.isFetched && FileListQuery.isFetched && FileListQuery.isFetchedAfterMount ? CollapseList()
+                            : (<div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-white bg-opacity-50 z-50">
+                                <Spin
+                                    spinning={true}
+                                    tip="Please wait..."
+                                    className="text-green-500"
+                                />
+                            </div>)} />
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@ function LabeledSelectAgency({ showSearch, required, placeHolder, label, value, 
     const { data: getAgencyOption } = useQuery({
         queryKey: ['getAgency'],
         queryFn: async () => {
-            const result = await GET_LIST('/OFWDetails/GetAgency');
+            const result = await GET_LIST('/GET/G1A');
             return result.list;
         },
         refetchInterval: 30 * 1000,

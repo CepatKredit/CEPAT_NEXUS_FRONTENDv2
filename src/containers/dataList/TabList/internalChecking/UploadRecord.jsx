@@ -27,7 +27,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
         queryKey: ['DocListICQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/getFileType/${'IC'}`)
+                const result = await GET_LIST(`/GET/G16FT/${'IC'}`)
                 SET_LOADING_INTERNAL('FinancialChecker', false);
                 return result.list
             } catch (error) {
@@ -158,7 +158,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
         queryKey: ['FileListFinQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/getFileList/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${'IC'}/${jwtDecode(token).USRID}`)
                 let dataContainer = []
                 SET_LOADING_INTERNAL('FinancialChecker', false);
                 result.list?.map((x) => {
@@ -184,10 +184,10 @@ function UploadRecord({ data, ClientId, Uploader }) {
         enabled: true
     })
 
-    React.useEffect(() => {
+   /* React.useEffect(() => {
         FileListQuery.refetch()
         SET_LOADING_INTERNAL('FinancialChecker', true);
-    }, [data])
+    }, [data])*/
 
     const { modalStatus, setStatus, storeData } = viewPDFView()
 
@@ -361,7 +361,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
             PROID: 'IC'
         }
 
-        await axios.post('/updateFileStatus', dataContainer)
+        await axios.post('/POST/P68FS', dataContainer)
             .then((result) => {
                 FileListQuery.refetch()
                 cancel()
@@ -377,6 +377,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
                     description: error.message
                 })
             })
+            SET_LOADING_INTERNAL('FinancialChecker', true);
     };
     const mergedColumns = colFinalCheck.map((col) => {
         if (!col.editable) {
@@ -466,7 +467,7 @@ function UploadRecord({ data, ClientId, Uploader }) {
             PRODID: 'IC'
         }
 
-        await axios.post('/updateFileStatus', dataContainer)
+        await axios.post('/POST/P68FS', dataContainer)
             .then((result) => {
                 FileListQuery.refetch()
                 cancel()

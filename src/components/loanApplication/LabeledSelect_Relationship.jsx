@@ -28,7 +28,7 @@ function LabeledSelect_Relationship({
   const getRelationship = useQuery({
     queryKey: ["getRelationship"],
     queryFn: async () => {
-      const result = await GET_LIST("/getListRelationship");
+      const result = await GET_LIST("/GET/G33RR");
       return result.list;
     },
     refetchInterval: (data) => {

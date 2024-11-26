@@ -12,7 +12,7 @@ function SelectIncome({ data, event, excludeItems }) {
     const NDIIncomeListQuery = useQuery({
         queryKey: ['NDIIncomeList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getNDI/${parseInt(23)}`);
+            const result = await GET_LIST(`/GET/G24N/${parseInt(23)}`);
             return result.list;
         },
         refetchInterval: (data) => {

@@ -7,9 +7,10 @@ import ViewPdf from './pdfToolbar/ViewPdf';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { toDecrypt } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uploader, FileType, LoanStatus }) {
-
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const [api, contextHolder] = notification.useNotification()
     const { fileList, addFile, updateFile, removeFile, clearList } = FileUpload()
     const { modalStatus, setStatus, storeData } = viewPDFView()
@@ -330,7 +331,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 })
             }
             else {
-                await axios.post(`/uploadFileReq`, formData, {
+                await axios.post(`/POST/P66UFR`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -344,7 +345,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                         setModalStatus(false)
                         queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
                         queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
-                        queryClient.invalidateQueries({queryKey: ["ClientDataQuery"]}, {exact: true})
+                        queryClient.invalidateQueries({ queryKey: ["ClientDataQuery"] }, { exact: true })
                         queryClient.invalidateQueries(["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))], { exact: true });
                     })
                     .catch((error) => {
@@ -357,14 +358,15 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                     UpdateStatus()
                 }
             }
+            SET_LOADING_INTERNAL('UploadDocs', true);
         }
     })
 
     async function UpdateStatus() {
-        await axios.post(`/UpdateLackOfDocs/${ClientId}/${Uploader}`)
+        await axios.post(`/POST/P82ULD/${ClientId}/${Uploader}`)
             .then((result) => {
                 //WORKING
-                queryClient.invalidateQueries({queryKey: ["ClientDataQuery"]}, {exact: true})
+                queryClient.invalidateQueries({ queryKey: ["ClientDataQuery"] }, { exact: true })
                 queryClient.invalidateQueries(["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))], { exact: true });
             })
             .catch((error) => {

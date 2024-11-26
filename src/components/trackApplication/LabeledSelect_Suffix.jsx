@@ -28,7 +28,7 @@ const { updateAppDetails } = React.useContext(LoanApplicationContext)
   const { data: suffixOption } = useQuery({
     queryKey: ["getSuffix"],
     queryFn: async () => {
-      const result = await GET_LIST("/OFWDetails/GetSuffix");
+      const result = await GET_LIST("/GET/G28S");
       return result.list;
     },
     refetchInterval: 30 * 1000,

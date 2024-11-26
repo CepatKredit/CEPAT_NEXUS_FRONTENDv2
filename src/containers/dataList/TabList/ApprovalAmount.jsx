@@ -174,7 +174,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                         MonthlyAmortization: parseFloat(getAppDetails.MonthlyAmortization),
                         LoggedUser: jwtDecode(token).USRID,
                     };
-                    await axios.post('addCharges/', payload);
+                    await axios.post('POST/P143AC/', payload);
                     api.success({
                         message: 'Success',
                         description: 'Charges Updated successfully!',

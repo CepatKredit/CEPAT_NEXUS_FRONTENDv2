@@ -125,7 +125,7 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                 Id: getFileData?.id,
                 PRODID: 'FILE'
             }
-            await axios.post('/updateFileStatus', dataContainer)
+            await axios.post('/POST/P68FS', dataContainer)
                 .then((result) => {
                     queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
                     queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })

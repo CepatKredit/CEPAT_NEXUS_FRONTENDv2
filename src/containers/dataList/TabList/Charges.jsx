@@ -15,7 +15,7 @@ function Charges({ LoanAppId, data, User, }) {
     const loanProducts = useQuery({
         queryKey: ['getProductSelect'],
         queryFn: async () => {
-            const result = await GET_LIST('/getListLoanProduct');
+            const result = await GET_LIST('/GET/G19LLP');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -193,8 +193,8 @@ function Charges({ LoanAppId, data, User, }) {
         queryFn: async () => {
             try {
                 //console.log('LOanappid ito..', LoanAppId)
-                const result = await GET_LIST(`/getChargesLPA/${LoanAppId}`)
-                console.log('chargesssss', result);
+                const result = await GET_LIST(`/POST/G114CL/${LoanAppId}`)
+               // console.log('chargesssss', result);
                 setAppDetails(prevDetails => ({
                     ...prevDetails,
                     PFR: result.list[0]?.processingFeeRate,

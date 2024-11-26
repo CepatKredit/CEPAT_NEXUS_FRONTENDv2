@@ -66,7 +66,7 @@ function ValidationOTP({ username, accessList }) {
                 Otp: getOTP.toString()
             }
             if (time === 0) {
-                await axios.post(`/cancelOtp/${username}`)
+                await axios.post(`/POST/P89CO/${username}`)
                     .then((result) => {
                         if (result.data.status === 'info') {
                             api.info({
@@ -83,7 +83,7 @@ function ValidationOTP({ username, accessList }) {
                     })
             } else {
                 try {
-                    const result = await axios.post('/verifyOtp', dataHolder);
+                    const result = await axios.post('/POST/P90VO', dataHolder);
                     const { status, message, description } = result.data;
                     if (status === 'success') {
                         // Reset OTPLock on success
@@ -142,7 +142,7 @@ function ValidationOTP({ username, accessList }) {
     });
 
     async function onClickResendOTP() {
-        await axios.post(`/resendOtp/${username}`)
+        await axios.post(`/POST/P88RO/${username}`)
             .then((result) => {
                 setTime(300)
                 setStartTime(Date.now())

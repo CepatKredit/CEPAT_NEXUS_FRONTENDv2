@@ -23,11 +23,11 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
         queryKey: ['ReleaseDocListQuery'],
         queryFn: async () => {
             let container = []
-            const LPACCDDT = await GET_LIST(`/getFileType/${'LPACCDDT'}`)
+            const LPACCDDT = await GET_LIST(`/GET/G16FT/${'LPACCDDT'}`)
             LPACCDDT.list?.map((x) => {
                 container.push({ id: x.id, name: 'LPACCDDT', docsType: x.docsType })
             })
-            const LPACCREL = await GET_LIST(`/getFileType/${'LPACCREL'}`)
+            const LPACCREL = await GET_LIST(`/GET/G16FT/${'LPACCREL'}`)
             LPACCREL.list?.map((x) => {
                 container.push({ id: x.id, name: 'LPACCREL', docsType: x.docsType })
             })
@@ -44,9 +44,9 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
         queryFn: async () => {
             try {
                 let container = []
-                const LPACCDDT = await GET_LIST(`/getFileList/${ClientId}/${'LPACCDDT'}/${jwtDecode(token).USRID}`)
+                const LPACCDDT = await GET_LIST(`/GET/G17FL/${ClientId}/${'LPACCDDT'}/${jwtDecode(token).USRID}`)
                 LPACCDDT.list?.map((x) => { container.push(x) })
-                const LPACCREL = await GET_LIST(`/getFileList/${ClientId}/${'LPACCREL'}/${jwtDecode(token).USRID}`)
+                const LPACCREL = await GET_LIST(`/GET/G17FL/${ClientId}/${'LPACCREL'}/${jwtDecode(token).USRID}`)
                 LPACCREL.list?.map((x) => { container.push(x) })
                 SET_LOADING_INTERNAL('ReleaseFile', false);
                 return container
@@ -61,12 +61,12 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
         staleTime: 5 * 1000
     })
 
-    React.useEffect(() => {
+   /* React.useEffect(() => {
         if (!data.loanIdCode) {
             SET_LOADING_INTERNAL('ReleaseFile', true)
             FileListQuery.refetch();
         }
-    }, [data]);
+    }, [data]);*/
 
 
     function GetFile(id, command) {

@@ -28,7 +28,7 @@ function LabeledSelect_Country({
   const getCountrySelect = useQuery({
     queryKey: ["getCountrySelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/OFWDetails/getCountry");
+      const result = await GET_LIST("/GET/G26C");
       return result.list;
     },
     refetchInterval: (data) => {
