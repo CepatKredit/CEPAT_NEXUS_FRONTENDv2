@@ -11,8 +11,8 @@ import {
   Space,
   Input,
 } from "antd";
-import Logo from "@assets/images/logo.png";
-import small from "@assets/images/small-logo.png";
+import Logo from "@assets/images/Nexus_v3a2.png";
+import small from "@assets/images/Nexus_v3a2.png";
 import AccountSettings from "@containers/accountMenu/AccountSettings";
 import DashMini from "@layouts/DashMini";
 import SessionTimeout from "@auth/SessionTimeout";
@@ -108,12 +108,14 @@ function SideNav() {
           <div className="bg-stone-100 h-[100%]">
             {collapsed ? (
               <div className="h-[5em] bg-[#34b331]">
-                <img src={small} alt="logo" className="h-[5em]" />
+                <img src={small} alt="logo" className="h-[4.5em]" />
               </div>
             ) : (
+              <center>
               <div className="h-[5em] bg-[#34b331]">
-                <img src={Logo} alt="logo" className="h-[5em]" />
+                <img src={Logo} alt="logo" className="h-[5.5em] pb-2" />
               </div>
+              </center>
             )}
             <div className="overflow-y-hidden hover:overflow-y-auto h-[90vh]">
               <ConfigProvider
@@ -178,7 +180,7 @@ function SideNav() {
               <div className="flex flex-row items-center">
                 <div className="mx-2 my-[4px]">
                   <span className="font-bold text-lg text-stone-100">
-                    CKFI Portal
+                    Search
                   </span>
                 </div>
                 <Space.Compact>

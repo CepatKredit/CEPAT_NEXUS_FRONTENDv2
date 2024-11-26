@@ -518,6 +518,12 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             else { return false }
         }
     }
+    const disabledStatuses = [
+        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
+        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
+        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
+        'RETURN TO CREDIT OFFICER', 'COMPLIED - LACK OF DOCUMENTS'
+    ];
 
     //Trigger Fields
     TriggerFields('CREDIT');
@@ -642,7 +648,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                     onChange={onChangeTab}
                     items={TabsItems}
                 />
-                {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
+                {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
                     <ConfigProvider
                         theme={{
                             token: {

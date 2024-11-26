@@ -103,7 +103,7 @@ function SideNavRoutes() {
         else if (x === '/ckfi/for-approval') { PageAccess.push({ key: x, label: 'For Approval', icon: <MdApproval  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/on-waiver') { PageAccess.push({ key: x, label: 'On Waiver', icon: <AiOutlineSignature  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/approved') { PageAccess.push({ key: x, label: 'Approved (Trans-Out)', icon: <RxExit style={{ fontSize: '18px' }} />, }) }
-        else if (x === '/ckfi/under-lp') { PageAccess.push({ key: x, label: 'Under Lp', icon: <GiReceiveMoney  style={{ fontSize: '18px' }} />, }) }
+        else if (x === '/ckfi/under-lp') { PageAccess.push({ key: x, label: 'Under LP', icon: <GiReceiveMoney  style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/confirmation') { PageAccess.push({ key: x, label: 'Confirmation', icon: <MdOutlineConfirmationNumber style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/confirmed') { PageAccess.push({ key: x, label: 'Confirmed', icon: <GiConfirmed style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/for-docusign') { PageAccess.push({ key: x, label: 'For Docusign', icon: <MdEditDocument style={{ fontSize: '18px' }} />, }) }

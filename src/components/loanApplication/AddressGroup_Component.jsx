@@ -190,7 +190,7 @@ function AddressContainer({
   return (
     <>
       {type === "permanent" ? (
-        <div className="mb-2 mt-2 w-full xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[53%] 3xl:w-[40%] mx-auto">
+        <div className="mb-2 mt-2 w-full xs1:w-[35%] xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[53%] 3xl:w-[40%] mx-auto">
         <Checkbox
           disabled={disabled ? true : disabled === undefined ? true : false}
           className="text-xs "
@@ -224,7 +224,7 @@ function AddressContainer({
         </Checkbox>
       </div>
       ) : type === "beneficiary" ? (
-        <div className="mb-[2%] mt-[2%]">
+        <div className="mb-2 mt-2 w-full xs1:w-[35%] xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[56%] 3xl:w-[56%] mx-auto">
           <Checkbox
             disabled={disabled ? true : disabled == undefined ? true : false}
             className="text-xs"

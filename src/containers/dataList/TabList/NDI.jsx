@@ -66,6 +66,12 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
         }
         else { return false }
     }
+    const disabledStatuses = [
+        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
+        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
+        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
+        'RETURN TO CREDIT OFFICER', 'RELEASED'
+    ];
 
     const InitialOtherIncome = (key, getValue) => {
         setIncomeInitial((prevValues) => ({
@@ -523,7 +529,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                 </div>
                 <center className="flex justify-center items-center ">
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
-                        {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                        {!DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
                             <Button
                                 size="large"
                                 className="-mt-6 mr-40 bg-[#2b972d]"

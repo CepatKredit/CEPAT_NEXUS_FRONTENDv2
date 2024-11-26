@@ -269,29 +269,29 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                         </ConfigProvider>)
                 ) : null}
             </div>
-
-    
-            <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-            {!isEdit && (!!isEligibleToApprove ) && (
-                    <ConfigProvider
-                        theme={{
-                            token: {
-                                colorPrimary: '#28a745',
-                                colorPrimaryHover: '#218838',
-                            },
-                        }}
-                    >
-                        <Button
-                            type="primary"
-                            onClick={onClickApprove}
-                            icon={<CheckCircleOutlined />}
-                            size="large"
+            
+                <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
+                {!isEdit && (!isEligibleToApprove ) && !shouldHideApproveButton && (
+                        <ConfigProvider
+                            theme={{
+                                token: {
+                                    colorPrimary: '#28a745',
+                                    colorPrimaryHover: '#218838',
+                                },
+                            }}
                         >
-                            Approve
-                        </Button>
-                    </ConfigProvider>
-                )}
-            </div>
+                            <Button
+                                type="primary"
+                                onClick={onClickApprove}
+                                icon={<CheckCircleOutlined />}
+                                size="large"
+                            >
+                                Approve
+                            </Button>
+                        </ConfigProvider>
+                    )}
+                </div>
+
             {(GetData('ROLE').toString() === '60' || GetData('ROLE').toString() === '100' &&
                 ['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) && !DISABLE_STATUS(localStorage.getItem('SP')) && (
                 <ConfigProvider

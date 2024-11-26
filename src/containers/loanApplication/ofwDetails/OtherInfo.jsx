@@ -10,9 +10,9 @@ import { useDataContainer } from "@context/PreLoad";
 
 function OtherInfo({ ofwrendered, data, receive }) {
   const classname_main =
-  "flex flex-col xs:flex-col 2xl:flex-row mt-2 xs:mt-3 2xl:mt-2 w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs:h-auto 2xl:h-[60px]";
-  const className_label = "mb-2 xs:mb-0 xs:mr-4 w-full xs:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
-  const className_dsub = "w-full xs:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[600px] 3xl:w-[400px]";
+  "flex flex-col xs1:flex-col 2xl:flex-row mt-2 xs1:mt-3 2xl:mt-2 w-full xs1:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs1:h-auto 2xl:h-[60px]";
+  const className_label = "mb-2 xs1:mb-0 xs1:mr-4 w-full xs1:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
+  const className_dsub = "w-full xs1:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[600px] 3xl:w-[400px]";
   const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext);
   const { GET_VALID_ID_LIST, GET_COUNTRY_LIST } = useDataContainer();
 

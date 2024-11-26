@@ -275,13 +275,18 @@ function OwnedAsset({ data, User }) {
 
     const [getStatus, setStatus] = React.useState(false)
     React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
-
+    const disabledStatuses = [
+        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
+        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
+        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
+        'RETURN TO CREDIT OFFICER', 'COMPLIED - LACK OF DOCUMENTS'
+    ];
     const [form] = Form.useForm();
     const columns = [
         {
 
             title: (<div className="flex items-center">
-                {!DISABLE_STATUS(localStorage.getItem('SP')) && (
+                {!DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                         <Tooltip title='Add'>
                             <Button className='bg-[#3b0764]' type='primary'
@@ -340,7 +345,7 @@ function OwnedAsset({ data, User }) {
             editable: true,
         },
         {
-            hidden: DISABLE_STATUS(localStorage.getItem('SP')),
+            hidden: DISABLE_STATUS(localStorage.getItem('SP')) || disabledStatuses.includes(GetStatus),
             title: 'Action',
             dataIndex: 'action',
             key: 'action',

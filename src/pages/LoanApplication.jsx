@@ -121,16 +121,16 @@ function LoanApplication() {
 
   return (
     <div className="flex flex-col bg-[#e8eee5] h-[100vh] w-[100vw] justify-center items-center">
-      <div className="h-auto xs:h-[790px] xs:h-[890px] sm:h-[790px] md:h-[790px] lg:h-[790px] xl:h-[790px] 2xl:h-[790px] 3xl:h-[790px] w-full xs:w-[100%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[70%] 2xl:w-[70%] 3xl:w-[70%] bg-white rounded-lg shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">
+      <div className=" mb-4 md:mb-[43%] lg:mb-[63%] 2xl:mb-[0%] h-auto xs1:h-[790px] xs2:h-[890px] xs:h-[950px] sm:h-[1200px] md:h-[660px] lg:h-[660px] xl:h-[790px] 2xl:h-[770px] 3xl:h-[880px] w-full xs1:w-[100%] sm:w-[90%] md:w-[90%] lg:w-[70%] xl:w-[70%] 2xl:w-[70%] 3xl:w-[70%] bg-white rounded-lg shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">
         <div
-          className="float-right mt-4 sm:mt-[2%] sm:mr-[3%] cursor-pointer"
+          className="float-right mt-4 xs1:mt-[2%] sm:mr-[3%] cursor-pointer"
           onClick={() => {
             navigate("/");
           }}
         >
-          <img src={Logo} alt="logo" className="h-9 xs:mt-[10%]" />
+          <img src={Logo} alt="logo" className="h-9 xs1:mt-[10%]" />
         </div>
-        <div className="mt-4 xs:mt-[3%] xs:ml-[3%] w-full xs:w-[120px]">
+        <div className="mt-4 xs1:mt-[3%] xs1:ml-[3%] w-full xs1:w-[120px]">
           <a
             href="https://secure.trust-provider.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=POSDV&v_search=https://ckfi.live/cepat-portal/index.php&x=6&y=5"
             target="_blank"
@@ -156,7 +156,7 @@ function LoanApplication() {
           direct={direct}
         />
   
-        <div className="w-full xs:w-[90%] mx-auto mt-4 xs:mt-[2%]">
+        <div className="w-full xs1:w-[90%] mx-auto mt-4 xs1:mt-[2%]">
           <ConfigProvider
             theme={{
               components: {
@@ -173,11 +173,11 @@ function LoanApplication() {
               current={getStep}
             />
           </ConfigProvider>
-          <div className="h-[36rem] xs:h-[23rem] sm:h-[36rem] md:h-[36rem] lg:h-[36rem] xl:h-[36rem] 2xl:h-[36rem] 3xl:h-[36rem] overflow-y-auto mt-4 xs:mt-[2%]">
+          <div className="h-[36rem] xs1:h-[17.2rem] xs2:h-[22rem] xs:h-[28rem] sm:h-[36rem] md:h-[30rem] lg:h-[30rem] xl:h-[36rem] 2xl:h-[36rem] 3xl:h-[40rem] overflow-y-auto overflow-x-hidden mt-4 xs:mt-[2%]">
             {steps[getStep].content}
           </div>
           <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-col xs:flex-row sm:flex-row mt-2 w-full justify-center items-center">
+            <div className="flex flex-col xs1:flex-row sm:flex-row mt-2 w-full justify-center items-center">
               {getStep === 0 ? (
                 <ConfigProvider theme={{ token: { colorPrimary: "#898FCD" } }}>
                   <Button
@@ -196,7 +196,7 @@ function LoanApplication() {
                     <Button
                       size="large"
                       onClick={onClickBack}
-                      className="mr-5 text-green-500 bg-[#f8f5f0] mb-2 xs:mb-0"
+                      className="mr-5 text-green-500 bg-[#f8f5f0] mb-2 xs1:mb-0"
                     >
                       Back
                     </Button>
@@ -206,7 +206,7 @@ function LoanApplication() {
                       <Button
                         size="large"
                         onClick={onClickNext}
-                        className="bg-[#6B73C1] w-full xs:w-auto"
+                        className="bg-[#6B73C1] w-full xs1:w-auto"
                         type="primary"
                         disabled={ofwdetails}
                       >
@@ -218,7 +218,7 @@ function LoanApplication() {
                       <Button
                         size="large"
                         onClick={applyDirectLoan}
-                        className="bg-[#31b235] w-full xs:w-auto"
+                        className="bg-[#31b235] w-full xs1:w-auto"
                         type="primary"
                         disabled={direct ? ben_details : lc_ofwdetails}
                       >
@@ -233,7 +233,7 @@ function LoanApplication() {
                     <Button
                       size="large"
                       onClick={onClickBack}
-                      className="mr-5 text-green-500 bg-[#f8f5f0] mb-2 xs:mb-0"
+                      className="mr-5 text-green-500 bg-[#f8f5f0] mb-2 xs1:mb-0"
                     >
                       Back
                     </Button>
@@ -242,7 +242,7 @@ function LoanApplication() {
                     <Button
                       size="large"
                       onClick={applyDirectLoan}
-                      className="bg-[#31b235] w-full xs:w-auto"
+                      className="bg-[#31b235] w-full xs1:w-auto"
                       type="primary"
                       disabled={ben_details}
                     >

@@ -295,8 +295,8 @@ function PortalLogin() {
 
   return (
     <div
-      className="flex flex-wrap bg-cover bg-no-repeat h-screen w-full"
-      style={{ backgroundImage: `url(${FullScreenBackground})` }}
+    className="flex flex-wrap bg-cover bg-no-repeat h-screen w-full overflow-hidden"
+    style={{ backgroundImage: `url(${FullScreenBackground})` }}
     >
       {contextHolder}
 
@@ -390,7 +390,7 @@ function PortalLogin() {
 
       <Spin
         indicator={
-          <LoadingOutlined style={{ fontSize: 100, color: "white" }} spin />
+          <LoadingOutlined style={{ fontSize: 100, color: "green" }} spin />
         }
         fullscreen
         spinning={
@@ -399,7 +399,7 @@ function PortalLogin() {
           PasswordNotMatch.isPending
         }
       />
-      <div className="h-full xs1:h-[28%] xs2:h-[25%] xs:h-[10%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%]  w-full xs1:h-[100%] xs2:h-[100%] xs:w-[100%] sm:w-[55%] md:w-[67%] lg:w-[70%] xl:w-[67%] 2xl:w-[67%] 3xl:w-[70%]">
+      <div className="h-full xs1:h-[28%] xs2:h-[25%] xs:h-[12%] sm:h-[70%] md:h-[100%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%]  w-full xs1:w-[100%] xs2:w-[100%] xs:w-[100%] sm:w-[55%] md:w-[67%] lg:w-[70%] xl:w-[67%] 2xl:w-[67%] 3xl:w-[70%]">
         <div className="pt-3  xs1:pt-3 xs2:pt-3 xs:pt-3 md:pt-3 ml-3  xs:ml-5 md:ml-3 w-full xs:w-[80px] sm:w-[90px] md:w-[100px] lg:w-[110px] xl:w-[120px] 2xl:w-[150px] 3xl:w-[160px]">
           <a
             href="https://secure.trust-provider.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=POSDV&v_search=https://ckfi.live/cepat-portal/index.php&x=6&y=5"
@@ -412,9 +412,9 @@ function PortalLogin() {
           </a>
         </div>
         <center>
-          <img src={Logo} alt="logo" className="h-[60px] xs1:h-[40px] xs2:h-[40px] xs:h-[40px] sm:h-[50px] md:h-[60px] lg:h-[70px] xl:h-[80px] 2xl:h-[90px] mt-[8%] xs1:mt-[3%] sm:mt-[4%] md:mt-[5%] lg:mt-[6%] xl:mt-[8%] mx-auto" />
-          <div className="font-sans font-bold text-4xl xs1:text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-stone-100 drop-shadow-[0_5px_5px_rgba(0,0,0,.7)] pt-[5%] text-center">
-            <span>Cepat Kredit Portal</span>
+          <img src={Logo} alt="logo" className="h-[60px] xs1:h-[60px] xs2:h-[70px] xs:h-[80px] sm:h-[100px] md:h-[120px] lg:h-[130px] xl:h-[135px] 2xl:h-[180px] mt-[8%] xs1:mt-[3%] sm:mt-[4%] md:mt-[5%] lg:mt-[6%] xl:mt-[9%] mx-auto" />
+          <div className="font-sans font-bold text-4xl xs1:text-xs xs:text-xs sm:text-sm md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl text-stone-100 drop-shadow-[0_5px_5px_rgba(0,0,0,.7)] text-center">
+            <span>Loan Origination System</span>
           </div>
           <div>
             <ConfigProvider
@@ -474,10 +474,11 @@ function PortalLogin() {
         </center>
       </div>
       <div
-        className="h-full xs1:h-[35%] xs2:h-[35%] xs:h-[35%] sm:h-[65%] md:h-[70%] lg:h-[100%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] 
-        w-full xs1:w-full sm:w-[42%] md:w-[31%] lg:w-[28%] xl:w-[28%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
-        style={{ backgroundImage: `url(${LoginBackground})` }}
+        className="h-full xs1:h-[35%] xs2:h-[35%] xs:h-[35%] sm:h-[50%] md:h-[50%] lg:h-[53%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] 
+        w-full xs1:w-full sm:w-[42%] md:w-[31%] lg:w-[28%] xl:w-[30%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
+        style={{ backgroundImage: `url(${LoginBackground})`}}
       >
+        <div className="absolute inset-0 bg-white opacity-30"></div>
         <div className="h-full w-full bg-stone-800/70">
           <center>
             <div className="pt-[50%] xs1:pt-[4%] sm:pt-[36%] md:pt-[30%] lg:pt-[40%] xl:pt-[62%] h-[500px] w-full">
@@ -497,7 +498,6 @@ function PortalLogin() {
                     }}
                   >
                     <Input
-                      size="large"
                       name="Username"
                       placeholder="Email Address"
                       prefix={
@@ -550,7 +550,7 @@ function PortalLogin() {
                       setUnlockStatus(true);
                     }}
                   >
-                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs1:text-[10px] sm:text-xs md:text-xs lg:text-md xl:text-md 2xl:text-base">
+                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs1:text-[10px] sm:text-[10px] md:text-[10px] lg:text-md xl:text-base 2xl:text-base">
                       Unlock Account
                     </span>
                   </div>
@@ -560,13 +560,13 @@ function PortalLogin() {
                       setForgotStatus(true);
                     }}
                   >
-                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs1:text-[10px] sm:text-xs md:text-xs lg:text-md xl:text-md 2xl:text-base">
+                    <span className="font-bold text-sky-400 hover:text-cyan-300 text-base xs1:text-[10px] sm:text-[10px] md:text-[10px] lg:text-md xl:text-base 2xl:text-base">
 
                       Forgot Password?
                     </span>
                   </div>
                 </div>
-                <div className="text-center pt-9">
+                <div className="text-center pt-9 xs1:pt-5 xs:pt-9">
                   <ConfigProvider
                     theme={{
                       token: {
@@ -578,7 +578,8 @@ function PortalLogin() {
                     }}
                   >
                     <Button
-                      className="text-2xl xs1:text-sm sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-semibold w-full xs1:w-[150px] sm:w-[150px] md:w-[200px] lg:w-[200px] xl:w-[200px] 2xl:w-[200px] 3xl:w-[250px] h-[50px] xs1:h-[30px] sm:h-[35px] md:h-[35px] lg:h-[45px] xl:h-[40px] bg-[#31b234]"
+                      className="text-2xl xs1:text-xs xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-semibold w-full xs1:w-[100px] xs:w-[150px] sm:w-[150px] md:w-[200px] lg:w-[200px] xl:w-[200px] 2xl:w-[200px] 3xl:w-[250px] 
+                      h-[50px] xs1:h-[30px] sm:h-[35px] md:h-[35px] lg:h-[45px] xl:h-[40px] bg-[#31b234]"
                       onClick={() => {
                         onClickLogin.mutate(navigate);
                       }}
@@ -596,12 +597,12 @@ function PortalLogin() {
           </center>
         </div>
       </div>
-      <div className="flex flex-wrap w-full mb-[-100] xs1:mb-[-50px] xs2:mb-[-80px] xs:mb-[-50px] 2xl:mb-[-0px] mt-[-180px] xs1:mt-[-40px] xs2:mt-[-50px] xs:mt-[-90px] sm:mt-[-150px] md:mt-[-220px] lg:mt-[-630px] xl:mt-[-180px] 2xl:mt-[-180px]">
+      <div className="flex flex-wrap w-full mb-[-100] xs1:mb-[-50px] xs2:mb-[-80px] xs:mb-[-50px] 2xl:mb-[-0px] mt-[-180px] xs1:mt-[-40px] xs2:mt-[-50px] xs:mt-[-120px] sm:mt-[-370px] md:mt-[-480px] lg:mt-[-820px] xl:mt-[-190px] 2xl:mt-[-180px]">
         <div className="pl-[3%]">
           <img
-            src={Datos} alt="datos" className="w-[70px] xs1:w-[20px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs1:h-[35px] sm:h-[85px] md:h-[140px] lg:h-[150px] xl:h-[90px] 2xl:h-[150px]" />
+            src={Datos} alt="datos" className="w-[70px] xs1:w-[20px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs1:h-[35px] sm:h-[85px] md:h-[140px] lg:h-[150px] xl:h-[150px] 2xl:h-[150px]" />
         </div>
-        <div className="pl-[3%] text-white w-full xs1:w-[50%] sm:w-[50%] md:w-[50%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%] xs1:text-[4.5px] sm:text-[8px] md:text-[9px] lg:text-[9px] xl:text-[9px] 2xl:text-[8px] 3xl:text-[10px]">
+        <div className="pl-[3%] text-white w-full xs1:w-[50%] sm:w-[50%] md:w-[50%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%] xs1:text-[4.5px] sm:text-[8px] md:text-[8px] lg:text-[8px] xl:text-[8px] 2xl:text-[8px] 3xl:text-[10px]">
           <strong>
             <h5>CEPAT KREDIT FINANCING INC.</h5>
             <br />
@@ -632,12 +633,12 @@ function PortalLogin() {
         </div>
         <ConfigProvider theme={{ token: { colorSplit: "#ffffff", lineWidth: 2 } }}>
           <Divider
-            className="h-[150px] xs1:h-[100px] sm:h-[100px] md:h-[100px] lg:h-[170px] xl:h-[135px] 2xl:h-[135px] 3xl:h-[155px]"
+            className="h-[150px] xs1:h-[100px] sm:h-[150px] md:h-[150px] lg:h-[170px] xl:h-[155px] 2xl:h-[135px] 3xl:h-[155px]"
             type="vertical"
           />
         </ConfigProvider>
-        <div className="pl-[1%] xs1:pl-[3%] 2xl:pl-[1%] text-white w-full xs1:w-[30%] sm:w-[25%] md:w-[30%] lg:w-[30%] xl:w-[30%] 2xl:w-[30%] 
-        text-[6px] xs1:text-[5.6px] sm:text-[8px] md:text-[9px] lg:text-[9px] xl:text-[9px] 2xl:text-[10px] 3xl:text-[12px]">
+        <div className="pl-[1%] xs1:pl-[3%] lg:pl-[1%] text-white w-full xs1:w-[30%] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[25%] 2xl:w-[30%] 
+        text-[6px] xs1:text-[5.6px] sm:text-[9px] md:text-[9px] lg:text-[9px] xl:text-[10px] 2xl:text-[10px] 3xl:text-[12px]">
           <strong>
             <h5>CONTACT DETAILS</h5>
             <br />

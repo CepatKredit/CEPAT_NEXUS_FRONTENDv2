@@ -24,7 +24,7 @@ export const PathName = (container) => {
     else if (container === '/ckfi/for-approval') { name = 'For Approval' }
     else if (container === '/ckfi/on-waiver') { name = 'On Waiver' }
     else if (container === '/ckfi/approved') { name = 'Approved (Trans-Out)' }
-    else if (container === '/ckfi/under-lp') { name = 'Under Lp' }
+    else if (container === '/ckfi/under-lp') { name = 'Under LP' }
     else if (container === '/ckfi/confirmation') { name = 'Confirmation' }
     else if (container === '/ckfi/confirmed') { name = 'Confirmed' }
     else if (container === '/ckfi/for-docusign') { name = 'For Docusign' }
