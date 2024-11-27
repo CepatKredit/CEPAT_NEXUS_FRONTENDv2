@@ -478,8 +478,7 @@ function PortalLogin() {
         w-full xs1:w-full sm:w-[42%] md:w-[31%] lg:w-[28%] xl:w-[30%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
         style={{ backgroundImage: `url(${LoginBackground})`}}
       >
-        <div className="absolute inset-0 bg-white opacity-30"></div>
-        <div className="h-full w-full bg-stone-800/70">
+        <div className="h-full w-full bg-stone-500/70">
           <center>
             <div className="pt-[50%] xs1:pt-[4%] sm:pt-[36%] md:pt-[30%] lg:pt-[40%] xl:pt-[62%] h-[500px] w-full">
               <div className="text-2xl xs1:text-xs xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl font-normal text-stone-100">
@@ -597,7 +596,7 @@ function PortalLogin() {
           </center>
         </div>
       </div>
-      <div className="flex flex-wrap w-full mb-[-100] xs1:mb-[-50px] xs2:mb-[-80px] xs:mb-[-50px] 2xl:mb-[-0px] mt-[-180px] xs1:mt-[-40px] xs2:mt-[-50px] xs:mt-[-110px] sm:mt-[-370px] md:mt-[-480px] lg:mt-[-820px] xl:mt-[-190px] 2xl:mt-[-180px]">
+      <div className="flex flex-wrap w-full mb-[-100] xs1:mb-[-50px] xs2:mb-[-80px] xs:mb-[-50px] 2xl:mb-[-0px] mt-[-180px] xs1:mt-[-40px] xs2:mt-[-50px] xs:mt-[-115px] sm:mt-[-370px] md:mt-[-480px] lg:mt-[-820px] xl:mt-[-190px] 2xl:mt-[-180px]">
         <div className="pl-[3%]">
           <img
             src={Datos} alt="datos" className="w-[70px] xs1:w-[20px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs1:h-[35px] sm:h-[85px] md:h-[140px] lg:h-[150px] xl:h-[150px] 2xl:h-[150px]" />
@@ -633,11 +632,11 @@ function PortalLogin() {
         </div>
         <ConfigProvider theme={{ token: { colorSplit: "#ffffff", lineWidth: 2 } }}>
           <Divider
-            className="h-[150px] xs1:h-[100px] sm:h-[150px] md:h-[150px] lg:h-[170px] xl:h-[155px] 2xl:h-[135px] 3xl:h-[155px]"
+            className="h-[150px] xs1:h-[100px] xs:h-[80px] sm:h-[150px] md:h-[150px] lg:h-[170px] xl:h-[155px] 2xl:h-[135px] 3xl:h-[155px]"
             type="vertical"
           />
         </ConfigProvider>
-        <div className="pl-[1%] xs1:pl-[3%] lg:pl-[1%] text-white w-full xs1:w-[30%] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[25%] 2xl:w-[30%] 
+        <div className="pl-[1%] xs1:pl-[3%] lg:pl-[1%] text-white w-full xs1:w-[30%] xs:w-[35%] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[25%] 2xl:w-[30%] 
         text-[6px] xs1:text-[5.6px] sm:text-[9px] md:text-[9px] lg:text-[9px] xl:text-[10px] 2xl:text-[10px] 3xl:text-[12px]">
           <strong>
             <h5>CONTACT DETAILS</h5>

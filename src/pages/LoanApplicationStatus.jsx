@@ -255,7 +255,7 @@ function LoanApplicationTracker({ data }) {
         </span>
       ),
       children: (
-        <div className="max-h-[calc(80vh-220px)] overflow-y-auto pr-2 sm:max-h-[calc(90vh-200px)] md:max-h-[calc(90vh-200px)] lg:max-h-[calc(90vh-220px)] xl:max-h-[calc(90vh-220px)]">
+        <div className="max-h-[calc(80vh-220px)] overflow-y-auto pr-2 xs1:max-h-[calc(60vh-200px)] xs2:max-h-[calc(68vh-200px)] xs:max-h-[calc(59vh-200px)] sm:max-h-[calc(70vh-200px)] md:max-h-[calc(90vh-200px)] lg:max-h-[calc(90vh-220px)] xl:max-h-[calc(90vh-220px)]">
           <Card bordered={false}>
             <SectionHeader borrower="Loan Details" />
             <LoanDetails
@@ -697,9 +697,9 @@ function LoanApplicationTracker({ data }) {
                 </Title>
               </div>
               <div className="flex items-center">
-                <div className="w-full sm:w-auto mt-0 sm:mt-[-0.5rem] md:mt-[-1rem] ml-0 sm:ml-4 md:ml-6 lg:ml-10">
+                <div className="w-full xs1:w-auto mt-0 xs1:mt-[0.3rem] sm:mt-[-0.5rem] md:mt-[-1rem] ml-0 sm:ml-4 md:ml-6 lg:ml-10">
                   <div
-                    className={`inline-flex font-bold items-center px-4 sm:px-5 md:px-7 py-1 sm:py-2 rounded-full ${getStatusBackgroundColor(
+                    className={`inline-flex font-bold items-center px-4 xs1:px-5 md:px-7 py-1 xs1:py-2 rounded-full ${getStatusBackgroundColor(
                       getAppDetails.loanStatus
                     )}`}
                   >
@@ -736,7 +736,7 @@ function LoanApplicationTracker({ data }) {
                   </Button>
                 </Flex>
               </div>
-              <div className="flex flex-col w-full lg:w-auto mt-4 lg:mt-0 lg:ml-6">
+              <div className="flex flex-col w-full lg:w-auto mt-4 xs1:mt-0 lg:ml-6">
                 <label className="font-bold mb-2">External Remarks</label>
                 <TextArea
                   className="w-full lg:w-[20rem] h-[80px] p-2 border border-gray-300 rounded-md"

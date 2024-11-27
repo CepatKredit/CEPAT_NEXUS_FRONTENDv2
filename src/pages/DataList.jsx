@@ -25,14 +25,14 @@ function DataList() {
     queryKey: ['AppDataListQuery'],
     queryFn: async () => {
       try {
-      const result = await GET_LIST(`/GET/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
-      setLoading(false);
-      return result.list;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false); 
-      return []; 
-    }
+        const result = await GET_LIST(`/GET/G2AD/${jwtDecode(token).USRID}/${TileNumber(localStorage.getItem('SP'))}`);
+        setLoading(false);
+        return result.list;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+        return [];
+      }
     },
     enabled: true,
     refetchInterval: 60 * 1000,
@@ -42,7 +42,7 @@ function DataList() {
 
 
   return (
-    <div className='mx-[1%] my-[2%]'>
+    <div className="mx-[1%] my-[2%] xs1:my-[-30%] sm:my-[0%] md:my-[2%] ">
       <div className='flex flex-row gap-3'>
         <MdOutlineManageAccounts style={{ fontSize: '40px', color: '#483d8b' }} hidden />
         <Typography.Title level={2}>{PathName(localStorage.getItem('SP'))}</Typography.Title>
@@ -55,8 +55,8 @@ function DataList() {
           <Input
             addonAfter={<SearchOutlined />}
             placeholder="Search"
-            size="large" 
-            className="w-full h-[50px] px-4" 
+            size="large"
+            className="w-full h-[50px] px-4"
             onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
             value={getSearch}
           />

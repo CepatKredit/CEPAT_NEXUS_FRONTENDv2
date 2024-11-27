@@ -221,7 +221,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         }
         else { return false }
     }
-    const shouldHideApproveButton = data.CremanBy && data.CremanDate;
+    //const shouldHideApproveButton = data.CremanBy && data.CremanDate;
 
     return (
         <div className={classname}>
@@ -272,7 +272,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             </div>
 
             <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-                {GetData('ROLE') !== '70' && GetData('ROLE') !== '80' && !isEdit && !isEligibleToApprove && !shouldHideApproveButton && (
+                {GetData('ROLE') !== '70' && GetData('ROLE') !== '80' && !isEdit && !isEligibleToApprove && (
                     <ConfigProvider
                         theme={{
                             token: {

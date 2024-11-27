@@ -547,7 +547,7 @@ function LoanApplicationInfo() {
             <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(7, 175, 4)' } } }}>
                 <Spin spinning={ClientDataListQuery.isFetching} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center mt-[8%]" size='large'>
                     {contextHolder}
-                    <div className="h-[100%] mt-[1%]">
+                    <div className="h-[100%] mt-[1%] xs1:mt-[-20%] sm:mt-[0%] md:mt-[1%]">
                         {
                             GetData('ROLE').toString() === '20'
                                 ? (<LcTabs

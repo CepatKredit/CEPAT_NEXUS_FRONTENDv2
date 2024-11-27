@@ -184,7 +184,7 @@ function LoanApplication() {
                   <Button
                     size="large"
                     onClick={onClickNext}
-                    className="bg-[#6B73C1] w-full sm:w-auto"
+                    className="bg-[#6B73C1] w-full xs1:w-auto"
                     type="primary"
                     disabled={direct ? loandetails : lc_loandetails}
                   >

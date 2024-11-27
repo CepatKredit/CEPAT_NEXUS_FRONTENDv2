@@ -11,7 +11,7 @@ import {
   Space,
   Input,
 } from "antd";
-import Logo from "@assets/images/Nexus_v3a2.png";
+import Logo from "@assets/images/Nexus_v3a1.png";
 import small from "@assets/images/Nexus_v3a2.png";
 import AccountSettings from "@containers/accountMenu/AccountSettings";
 import DashMini from "@layouts/DashMini";
@@ -24,6 +24,7 @@ import { GetData } from "@utils/UserData";
 import { SearchOutlined } from "@ant-design/icons";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 
 function SideNav() {
   //   const handleFilterChange = (e) => {
@@ -58,6 +59,16 @@ function SideNav() {
     left: 0,
   });
   const [searchValue, setSearchValue] = React.useState("");
+
+  const { width: screenWidth } = useWindowDimensions(); 
+  React.useEffect(() => {
+    if (screenWidth <= 640) {
+      setCollapsed(true); 
+    } else {
+      setCollapsed(false);
+    }
+  }, [screenWidth]);
+
 
   const handleSearchClick = () => {
     const token = localStorage.getItem("UTK");
@@ -113,7 +124,7 @@ function SideNav() {
             ) : (
               <center>
                 <div className="h-[5em] bg-[#34b331]">
-                  <img src={Logo} alt="logo" className="h-[5.5em] pb-2" />
+                  <img src={Logo} alt="logo" className="h-[5em] pb-2" />
                 </div>
               </center>
             )}
@@ -147,10 +158,9 @@ function SideNav() {
                     icon: x.icon,
                     children: x.children,
                   }))}
+                  collapsed={collapsed}
                 />
               </ConfigProvider>
-
-
             </div>
             <div
               className={`text-center p-2 fixed bottom-0 transition-all duration-300 ease-in-out ${collapsed ? "w-[4vw]" : "w-[12vw]"
@@ -172,6 +182,7 @@ function SideNav() {
                     <MenuFoldOutlined style={{ fontSize: "1.3rem" }} />
                   )
                 }
+                className="hidden xs1:hidden sm:hidden lg:block"
                 onClick={() => setCollapsed(!collapsed)}
                 style={{
                   width: 50,
@@ -181,7 +192,7 @@ function SideNav() {
                   color: "white",
                 }}
               />
-              <div className="flex flex-row items-center">
+              <div className="flex flex-row items-center hidden md:flex"> 
                 <div className="mx-2 my-[4px]">
                   <span className="font-bold text-lg text-stone-100">
                     Search
@@ -218,7 +229,7 @@ function SideNav() {
               </div>
             </div>
           </Header>
-          <Content className="bg-white h-full">
+          <Content className="bg-white h-full overflow-hidden">
             {mini_dash !== "/ckfi/dashboard" ? (
               <center>
                 <div className="h-[7rem] w-[85vw] pt-[.5em] overflow-x-hidden hover:overflow-x-auto">

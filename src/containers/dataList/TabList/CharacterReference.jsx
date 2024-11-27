@@ -271,7 +271,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     function DISABLE_STATUS(LOCATION, LoanStatus) {
         const userRole = GetData('ROLE') ? GetData('ROLE').toString() : "";
         if (!userRole) {
-            return !(LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
+            return (LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
         }
         const roleConditions = {
             '30': ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'],

@@ -17,6 +17,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
     const navigate = useNavigate();
     const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const [isEdit, setEdit] = React.useState(true);
+    
     const getStatusBackgroundColor = status => {
         const colors = {
             RECEIVED: 'bg-[#29274c] text-white',
@@ -58,42 +59,49 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
     TriggerFields('LOAN_CONSULTANT');
     const TabsItems = [
         {
-            label: <div className='flex flex-rows'>
-                <BsFileEarmarkBarGraph style={{ fontSize: '20px', marginRight: 5 }} />
-                <span>Loan Details</span>
-            </div>,
+            label: (
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                    <BsFileEarmarkBarGraph className='mr-2 text-lg' />
+                    <span>Loan Details</span>
+                </div>
+            ),
             key: 'loan-details',
-            children: <LoanDetails classname={'h-[12rem]'} data={value} receive={(e) => { updateAppDetails(e); }} isEdit={isEdit} User={'LC'}  />,
+            children: <LoanDetails classname={'h-[12rem] xs1:h-[16rem]'} data={value} receive={(e) => { updateAppDetails(e); }} isEdit={isEdit} User={'LC'} />,
         },
         {
-            label: <div className='flex flex-rows'>
-                <BsFillPersonLinesFill style={{ fontSize: '20px', marginRight: 5 }} />
-                <span>OFW Details</span>
-            </div>,
+            label: (
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                    <BsFillPersonLinesFill className='mr-2 text-lg' />
+                    <span>OFW Details</span>
+                </div>
+            ),
             key: 'ofw-details',
-            children: <OfwDetails classname={'h-[12rem]'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'LC'}  />,
+            children: <OfwDetails classname={'h-[12rem] xs1:h-[16rem]'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'LC'} />,
         },
         {
-            label: <div className='flex flex-rows'>
-                <MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} />
-                <span>Upload Documents</span>
-            </div>,
+            label: (
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                    <MdOutlineUploadFile className='mr-2 text-lg' />
+                    <span>Upload Documents</span>
+                </div>
+            ),
             key: 'upload-documents',
-            children: <UploadDocs classname={'h-[22rem] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'}
-                ClientId={ClientId} FileType={FileType} Uploader={Uploader} User={'LC'} data={value} LoanStatus={LoanStatus} />,
+            children: <UploadDocs classname={'h-[22rem] xs1:h-[24rem] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} User={'LC'} data={value} LoanStatus={LoanStatus} />,
         },
         {
-            label: <div className='flex flex-rows'>
-                <FaUserGroup style={{ fontSize: '20px', marginRight: 5 }} />
-                <span>Character Reference</span>
-            </div>,
+            label: (
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                    <FaUserGroup className='mr-2 text-lg' />
+                    <span>Character Reference</span>
+                </div>
+            ),
             key: 'character-reference',
             children: <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} User={'LC'} data={value} LoanStatus={LoanStatus} />,
         },
     ];
     return (
         <div className="relative w-full">
-            <div className="absolute top-[-10px] right-0 mt-1 mr-4 text-right">
+            <div className="absolute top-[-10px] right-0 mt-1 xs1:mt-[-40px] md:mt-1 mr-4 text-right">
                 <div className={`inline-flex font-bold items-center px-10 py-2 rounded-full ${getStatusBackgroundColor(value.loanAppStat)}`}>{value.loanAppStat} </div>
             </div>
             <Tabs
