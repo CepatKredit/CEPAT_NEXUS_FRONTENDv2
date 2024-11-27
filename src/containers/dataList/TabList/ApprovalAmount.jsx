@@ -229,7 +229,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
 
             <div
                 className={`w-full overflow-y-auto ${((GetData('ROLE') === '70' || GetData('ROLE') === '80') ?
-                        'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[50vh] 3xl:h-[65vh]' :
+                        'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[45vh] 3xl:h-[65vh]' :
                         ((!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
                             ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
                             : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]')
@@ -247,7 +247,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             </div>
             {contextHolder}
 
-            <div className="w-full  p-5 flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-1 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-1">
+            <div className="w-full flex justify-center items-center mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-1 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-1">
                 {GetData('ROLE') === '70' || GetData('ROLE') === '80' ? (
                     !['CONFIRMED', 'DECLINED', 'CANCELLED'].includes(data.loanAppStat) && (
                         <ConfigProvider

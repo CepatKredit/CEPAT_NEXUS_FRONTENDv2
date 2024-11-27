@@ -206,7 +206,7 @@ function Charges({ LoanAppId, data, User, }) {
             try {
                 //console.log('LOanappid ito..', LoanAppId)
                 const result = await GET_LIST(`/GET/G114CL/${isLoanAppId}`)
-                // console.log('chargesssss', result);
+              //   console.log('chargesssss', result);
                 setAppDetails(prevDetails => ({
                     ...prevDetails,
                     PFR: result.list[0]?.processingFeeRate,
@@ -279,7 +279,20 @@ function Charges({ LoanAppId, data, User, }) {
     };
 
     // Separate display formatting for when commas are needed
+   /* const formatNumberForDisplay = (value) => {
+        return value.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 20,
+        });
+    };*/
+
     const formatNumberForDisplay = (value) => {
+        // Check if the value is undefined or null
+        if (value === undefined || value === null) {
+            return value; // Return the value as is
+        }
+        
+        // Proceed with formatting if the value is defined
         return value.toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 20,

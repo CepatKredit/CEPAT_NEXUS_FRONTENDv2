@@ -93,7 +93,7 @@ function DataList() {
                 LC: x.consultant,
                 LT: x.loanType,
                 LB: x.branch,
-                STAT: x.status,
+                STAT: x.statusName,
                 UB: x.modUser,
                 LIR: x.remarksIn
               }))} />

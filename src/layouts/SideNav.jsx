@@ -26,21 +26,21 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 function SideNav() {
-    //   const handleFilterChange = (e) => {
-//     setSearchValue(e.target.value);
-//   };
+  //   const handleFilterChange = (e) => {
+  //     setSearchValue(e.target.value);
+  //   };
 
-//   const searchResult = () => {
-//     axios
-//       .get(`/wild-search/${userID}?searching=${value}`)
-//       .then((result) => {
-//         result.data;
-//       })
-//       .catch((error) => {
-//         console.error(error.message);
-//         throw new Error("Token generation failed.");
-//       });
-//   };
+  //   const searchResult = () => {
+  //     axios
+  //       .get(`/wild-search/${userID}?searching=${value}`)
+  //       .then((result) => {
+  //         result.data;
+  //       })
+  //       .catch((error) => {
+  //         console.error(error.message);
+  //         throw new Error("Token generation failed.");
+  //       });
+  //   };
   //   const handleSearch = (value) => {
   //     const userID = jwtDecode(token).USRID;
   //     if (value.trim() !== "") {
@@ -63,7 +63,7 @@ function SideNav() {
     const token = localStorage.getItem("UTK");
     const userID = jwtDecode(token).USRID
     if (searchValue.trim() !== "") {
-        console.log(`Navigating to /ckfi/searches/${userID}/${searchValue}`);
+      console.log(`Navigating to /ckfi/searches/${userID}/${searchValue}`);
       navigate(`/ckfi/searches/${userID}/${searchValue}`);
     }
   };
@@ -112,9 +112,9 @@ function SideNav() {
               </div>
             ) : (
               <center>
-              <div className="h-[5em] bg-[#34b331]">
-                <img src={Logo} alt="logo" className="h-[5.5em] pb-2" />
-              </div>
+                <div className="h-[5em] bg-[#34b331]">
+                  <img src={Logo} alt="logo" className="h-[5.5em] pb-2" />
+                </div>
               </center>
             )}
             <div className="overflow-y-hidden hover:overflow-y-auto h-[90vh]">
@@ -150,9 +150,13 @@ function SideNav() {
                 />
               </ConfigProvider>
 
-              <div className=" text-center p-2 fixed bottom-0 w-[12vw]">
-                <span className="text-xs text-gray-600">v2.0.2</span>
-              </div>
+
+            </div>
+            <div
+              className={`text-center p-2 fixed bottom-0 transition-all duration-300 ease-in-out ${collapsed ? "w-[4vw]" : "w-[12vw]"
+                }`}
+            >
+              <span className="text-xs text-gray-600">v2.0.2</span>
             </div>
           </div>
         </Sider>
@@ -199,11 +203,11 @@ function SideNav() {
                     placeholder="search..."
                     allowClear
                     style={{ width: 170 }}
-                    value={searchValue} 
+                    value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
                   <Button
-                    type="default"  
+                    type="default"
                     onClick={handleSearchClick}
                     icon={<SearchOutlined />}
                   />
@@ -241,9 +245,8 @@ function SideNav() {
             <img
               src={isModalOpen ? CepatChatbotOpen : CepatChatbot}
               alt="Chatbot Icon"
-              className={`${
-                isModalOpen ? "w-22 h-24" : "w-18 h-20"
-              } transition-transform duration-200 hover:scale-105 hover:-translate-y-3`}
+              className={`${isModalOpen ? "w-22 h-24" : "w-18 h-20"
+                } transition-transform duration-200 hover:scale-105 hover:-translate-y-3`}
             />
           </div>
 
