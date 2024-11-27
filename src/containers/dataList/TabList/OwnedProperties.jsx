@@ -10,7 +10,6 @@ dayjs.extend(customParseFormat);
 import moment from 'moment';
 import axios from 'axios';
 import { toDecrypt } from '@utils/Converter';
-import { DropdownOwnedProperties } from '@utils/FixedData';
 import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
@@ -443,10 +442,7 @@ function OwnedProperties({ data, User }) {
                         className='w-[13rem]'
                         onChange={(value) => { onChangeProperties(value); }}
                         placeholder='Properties'
-                        options={DropdownOwnedProperties().map(x => ({
-                            value: x.value,
-                            label: x.label
-                        }))}
+                       
                         showSearch
                         filterOption={(input, option) =>
                             option.label.toLowerCase().includes(input.toLowerCase())

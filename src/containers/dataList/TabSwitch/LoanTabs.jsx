@@ -215,9 +215,6 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
                             <div id='Owned-Assets'>
                                 <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
                             </div>
-                            <div id='Owned-Properties'>
-                                <OwnedProperties data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
-                            </div>
                             <div id='Character-Reference'>
                                 <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Lp'} LoanStatus={LoanStatus} />
                             </div>
@@ -239,7 +236,6 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
                                         { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
                                         { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
                                         { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
-                                        { key: 'Owned-Properties', href: '#Owned-Properties', title: 'Owned Properties' },
                                         { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
                                         { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
                                     ]}

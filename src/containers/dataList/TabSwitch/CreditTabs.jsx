@@ -25,7 +25,6 @@ import EmploymentHistoryTable from '../TabList/EmploymentHistoryTable';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import CreditHistory from '../TabList/CreditHistory';
 import AssetTable from '../TabList/OwnedAssetTable';
-import OwnedProperties from '../TabList/OwnedProperties';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -563,9 +562,6 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                             <div id='Owned-Assets' className="w-full">
                                 <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} />
                             </div>
-                            <div id='Owned-Properties' className="w-full">
-                                <OwnedProperties data={value} receive={updateAppDetails} isEdit={isEdit} />
-                            </div>
                             <div id='Character-Reference' className="w-full">
                                 <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
                             </div>
@@ -586,7 +582,6 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                                         { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
                                         { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
                                         { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
-                                        { key: 'Owned-Properties', href: '#Owned-Properties', title: 'Owned Properties' },
                                         { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
                                         { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
                                     ]}

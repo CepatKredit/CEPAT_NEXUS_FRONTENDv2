@@ -150,6 +150,8 @@ function Charges({ LoanAppId, data, User, }) {
             pnValue = (baseAmount * terms * (interestRate / 100)) + baseAmount;
         }
 
+       // console.log('Approved', approvedAmount, '*', terms, '*', (interestRate/100), '+', approvedAmount, '=')
+
         // Compute netProceeds based on ChargeType
         let netProceeds = 0;
 

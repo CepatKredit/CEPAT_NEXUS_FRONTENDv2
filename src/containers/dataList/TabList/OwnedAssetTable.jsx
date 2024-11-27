@@ -10,7 +10,7 @@ dayjs.extend(customParseFormat);
 import moment from 'moment';
 import axios from 'axios';
 import { toDecrypt } from '@utils/Converter';
-import { DropdownOwnedAssets } from '@utils/FixedData';
+import { DropdownOptionsOwned } from '@utils/FixedData';
 import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
@@ -83,13 +83,13 @@ function OwnedAsset({ data, User }) {
     });
 
     React.useEffect(() => {
-            SET_LOADING_INTERNAL('AssetTABLE', true)
-            getOwnedAssets.refetch();
+        SET_LOADING_INTERNAL('AssetTABLE', true)
+        getOwnedAssets.refetch();
     }, [getAppDetails]);
 
     function GetAssetsOption() {
         const categoryValue = form.getFieldValue('category');
-        const CategoryOptionHolder = DropdownOwnedAssets().find(
+        const CategoryOptionHolder = DropdownOptionsOwned().find(
             (x) => x.label === categoryValue || x.value === categoryValue
         );
         return CategoryOptionHolder ? CategoryOptionHolder.value : null;
@@ -320,21 +320,21 @@ function OwnedAsset({ data, User }) {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            width: '20%',
+            width: '15%',
             editable: true,
         },
         {
-            title: 'Make',
+            title: 'Make / Loacation',
             dataIndex: 'make',
             key: 'make',
             width: '15%',
             editable: true,
         },
         {
-            title: 'Year Model',
+            title: 'Year Model / Year Acquired',
             dataIndex: 'yearModel',
             key: 'yearModel',
-            width: '15%',
+            width: '20%',
             editable: true,
         },
         {
@@ -479,6 +479,28 @@ function OwnedAsset({ data, User }) {
         children,
         ...restProps
     }) => {
+
+      const [autoPlaceHolder, setAutoPlaceHolder] = React.useState({
+        make: 'Make',
+        year: 'Year Model',
+      });
+
+        React.useEffect(() => {
+            const categoryValue = form.getFieldValue('category');
+            if ([7, 8, 9].includes(categoryValue)) {
+                setAutoPlaceHolder({
+                    make: 'Location',
+                    year: 'Year Acquired',
+                });
+
+            } else {
+                setAutoPlaceHolder({
+                    make: 'Make',
+                    year: 'Year Model',
+                });
+            }
+        }, [form.getFieldValue('category')]);
+
         const inputNode = dataIndex === 'category'
             ? (
                 <>
@@ -486,7 +508,7 @@ function OwnedAsset({ data, User }) {
                         className='w-[13rem]'
                         onChange={(value) => { onChangeCategory(value); }}
                         placeholder='Category'
-                        options={DropdownOwnedAssets().map(x => ({
+                        options={DropdownOptionsOwned().map(x => ({
                             value: x.value,
                             label: x.label
                         }))}
@@ -504,7 +526,7 @@ function OwnedAsset({ data, User }) {
                         <Input
                             className='w-[10rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'make'); }}
-                            placeholder='Make' />
+                            placeholder={autoPlaceHolder.make} />
                     </>
                 )
                 : dataIndex === 'yearModel'
@@ -514,7 +536,7 @@ function OwnedAsset({ data, User }) {
                             <Input
                                 className='w-[10rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'yearModel'); }}
-                                placeholder='Year Model' />
+                                placeholder={autoPlaceHolder.year} />
                         </>
                     )
                     : dataIndex === 'plateNo'
@@ -564,7 +586,7 @@ function OwnedAsset({ data, User }) {
                                     ? getOwnedAssets.data?.map((x) => ({
                                         key: x.key,
                                         no: x.no,
-                                        category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
+                                        category: DropdownOptionsOwned().find((option) => option.value === x.Category)?.label || x.Category,
                                         make: x.Make,
                                         yearModel: x.YearModel,
                                         plateNo: x.PlateNo,
@@ -572,7 +594,7 @@ function OwnedAsset({ data, User }) {
                                     : dataOnly?.map((x) => ({
                                         key: x.key,
                                         no: x.no,
-                                        category: DropdownOwnedAssets().find((option) => option.value === x.Category)?.label || x.Category,
+                                        category: DropdownOptionsOwned().find((option) => option.value === x.Category)?.label || x.Category,
                                         make: x.Make,
                                         yearModel: x.YearModel,
                                         plateNo: x.PlateNo,
