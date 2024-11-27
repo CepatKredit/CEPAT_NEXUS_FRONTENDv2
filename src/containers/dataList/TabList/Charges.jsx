@@ -192,7 +192,7 @@ function Charges({ LoanAppId, data, User, }) {
             NetProceeds: netProceeds.toFixed(2),
             MonthlyAmortization: monthlyAmortization.toFixed(2),
         }));
-    }, [getAppDetails?.loanType, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.Terms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
+    }, [getAppDetails?.loanType,  getAppDetails.IBFTFee, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.Terms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
 
 
 
