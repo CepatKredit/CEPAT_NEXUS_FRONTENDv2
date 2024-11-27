@@ -221,6 +221,8 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
        }
        else { return false }
    }
+   const shouldHideApproveButton = data.CremanBy && data.CremanDate;
+
     return (
         <div className={classname}>
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
