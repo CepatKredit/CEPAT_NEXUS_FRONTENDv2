@@ -40,13 +40,14 @@ export const dateMessage = (keyName, state) => {
     }
 }
 
-export const inputMessage = (group, state, comp_name) => {
+export const inputMessage = (group, state, comp_name, InvalidMsg, EmptyMsg) => {
     switch (group) {
         case 'Email'://
         case 'Default'://
         case 'Uppercase'://
         case 'Income'://
         case 'Rent_Amort'://
+        case 'CRAApprvRec':
             if (comp_name && state === 'Invalid') {
                 return `Invalid ${comp_name}`;
             } else if (comp_name && state === 'Empty') {
@@ -55,6 +56,12 @@ export const inputMessage = (group, state, comp_name) => {
             break;
 
         default:
-            return 'Invalid Component(No CompName / KeyName)';
+            if (state === 'Invalid') {
+                return InvalidMsg;
+            } else if (state === 'Empty') {
+                return EmptyMsg;
+            } else {
+                return 'Invalid Component(No CompName / KeyName)';
+            }
     }
 }

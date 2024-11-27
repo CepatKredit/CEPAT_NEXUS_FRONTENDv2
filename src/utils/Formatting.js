@@ -60,6 +60,7 @@ export const CharacterLimit = (Group) => { //Decimal places will be disregard
     switch (Group) {
         case 'Rent_Amort':
         case 'Income':
+        case 'Amount-30,000':
             return 10; // till 99,999,999
         case 'Number':
             return 2;

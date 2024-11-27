@@ -413,7 +413,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     readOnly={isEdit}
                                     value={data.SpIncome}
                                     receive={(e) => updateAppDetails({ name: 'SpIncome', value: e })}
-                                    category={'direct'}
+                                    category={'marketing'}
                                     rendered={rendered}
                                     KeyName={'SpIncome'}
                                     format={'Currency'}

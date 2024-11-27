@@ -24,13 +24,13 @@ function SelectOpt({
     rendered,
 
     compname,
-    InvalidMsg='Selected Item is Not Valid',
-    EmptyMsg= `${compname} Required`,
+    InvalidMsg = 'Selected Item is Not Valid',
+    EmptyMsg = `${compname} Required`,
 }) {
     const [search, setSearchInput] = useState('');
     const [isRendered, setRendered] = useState(rendered !== undefined ? rendered : true);//make sure rendered has a value
     const inputRef = useRef(null);
-    const { setfocus } = useContext(LoanApplicationContext);
+    const { setfocus, focus } = useContext(LoanApplicationContext);
 
     useEffect(() => {
         setfocus(KeyName, inputRef.current);
@@ -43,6 +43,7 @@ function SelectOpt({
         handleKeyDown,
         setDropdownOpen,
         selected,
+        ErrorMsg,
         //ErrMessage,
     } = SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered, InvalidMsg, EmptyMsg);
 
@@ -91,17 +92,36 @@ function SelectOpt({
         }
     };
 
-    // Trigger `handleSelectChange` when `value` changes externally
     useEffect(() => {
         if (rendered) {
             handleSelectChange(value);
         }
     }, [value]);
 
+    const [isHovered, setIsHovered] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+
+    const handleMouseEnter = () => {
+        if (!disabled) setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+    };
+
     return (
         <div className={className_dmain}>
             <label className={className_label}>{label}</label>
-            <div className={className_dsub}>
+            <div className={className_dsub} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} tabIndex={disabled ? 0 : undefined} style={{
+                border: disabled ? 'none' : isFocused ? 'none' : '#d9d9d9', // No border when focused
+                borderRadius: '4px',
+                padding: '0', // Ensure no extra padding or margin interferes
+                outline: 'none',
+                transition: 'border-color 0.3s',
+            }}
+                onBlur={() => { setIsFocused(false); }}
+                onFocus={() => { setIsFocused(true); }}
+            >
                 <ConfigProvider
                     theme={{
                         components: {
@@ -116,7 +136,10 @@ function SelectOpt({
                                     }
                                     return disabled ? '#f5f5f5' : '#ffffff'; // Default cases
                                 })(),
+                                colorTextDisabled: '#000000', // Force black text for disabled components
+                                colorBorder: isFocused ? '#1890ff' : '#d9d9d9' // Blue border when selected
                             },
+
                         },
                     }}
                 >
@@ -129,8 +152,8 @@ function SelectOpt({
                         size='large'
                         placeholder={placeHolder}
                         onChange={handleSelectChange}
-                        onBlur={handleBlur}
-                        onFocus={() => setDropdownVisible(true)}
+                        onBlur={() => { handleBlur }}
+                        onFocus={() => { setDropdownVisible(true)}}
                         showSearch={showSearch}
                         filterOption={false}
                         onSearch={handleSearch}
@@ -139,7 +162,11 @@ function SelectOpt({
                         open={dropdownOpen}
                         onDropdownVisibleChange={handleDropdownVisibleChange}
                         status={isRendered && !disabled && (required || required === undefined) ? status : false}
-                        style={{ width: '100%' }}
+                        style={{
+                            width: '100%',
+                            backgroundColor: isHovered ? '#ffffff' : disabled ? '#ffffff' : undefined, // Change background color
+                            //color: disabled ? '#000000' : undefined, // Keep text black when disabled
+                        }}
                         suffixIcon={
                             isRendered && (required || required === undefined) && status === 'error' ? (
                                 <ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />
@@ -150,7 +177,7 @@ function SelectOpt({
                     />
                     {isRendered && !disabled && (required || required === undefined) && status === 'error' && (
                         <div className='text-xs text-red-500 pt-1 pl-2'>
-                            {notValidMsg || notValid}
+                            {ErrorMsg != "" && ErrorMsg != 'EMPTY'?  InvalidMsg: EmptyMsg }
                         </div>
                     )}
                 </ConfigProvider>

@@ -40,9 +40,28 @@ function EditLoanDetails({ data, receive, User }) {
     }, []);
 
     //Preload Selects
-    const { GET_LOAN_PRODUCT_LIST } = useDataContainer();
+    const { 
+        GET_LOAN_PRODUCT_LIST, 
+        GET_BRANCH_LIST, 
+        GET_LOAN_PURPOSE_LIST,
+        GET_LOAN_CONSULTANT } = useDataContainer();
+
+    function branchFilter(mod) {
+        let fb = [{ value: 11, label: 'Facebook/Online' }]
+        if (!mod) { fb = [] }
+        GET_BRANCH_LIST?.map((x) => { fb.push({ value: x.code, label: x.name, }) })
+        return fb
+    }
+
+    const get_loan_consultant_list = GET_LOAN_CONSULTANT?.map((x) => ({ value: x.id, label: x.fullName })) || [];
     const get_loan_product_list = GET_LOAN_PRODUCT_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
-    //Focus on Component
+    const get_loan_purpose_list = GET_LOAN_PURPOSE_LIST?.map(x => ({ value: x.id, label: x.purpose })) || [];
+    function loanTerms(terms) {
+        return LoanTerms(terms)?.map(x => ({ value: x.value, label: `${x.label.toString().toUpperCase()} Terms` })) || [];
+    }
+    function HCKFI_Option() {
+        return Hckfi()?.map(x => ({ value: x.value, label: x.label })) || [];
+    }
 
     return (
         <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
@@ -96,38 +115,18 @@ function EditLoanDetails({ data, receive, User }) {
                             receive={(e) => updateAppDetails({ name: 'loanAppStat', value: e })}
                         />)*/ }
 
-            {User !== 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL') ? (
-                <DatePickerOpt
-                    className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                    className_label={"font-bold"}
-                    className_dsub=""
-                    label={<>OFW Departure Date <span className="text-red-500">*</span></>}
-                    value={getAppDetails.ofwDeptDate}
-                    receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
-                    //disabled={!isEdit && !(data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL')}
-                    placeHolder={"Departure Date"}
-                    disabledate={disableDate_deployment}
-                    rendered={rendered}
 
-                    KeyName={'ofwDeptDate'}
-                    EmptyMsg={'Departure Date Required'}
-                    InvalidMsg={'Invalid Departure Date'}
-                    group={'default'}
-                    compname={'Departure Date'}
-
-                />
-            ) : null}
             {User !== 'LC' && (
-                <InputOpt
+                <SelectOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
                     value={getAppDetails.loanBranch}
                     receive={(e) => updateAppDetails({ name: 'loanBranch', value: e })}
                     label={User === 'Credit' ? 'Loan Branch' : 'Assigned Branch'}
-                    readOnly
                     category={User !== 'Credit' ? 'MARKETING' : undefined}
-                    mod={User !== 'Credit' && GetData('ROLE').toString() === '20'}
+                    options={branchFilter(User !== 'Credit' && GetData('ROLE').toString() === '20')}
                     rendered={rendered}
+                    disabled={true}
 
                     KeyName={'loanBranch'}
                     EmptyMsg={'Loan Branch Required'}
@@ -152,6 +151,26 @@ function EditLoanDetails({ data, receive, User }) {
                 group={'Default'}
                 compname={'Loan Product'}
             />
+            {User !== 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL') ? (
+                <DatePickerOpt
+                    className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                    className_label={"font-bold"}
+                    className_dsub=""
+                    label={<>OFW Departure Date <span className="text-red-500">*</span></>}
+                    value={getAppDetails.ofwDeptDate}
+                    receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
+                    placeHolder={"Departure Date"}
+                    disabledate={disableDate_deployment}
+                    rendered={rendered}
+
+                    KeyName={'ofwDeptDate'}
+                    EmptyMsg={'Departure Date Required'}
+                    InvalidMsg={'Invalid Departure Date'}
+                    group={'default'}
+                    compname={'Departure Date'}
+
+                />
+            ) : null}
             <SelectOpt
                 className_dmain="mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
@@ -170,91 +189,145 @@ function EditLoanDetails({ data, receive, User }) {
             />
 
             {User === 'Credit' && getAppDetails.loanType === 2 && (
-                <LabeledCurrencyInput
+                <InputOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
+                    label={<>Previous Approved Amount <span className="text-red-500">*</span></>}
+                    placeHolder='Previous Approved Amount'
+                    readOnly={isEdit}
                     value={getAppDetails.PrevAmount}
                     receive={(e) => updateAppDetails({ name: 'PrevAmount', value: e })}
-                    label={<>Previous Approved Amount <span className="text-red-500">*</span></>}
-                    placeHolder={'Previous Amount'}
                     category={'marketing'}
                     rendered={rendered}
+                    KeyName={'PrevAmount'}
+                    format={'Currency'}
+                    group={'Income'}
+                    compname={'Previous Approved Amount'}
+
+                    EmptyMsg={'Previous Approved Amount Required'}
+                    InvalidMsg={'Invalid Previous Approved Amount(min. 25,000)'}
+
                 />)}
-            <LabeledSelectLoanPurpose
-                className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+            <SelectOpt
+                className_dmain="mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
-                value={getAppDetails.loanPurpose}
-                receive={(e) => updateAppDetails({ name: 'loanPurpose', value: e })}
                 label={<>Purpose <span className="text-red-500">*</span></>}
-                showSearch
+                placeHolder={'Purpose'}
+                value={getAppDetails.loanPurpose}
                 rendered={rendered}
+                showSearch
+                receive={(e) => updateAppDetails({ name: 'loanPurpose', value: e })}
+                options={get_loan_purpose_list}
+
+                EmptyMsg={'Loan Purpose Required'}
+                InvalidMsg={'Invalid Loan Purpose'}
+                KeyName={'loanPurpose'}
+                group={'Default'}
+                compname={'Loan Purpose'}
             />
-            <LabeledCurrencyInput
+            <InputOpt
                 className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                 className_label="font-bold"
+                label={<>{User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'} <span className="text-red-500">*</span></>}
+                placeHolder={User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'}
+                readOnly={isEdit}
                 value={getAppDetails.loanAmount}
                 receive={(e) => updateAppDetails({ name: 'loanAmount', value: e })}
-                label={<>{User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'} <span className="text-red-500">*</span></>}
                 category={'marketing'}
                 rendered={rendered}
-            />
-            {User === 'Credit' ? (
-                <LabeledInput
-                    className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                    className_label="font-bold"
-                    label={<>Applied Loan Terms <span className="text-red-500">*</span></>}
-                    value={getAppDetails.loanTerms}
-                    receive={(e) => updateAppDetails({ name: 'loanTerms', value: e })}
-                    placeholder="Enter Loan Terms"
-                    readOnly={true}
-                    rendered={rendered}
-                />
-            ) : (
-                <LabeledSelect
-                    className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                KeyName={'loanAmount'}
+                format={'Currency'}
+                group={'Amount-30,000'}
+                compname={User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'}
 
-                    className_label="font-bold"
-                    label={<>Loan Terms (in Months) <span className="text-red-500">*</span></>}
-                    value={getAppDetails.loanTerms}
-                    data={LoanTerms(24)}
-                    receive={(e) => updateAppDetails({ name: 'loanTerms', value: e })}
-                    rendered={rendered}
-                />)}
+                EmptyMsg={`${User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'} Required`}
+                InvalidMsg={`Invalid ${User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'} (min. 30,000)`}
+
+            />
+
+            <SelectOpt
+                className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                className_label="font-bold"
+                label={<>Applied Loan Terms <span className="text-red-500">*</span></>}
+                placeholder="Enter Loan Terms"
+                disabled={User === 'Credit' ? true : false}
+                value={getAppDetails.loanTerms}
+                receive={(e) => updateAppDetails({ name: 'loanTerms', value: e })}
+                category={'marketing'}
+                options={loanTerms(24)}
+                rendered={rendered}
+                KeyName={'loanTerms'}
+                group={'Default'}
+                compname={'Loan Terms'}
+
+                EmptyMsg={'Loan Terms Required'}
+                InvalidMsg={'Invalid Loan Terms'}
+            />
+
             {User === 'Credit' && (
-                <LabeledCurrencyInput
+                <InputOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                    className_label="font-bold"
-                    value={getAppDetails.CRAApprvRec}
-                    receive={(e) => updateAppDetails({ name: 'CRAApprvRec', value: e })}
+                    className_label={"font-bold"}
                     label={<>CRA Recommendation <span className="text-red-500">*</span></>}
                     placeHolder={"CRA Recommendation"}
+                    readOnly={isEdit}
+                    value={getAppDetails.CRAApprvRec}
+                    receive={(e) => updateAppDetails({ name: 'CRAApprvRec', value: e })}
                     category={'marketing'}
                     rendered={rendered}
-                />)}
+                    KeyName={'CRAApprvRec'}
+                    format={'Currency'}
+                    group={'Amount-30,000'}
+                    compname={'CRA Recommendation'}
+
+                    EmptyMsg={'CRA Recommendation Required'}
+                    InvalidMsg={`Invalid CRA Recommendation`}
+                />
+
+            )}
             {User === 'LC'
                 ? (<></>)
-                : (<LabeledSelect
-                    className_dmain={'mt-4 w-[300px] h-[5rem] pt-2'}
-                    className_label="font-bold"
-                    label={<>How did you know about Cepat Kredit Financing? <span className="text-red-500">*</span></>}
-                    value={getAppDetails.channelId}
-                    data={Hckfi()}
-                    receive={(e) => updateAppDetails({ name: 'channelId', value: e })}
-                    showSearch
-                    rendered={rendered}
-                />)}
+                : (
+                    <SelectOpt
+                        className_dmain={'mt-4 w-[300px] h-[5rem] pt-2'}
+                        className_label="font-bold"
+                        label={<>How did you know about Cepat Kredit Financing? <span className="text-red-500">*</span></>}
+                        placeholder="Select"
+                        value={getAppDetails.channelId}
+                        receive={(e) => updateAppDetails({ name: 'channelId', value: e })}
+                        category={'marketing'}
+                        options={HCKFI_Option()}
+                        rendered={rendered}
+                        KeyName={'channelId'}
+                        group={'Default'}
+                        compname={'hckfi'}
+                        showSearch
+
+                        EmptyMsg={'How did you know about Cepat Kredit Financing Required'}
+                        InvalidMsg={'Invalid How did you know about Cepat Kredit Financing'}
+                    />
+                )}
             {getAppDetails.channelId == 10 ? (<>
-                <LabeledSelect_Consultant
+                <SelectOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
-                    value={getAppDetails.consultName}
-                    receive={(e) => updateAppDetails({ name: 'consultName', value: e })}
                     label={<>Loan Consultant <span className="text-red-500">*</span></>}
                     placeHolder={"Loan Consultant"}
+                    value={getAppDetails.consultName}
+                    receive={(e) => updateAppDetails({ name: 'consultName', value: e })}
+                    category={'marketing'}
                     disabled={User == 'LC' ? true : false}
-                    showSearch
+                    options={get_loan_consultant_list}
                     rendered={rendered}
+                    KeyName={'consultName'}
+                    group={'Default'}
+                    compname={'Loan Consultant'}
+                    showSearch
+
+                    EmptyMsg={'Loan Consultant Required'}
+                    InvalidMsg={'Invalid Loan Consultant'}
                 />
+
                 {User === 'LC' || User === 'Credit'
                     ? (<></>)
                     : (<LabeledInput_Contact

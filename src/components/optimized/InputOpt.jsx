@@ -1,6 +1,7 @@
 import { Input } from 'antd'
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { InputComponentHook } from '@hooks/ComponentHooks';
+import { useState } from 'react';
 
 function InputOpt({
     rendered,
@@ -20,11 +21,12 @@ function InputOpt({
     group,
     CustomLength = 13,
     compname,
-    InvalidMsg='Input is not Valid',
-    EmptyMsg= `${compname} Required`,
+    InvalidMsg = 'Input is not Valid',
+    EmptyMsg = `${compname} Required`,
 }) {
+    const [isFocused, setIsFocused] = useState();
 
-    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, InvalidMsg, EmptyMsg, CustomLength);
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, isFocused, InvalidMsg, EmptyMsg, CustomLength);
 
     const isValidationEnabled = !readOnly && required;
 
@@ -32,7 +34,10 @@ function InputOpt({
         <div className={className_dmain}>
             {label && <label className={className_label}>{label}</label>}
 
-            <div className={className_dsub}>
+            <div className={className_dsub}
+                onBlur={() => { setIsFocused(true); }}
+                onFocus={() => { setIsFocused(false); }}
+            >
                 <Input
                     disabled={disabled}
                     className={`w-full ${readOnly ? 'bg-[#f5f5f5]' : 'bg-[#ffffff]'}`}

@@ -17,6 +17,7 @@ function PreLoad({ children }) {
     GET_RELATIONSHIP_LIST,
     GET_CURRENCY_LIST,
     GET_COLLECTION_AREA_LIST,
+    GET_LOAN_CONSULTANT,
   } = ComponentPreloads();
   //const GET_PROVINCE_LIST = ProvinceList();
 
@@ -129,6 +130,7 @@ function PreLoad({ children }) {
         GET_RELATIONSHIP_LIST,
         GET_CURRENCY_LIST,
         GET_COLLECTION_AREA_LIST,
+        GET_LOAN_CONSULTANT,
         //Accounting
         getBank,
         getPurpose,

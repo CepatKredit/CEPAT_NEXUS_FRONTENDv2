@@ -54,7 +54,7 @@ export function ComponentPreloads() {
 
   const [getLoanPurpose, setLoanPurpose] = React.useState([]);
   useQuery({
-    queryKey: ["getLoanPurpose"],
+    queryKey: ["LoanPurposeList"],
     queryFn: async () => {
       const result = await GET_LIST("/GET/G20LP");
       setLoanPurpose(result.list);
@@ -104,26 +104,39 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ['getCurrency'],
     queryFn: async () => {
-        const result = await GET_LIST('/GET/G105CL');
-        setCurrency(result.list)
-        return result.list;
+      const result = await GET_LIST('/GET/G105CL');
+      setCurrency(result.list)
+      return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
     retryDelay: 1000,
-});
+  });
 
-const [getCollectionArea, setCollectionArea] = React.useState([])
-const collectionArea = useQuery({
-  queryKey: ['collectionArea'],
-  queryFn: async () => {
+  const [getCollectionArea, setCollectionArea] = React.useState([])
+  useQuery({
+    queryKey: ['collectionArea'],
+    queryFn: async () => {
       const result = await GET_LIST('GET/G29CA');
       setCollectionArea(result.list)
       return result.list;
-  },
-  refetchInterval: (data) => (data?.length === 0 ? 500 : false),
-  enabled: true,
-  retryDelay: 1000,
-});
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    enabled: true,
+    retryDelay: 1000,
+  });
+
+  const [getConsultant, setConsultant] = React.useState([]);
+  useQuery({
+    queryKey: ['ConsultantList'],
+    queryFn: async () => {
+      const result = await GET_LIST('/GET/G21LC');
+      setConsultant(result.list);
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
 
   //////////////////////////////////
   //const { getAppDetails } = useContext(LoanApplicationContext)
@@ -165,7 +178,8 @@ const collectionArea = useQuery({
     GET_VALID_ID_LIST: getValidId,
     GET_RELATIONSHIP_LIST: getRelationship,
     GET_CURRENCY_LIST: getCurrency,
-    GET_COLLECTION_AREA_LIST: getCollectionArea
+    GET_COLLECTION_AREA_LIST: getCollectionArea,
+    GET_LOAN_CONSULTANT: getConsultant,
     //     GET_MUNICIPALITY: getMunicipalityList,
   };
 }

@@ -3,18 +3,18 @@ import { mmddyy } from '@utils/Converter';
 import { debouncef } from '@utils/Debounce';
 import { CharacterLimit, DateFormat, FormatComma, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
 import { dateMessage, inputMessage } from '@utils/MessageValidationList';
-import { checkAgeisValid, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
+import { checkAgeisValid, CheckAmountValid, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
 import dayjs from 'dayjs';
 import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'react';
 
 
 function hookDateValid(KeyName, date) {
-  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') { return !checkDeployisValid(date); }
-  else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") { return !checkAgeisValid(date) }
+  if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') { return checkDeployisValid(date); }
+  else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") { return checkAgeisValid(date) }
   else { return CheckDateValid(date) }
 }
 
-function hookInputValid(KeyName, input, comp_name, format, group) {
+function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, EmptyMsg) {
   //LETTERS
   if (group === 'Email' && CheckEmailValid(input)) {//For Email
     return { valid: true, value: input, errmsg: '' }; //As-is
@@ -25,22 +25,26 @@ function hookInputValid(KeyName, input, comp_name, format, group) {
     //CURRENCY
   } else if (group === 'Income' && input !== '' && CheckIncomeValid(input)) { // 25,000.00
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
+  } else if (group === 'Amount-30,000' && input !== '' && CheckAmountValid(input)) { // 30,000.00
+    return { valid: true, value: inputFormat(format, input), errmsg: '' };
   } else if ((group === 'Rent_Amort' || group === 'Allotment') && input !== '' && CheckRentAmortValid(input)) { // !0
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
-
+    /* } else if ((group === 'Number' ) && input !== '' && CheckNumberValid()) { // !0
+       return { valid: true, value: inputFormat(format, input), errmsg: '' };*/
     //NUMBER
 
   } else { //error
-    return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(group, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name) };
+    return { valid: false, value: inputFormat(format, input), errmsg: inputMessage(group, inputFormat(format, input) === '' ? 'Empty' : 'Invalid', comp_name, InvalidMsg, EmptyMsg) };
   }
 }
 
-export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered) {
+export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered,  InvalidMsg, EmptyMsg) {
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selected, setselected] = useState(value || '');
   const [debouncedInput, setDebouncedInput] = useState(selected);
+  const [ErrorMsg, setErrorMsg] = useState('EMPTY')
 
 
   //Fix tomorrow
@@ -71,6 +75,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
 
   useEffect(() => {
     setStatus(debouncedInput ? '' : 'error');
+    setErrorMsg(debouncedInput ? '' : 'EMPTY')
     receive(debouncedInput);
   }, [debouncedInput])
 
@@ -99,6 +104,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     if (rendered) {
       if (!value) {
         setStatus("error")
+        setErrorMsg('EMPTY')
       } else {
         setStatus("")
       }
@@ -114,6 +120,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     dropdownOpen,
     setDropdownOpen,
     selected,
+    ErrorMsg,
   };
 }
 
@@ -167,7 +174,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
     const handler = setTimeout(() => {
       const date = dayjs(debouncedInput, 'MM-DD-YYYY');
       if (debouncedInput.length === 10 && date.isValid()) {
-        if (hookDateValid(KeyName, date)) {
+        if (!hookDateValid(KeyName, date)) {
           setRendered(true);
           setStatus('error');
           setValidationMessage(dateMessage(KeyName, 'Invalid'));
@@ -203,7 +210,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
       if (CheckDateValid(inputValue)) {//Reset the DatePicker value when there is no valid date in input date
         setDatePickerValue('');
       }
-      if (hookDateValid(KeyName, inputValue)) {
+      if (!hookDateValid(KeyName, inputValue)) {
         setStatus('error');
       } else {
         setStatus('');
@@ -218,7 +225,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
         // When MarriedPBCB is true, set the value from props and validate
         setDatePickerValue(value ? dayjs(value) : '');
         setInputValue(value ? dayjs(value).format('MM-DD-YYYY') : '');
-        if (hookDateValid(KeyName, value)) {
+        if (!hookDateValid(KeyName, value)) {
           setStatus('error');
           setValidationMessage(dateMessage(KeyName, 'Invalid'));
         } else {
@@ -240,7 +247,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
 
   const handleBlur = (date) => {
     if (debouncedInput.length === 10 && CheckDateValid(date)) { //Inputvalue is not defined after initilized
-      if (hookDateValid(KeyName, date)) {
+      if (!hookDateValid(KeyName, date)) {
         setStatus('error');
         setValidationMessage(dateMessage(KeyName, 'Invalid'));
         receive()
@@ -274,7 +281,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   };
 }
 
-export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group, isDisabled) {
+export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group, isDisabled, isFocused, InvalidMsg, EmptyMsg) {
   const [inputValue, setInputValue] = useState(initialValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
@@ -307,6 +314,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
       }
     }
   };
+
   const handleChange = (e) => {
     let value = e;
     const maxchar = CharacterLimit(group);
@@ -314,26 +322,27 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
       value = value.slice(0, maxchar);
     }
 
-    const res = hookInputValid(KeyName, value, comp_name, format, group);
+    const res = hookInputValid(KeyName, value, comp_name, format, group, InvalidMsg, EmptyMsg);
     statusValidation(res.valid, res.value, res.errmsg, true, 800);
   }
 
   const handleBlur = () => {
     setIconVisible(true);
-    const res = hookInputValid(KeyName, inputValue, comp_name, format, group);
+    const res = hookInputValid(KeyName, inputValue, comp_name, format, group, InvalidMsg, EmptyMsg);
     statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(Uppercase(res.value).replaceAll(',', '')) : '') : res.value), res.errmsg, false, 100);
   };
 
   useEffect(() => { //INITIAL RELOAD
     if (rendered) {
       setIconVisible(true);
-      const res = hookInputValid(KeyName, initialValue /* || inputValue */, comp_name, format, group);
+      const res = hookInputValid(KeyName, initialValue /* || inputValue */, comp_name, format, group, InvalidMsg, EmptyMsg);
       statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(Uppercase(res.value).replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
     }
   }, [rendered]);
 
   useEffect(() => {
-    if (isDisabled || initialValue === '') {
+    if (isDisabled || isFocused) {
+      console.log('Checked', isFocused)
       handleChange(initialValue);
     }
   }, [initialValue])
