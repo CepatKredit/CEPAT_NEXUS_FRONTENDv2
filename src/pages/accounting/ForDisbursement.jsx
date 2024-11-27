@@ -14,6 +14,9 @@ import { toEncrypt } from "@utils/Converter";
 import NetProceeds from "./disbursement/NetProceeds";
 import LCCommission from "./disbursement/LCCommission";
 import { useDataContainer } from "@context/PreLoad";
+import ResponsiveModal from "@components/global/ResponsiveModal";
+import { BankGeneration } from "@hooks/ModalController";
+import Generation from "./Generation";
 
 function ForDisbursement() {
   const [getSearch, setSearch] = React.useState("");
@@ -50,8 +53,12 @@ function ForDisbursement() {
     return parts.join(".");
   }
 
+  const { modalStatus, setStatus } = BankGeneration()
+
   return (
     <>
+      <ResponsiveModal showModal={modalStatus} closeModal={() => { setStatus(false) }} modalTitle={<span>Bank Generation</span>}
+        modalWidth={'100rem'} contextHeight={'h-[40rem]'} contextInside={<Generation />} />
       {GetData("ROLE").toString() === "90" ? (
         <div className="mx-[1%] my-[2%]">
           <div className="flex flex-row gap-3">
@@ -61,6 +68,7 @@ function ForDisbursement() {
           </div>
           <>
             <div className="flex flex-rows pb-2 min-w-[30%] float-end">
+              <Button className='mr-2' size='large' type='primary' onClick={(x) => { setStatus(true) }}>Bank Generation</Button>
               <Input
                 className="w-[100%]"
                 addonAfter={<SearchOutlined />}
@@ -98,8 +106,7 @@ function ForDisbursement() {
                       onClick={() => {
                         localStorage.setItem("SIDC", toEncrypt(x.loanAppId));
                         navigate(
-                          `${localStorage.getItem("SP")}/${
-                            x.loanAppCode
+                          `${localStorage.getItem("SP")}/${x.loanAppCode
                           }/acc-uploaded-files`
                         );
                       }}
@@ -144,11 +151,11 @@ function ForDisbursement() {
                     />
                   </div>
                 ),
-                expandedRowKeys: [expandedRowKey], 
+                expandedRowKeys: [expandedRowKey],
                 onExpand: (expanded, record) => {
                   if (expanded) {
                     SET_REFRESH_LAN(1)
-                    setExpandedRowKey(record.key); 
+                    setExpandedRowKey(record.key);
                     localStorage.setItem("SIDC", toEncrypt(record.CID));
                   } else {
                     setExpandedRowKey(null);

@@ -33,6 +33,8 @@ import { LoginSession } from '@auth/LoginSession';
 import { AuthProvider } from '@auth/AuthProvider';
 import WildSearch from '@pages/WildSearch';
 
+import Minitable from '@pages/Test/minitable';
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -69,6 +71,10 @@ function App() {
         {
           path: "/unauthorized",
           element: <Page403 />,
+        },
+        {
+          path: "/tester",
+          element: <Minitable />,
         },
         {
           path: "/ckfi",
