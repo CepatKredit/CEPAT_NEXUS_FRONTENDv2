@@ -121,7 +121,8 @@ function LoanApplication() {
 
   return (
     <div className="flex flex-col bg-[#e8eee5] h-[100vh] w-[100vw] justify-center items-center">
-      <div className=" mb-4 md:mb-[43%] lg:mb-[63%] 2xl:mb-[0%] h-auto xs1:h-[790px] xs2:h-[890px] xs:h-[950px] sm:h-[1200px] md:h-[660px] lg:h-[660px] xl:h-[790px] 2xl:h-[770px] 3xl:h-[880px] w-full xs1:w-[100%] sm:w-[90%] md:w-[90%] lg:w-[70%] xl:w-[70%] 2xl:w-[70%] 3xl:w-[70%] bg-white rounded-lg shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">
+      <div className=" mb-4 md:mb-[43%] lg:mb-[63%] xl:mb-[0%] h-auto xs1:h-[790px] xs2:h-[890px] xs:h-[950px] sm:h-[1200px] md:h-[660px] lg:h-[660px] xl:h-[730px] 2xl:h-[720px] 3xl:h-[880px] 
+      w-full xs1:w-[100%] sm:w-[90%] md:w-[90%] lg:w-[70%] xl:w-[70%] 2xl:w-[70%] 3xl:w-[70%] bg-white rounded-lg shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">
         <div
           className="float-right mt-4 xs1:mt-[2%] sm:mr-[3%] cursor-pointer"
           onClick={() => {
@@ -173,7 +174,7 @@ function LoanApplication() {
               current={getStep}
             />
           </ConfigProvider>
-          <div className="h-[36rem] xs1:h-[17.2rem] xs2:h-[22rem] xs:h-[28rem] sm:h-[36rem] md:h-[30rem] lg:h-[30rem] xl:h-[36rem] 2xl:h-[36rem] 3xl:h-[40rem] overflow-y-auto overflow-x-hidden mt-4 xs:mt-[2%]">
+          <div className="h-auto xs1:h-[17.2rem] xs2:h-[22rem] xs:h-[28rem] sm:h-[36rem] md:h-[28.5rem] lg:h-[30rem] xl:h-[33rem] 2xl:h-[32rem] 3xl:h-[40rem] overflow-y-auto overflow-x-hidden mt-4 xs:mt-[2%]">
             {steps[getStep].content}
           </div>
           <div className="flex flex-col justify-center items-center">

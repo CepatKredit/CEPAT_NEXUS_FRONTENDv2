@@ -50,7 +50,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
       <div
   className={`flex flex-row w-full 
     ${GetData('ROLE') && GetData('ROLE').toString() === '20' ? 'xs1:w-[40%] xs2:w-[35%] xs:w-[35%] sm:w-[80%] md:w-[60%] lg:w-[90%] xl:w-[100%] 2xl:w-[80%] 3xl:w-[51%]' : 'xs1:w-[100%] xs2:w-[85%] xs:w-[85%]'} 
-    sm:w-[80%] md:w-[90%] lg:w-[90%] xl:w-[100%] 2xl:w-[70%] 3xl:w-[51%] justify-between items-center`}
+    sm:w-[80%] md:w-[90%] lg:w-[90%] xl:w-[80.5%] 2xl:w-[67.1%] 3xl:w-[51%] justify-between items-center`}
 >
         <Checkbox
           name="chkBox_DataPrivacy"

@@ -597,7 +597,7 @@ function PortalLogin() {
           </center>
         </div>
       </div>
-      <div className="flex flex-wrap w-full mb-[-100] xs1:mb-[-50px] xs2:mb-[-80px] xs:mb-[-50px] 2xl:mb-[-0px] mt-[-180px] xs1:mt-[-40px] xs2:mt-[-50px] xs:mt-[-120px] sm:mt-[-370px] md:mt-[-480px] lg:mt-[-820px] xl:mt-[-190px] 2xl:mt-[-180px]">
+      <div className="flex flex-wrap w-full mb-[-100] xs1:mb-[-50px] xs2:mb-[-80px] xs:mb-[-50px] 2xl:mb-[-0px] mt-[-180px] xs1:mt-[-40px] xs2:mt-[-50px] xs:mt-[-110px] sm:mt-[-370px] md:mt-[-480px] lg:mt-[-820px] xl:mt-[-190px] 2xl:mt-[-180px]">
         <div className="pl-[3%]">
           <img
             src={Datos} alt="datos" className="w-[70px] xs1:w-[20px] sm:w-[60px] md:w-[80px] lg:w-[80px] xl:w-[90px] 2xl:w-[90px] h-[70px] xs1:h-[35px] sm:h-[85px] md:h-[140px] lg:h-[150px] xl:h-[150px] 2xl:h-[150px]" />
