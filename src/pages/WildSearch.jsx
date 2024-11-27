@@ -18,7 +18,7 @@ function WildSearch() {
     const { data: getData = [], isFetching } = useQuery({
         queryKey: ["wildSearch", userID, searchValue],
         queryFn: async () => {
-          const { data } = await axios.get(`/wild-search/${userID}/${searchValue}`);
+          const { data } = await axios.get(`/GET/G146WS/${userID}/${searchValue}`);
           return data.map((item) => ({
             key: item.key,           
             loanAppId: item.loanAppId,

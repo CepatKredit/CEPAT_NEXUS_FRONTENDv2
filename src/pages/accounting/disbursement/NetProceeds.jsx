@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button, Input, Radio, Select, Space, Spin, notification } from "antd";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useIsFetching, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { generateKey } from "@utils/Generate";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -37,10 +37,13 @@ function NetProceeds({ data }) {
     Suffix: "",
     BankName: "",
     BankAcctNo: "",
-    Amount: "",//
+    Amount: "",
     Type: "NP",
     Purpose: "",
     Status: "AVAILABLE",
+  });
+  const isFetching = useIsFetching({
+    queryKey: ["DisbursementListQuery", data.LAN.props.children, getData.Type],
   });
 
   React.useEffect(() => {
@@ -197,27 +200,29 @@ function NetProceeds({ data }) {
   }
 
   const token = localStorage.getItem("UTK");
+
   async function AddNP() {
-    const container = {
+    let remaining = getRemaining;
+
+    const createContainer = (amount) => ({
       PaymentType: getData.PaymentType,
       FirstName: getData.FirstName,
       LastName: getData.LastName,
       BankName: GetBankCode(getData.BankName),
       BankAcctNo: getData.BankAcctNo,
-      Amount: truncateToDecimals(removeCommas(getData.Amount)),
+      Amount: parseFloat(amount),
       Type: getData.Type,
       Purpose: GetPurposeCode(getData.Purpose),
       Status: getData.Status,
       TraceId: "CKT" + data.LAN.props.children,
       RecUser: jwtDecode(token).USRID,
       Lan: data.LAN.props.children,
-    };
+    });
 
-    await axios
-      .post("/POST/P122AD", container)
-      .then((result) => {
+    const postTransaction = (container) =>
+      axios.post("/POST/P122AD", container).then((result) => {
         queryClient.invalidateQueries(
-          { queryKey: ["DisbursementListQuery", data.LAN.props.children] },
+          { queryKey: ["DisbursementListQuery", data.LAN.props.children, getData.Type] },
           { exact: true }
         );
         SET_REFRESH_LAN(1);
@@ -225,15 +230,10 @@ function NetProceeds({ data }) {
           { queryKey: ["PRELOAD_DISBURSEMENT", data.LAN.props.children] },
           { exact: true }
         );
-        api[result.data.status]({
-          message: result.data.message,
-          description: result.data.description,
-        });
+  
         setData({
           ...getData,
           PaymentType: "",
-          //FirstName: "",
-          //LastName: "",
           BankName: "",
           BankAcctNo: "",
           Amount: "0.00",
@@ -241,13 +241,53 @@ function NetProceeds({ data }) {
           Purpose: "",
           Status: "AVAILABLE",
         });
-      })
-      .catch((error) => {
-        api["error"]({
-          message: "Something went wrong",
-          description: error.message,
-        });
       });
+
+      if (getData.PaymentType === "INSTAPAY") {
+        const loopPost = async () => {
+          while (remaining > 0) {
+            const instaAmount = remaining >= 50000 ? 50000 : remaining;
+            const container = createContainer(instaAmount);
+    
+            await postTransaction(container)
+              .then(() => {
+                remaining -= instaAmount;
+              })
+              .catch((error) => {
+                api["error"]({
+                  message: "Something went wrong",
+                  description: error.message,
+                });
+                remaining = -1;
+              });
+          }
+        };
+    
+        await loopPost();
+
+        if (remaining === 0) {
+          api["success"]({
+            message: "All transactions completed successfully",
+            description: "The remaining balance has been fully processed.",
+          });
+        };
+      } else {
+        const container = createContainer(getRemaining);
+    
+        await postTransaction(container)
+          .then(() => {
+            api["success"]({
+              message: "Transaction completed successfully",
+              description: "The transaction was processed.",
+            });
+          })
+          .catch((error) => {
+            api["error"]({
+              message: "Something went wrong",
+              description: error.message,
+            });
+          });
+      }
   }
 
   return (
@@ -316,13 +356,17 @@ function NetProceeds({ data }) {
                 /> */}
                 <Select
                   className="w-full"
+
                   placeholder={
                     GetClient.isFetching || !NameList(getAppDetails)?.some((x) => x.name)
                       ? "Please wait..." 
                       : "Select borrower"
                   }
                   loading={GetClient.isFetching || !NameList(getAppDetails)?.some((x) => x.name)}
-                  disabled={GetClient.isFetching || !NameList(getAppDetails)?.some((x) => x.name)}
+                  disabled={GetClient.isFetching || !NameList(getAppDetails)?.some((x) => x.name) || !getData.PaymentType ||
+                    formatNumberWithCommas(
+                      parseFloat(getRemaining).toFixed(2).toString()
+                    ).toString() === "0.00"}
                   style={{
                     color: GetClient.isFetching || !NameList(getAppDetails)?.some((x) => x.name) ? "gray" : "black",
                   }}
@@ -451,7 +495,7 @@ function NetProceeds({ data }) {
               </div>
             </div>
             <Space>
-              <div>
+              {/* <div>
                 <div className="w-[10.6rem]">Amount to Credit</div>
                 <div className="w-[10.6rem]">
                   <Input
@@ -462,16 +506,18 @@ function NetProceeds({ data }) {
                         parseFloat(getRemaining).toFixed(2).toString()
                       ).toString() === "0.00"
                     }
-                    value={getData.Amount}
+                    // value={getData.Amount}
+                    value={50000}
                     onBlur={(e) => {
                       onBlurAmount(e);
                     }}
                     onChange={(e) => {
                       onChangeAmount(e);
                     }}
+                    readOnly
                   />
                 </div>
-              </div>
+              </div> */}
               <Button
                 disabled={
                   !getData.FirstName ||
@@ -484,6 +530,7 @@ function NetProceeds({ data }) {
                     parseFloat(getRemaining).toFixed(2).toString()
                   ).toString() === "0.00"
                 }
+                loading={!!isFetching}
                 className="mt-[1.6em]"
                 type="primary"
                 onClick={() => {

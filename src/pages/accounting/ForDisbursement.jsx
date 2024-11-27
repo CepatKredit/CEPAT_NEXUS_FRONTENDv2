@@ -58,7 +58,7 @@ function ForDisbursement() {
   return (
     <>
       <ResponsiveModal showModal={modalStatus} closeModal={() => { setStatus(false) }} modalTitle={<span>Bank Generation</span>}
-        modalWidth={'100rem'} contextHeight={'h-[40rem]'} contextInside={<Generation />} />
+        modalWidth={'100rem'} contextHeight={'h-[40rem]'} contextInside={<Generation data={AppDataListQuery.data} />} />
       {GetData("ROLE").toString() === "90" ? (
         <div className="mx-[1%] my-[2%]">
           <div className="flex flex-row gap-3">

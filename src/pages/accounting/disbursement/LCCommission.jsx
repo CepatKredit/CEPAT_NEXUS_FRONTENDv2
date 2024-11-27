@@ -1,11 +1,14 @@
 import * as React from 'react'
 import { Button, Input, Radio, Select, Space, notification } from 'antd'
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { generateKey } from '@utils/Generate';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import DisbursementList from './DisbursementList';
 import { useDataContainer } from '@context/PreLoad';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { toDecrypt } from '@utils/Converter';
+import { GET_LIST } from '@api/base-api/BaseApi';
 
 function LCCommission({ data }) {
 
@@ -23,7 +26,35 @@ function LCCommission({ data }) {
         Status: 'AVAILABLE',
     })
 
-    const { getBank, getPurpose } = useDataContainer()
+    const { getBank, getPurpose } = useDataContainer();
+    const { getAppDetails, setAppDetails } = React.useContext(LoanApplicationContext)
+
+    React.useEffect(() => {
+        GetClient.refetch();
+        console.log("TRIGGER")
+      }, [toDecrypt(localStorage.getItem("SIDC")), ]);
+    
+      const GetClient = useQuery({
+        queryKey: ["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))],
+        queryFn: async () => {
+          const result = await GET_LIST(
+            `/GET/G3CD/${toDecrypt(localStorage.getItem("SIDC"))}`
+          );
+          const data = result.list;
+    
+          // Populate app details and old client data when data is fetched
+          setAppDetails((prevDetails) => ({
+            ...prevDetails,
+            
+            consultName: data?.LoanDetails?.consultant || '',
+            
+          }));
+    
+          return data;
+        },
+        enabled: true,
+      });
+    
 
     function BankList() {
         let container = []
@@ -145,15 +176,23 @@ function LCCommission({ data }) {
                         <div>
                             <div className='w-[15rem]'>Recipient First Name</div>
                             <div className='w-[15rem]'>
-                                <Input className='w-full' disabled={!getData.PaymentType} value={getData.FirstName}
-                                    onChange={(e) => { setData({ ...getData, FirstName: e.target.value }) }} />
+                                <Input className='w-full' 
+                                disabled={!getData.PaymentType} 
+                                value={getAppDetails.consultName}  
+                                onChange={(e) => { setData({ ...getData, FirstName: e.target.value }) }} 
+                                readOnly
+                                />
                             </div>
                         </div>
                         <div>
                             <div className='w-[15rem]'>Recipient Last Name</div>
                             <div className='w-[15rem]'>
-                                <Input className='w-full' disabled={!getData.PaymentType} value={getData.LastName}
-                                    onChange={(e) => { setData({ ...getData, LastName: e.target.value }) }} />
+                                <Input className='w-full' 
+                                disabled={!getData.PaymentType} 
+                                // value={getData.LastName}
+                                value={getAppDetails.consultName}  
+                                readOnly
+                                onChange={(e) => { setData({ ...getData, LastName: e.target.value }) }} />
                             </div>
                         </div>
                     </Space>

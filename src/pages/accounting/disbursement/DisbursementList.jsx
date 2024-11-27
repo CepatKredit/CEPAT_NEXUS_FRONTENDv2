@@ -216,7 +216,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
 
             await axios.post('/POST/P123UD', container)
                 .then((result) => {
-                    queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', LAN] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', LAN, type] }, { exact: true })
                     if (type === 'NP') {
                         SET_REFRESH_LAN(1);
                     }
