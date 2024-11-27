@@ -16,7 +16,7 @@ import { toUpperText } from '@utils/Converter';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
-function Relatives({ BorrowerId, onUpdateCount, User, data }) {
+function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext);
     const suffixRef = React.useRef();
     const { setCount } = getDependentsCount();
@@ -35,6 +35,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         Birthdate: '',
         WorkEducStatus: '',
         Relationship: '',
+        IsOfw: '',
     });
 
     const [getStat, setStat] = React.useState(true);
@@ -42,11 +43,15 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
         getRelatives.refetch()
     }, [BorrowerId]);
 
+    /*React.useEffect(() => {
+        console.log('isofwito....', isOfw);
+    },[getAppDetails])*/
+
     const getRelatives = useQuery({
-        queryKey: ['getRelatives'],
+        queryKey: ['getRelatives', BorrowerId, isOfw],
         queryFn: async () => {
             try {
-                const result = await axios.get(`/GET/G35R/${BorrowerId}`);
+                const result = await axios.get(`/GET/G35R/${BorrowerId}/${isOfw}`);
                 let dataList = [{
                     key: 0,
                     no: '',
@@ -150,7 +155,8 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                 Birthdate: row.birthdate,
                 workEducStatus: row.workEducStatus,
                 Relationship: GetReshipId(),
-                RecUser: jwtDecode(token).USRID
+                RecUser: jwtDecode(token).USRID,
+                IsOfw: isOfw,
             }
 
             try {
@@ -208,7 +214,8 @@ function Relatives({ BorrowerId, onUpdateCount, User, data }) {
                     Birthdate: row.birthdate,
                     workEducStatus: GetWorkEducStatusId(),
                     Relationship: GetReshipId(),
-                    ModUser: jwtDecode(token).USRID
+                    ModUser: jwtDecode(token).USRID,
+                    IsOfw: isOfw,
                 };
                 console.log(data)
                 const result = await axios.post('/POST/P76UR', data);

@@ -11,9 +11,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { GetData } from '@utils/UserData';
+import RelativesTable from './RelativesTable';
+import { GET_LIST } from '@api/base-api/BaseApi';
 
 
-function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading }) {
+function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading, isEditCRAM }) {
 
     const [api, contextHolder] = notification.useNotification()
     const [isEdit, setEdit] = useState(false);
@@ -22,6 +24,34 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
     const didMountRef = useRef(false);
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
+    const [isBen, setIsBen] = React.useState(2);
+
+    const [relativesCount, setRelativesCount] = React.useState(0);
+    const fetchRelativesAndUpdateCount = () => {
+
+        if (BorrowerId) {
+            GET_LIST(`/GET/G35R/${BorrowerId}`).then((result) => {
+                if (result?.list) {
+                    const relativescount = result.list.length;
+                    setRelativesCount(relativescount);
+                    // console.log('Relatives count updated:', relativescount);
+                }
+            });
+        }
+    };
+
+    React.useEffect(() => {
+        fetchRelativesAndUpdateCount()
+    }, [BorrowerId])
+    
+
+    const handleUpdateRelativesCount = (count) => {
+        const relativescount = count - 1;
+        setRelativesCount(relativescount);
+        // console.log('Updated Relatives Count (adjusted):', relativescount);
+    };
+
+
 
     const valid_addcoborrow = !data.coborrowfname || data.coborrowfname.trim() === "" ||
         !data.coborrowlname || data.coborrowlname.trim() === "" ||
@@ -297,6 +327,11 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                     <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
                         showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
                 )}
+                 {!isEditCRAM && !isEdit && User !== 'LC' ? (
+                    <div className='w-full px-2'>
+                        <RelativesTable BorrowerId={BorrowerId}  User={User} onUpdateCount={handleUpdateRelativesCount} data={data} isOfw={isBen} />
+                    </div>
+                ) : null}
             </div>
             {User !== 'Credit' && User !== 'Lp' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
                 <ConfigProvider

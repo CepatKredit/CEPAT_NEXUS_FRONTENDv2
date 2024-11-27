@@ -22,7 +22,8 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
     const { GetStatus } = ApplicationStatus();
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
-    const token = localStorage.getItem('UTK')
+    const token = localStorage.getItem('UTK');
+    const [isOfw, setIsOFW] = React.useState(1);
 
     const [relativesCount, setRelativesCount] = React.useState(0);
     const fetchRelativesAndUpdateCount = () => {
@@ -311,7 +312,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
 
                 {!isEditCRAM && !isEdit && User !== 'LC' ? (
                     <div className='w-full px-2'>
-                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} />
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} isOfw={isOfw} />
                     </div>
                 ) : null}
         </div>
