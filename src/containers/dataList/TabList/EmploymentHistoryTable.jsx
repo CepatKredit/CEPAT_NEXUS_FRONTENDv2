@@ -83,8 +83,8 @@ function EmploymentHistory({ data, User }) {
 
 
     React.useEffect(() => {
-            SET_LOADING_INTERNAL('EmploymentHistoryTABLE', true)
-            getEmploymentHistory.refetch();
+        SET_LOADING_INTERNAL('EmploymentHistoryTABLE', true)
+        getEmploymentHistory.refetch();
     }, [getAppDetails]);
 
     const [getAddStat, setAddStat] = React.useState(false)
@@ -99,7 +99,7 @@ function EmploymentHistory({ data, User }) {
 
         const row = await form.validateFields();
         onClickSaveData.mutate(row);
-        
+
 
     }
 
@@ -110,12 +110,12 @@ function EmploymentHistory({ data, User }) {
                 LoanappId: toDecrypt(localStorage.getItem('SIDC')),
                 Agency: row.agency,
                 Position: row.position,
-                StartDate: row.startdate,
-                EndDate: row.enddate,
+                StartDate: row.startdate ? row.startdate.format('YYYY-MM') : null, // Convert to string
+                EndDate: row.enddate ? row.enddate.format('YYYY-MM') : null,     // Convert to string
                 RecUser: jwtDecode(token).USRID
             }
-    
-    
+
+            console.log('employmenthistory:', data)
             await axios.post('/POST/P128AEH', data)
                 .then((result) => {
                     api[result.data.status]({
@@ -140,7 +140,7 @@ function EmploymentHistory({ data, User }) {
                         message: 'Something went wrong',
                         description: error.message,
                     });
-    
+
                 })
         }
     })
@@ -151,61 +151,61 @@ function EmploymentHistory({ data, User }) {
     async function onClickEdit() {
         const row = await form.validateFields();
         onClickEdiData.mutate(row);
-       
+
     }
 
-const onClickEdiData = useMutation({
-    mutationFn: async (row) => {
-        try {
-           
-            const data = {
-                Id: editingKey,
-                Agency: row.agency,
-                Position: row.position,
-                StartDate: row.startdate.format('YYYY-MM'),
-                EndDate: row.enddate.format('YYYY-MM'),
-                ModUser: jwtDecode(token).USRID
-            };
+    const onClickEdiData = useMutation({
+        mutationFn: async (row) => {
+            try {
+
+                const data = {
+                    Id: editingKey,
+                    Agency: row.agency,
+                    Position: row.position,
+                    StartDate: row.startdate.format('YYYY-MM'),
+                    EndDate: row.enddate.format('YYYY-MM'),
+                    ModUser: jwtDecode(token).USRID
+                };
 
 
 
-            const result = await axios.post('/POST/P127UEH', data);
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description,
-            });
+                const result = await axios.post('/POST/P127UEH', data);
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description,
+                });
 
-            if (result.data.status === 'success') {
-                queryClient.invalidateQueries({ queryKey: ['getEmploymentHistory'] }, { exact: true });
-                setStat(true);
-                setAddStat(false);
-                setEditingKey('');
-                setInfo({
-                    key: '',
-                    Agency: '',
-                    Position: '',
-                    StartDate: '',
-                    EndDate: '',
+                if (result.data.status === 'success') {
+                    queryClient.invalidateQueries({ queryKey: ['getEmploymentHistory'] }, { exact: true });
+                    setStat(true);
+                    setAddStat(false);
+                    setEditingKey('');
+                    setInfo({
+                        key: '',
+                        Agency: '',
+                        Position: '',
+                        StartDate: '',
+                        EndDate: '',
+                    });
+                }
+            } catch (error) {
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message,
                 });
             }
-        } catch (error) {
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message,
-            });
         }
+    })
+
+
+    async function onClickDelete(e) {
+        setDeletingKey(e); // Set the key of the row being deleted
+        onClickDeleteData.mutate(e, {
+            onSettled: () => {
+                setDeletingKey(null); // Reset the deletingKey when the mutation completes
+            },
+        });
     }
-})
-
-
-async function onClickDelete(e) {
-    setDeletingKey(e); // Set the key of the row being deleted
-    onClickDeleteData.mutate(e, {
-        onSettled: () => {
-            setDeletingKey(null); // Reset the deletingKey when the mutation completes
-        },
-    });
-}
 
     const onClickDeleteData = useMutation({
         mutationFn: async (e) => {
@@ -414,7 +414,7 @@ async function onClickDelete(e) {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button  loading={deletingKey === record.key} disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
+                                    <Button loading={deletingKey === record.key} disabled={editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>
