@@ -113,8 +113,7 @@ function SideNav() {
     <SessionTimeout>
       <Layout>
         <Sider
-          width={"12vw"}
-          className="h-[100vh] shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]"
+          className=" w-[100vw] md:w-[15vw] lg:w-[18vw] xl:w-[14vw] 2xl:w-[12vw] h-[100vh] shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]"
           trigger={null}
           collapsible
           collapsed={collapsed}

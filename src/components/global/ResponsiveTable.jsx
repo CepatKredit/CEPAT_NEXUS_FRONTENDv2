@@ -14,7 +14,7 @@ function ResponsiveTable({ rows, columns, width, height, loading, change }) {
                 },
             }}
         >
-                <Table
+                <Table 
                     size="small"
                     onChange={change}
                     columns={columns}

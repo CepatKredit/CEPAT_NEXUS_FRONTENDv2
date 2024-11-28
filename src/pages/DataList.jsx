@@ -163,6 +163,7 @@ function DataList() {
                 x.beneficiaryFullName.toUpperCase().includes(getSearch) ||
                 x.consultant.toUpperCase().includes(getSearch) ||
                 x.loanType.toUpperCase().includes(getSearch) ||
+                
                 x.branch.toUpperCase().includes(getSearch)
               ).map((x, i) => ({
                 key: i,
