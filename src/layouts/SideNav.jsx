@@ -166,7 +166,7 @@ function SideNav() {
               className={`text-center p-2 fixed bottom-0 transition-all duration-300 ease-in-out ${collapsed ? "w-[4vw]" : "w-[12vw]"
                 }`}
             >
-              <span className="text-xs text-gray-600">v2.0.2</span>
+              <span className="text-xs text-gray-600">v2.0.3</span>
             </div>
           </div>
         </Sider>
