@@ -15,6 +15,19 @@ function AccountSettings() {
     // const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
     const USRNAME = toDecrypt(localStorage.getItem('USRFN'));
+
+    const getGreeting = () => {
+        const currentHour = new Date().getHours();
+        if (currentHour < 12) {
+            return 'Good Morning';
+        } else if (currentHour < 18) {
+            return 'Good Afternoon';
+        } else {
+            return 'Good Evening';
+        }
+    };
+    const firstName = USRNAME.split(' ')[0];
+
     const items = [
         {
             label: 'My Account',
@@ -51,7 +64,7 @@ function AccountSettings() {
         <Dropdown menu={{ items }} placement="bottom">
             <div className='flex flex-row'>
                 <IoMdPerson className='mx-[5px] mt-[4px]' style={{ fontSize: '20px', color: 'white' }} />
-                <span className='font-bold text-lg text-stone-100 cursor-pointer'>{USRNAME}</span>
+                <span className='font-bold text-lg text-stone-100 cursor-pointer'>{getGreeting()}😊, {firstName} </span>            
             </div>
         </Dropdown>
     )

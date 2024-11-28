@@ -63,16 +63,16 @@ function SideNav() {
   const [searchValue, setSearchValue] = React.useState("");
   const queryClient = useQueryClient();
 
-  const { width: screenWidth } = useWindowDimensions(); 
+  const { width } = useWindowDimensions(); 
+  
+
   React.useEffect(() => {
-    if (screenWidth <= 640) {
+    if (width <= 768) {  
       setCollapsed(true); 
     } else {
-      setCollapsed(false);
+      setCollapsed(false); 
     }
-  }, [screenWidth]);
-
-
+  }, [width]);
   const handleSearchClick = () => {
     const token = localStorage.getItem("UTK");
     const userID = jwtDecode(token).USRID
@@ -164,7 +164,6 @@ function SideNav() {
                     icon: x.icon,
                     children: x.children,
                   }))}
-                  collapsed={collapsed}
                 />
               </ConfigProvider>
             </div>

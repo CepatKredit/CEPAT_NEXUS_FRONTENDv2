@@ -1,21 +1,17 @@
 import React from "react";
 
-const getWindowsDimension = () => {
-    const { innerWidth, innerHeight } = window;
-    const { clientWidth, clientHeight } = document.documentElement;
-
-    return {
-        screenWidth: Math.min(innerWidth, clientWidth),
-        screenHeight: Math.min(innerHeight, clientHeight),
-    };
-};
-
 export const useWindowDimensions = () => {
-    const [windowsDimensions, setWindowsDimensions] = React.useState(getWindowsDimension());
+    const [windowDimensions, setWindowDimensions] = React.useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+    });
 
     React.useEffect(() => {
         const handleResize = () => {
-            setWindowsDimensions(getWindowsDimension());
+            setWindowDimensions({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
         };
 
         window.addEventListener('resize', handleResize);
@@ -23,5 +19,5 @@ export const useWindowDimensions = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    return windowsDimensions;
-}
+    return windowDimensions; 
+};

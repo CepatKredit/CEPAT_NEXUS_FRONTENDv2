@@ -33,9 +33,9 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
   const [readMore, setReadMore] = React.useState(false);
 
   const classname_main =
-    "flex flex-col xs1:flex-col 2xl:flex-row mt-2 xs1:mt-3 2xl:mt-2 w-full xs1:w-[250px] xs2:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs1:h-auto 2xl:h-[60px]";
+    "flex flex-col xs1:flex-col 2xl:flex-row mt-2 xs1:mt-3 2xl:mt-2 w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs1:h-auto 2xl:h-[60px]";
   const className_label = "mb-2 xs1:mb-0 xs:mr-4 w-full xs1:w-[200px]  xs2:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
-  const className_dsub = "w-full xs1:w-[250px] xs2:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[400px]";
+  const className_dsub = "w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[400px]";
 
   React.useEffect(() => {
     setloanrendered(true);
@@ -49,8 +49,9 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
     <div className="flex flex-col justify-center items-center mt-[2rem]">
       <div
   className={`flex flex-row w-full 
-    ${GetData('ROLE') && GetData('ROLE').toString() === '20' ? 'xs1:w-[40%] xs2:w-[35%] xs:w-[35%] sm:w-[80%] md:w-[60%] lg:w-[90%] xl:w-[100%] 2xl:w-[80%] 3xl:w-[51%]' : 'xs1:w-[100%] xs2:w-[85%] xs:w-[85%]'} 
-    sm:w-[80%] md:w-[90%] lg:w-[90%] xl:w-[68.1%] 2xl:w-[67.1%] 3xl:w-[51%] justify-between items-center`}
+    ${GetData('ROLE') && GetData('ROLE').toString() === '20' ? 'xs1:w-[40%] xs2:w-[31%] xs:w-[35%] sm:w-[80%] md:w-[60%] lg:w-[90%] xl:w-[100%] 2xl:w-[76.4%] 3xl:w-[51%]' :
+       'xs1:w-[100%] xs2:w-[25%] xs:w-[85%] sm:w-[80%] md:w-[90%] lg:w-[90%] xl:w-[68.1%] 2xl:w-[67.1%] 3xl:w-[76.5%]'} 
+     justify-between items-center`}
 >
         <Checkbox
           name="chkBox_DataPrivacy"

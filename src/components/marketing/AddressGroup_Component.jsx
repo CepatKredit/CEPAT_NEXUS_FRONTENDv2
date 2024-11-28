@@ -277,12 +277,7 @@ function AddressContainer({
           </Checkbox>
         </div>
       ) : null}
-      <Space
-        direction={!vertical_align ? "vertical" : "horizontal"}
-        className={
-          !vertical_align ? "vertical-classname" : "horizontal-classname"
-        }
-      >
+      
         <LabeledSelect_AddressFields
           className_dmain={className_dmain}
           className_label={className_label}
@@ -615,7 +610,6 @@ function AddressContainer({
             triggerValidation={triggerValidation}
           />
         ) : null}
-      </Space>
     </>
   );
 }

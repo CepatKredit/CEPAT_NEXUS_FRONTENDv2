@@ -138,7 +138,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                         </div>
                     )}
                     {isEdit && User === 'LC' && (
-                        <div className="flex justify-center w-full md:w-[50rem] mx-auto mb-5 space-x-4">
+                        <div className="flex justify-center w-full md:w-[30rem] 2xl:w-[50rem] mx-auto mb-5 space-x-4">
                             <div className="w-full">
                                 <label className="font-bold">External Remarks</label>
                                 <TextArea

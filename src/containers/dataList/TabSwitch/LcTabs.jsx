@@ -62,7 +62,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
     const TabsItems = [
         {
             label: (
-                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] 2xl:text-base'>
                     <BsFileEarmarkBarGraph className='mr-2 text-lg' />
                     <span>Loan Details</span>
                 </div>
@@ -72,7 +72,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
         },
         {
             label: (
-                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] 2xl:text-base'>
                     <BsFillPersonLinesFill className='mr-2 text-lg' />
                     <span>OFW Details</span>
                 </div>
@@ -82,7 +82,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
         },
         {
             label: (
-                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] 2xl:text-base'>
                     <MdOutlineUploadFile className='mr-2 text-lg' />
                     <span>Upload Documents</span>
                 </div>
@@ -92,7 +92,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
         },
         {
             label: (
-                <div className='flex flex-row items-center text-sm xs1:text-[12px] md:text-base'>
+                <div className='flex flex-row items-center text-sm xs1:text-[12px] 2xl:text-base'>
                     <FaUserGroup className='mr-2 text-lg' />
                     <span>Character Reference</span>
                 </div>
@@ -103,7 +103,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
     ];
     return (
         <div className="relative w-full">
-            <div className="absolute top-[-10px] right-0 mt-1 xs1:mt-[-40px] md:mt-1 mr-4 text-right">
+            <div className="absolute top-[-10px] right-0 mt-1 xs1:mt-[-40px] lg:mt-1 2xl:mt-1 mr-4 text-right">
                 <div className={`inline-flex font-bold items-center px-10 py-2 rounded-full ${getStatusBackgroundColor(value.loanAppStat)}`}>{value.loanAppStat} </div>
             </div>
             <Tabs
