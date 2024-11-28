@@ -169,7 +169,7 @@ function Borrower({ principal, onValueChange, onOtherIncome, onOtherExpense, Ini
         enabled: true,
     });
     React.useEffect(() => {
-        if (data.loanIdCode !== '' || Object.keys(data).length !== 0) {
+        if (data.loanIdCode !== '' || data.loanIdCode !== undefined || Object.keys(data).length !== 0) {
             SET_LOADING_INTERNAL('BorrowerNDI', true);
             NdiDataQuery.refetch();
         }

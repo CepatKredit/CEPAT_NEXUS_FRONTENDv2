@@ -1,32 +1,18 @@
 import React from 'react';
 import { Flex } from 'antd';
-import LabeledInput from '@components/marketing/LabeledInput';
 import LabeledInput_Contact from '@components/marketing/LabeledInput_Contact';
-import DatePicker_Deployment from '@components/marketing/DatePicker_Deployment';
-import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
-import LabeledSelectLoanProduct from '@components/marketing/LabeledSelectLoanProduct';
-import LabeledSelectLoanPurpose from '@components/marketing/LabeledSelectLoanPurpose';
-import LabeledSelect from '@components/marketing/LabeledSelect';
-import LabeledSelect_Consultant from '@components/marketing/LabeledSelect_Consultant';
 import { LoanType, Hckfi, LoanTerms } from '@utils/FixedData';
 import dayjs from 'dayjs';
-import LabeledInput_NotRequired from '@components/marketing/LabeledInput_NotRequired';
 import { GetData } from '@utils/UserData';
 import { useDataContainer } from '@context/PreLoad';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
-import DatePickerOpt from '@components/optimized/DatePickerOpt';
-import { FocusHook } from '@hooks/ComponentHooks';
 import SelectOpt from '@components/optimized/SelectOpt';
-import DatePicker_BDay from '@components/marketing/DatePicker_BDate';
 import InputOpt from '@components/optimized/InputOpt';
 function EditLoanDetails({ data, receive, User }) {
-    //const {data, receive } = React.useContext(LoanApplicationContext)
-
     const [isEdit, setEdit] = React.useState(false);
     const isFirstRender = React.useRef(true);
     const rendered = true;
     const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
-
 
     React.useEffect(() => {
         if (isFirstRender.current) {
@@ -35,24 +21,20 @@ function EditLoanDetails({ data, receive, User }) {
         }
         updateAppDetails({ name: 'ofwDeptDate', value: '' })
     }, [getAppDetails.loanProd])
-    const disableDate_deployment = React.useCallback((current) => {
-        return current && current < dayjs().startOf('day');
-    }, []);
 
-    //Preload Selects
-    const { 
-        GET_LOAN_PRODUCT_LIST, 
-        GET_BRANCH_LIST, 
+    //Preload Selects////
+    const {
+        GET_LOAN_PRODUCT_LIST,
+        GET_BRANCH_LIST,
         GET_LOAN_PURPOSE_LIST,
         GET_LOAN_CONSULTANT } = useDataContainer();
-
+    //Custom Options//////
     function branchFilter(mod) {
         let fb = [{ value: 11, label: 'Facebook/Online' }]
         if (!mod) { fb = [] }
         GET_BRANCH_LIST?.map((x) => { fb.push({ value: x.code, label: x.name, }) })
         return fb
     }
-
     const get_loan_consultant_list = GET_LOAN_CONSULTANT?.map((x) => ({ value: x.id, label: x.fullName })) || [];
     const get_loan_product_list = GET_LOAN_PRODUCT_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
     const get_loan_purpose_list = GET_LOAN_PURPOSE_LIST?.map(x => ({ value: x.id, label: x.purpose })) || [];
@@ -62,7 +44,7 @@ function EditLoanDetails({ data, receive, User }) {
     function HCKFI_Option() {
         return Hckfi()?.map(x => ({ value: x.value, label: x.label })) || [];
     }
-
+    ////////////////////
     return (
         <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
             {User === 'LC'
@@ -82,7 +64,6 @@ function EditLoanDetails({ data, receive, User }) {
                         group={'Default'}
                         compname={'Loan Application ID'}
                         required={false}
-                    //No Message
                     />
                 )}
             {User === 'LC'
@@ -101,21 +82,7 @@ function EditLoanDetails({ data, receive, User }) {
                     group={'Default'}
                     compname={'Loan Application ID'}
                     required={false}
-                //No Message
                 />)}
-            { /* User === 'LC'
-                        ? (<></>)
-                        : ( <LabeledInput
-                            className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-
-                            className_label="font-bold"
-                            label="Loan Application Status"
-                            value={data.loanAppStat}
-                            readOnly={true}
-                            receive={(e) => updateAppDetails({ name: 'loanAppStat', value: e })}
-                        />)*/ }
-
-
             {User !== 'LC' && (
                 <SelectOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
@@ -151,26 +118,6 @@ function EditLoanDetails({ data, receive, User }) {
                 group={'Default'}
                 compname={'Loan Product'}
             />
-            {/*User !== 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL') ? (
-                <DatePickerOpt
-                    className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                    className_label={"font-bold"}
-                    className_dsub=""
-                    label={<>OFW Departure Date <span className="text-red-500">*</span></>}
-                    value={getAppDetails.ofwDeptDate}
-                    receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
-                    placeHolder={"Departure Date"}
-                    disabledate={disableDate_deployment}
-                    rendered={rendered}
-
-                    KeyName={'ofwDeptDate'}
-                    EmptyMsg={'Departure Date Required'}
-                    InvalidMsg={'Invalid Departure Date'}
-                    group={'default'}
-                    compname={'Departure Date'}
-
-                />
-            ) : null*/}
             <SelectOpt
                 className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
@@ -283,7 +230,6 @@ function EditLoanDetails({ data, receive, User }) {
                     EmptyMsg={'CRA Recommendation Required'}
                     InvalidMsg={`Invalid CRA Recommendation`}
                 />
-
             )}
             {User === 'LC'
                 ? (<></>)
@@ -330,40 +276,71 @@ function EditLoanDetails({ data, receive, User }) {
 
                 {User !== 'LC' || User === 'Credit'
                     ? (<></>)
-                    : (<LabeledInput_Contact
+                    : (<>{/*
+                        <InputOpt
+                        className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                            className_label="font-bold"
+                            label={'Loan Consultant No.'}
+                            readOnly={isEdit}
+                            value={getAppDetails.consultNumber}
+                            receive={(e) => updateAppDetails({ name: 'consultNumber', value: e })}
+                            category={'marketing'}
+                            rendered={rendered}
+                            KeyName={'consultNumber'}
+                            format={'+639'}
+                            group={'Contact'}
+                            compname={'Loan Consultant No.'}
+
+                            required={false}
+                        />*/} <LabeledInput_Contact
                         className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                         className_label="font-bold"
-                        value={getAppDetails.consultNumber}
-                        receive={(e) => updateAppDetails({ name: 'consultNumber', value: e })}
-                        label={'Loan Consultant No.'}
-                        type='contact'
-                        required={false}
-                        rendered={rendered}
-                    />)}
+                            value={getAppDetails.consultNumber}
+                            receive={(e) => updateAppDetails({ name: 'consultNumber', value: e })}
+                            label={'Loan Consultant No.'}
+                            type='contact'
+                            required={false}
+                            rendered={rendered}
+                        />
+                    </>)}
                 {User === 'MARKETING'
                     ? (<></>)
-                    : (<LabeledInput
+                    : (<InputOpt
                         className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                        className_label="font-bold"
-                        value={getAppDetails.consultantfblink}
-                        receive={(e) => updateAppDetails({ name: 'consultantfblink', value: e })}
+                        className_label={"font-bold"}
                         label={"Consultant Facebook Name / Profile"}
                         placeHolder="Facebook Name / Profile"
+                        readOnly={isEdit}
+                        value={getAppDetails.consultantfblink}
+                        receive={(e) => updateAppDetails({ name: 'consultantfblink', value: e })}
+                        category={'marketing'}
                         rendered={rendered}
+                        KeyName={'consultantfblink'}
+                        group={'Uppercase'}
+                        compname={'Facebook Name / Profile'}
                         required={false}
-                    />)}
+
+                    />
+                    )}
             </>) : (<></>)}
             {User === 'Credit' && (
-                <LabeledInput_NotRequired
+                <InputOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-
-                    className_label="font-bold"
-                    value={getAppDetails.CRARemarks}
-                    receive={(e) => updateAppDetails({ name: 'CRARemarks', value: e })}
+                    className_label={"font-bold"}
                     label="CRA Remarks "
                     placeHolder="Remarks "
+                    readOnly={isEdit}
+                    value={getAppDetails.CRARemarks}
+                    receive={(e) => updateAppDetails({ name: 'CRARemarks', value: e })}
+                    category={'marketing'}
                     rendered={rendered}
-                />)}
+                    KeyName={'CRARemarks'}
+                    group={'Uppercase'}
+                    compname={'CRA Remarks'}
+                    required={false}
+
+                />
+            )}
         </Flex>
     );
 }

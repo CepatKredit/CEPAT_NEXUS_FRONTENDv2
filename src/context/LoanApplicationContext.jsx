@@ -3,7 +3,6 @@ import { getBeneficiaryAddressUpdatedFields, getLoanDetailUpdatedFields, getOfwA
 import React from "react";
 import { notification } from 'antd'
 import { FocusHook } from "@hooks/ComponentHooks";
-import { debouncef } from "@utils/Debounce";
 
 export const LoanApplicationContext = React.createContext();
 
@@ -18,29 +17,19 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     Suffix: "",
     Birthday: "",
   });
-  /*
-    // Ref to store the previous value of getAppDetails
-    const prevAppDetailsRef = React.useRef(getAppDetails);
-  
-    React.useEffect(() => {
-      const prevAppDetails = prevAppDetailsRef.current;
-  
-      // Find the updated keys and log the changes
-      const updatedData = Object.keys(getAppDetails).reduce((acc, key) => {
-        if (getAppDetails[key] !== prevAppDetails[key]) {
-          acc[key] = { oldValue: prevAppDetails[key], newValue: getAppDetails[key] };
-        }
-        return acc;
-      }, {});
-  
-      if (Object.keys(updatedData).length > 0) {
-        console.log("Updated data:", updatedData);
-      }
-  
-      // Update the ref to the current state
-      prevAppDetailsRef.current = getAppDetails;
-    }, [getAppDetails]);
-  */
+
+  const proxiedAppDetails = React.useMemo(() => {
+    return new Proxy(getAppDetails, {
+      set(target, key, value) {
+        if (target[key] === value) return true; // Skip if no change
+        console.log(`Field changed: ${key}, New value: ${value}, Old value: ${target[key]}`);
+        const updatedDetails = { ...target, [key]: value }; // Clone and update
+        setAppDetails(updatedDetails); // Update React state
+        return true;
+      },
+    });
+  }, [getAppDetails]);
+
   const setOldClientNameAndBDay = (result) => {
     const ofwDetails = result?.data?.list?.OfwDetails || {};
 
@@ -53,20 +42,13 @@ export const LoanApplicationProvider = ({ children, direct }) => {
     }));
   };
 
-  const updateAppDetails = React.useCallback((e) => {
-    if (!e || !e.name) return;
-    setAppDetails((prevDetails) => {
-      const newValue = e.value;
-      if (prevDetails[e.name] === newValue) {
-        return prevDetails;
-      }
-      const updatedDetails = {
-        ...prevDetails,
-        [e.name]: newValue,
-      };
-      return updatedDetails;
-    });
-  }, []);
+  const updateAppDetails = React.useCallback(
+    (e) => {
+      if (!e || !e.name) return;
+      proxiedAppDetails[e.name] = e.value; // Directly update proxied object
+    },
+    [proxiedAppDetails]
+  );
 
   const queryDetails = React.useCallback((updates) => {
     if (!updates) return;

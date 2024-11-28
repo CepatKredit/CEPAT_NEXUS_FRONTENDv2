@@ -194,31 +194,6 @@ function TriggerFields(ROLE) {
             debouncedReceive('benrelationship', getRelationshipConv(getAppDetails.RelationshipBen, getAppDetails.ofwgender), delay_def); // Pass the custom delay
         }
     }, [relationshipBen])
-    
-
-    /*
-
-     
-
-
-        React.useEffect(() => {
-            if (!getRendered) return;
-    
-            const isInvalidRole = (ROLE === 'CREDIT');
-            const isInvalidStatus = ![2, 5, 6].includes(getAppDetails.benmstatus);
-    
-            if (isInvalidRole && isInvalidStatus) {
-                const updates = {
-                    MarriedPBCB: '',
-                };
-                Object.entries(updates).forEach(([name, value]) => {
-                    updateAppDetails({ name, value });
-                });
-            }else{
-                //Trigger Case Match Relationship
-            }
-        }, [getAppDetails.benmstatus]);
-    */
 
     React.useEffect(() => {
         if (!getRendered) return;

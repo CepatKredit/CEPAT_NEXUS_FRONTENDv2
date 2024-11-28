@@ -164,7 +164,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
 
 
     async function updateData() {
-        
+
         if (getAppDetails.ofwfname === '' || getAppDetails.ofwlname === '' || getAppDetails.ofwbdate === '' || getAppDetails.ofwbdate === undefined) {
             api['warning']({
                 message: 'Incomplete OFW Basic Information',
@@ -506,7 +506,9 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     }, [value.VesselIMO]);
 
     React.useEffect(() => {
-        fetchRelativesAndUpdateCount();
+        if (BorrowerId !== '' || BorrowerId !== undefined) {
+            fetchRelativesAndUpdateCount();
+        }
     }, [BorrowerId]);
 
     function DISABLE_STATUS(LOCATION) {
@@ -564,7 +566,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                             <div id='Loan-Details'>
                                 <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} creditisEdit={isEdit} User={'Credit'} />
                             </div>
-                            <div id='OFW-Details'>
+                           <div id='OFW-Details'>
                                 <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
                             </div>
                             <div id="Employment-History" className="w-full">

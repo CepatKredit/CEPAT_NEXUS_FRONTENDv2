@@ -83,23 +83,20 @@ function EmploymentHistory({ data, User }) {
 
 
     React.useEffect(() => {
-        SET_LOADING_INTERNAL('EmploymentHistoryTABLE', true)
-        getEmploymentHistory.refetch();
-    }, [getAppDetails]);
+        if (getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined) {
+            SET_LOADING_INTERNAL('EmploymentHistoryTABLE', true)
+            getEmploymentHistory.refetch();
+        }
+    }, [getAppDetails.loanIdCode]);
 
     const [getAddStat, setAddStat] = React.useState(false)
 
-
-
-
     async function onClickSave() {
-
 
         setStat(false);
 
         const row = await form.validateFields();
         onClickSaveData.mutate(row);
-
 
     }
 

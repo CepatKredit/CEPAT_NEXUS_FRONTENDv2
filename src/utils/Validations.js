@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { Uppercase } from "./Formatting";
 
 const isValidEmail = (email) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
 
@@ -10,6 +11,11 @@ const isValidAge = (dateStr) => {
   const age = dayjs().diff(birthDate, 'year');
   return age >= 20 && age <= 65;
 };
+
+const isPrefixMatch = (value,format) => {
+  if( (Uppercase(value).replaceAll(format)).length === 9 || !value.startsWith(format)) return true;
+  return false;
+}
 
 const isValidDeployDate = (dateStr) => {
   return !(!dayjs().isBefore(dateStr,'day') && !dayjs().isSame(dayjs(dateStr),'day'));
@@ -26,16 +32,10 @@ export const CheckIncomeValid = (value) => {
 export const CheckRentAmortValid = (value) => {
   return parseFloat(value? value.toString().replaceAll(',','') : 0) >= 0;
 }
-/*
-export const CheckNumTerms= (value,terms) => {
-  if(terms === 12){
-    return 
-  }else if(terms === 24){
 
-  }else{
-    return false;
-  }
-}*/
+export const CheckContactNo = (value,format) => { // Format = Prefix
+  return value ? isPrefixMatch(value,format) : false;
+}
 
 export const CheckEmailValid = (input) =>{
   return isValidEmail(input);

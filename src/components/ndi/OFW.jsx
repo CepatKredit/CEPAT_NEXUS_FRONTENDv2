@@ -161,11 +161,11 @@ function OFW({ principal, onValueChange, onOtherIncome, onOtherExpense, InitialO
     });
 
     React.useEffect(() => {
-        if (data.loanIdCode !== '' || Object.keys(data).length !== 0) {
+        if (data.loanIdCode !== '' || data.loanIdCode !== undefined || Object.keys(data).length !== 0) {
             SET_LOADING_INTERNAL('NDIOFW', true)
             NdiDataQuery.refetch();
         }
-    }, [data]);
+    }, [data.loanIdCode]);
 
     React.useEffect(() => {
         if (!isComputing && getTrigger) {

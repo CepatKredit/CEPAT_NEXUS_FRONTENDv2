@@ -66,11 +66,11 @@ function Deduplication({ classname, data }) {
     });
 
     React.useEffect(() => {
-        if (data.loanIdCode !== '') {
+        if (data.loanIdCode !== '' || data.loanIdCode !== undefined) {
             SET_LOADING_INTERNAL('Deduplication', true)
             getDuplicateLoan.refetch();
         }
-    }, [data]);
+    }, [data.loanIdCode]);
 
     return (
         <>

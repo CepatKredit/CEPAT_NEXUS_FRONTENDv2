@@ -5,8 +5,8 @@ const createInitialAppDetails = (direct) => {
   const USRNAME = toDecrypt(localStorage.getItem("USRFN"));
   const ROLE = GetData('ROLE') ? GetData('ROLE') : "" ;
   const BRANCH = GetData("BRANCH");
-  console.log("ROLE from localStorage:", ROLE);
-
+  //console.log("ROLE from localStorage:", ROLE);
+  console.log('DATA IN CONTEXT UPDATED') // MONITORING
   return {
     // Initial data setup
     ofwcontactNo: "",

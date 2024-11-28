@@ -68,8 +68,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
     const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
     const { getAppDetails, updateAppDetails, queryDetails } = useContext(LoanApplicationContext)
-    const JOB_CATEGORY =  JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
-    const JOB_TITLE = JobTitle(data.JobCategory)? JobTitle(data.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
+    const JOB_CATEGORY = JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
+    const JOB_TITLE = JobTitle(data.JobCategory) ? JobTitle(data.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
 
     return (
         <div>
@@ -346,8 +346,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
-               
-                {(User === 'Credit' || User === 'MARKETING') &&  (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
+
+                {(User === 'Credit' || User === 'MARKETING') && (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
                     <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
                         <Checkbox
                             checked={data.MarriedPBCB}
@@ -419,7 +419,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     KeyName={'SpIncome'}
                                     format={'Currency'}
                                     group={'Rent_Amort'}
-                                    compname={'Spouse Income'} 
+                                    compname={'Spouse Income'}
                                 />)}
                         </>
                     )
@@ -701,7 +701,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 ) : (
                     User === 'Credit' ? (
 
-                         <SelectOpt
+                        <SelectOpt
                             className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             label={<>Job Category <span className="text-red-500">*</span></>}
@@ -732,23 +732,27 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />))}
                 {User === 'Credit' && (
                     <SelectOpt
-                            className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
-                            className_label={'font-bold'}
-                            label={<>Position <span className="text-red-500">*</span></>}
-                            value={data.ofwjobtitle}
-                            rendered={rendered}
-                            placeHolder='Position'
-                            category={'marketing'}
-                            disabled={isEdit}
-                            isEdit={isEdit}
-                            receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
-                            options={JOB_TITLE}
-                            notValidMsg={'Position Required'}
-                            KeyName={'ofwjobtitle'}
-                            group={'Default'}
-                            showSearch
-                        />
-                    )}
+                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_label={'font-bold'}
+                        label={<>Position <span className="text-red-500">*</span></>}
+                        value={data.ofwjobtitle}
+                        rendered={rendered}
+                        placeHolder='Position'
+                        category={'marketing'}
+                        disabled={isEdit}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
+                        options={JOB_TITLE}
+                        notValidMsg={'Position Required'}
+                        KeyName={'ofwjobtitle'}
+                        group={'Default'}
+                        showSearch
+
+                        EmptyMsg={'Position Required'}
+                        InvalidMsg={'Invalid Position'}
+                        compname={'Position'}
+                    />
+                )}
                 {User === 'Credit' && (
                     <LabeledSelect
                         className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -891,7 +895,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         notValidMsg={'Contract Date Required'}
                         KeyName={'ContractDate'}
-                       // disabledate={disableDate_deployment}
+                    // disabledate={disableDate_deployment}
 
                     />)}
                 {User === 'Credit' && (<>

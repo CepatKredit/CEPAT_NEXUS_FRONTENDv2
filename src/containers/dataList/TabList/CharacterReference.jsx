@@ -77,9 +77,11 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     })
 
     React.useEffect(() => {
-        SET_LOADING_INTERNAL('CharRefTABLE', true)
-        getCharacterRef.refetch();
-    }, [getAppDetails]);
+        if(getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined){
+            SET_LOADING_INTERNAL('CharRefTABLE', true)
+            getCharacterRef.refetch();
+        }
+    }, [getAppDetails.loanIdCode]);
 
     const getRelationshipList = useQuery({
         queryKey: ['getRelationshipList'],

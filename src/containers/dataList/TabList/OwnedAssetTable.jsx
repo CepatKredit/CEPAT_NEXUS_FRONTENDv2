@@ -83,9 +83,11 @@ function OwnedAsset({ data, User }) {
     });
 
     React.useEffect(() => {
-        SET_LOADING_INTERNAL('AssetTABLE', true)
-        getOwnedAssets.refetch();
-    }, [getAppDetails]);
+        if(getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined){
+            SET_LOADING_INTERNAL('AssetTABLE', true)
+            getOwnedAssets.refetch();
+        }
+    }, [getAppDetails.loanIdCode]);
 
     function GetAssetsOption() {
         const categoryValue = form.getFieldValue('category');

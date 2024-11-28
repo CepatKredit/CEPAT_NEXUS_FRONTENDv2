@@ -81,9 +81,12 @@ function OtherLoanHistory({ data, User }) {
 
 
     React.useEffect(() => {
+        if(getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined){
             SET_LOADING_INTERNAL('CreditHistoryTABLE', true)
             getOtherLoanHistory.refetch();
-    }, [getAppDetails]);
+        }
+            
+    }, [getAppDetails.loanIdCode]);
 
 
     const [getAddStat, setAddStat] = React.useState(false)

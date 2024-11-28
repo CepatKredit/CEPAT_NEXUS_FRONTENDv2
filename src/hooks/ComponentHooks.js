@@ -3,7 +3,7 @@ import { mmddyy } from '@utils/Converter';
 import { debouncef } from '@utils/Debounce';
 import { CharacterLimit, DateFormat, FormatComma, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
 import { dateMessage, inputMessage } from '@utils/MessageValidationList';
-import { checkAgeisValid, CheckAmountValid, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
+import { checkAgeisValid, CheckAmountValid, CheckContactNo, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
 import dayjs from 'dayjs';
 import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'react';
 
@@ -18,6 +18,8 @@ function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, Em
   //LETTERS
   if (group === 'Email' && CheckEmailValid(input)) {//For Email
     return { valid: true, value: input, errmsg: '' }; //As-is
+  } else if (group === 'Contact' && input !== '' && CheckContactNo(input, format)) { //For letters / number
+    return { valid: true, value: inputFormat(format, input), errmsg: '' }; //Change format to uppercase
   } else if (group === 'Uppercase' && input !== '') { //For letters / number
     return { valid: true, value: Uppercase(input), errmsg: '' }; //Change format to uppercase
   } else if (group === 'Default' && input !== '') { //For No-case sensitive
@@ -38,16 +40,14 @@ function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, Em
   }
 }
 
-export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered,  InvalidMsg, EmptyMsg) {
+export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value = '', setRendered,  InvalidMsg, EmptyMsg) {
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selected, setselected] = useState(value || '');
+  const [selected, setselected] = useState(value );
   const [debouncedInput, setDebouncedInput] = useState(selected);
   const [ErrorMsg, setErrorMsg] = useState('EMPTY')
 
-
-  //Fix tomorrow
   const debounceChange = useCallback((formattedValue) => {
     setDebouncedInput(formattedValue);
   }, []);
@@ -64,11 +64,6 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     }
   }, [search, options]);
 
-  /*
-  useEffect(() => { //Should place to another file?
-    setStatus("")
-  }, [!getAppDetails.dataPrivacy])*/
-
   useEffect(() => {
     setHighlightedIndex(0);
   }, [search]);
@@ -82,7 +77,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
   const handleSelectChange = useCallback((selectedValue) => {
     setDropdownOpen(false)
     setRendered(true)
-    debounceChange(selectedValue || undefined);
+    debounceChange(selectedValue);
     setselected(selectedValue)
   }, [receive]); //Need monitor in this value
 
@@ -319,7 +314,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
 
   const handleChange = (e) => {
     let value = e;
-    const maxchar = CharacterLimit(group);
+    const maxchar = CharacterLimit(group, format);
     if (maxchar && value.length > maxchar) {
       value = value.slice(0, maxchar);
     }
@@ -344,7 +339,6 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
 
   useEffect(() => {
     if (isDisabled || isFocused) {
-      console.log('Checked', isFocused)
       handleChange(initialValue);
     }
   }, [initialValue])
@@ -368,8 +362,6 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     errorMessage,
   };
 }
-
-
 
 //Focus to Required/Invalid Field
 export function FocusHook() {

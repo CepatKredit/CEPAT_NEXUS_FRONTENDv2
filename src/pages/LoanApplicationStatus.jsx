@@ -27,7 +27,6 @@ import SectionHeader from "@components/loanApplication/SectionHeader";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { toDecrypt } from "@utils/Converter";
-import createInitialAppDetails from "@utils/IntialValues";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { LiaClipboardSolid } from "react-icons/lia";
 import { message } from "antd";
