@@ -114,7 +114,7 @@ function Charges({ LoanAppId, data, User, }) {
         const CFRF = getAppDetails?.CFRF;
         const terms = parseFloat(getAppDetails.loanTerms);
         const gracePeriod = getAppDetails.GracePeriod;
-        const others = parseFloat(getAppDetails.Others);
+        const others = parseFloat(String(getAppDetails.Others).replace(/,/g, ''));
         const chargetype = getAppDetails.ChargeType;
 
         const processingFee = ((parseFloat(PFR) / 100) * approvedAmount).toFixed(2);
@@ -133,9 +133,8 @@ function Charges({ LoanAppId, data, User, }) {
             serviceFee = '0.00'; // Default value if no valid grace period
         }
 
-        const totalCharges = others > 0
-            ? (parseFloat(processingFee) + parseFloat(others)).toFixed(2)
-            : "0.00";
+        const totalCharges = (parseFloat(processingFee) + parseFloat(others || 0)).toFixed(2)
+      
 
         // Default value for PNValue calculation
         let pnValue = 0;
