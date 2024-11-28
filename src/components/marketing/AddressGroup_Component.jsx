@@ -118,8 +118,8 @@ function AddressContainer({
   return (
     <>
       {type === "permanent" ? (
-        <div className="mb-[2%] mt-[2%]">
-          <Checkbox
+        <div className="mb-2 mt-2 w-full xs1:w-[35%] xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[80%] 2xl:w-[100%] 3xl:w-[120%] mx-auto flex justify-center">
+        <Checkbox
             disabled={disabled ? true : disabled == undefined ? true : false}
             className="text-xs"
             checked={data.ofwSameAdd}
@@ -152,7 +152,7 @@ function AddressContainer({
           </Checkbox>
         </div>
       ) : type === "beneficiary" ? (
-        <div className="mb-[2%] mt-[2%]">
+        <div className="mb-2 mt-2 w-full xs1:w-[35%] xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[80%] 2xl:w-[100%] 3xl:w-[120%] mx-auto flex justify-center">
           <Checkbox
             disabled={disabled ? true : disabled == undefined ? true : false}
             className="text-xs"
@@ -195,7 +195,7 @@ function AddressContainer({
           </Checkbox>
         </div>
       ) : type === "provincial" ? (
-        <div className="mb-[2%] mt-[2%]">
+        <div className="mb-2 mt-2 w-full xs1:w-[35%] xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[80%] 2xl:w-[100%] 3xl:w-[120%] mx-auto flex justify-center">
           <Checkbox
             disabled={disabled ? true : disabled == undefined ? true : false}
             className="text-xs"
@@ -236,7 +236,7 @@ function AddressContainer({
           </Checkbox>
         </div>
       ) : type === "coborrow" ? (
-        <div className="mb-[2%] mt-[2%]">
+        <div className="mb-2 mt-2 w-full xs1:w-[35%] xs:w-[40%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[80%] 2xl:w-[100%] 3xl:w-[120%] mx-auto flex justify-center">
           <Checkbox
             disabled={disabled ? true : disabled == undefined ? true : false}
             className="text-xs"
