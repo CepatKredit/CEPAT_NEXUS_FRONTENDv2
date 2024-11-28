@@ -123,7 +123,6 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     BarangayId: data.ofwPresBarangay,
                     Address1: data.ofwPresStreet,
                     ModUser: jwtDecode(token).USRID
-    
                 };
                 console.log('testtset', value)
                 let result = await UpdateLoanDetails(value);
@@ -200,7 +199,6 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     School: data.ofwschool || '',
                     Course: data.ofwcourse || '',
                     ModUser: jwtDecode(token).USRID
-    
                 };
     
                 console.log('testtset', value)

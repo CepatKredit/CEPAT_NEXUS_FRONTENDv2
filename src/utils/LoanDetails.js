@@ -201,7 +201,7 @@ export const UpdateLoanDetails = async ({
     acblname = null,
 
 
-    ModUser = null,
+    ModUser,
 
 
     //....  

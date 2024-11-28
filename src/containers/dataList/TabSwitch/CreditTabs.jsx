@@ -181,6 +181,8 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             //ConsultantNo: value.consultNumber,
             //ConsultantProfile: value.consultantfblink,
 
+            ModUser: jwtDecode(token).USRID,
+
         }
 
 
@@ -268,6 +270,8 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             Employer: value.ofwcompany || null,//agency
             EducationLevel: value.ofwHighestEdu || null,
             Course: value.ofwcourse || '',
+
+            ModUser: jwtDecode(token).USRID,
 
         }
         const data_bene = {
