@@ -23,7 +23,6 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
     const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
     const token = localStorage.getItem('UTK');
-    const [isOfw, setIsOFW] = React.useState(1);
 
     const [relativesCount, setRelativesCount] = React.useState(0);
     const fetchRelativesAndUpdateCount = () => {
@@ -159,6 +158,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
     
     
                     CivilStatus: data.ofwmstatus || null,
+                    MarriedPBCB: data.MarriedPBCB ? 1 : 0,
                     SpouseName: data.ofwspouse || '',
                     SpouseBirthday: data.ofwspousebdate ? mmddyy(data.ofwspousebdate) : '',
                     Dependent: data.ofwdependents || null,
@@ -310,7 +310,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
 
                 {!isEditCRAM && !isEdit && User !== 'LC' ? (
                     <div className='w-full px-2'>
-                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} isOfw={isOfw} />
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={handleUpdateRelativesCount} User={User} data={data} isOfw={1} />
                     </div>
                 ) : null}
         </div>

@@ -6,9 +6,18 @@ import { GET_LIST } from '@api/base-api/BaseApi';
 import { Gender, MaritalStatus, Residences,Overseas,SpouseSourceIncome ,Religion } from '@utils/FixedData';
 import { mmddyy } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
+import { getDependentsCount } from '@hooks/DependentsController';
+import { useStore } from 'zustand';
 
 
-function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
+function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
+    const { Count } = useStore(getDependentsCount);
+
+    React.useEffect(() => {
+        receive({ name: 'bendependents', value: Count - 1 });
+    }, [Count]);
+
+
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {

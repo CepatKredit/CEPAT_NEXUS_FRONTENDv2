@@ -13,10 +13,11 @@ import axios from 'axios';
 import { GetData } from '@utils/UserData';
 import RelativesTable from './RelativesTable';
 import { GET_LIST } from '@api/base-api/BaseApi';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading, isEditCRAM }) {
-
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const [api, contextHolder] = notification.useNotification()
     const [isEdit, setEdit] = useState(false);
     const { GetStatus } = ApplicationStatus();
@@ -24,7 +25,6 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
     const didMountRef = useRef(false);
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
-    const [isBen, setIsBen] = React.useState(2);
 
     const [relativesCount, setRelativesCount] = React.useState(0);
     const fetchRelativesAndUpdateCount = () => {
@@ -43,7 +43,11 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
     React.useEffect(() => {
         fetchRelativesAndUpdateCount()
     }, [BorrowerId])
-    
+
+  /*  React.useEffect(() => {
+        console.log('pupupuupup', getAppDetails.MarriedPBCB)
+    }, [getAppDetails])*/
+
 
     const handleUpdateRelativesCount = (count) => {
         const relativescount = count - 1;
@@ -316,22 +320,32 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 <StatusRemarks isEdit={!isEdit} User={User} data={data} />
             )}
             <div className={`w-full mt-4 ${(User === 'MARKETING' || User === 'LC') ?
-                    (isEdit ?
-                        'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[56vh] 3xl:h-[62vh] overflow-y-auto'
-                        :
-                        'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[46vh] 3xl:h-[54vh] overflow-y-auto'
-                    ) : ''}`}>
+                (isEdit ?
+                    'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[56vh] 3xl:h-[62vh] overflow-y-auto'
+                    :
+                    'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[46vh] 3xl:h-[54vh] overflow-y-auto'
+                ) : ''}`}>
                 {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
-                    <ViewBeneficiaryDetails data={data} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} />
+                    <ViewBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} Sepcoborrowfname={sepcoborrowfname} User={User} IsOfw={2} />
                 ) : (
                     <EditBeneficiaryDetails data={data} receive={receive} BorrowerId={BorrowerId} presaddress={presaddress} Sepcoborrowfname={sepcoborrowfname}
                         showCoBorrower={showCoBorrower} setShowCoBorrower={setShowCoBorrower} sepBenfname={sepBenfname} User={User} />
                 )}
-                 {!isEditCRAM && !isEdit && User !== 'LC' ? (
-                    <div className='w-full px-2'>
-                        <RelativesTable BorrowerId={BorrowerId}  User={User} onUpdateCount={handleUpdateRelativesCount} data={data} isOfw={isBen} />
-                    </div>
-                ) : null}
+            
+
+                {getAppDetails?.MarriedPBCB === 1 && (
+                    !isEditCRAM && !isEdit && !creditisEdit && User !== 'LC' ? (
+                        <div className='w-full px-2'>
+                            <RelativesTable
+                                BorrowerId={BorrowerId}
+                                User={User}
+                                onUpdateCount={handleUpdateRelativesCount}
+                                data={data}
+                                isOfw={2}
+                            />
+                        </div>
+                    ) : null
+                )}
             </div>
             {User !== 'Credit' && User !== 'Lp' && !DISABLE_STATUS(localStorage.getItem('SP')) && (
                 <ConfigProvider
@@ -382,7 +396,8 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                                         icon={<CloseOutlined />}
                                         onClick={() => {
                                             queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
-                                            setEdit(false)}}
+                                            setEdit(false)
+                                        }}
                                         disabled={onClickSaveData.isPending}
                                         size="large"
                                         className="-mt-5"
@@ -406,7 +421,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                                     onClick={toggleEditMode}
                                     size="large"
                                     className="-mt-5"
-                                    >EDIT
+                                >EDIT
                                 </Button>
                             </ConfigProvider>
                         )}

@@ -97,10 +97,10 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     });
 
     React.useEffect(() => {
-     
-            SET_LOADING_INTERNAL('DependentsTABLE', true)
-            getRelatives.refetch();
-    }, [getAppDetails]);
+if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
+        SET_LOADING_INTERNAL('DependentsTABLE', true)
+        getRelatives.refetch();}
+    }, [getAppDetails.loanIdCode]);
 
 
     const [getReshipList, setReshipList] = React.useState()
@@ -679,7 +679,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
             {contextHolder}
             <div className='mt-4 w-[100%] px-2'>
                 <center>
-                    <SectionHeader title="OFW Dependents" />
+                    <SectionHeader title={isOfw === 1 ? "OFW Dependents" : "Beneficiary Dependents"} />
                 </center>
                 <div className='mt-0'>
                     <Form form={form} component={false} >

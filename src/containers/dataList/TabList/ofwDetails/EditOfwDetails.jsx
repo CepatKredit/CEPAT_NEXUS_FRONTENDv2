@@ -346,7 +346,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
-                {User === 'Credit' && (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
+               
+                {(User === 'Credit' || User === 'MARKETING') &&  (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
                     <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
                         <Checkbox
                             checked={data.MarriedPBCB}
@@ -474,7 +475,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User !== 'LC' && (
                     <div className="w-full mt-[2rem] mx-auto">
-                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} />
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} isOfw={1} />
                     </div>
                 )}
 

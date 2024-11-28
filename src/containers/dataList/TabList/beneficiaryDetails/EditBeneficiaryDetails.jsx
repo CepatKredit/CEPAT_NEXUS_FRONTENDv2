@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, ConfigProvider, Row, Col, Flex, notification, message } from 'antd';
+import { Button, ConfigProvider, Row, Col, Flex, notification, message, Form, Input } from 'antd';
 import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
 import LabeledInput_UpperCase from '@components/marketing/LabeledInput_UpperCase';
 import LabeledInput from '@components/marketing/LabeledInput';
@@ -27,9 +27,13 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import InputOpt from '@components/optimized/InputOpt';
 import SelectOpt from '@components/optimized/SelectOpt';
 import { useDataContainer } from '@context/PreLoad';
+import RelativesTable from '@containers/dataList/TabList/RelativesTable';
+import { getDependentsCount } from '@hooks/DependentsController';
+import { useStore } from 'zustand';
 
 
 function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcoborrowfname, showCoBorrower, setShowCoBorrower, sepBenfname, User }) {
+    const { getAppDetails } = React.useContext(LoanApplicationContext);
     const [isEdit, setEdit] = useState(false);
     const [triggerValidation, setTriggerValidation] = useState(false);
     const [getAge, setAge] = useState(Age(data.benbdate) || 0);
@@ -37,7 +41,15 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
     const [api, contextHolder] = notification.useNotification();
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
-    const { updateAppDetails } = React.useContext(LoanApplicationContext)
+    const { updateAppDetails } = React.useContext(LoanApplicationContext);
+
+    const [relativesCount, setRelativesCount] = useState(0);
+
+    const { Count } = useStore(getDependentsCount);
+
+    useEffect(() => {
+        receive({ name: 'bendependents', value: Count - 1 });
+    }, [Count]);
 
     useEffect(() => {
         if (Sepcoborrowfname) {
@@ -302,17 +314,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     rendered={rendered}
                     required={false}
                 />
-                <LabeledInput_Numeric
-                    className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                    className_label='font-bold'
-                    label={<>Dependents <span className="text-red-500">*</span></>}
-                    digits={2}
-                    placeHolder='No. of Dependents'
-                    value={data.bendependents}
-                    receive={(e) => updateAppDetails({ name: 'bendependents', value: e })}
-                    readOnly={isEdit}
-                    rendered={rendered}
-                />
+
                 <LabeledSelect
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label={'font-bold'}
@@ -573,6 +575,44 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         disabled={isEdit}
                         rendered={rendered}
                     />)}
+
+
+                {User !== 'LC' && (
+                    <Form.Item
+                        label="Dependents"
+                        colon={false}
+                        wrapperCol={{ span: 24 }}
+                        className="w-[18.75rem] mt-4 font-bold"
+                    >
+                        <Input
+                            value={data.bendependents || '0'}
+                            className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
+                            readOnly
+                            placeholder="No. of Dependents"
+                        />
+                    </Form.Item>
+                )}
+
+                {User === 'LC' && (
+                    <LabeledInput_Numeric
+                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_label='font-bold'
+                        label={<>Dependents <span className="text-red-500">*</span></>}
+                        digits={2}
+                        placeHolder='No. of Dependents'
+                        value={data.bendependents}
+                        receive={(e) => updateAppDetails({ name: 'bendependents', value: e })}
+                        readOnly={isEdit}
+                        rendered={rendered}
+                    />
+                )}
+{/* dito ibabato ang check galing context upang gamitin sa condition na pag display ng relativetavle na once 1 ang makuha sa context ididisplay nya ito realtime then pag naman 0 hindi */}
+                {getAppDetails?.MarriedPBCB === 1 && (User !== 'LC' && (
+                    <div className="w-full mt-[2rem] mx-auto">
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} isOfw={2} />
+                    </div>
+                ))}
+
             </Flex>
             <SectionHeader title="Present Address" />
             <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
