@@ -15,7 +15,6 @@ function LabeledInput_Salary({ rendered, triggered,
     }, 300), [receive]);
 
     function formatNumberWithCommas(num) {
-        //if (!num) return '';
         const parts = num.toString().split('.');
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas
         return parts.join('.');
@@ -105,6 +104,7 @@ function LabeledInput_Salary({ rendered, triggered,
                     onChange={(e) => { onChange(e) }}
                     size='large'
                     placeholder={placeHolder}
+                    maxLength={12}
                     autoComplete='off'
                     style={{ width: '100%' }}
                     onBlur={(e) => { onBlur(e) }}

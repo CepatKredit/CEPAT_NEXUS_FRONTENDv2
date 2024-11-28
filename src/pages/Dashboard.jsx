@@ -40,22 +40,19 @@ function Dashboard() {
         return path
     }
 
-    const randomNumberInRange = (min, max) => {
-        return Math.floor(Math.random()
-            * (max - min + 1)) + min;
-    };
-
     return (
         <center>
             <div className='mx-[1%] my-[2%]'>
                 <Spin indicator={<LoadingOutlined style={{ fontSize: 100 }} spin />} spinning={spinning} percent={percent} fullscreen />
-                <div className='flex flex-row gap-3'>
-                    <RiDashboardFill style={{ fontSize: '40px', color: '#483d8b' }} />
-                    <Typography.Title level={2}>Loan Apps Dashboard</Typography.Title>
+                <div className="flex flex-row gap-3 items-center w-full">
+                    <RiDashboardFill style={{ color: '#483d8b' }} className="text-3xl xs1:text-[40px] sm:text-[50px] md:text-[50px] lg:text-[50px]" />
+                    <Typography.Title className="text-center" level={3}>
+                        Loan Apps Dashboard
+                    </Typography.Title>               
                 </div>
                 <Divider />
-                <div className='flex flex-wrap justify-center gap-1 h-[58vh] overflow-y-auto'>
-                    {pathList()?.map((x, i) => (<AnimatedCard value={randomNumberInRange(0, 2000)} key={i} path={x} />))}
+                <div className='flex flex-wrap justify-center gap-1 h-[60vh] xs1:h-[63vh] md:h-[60vh] overflow-y-auto '>
+                    {pathList()?.map((x, i) => (<AnimatedCard key={i} path={x} />))}
                 </div>
             </div>
         </center>

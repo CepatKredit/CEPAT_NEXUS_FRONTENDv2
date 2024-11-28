@@ -36,7 +36,7 @@ function NewBranch() {
             RecUser: jwtDecode(token).USRID,
             RecDate: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
         }
-        await axios.post('/addBranch', getver)
+        await axios.post('/POST/P58AB', getver)
             .then(result => {
                 if (result.data.status === 'success') {
                     api[result.data.status]({

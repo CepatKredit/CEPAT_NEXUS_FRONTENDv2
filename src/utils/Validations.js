@@ -11,6 +11,50 @@ const isValidAge = (dateStr) => {
   return age >= 20 && age <= 65;
 };
 
+const isValidDeployDate = (dateStr) => {
+  return !(!dayjs().isBefore(dateStr,'day') && !dayjs().isSame(dayjs(dateStr),'day'));
+}
+
+export const CheckAmountValid = (value) => {
+  return parseFloat(value? value.toString().replaceAll(',','') : 0) >= 30000;
+}
+
+export const CheckIncomeValid = (value) => {
+  return parseFloat(value? value.toString().replaceAll(',','') : 0) >= 25000;
+}
+
+export const CheckRentAmortValid = (value) => {
+  return parseFloat(value? value.toString().replaceAll(',','') : 0) >= 0;
+}
+/*
+export const CheckNumTerms= (value,terms) => {
+  if(terms === 12){
+    return 
+  }else if(terms === 24){
+
+  }else{
+    return false;
+  }
+}*/
+
+export const CheckEmailValid = (input) =>{
+  return isValidEmail(input);
+}
+
+export const CheckDateValid = (dateValue) => {
+  const date = dayjs(dateValue, 'MM-DD-YYYY', true); // `true` ensures strict parsing
+  return date.isValid();
+};
+
+export const checkAgeisValid = (dateValue) => {
+  return isValidAge(dateValue);
+}
+
+export const checkDeployisValid = (dateValue) =>{
+  return isValidDeployDate(dateValue);
+}
+
+
 export const isValidLoanDetails = (getAppDetails) => {
     const {
       loanProd,

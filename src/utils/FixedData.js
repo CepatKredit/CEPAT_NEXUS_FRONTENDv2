@@ -331,12 +331,17 @@ export const Hckfi = () => {
             value: 14,
             label: "Asialink Finance Referral",
         },
-        
+            {
+                value: 17,
+                label: "Others",
+            },
        
-        
     ]
+    dataList.sort((a, b) => a.label.localeCompare(b.label));
+
     return dataList;
 }
+
 export const ReferredBy = () => {
     const dataList = [
         {
@@ -733,55 +738,47 @@ export const JobTitle = (job) => {
     }
 
 }
-export const DropdownOwnedProperties = () =>{
+export const DropdownOptionsOwned = () => {
     const dataList = [
-        {
-            value: 1,
-            label: 'Commercial',
-            
-        },
-        {
-            value: 2,
-            label: 'Residential',
-        },
-        {
-            value: 3,
-            label: 'Lot',
-        }
-    ]
+            {
+                value: 1,
+                label: 'Truck',
+            },
+            {
+                value: 2,
+                label: 'Car',
+            },
+            {
+                value: 3,
+                label: 'Motor',
+            },
+            {
+                value: 4,
+                label: 'Bus',
+            },
+            {
+                value: 5,
+                label: 'Multicab',
+            },
+            {
+                value: 6,
+                label: 'Tricycle',
+            },
+            {
+                value: 7,
+                label: 'Commercial',
+            },
+            {
+                value: 8,
+                label: 'Residential',
+            },
+            {
+                value: 9,
+                label: 'Lot',
+            },
+        ];
     return dataList;
-}
-
-export const DropdownOwnedAssets = () =>{
-    const dataList = [
-        {
-            value: 1,
-            label: 'Truck',
-            
-        },
-        {
-            value: 2,
-            label: 'Car',
-        },
-        {
-            value: 3,
-            label: 'Motor',
-        },
-        {
-            value: 4,
-            label: 'Bus',
-        },
-        {
-            value: 5,
-            label: 'Multicab',
-        },
-        {
-            value: 6,
-            label: 'Tricycle',
-        }
-    ]
-    return dataList;
-}
+};
 
 export const RequestTypeDropdown = (loanProd) => {
     const MArequestType = [

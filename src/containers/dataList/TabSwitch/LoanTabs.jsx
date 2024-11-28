@@ -1,7 +1,5 @@
 import React, { useRef } from 'react';
-import { Tabs, Space, Anchor, FloatButton } from 'antd';
-import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import { FaUserGroup } from 'react-icons/fa6';
+import { Tabs, Space, Anchor, ConfigProvider } from 'antd';
 import { GrDuplicate } from "react-icons/gr";
 import Deduplication from '../TabList/Deduplication';
 import { AiOutlineAudit } from "react-icons/ai";
@@ -29,16 +27,17 @@ import CreditHistory from '../TabList/CreditHistory';
 import AssetTable from '../TabList/OwnedAssetTable';
 import OwnedProperties from '../TabList/OwnedProperties';
 import { GET_LIST } from '@api/base-api/BaseApi';
-import { useNavigate, useParams } from 'react-router-dom'; 
+import { useNavigate, useParams } from 'react-router-dom';
 import ReleaseDocuments from '../TabList/ReleaseDocuments';
-import Charges from '../TabList/Charges';
 import StatusRemarks from '../TabList/StatusRemarks';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
-function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, FileType, value, valueAmount, LoanStatus, ClientId, loading }) {
+function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, FileType, value, valueAmount, LoanStatus, ClientId }) {
     const [isEdit, setEdit] = React.useState(false);
     const [activeKey, setActiveKey] = React.useState('CRAM');
     const [relativesCount, setRelativesCount] = React.useState(0);
+    const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const navigate = useNavigate();
     const { id, tabs } = useParams();
     function onChangeTab(e) {
@@ -49,7 +48,7 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
     const fetchRelativesAndUpdateCount = async () => {
         if (BorrowerId) {
             try {
-                const result = await GET_LIST(`/getRelatives/${BorrowerId}`);
+                const result = await GET_LIST(`/GET/G35R/${BorrowerId}`);
                 if (result?.list) {
                     const relativesCount = result.list.length;
                     setRelativesCount(relativesCount);
@@ -194,72 +193,74 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
             label: <div className='flex flex-rows'><TbFileDescription style={{ fontSize: '20px', marginRight: 5 }} /><span>CRAM</span></div>,
             key: 'CRAM',
             children: (
-                <Space>
-                    <div className='h-[65vh] w-[75vw] overflow-y-auto'>
-                        <div className="sticky top-0 z-[1000] bg-white">
-                            <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
+                <div className='w-full flex flex-col'>
+                    <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
+                    <div className='flex flex-row'>
+                        <div
+                            id="scrollable-container" 
+                            className="h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[51vh] 3xl:h-[57vh] w-full overflow-y-auto mx-2 mb-9"
+                        >
+                            <div id='Loan-Details'>
+                                <LoanDetails getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} User={'Lp'} />
+                            </div>
+                            <div id='OFW-Details'>
+                                <OfwDetails getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'} />
+                            </div>
+                            <div id='Employment-History'>
+                                <EmploymentHistoryTable data={value} isEdit={isEdit} User={'Lp'} />
+                            </div>
+                            <div id='Credit-History'>
+                                <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
+                            </div>
+                            <div id='Owned-Assets'>
+                                <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
+                            </div>
+                            <div id='Character-Reference'>
+                                <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Lp'} LoanStatus={LoanStatus} />
+                            </div>
+                            <div id='Beneficiary-Details'>
+                                <BeneficiaryDetails getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'}
+                                    sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />
+                            </div>
                         </div>
-                        <div id='Loan-Details'>
-                            <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} User={'Lp'} />
+                        <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[51vh] 3xl:h-[57vh]">
+                            <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+                                <Anchor
+                                    replace
+                                    affix={false}
+                                    targetOffset={50}
+                                    getContainer={() => document.getElementById('scrollable-container')} 
+                                    items={[
+                                        { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                                        { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                                        { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                                        { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                                        { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                                        { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+                                        { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+                                    ]}
+                                />
+                            </ConfigProvider>
                         </div>
-                        <div id='OFW-Details'>
-                            <OfwDetails loading={loading} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Lp'} />
-                        </div>
-                        <div id='Employment-History'>
-                            <EmploymentHistoryTable data={value} isEdit={isEdit} User={'Lp'} />
-                        </div>
-                        <div id='Credit-History'>
-                            <CreditHistory data={value} receive={receive} isEdit={isEdit} User={'Lp'} />
-                        </div>
-                        <div id='Owned-Assets'>
-                            <AssetTable data={value} receive={receive} isEdit={isEdit} User={'Lp'} />
-                        </div>
-                        <div id='Owned-Properties'>
-                            <OwnedProperties data={value} receive={receive} isEdit={isEdit} User={'Lp'} />
-                        </div>
-                        <div id='Character-Reference'>
-                            <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Lp'} LoanStatus={LoanStatus} />
-                        </div>
-                        <div id='Beneficiary-Details'>
-                            <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Lp'}
-                                sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />
-                        </div>
-
                     </div>
-                    <div className='h-[60vh]'>
-                        <Anchor
-                            replace
-                            affix={false}
-                            items={[
-                                { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
-                                { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
-                                { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
-                                { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
-                                { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
-                                { key: 'Owned-Properties', href: '#Owned-Properties', title: 'Owned Properties' },
-                                { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
-                                { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
-
-                            ]}
-                        />
-                    </div>
-                </Space>
+                </div>
             ),
         },
         {
             label: <div className='flex flex-rows'><MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>,
             key: 'NDI',
-            children: <NDI loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} isEdit={true} isReadOnly={['70', '80'].includes(GetData('ROLE').toString())} />,
+            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} data={value} isEdit={true} activeKey={activeKey} isReadOnly={['70', '80'].includes(GetData('ROLE').toString())} />,
         },
         {
             label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
             key: 'internal-checking',
-            children: <InternalChecking data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} ClientId={ClientId} FileType={FileType} Uploader={Uploader} />,
+            children: <InternalChecking classname={'h-[65vh] w-full mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} ClientId={ClientId} FileType={FileType} Uploader={Uploader} />,
+
         },
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} />,
+            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} />,
         },
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Release Documents</span></div>,
@@ -269,12 +270,7 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
         {
             label: <div className="flex flex-rows"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
-        },
-        {
-            label: <div className='flex flex-rows'><LuCalculator style={{ fontSize: '20px', marginRight: 5 }} /><span>Charges</span></div>,
-            key: 'charges',
-            children: <Charges data={value} />,
+            children: <ApprovalAmount valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { updateAppDetails(e) }} />,
         },
         {
             label: <div className='flex flex-rows'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
@@ -287,10 +283,21 @@ function LoanTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfn
             children: <LastUpdateBy isEdit={true} data={value} />,
         },
     ];
+    React.useEffect(() => {
+        setActiveKey(tabs || 'deduplication');
+        console.log("HALAAA", tabs)
+    }, [tabs]);
+    
 
     return (
         <>
-            <Tabs defaultActiveKey={tabs}type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
+            <Tabs 
+            activeKey={activeKey}
+            defaultActiveKey={tabs} 
+            type="card" 
+            size="middle" 
+            onChange={onChangeTab} 
+            items={TabsItems} />
         </>
     );
 }

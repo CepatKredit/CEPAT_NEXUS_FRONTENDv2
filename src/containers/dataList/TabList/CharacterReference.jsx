@@ -1,77 +1,90 @@
 
-import React, {useState} from 'react';
-import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin } from 'antd';
+import React, { useState } from 'react';
+import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form } from 'antd';
 import { SaveOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import StatusRemarks from './StatusRemarks';
 import axios from 'axios';
 import SectionHeader from '@components/validation/SectionHeader';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
+import { toUpperText } from '@utils/Converter';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data }) {
+    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext)
     const token = localStorage.getItem('UTK');
     const [api, contextHolder] = notification.useNotification()
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
-    const [loading, setLoading] = useState(true);
-    const [contactError, setContactError] = React.useState('')
+    const [contactError, setContactError] = React.useState('');
+    const [deleteKey, setDeleteKey] = React.useState(null);
     const [getInfo, setInfo] = React.useState({
         key: '',
         name: '',
         conNum: '',
         relShip: '',
         prov: '',
-        /* city: '',
-         barangay: '',*/
         remarks: '',
     })
     React.useEffect(() => { getCharacterRef.refetch() }, [BorrowerId])
     const [getStat, setStat] = React.useState(true)
-    const role = GetData('ROLE') ? GetData('ROLE').toString() : null;
-    const getCharacterRef = useQuery({
-        queryKey: ['getCharacterRef'],
-        queryFn: async () => {
-            const result = await axios.get(`/getCharacterRef/${BorrowerId}`);
-            let dataList = [{
-                key: 0,
-                no: '',
-                name: '',
-                conNum: '',
-                relShip: '',
-                prov: '',
-                /* city: '',
-                 barangay: '',*/
-                remarks: '',
-            }]
+    const role = GetData('ROLE') ? GetData('ROLE').toString() : "";
 
-            result.data.list?.map((x, i) => {
-                dataList.push({
-                    key: x.characterRefId,
-                    no: i + 1,
-                    name: x.fullName,
-                    conNum: x.mobileNo,
-                    relShip: x.relationship,
-                    prov: x.province,
-                    /* city: x.municipality,
-                     barangay: x.barangay,*/
-                    remarks: x.remarks
+    React.useEffect(() => { getCharacterRef.refetch() }, [getAppDetails.loanIdCode]);
+
+    const getCharacterRef = useQuery({
+        queryKey: ['getCharacterRef', BorrowerId],
+        queryFn: async () => {
+            try {
+                const result = await axios.get(`/GET/G13CR/${BorrowerId}`);
+                let dataList = [{
+                    key: 0,
+                    no: '',
+                    name: '',
+                    conNum: '',
+                    relShip: '',
+                    prov: '',
+                    remarks: '',
+                }]
+
+                result.data.list?.map((x, i) => {
+                    dataList.push({
+                        key: x.characterRefId,
+                        no: i + 1,
+                        name: x.fullName,
+                        conNum: x.mobileNo,
+                        relShip: x.relationship,
+                        prov: x.province,
+                        remarks: x.remarks
+                    })
                 })
-            })
-            setLoading(false);
-            return dataList
+                SET_LOADING_INTERNAL('CharRefTABLE', false);
+                return dataList
+            } catch (error) {
+                console.error(error);
+                SET_LOADING_INTERNAL('CharRefTABLE', false);
+            }
+            return null;
         },
-        refetchInterval: 5000,
+        refetchInterval: (data) => {
+            return data?.length === 0 ? 500 : false;
+        },
         enabled: true,
         retryDelay: 1000,
     })
 
+    React.useEffect(() => {
+        SET_LOADING_INTERNAL('CharRefTABLE', true)
+        getCharacterRef.refetch();
+    }, [getAppDetails]);
+
     const getRelationshipList = useQuery({
         queryKey: ['getRelationshipList'],
         queryFn: async () => {
-            const result = await axios.get('/getRelationship');
+            const result = await axios.get('/GET/G12R');
             return result.data.list;
         },
         refetchInterval: (data) => {
@@ -83,17 +96,20 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     });
 
     function GetReshipId() {
-        const ReshipHolder = getRelationshipList.data?.find((x) => x.description === getInfo.relShip || x.code === getInfo.relShip)
-        return ReshipHolder.code
+        if (!getRelationshipList) {
+            return null;
+        }
+        const relshipvalue = form.getFieldValue('relShip');
+        const ReshipHolder = getRelationshipList.data?.find((x) => x.description === relshipvalue || x.code === relshipvalue)
+        return ReshipHolder ? ReshipHolder.code : null;
     }
 
 
-    const [getProvList, setProvList] = React.useState()
     const provinceList = useQuery({
         queryKey: ['getProvinceSelect'],
         queryFn: async () => {
-            const result = await axios.get('/getProvince');
-            setProvList(result.data.list)
+            const result = await axios.get('/GET/G8P');
+            // console.log(result.data.list)
             return result.data.list;
         },
         refetchInterval: (data) => {
@@ -105,355 +121,265 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     });
 
     function GetProvId() {
-        let dataHolder = getProvList;
-        if (!dataHolder) {
+        if (!provinceList.data) {
             return null; // Or handle the case where the data is not available
         }
-        const ProvHolder = dataHolder.find((x) => x.provinceDescription === getInfo.prov || x.provinceCode === getInfo.prov);
+        const provincevalue = form.getFieldValue('prov');
+        const ProvHolder = provinceList.data?.find((x) => x.provinceDescription === provincevalue || x.provinceCode === provincevalue);
         return ProvHolder ? ProvHolder.provinceCode : null;
     }
 
-    /* const [getCityList, setCityList] = React.useState()
-    const cityList = useQuery({
-        queryKey: ['getCitySelect'],
-        queryFn: async () => {
-            const result = await axios.get(`/getMuniArea/${GetProvId()}`);
-            setCityList(result.data.list)
-            return result.data.list;
-        },
-        enabled: false
-    });
-
-    React.useEffect(() => {
-        cityList.refetch()
-    }, [getInfo.prov])
-
-    function GetCityId() {
-        let dataHolder = getCityList
-        const CityHolder = dataHolder.find((x) => x.munDesc === getInfo.city || x.munCode === getInfo.city)
-        return CityHolder.munCode
-    }
-
-    const [getBrgyList, setBrgyList] = React.useState()
-    const brgyList = useQuery({
-        queryKey: ['getBrgySelect'],
-        queryFn: async () => {
-            const result = await axios.get(`/getbarangaylist/${GetCityId()}`);
-            setBrgyList(result.data.list)
-            return result.data.list;
-        },
-        enabled: false
-    });
-
-    React.useEffect(() => {
-        brgyList.refetch()
-    }, [getInfo.city])
-
-    function GetBrgyId() {
-        let dataHolder = getBrgyList
-        const BrgyHolder = dataHolder.find((x) => x.description === getInfo.barangay || x.code === getInfo.barangay)
-        return BrgyHolder.code
-    }*/
-
-    function validateContactNumber(number) {
-        return /^09\d{9}$/.test(number);
-    }
-    function validateFullName(name) {
-        return name.trim() !== '';
-    }
-    function validateFullRelationship(relShip) {
-        return relShip.trim() !== '';
-    }
-    function validateRemarks(remarks) {
-        return remarks.trim() !== '';
-    }
-
-
-    const [fieldErrors, setFieldErrors] = React.useState({
-        name: '',
-        conNum: '',
-        relShip: '',
-    });
 
     const [getAddStat, setAddStat] = React.useState(false)
-    async function onClickSave() {
-        let errors = {};
-
-        // Validate Name
-        if (!validateFullName(getInfo.name)) {
-            errors.name = 'Name is required.';
-        }
-        // Validate Contact Number
-        if (!validateContactNumber(getInfo.conNum)) {
-            errors.conNum = 'Contact number should have exactly 11 digits.';
-        }
-        // Validate Relationship
-        if (!validateFullRelationship(getInfo.relShip)) {
-            errors.relShip = 'Relationship is required.';
-        }
-
-        // If there are errors, set them and don't proceed
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-        // Clear errors if validation passes
-        setFieldErrors({ name: '', conNum: '', relShip: '', remarks: '' });
 
 
-        setStat(false)
-        const data = {
-            BorrowersId: BorrowerId,
-            FullName: getInfo.name,
-            Relationship: GetReshipId(),
-            MobileNo: getInfo.conNum,
-            Remarks: getInfo.remarks || '',
-           /* BarangayId: getInfo.barangay ? GetBrgyId().toString() : '',
-            MunicipalityId: getInfo.city ? GetCityId().toString() : '',
-           */ 
-            ProvinceId: getInfo.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
-            RecUser: Creator
-        }
+    const onClickSaveData = useMutation({
+        mutationFn: async (row) => {
+            // Prepare the data object
+            const data = {
+                BorrowersId: BorrowerId,
+                FullName: row.name, // Adjusted field name to match your data structure
+                Relationship: GetReshipId(), // Assuming GetReshipId() fetches the relationship ID
+                MobileNo: row.conNum,
+                Remarks: row.remarks || '',
+                ProvinceId: row.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
+                RecUser: Creator // Ensure Creator is properly defined
+            };
 
-        await axios.post('/addCharacterRef', data)
-            .then((result) => {
+            try {
+                const result = await axios.post('/POST/P60ACR', data);
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description,
                 });
-                if (result.data.status === 'success') {
-                    queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
-                    setStat(true)
-                    setAddStat(false);
-                    setEditingKey('');
-                    setInfo({
-                        name: '',
-                        conNum: '',
-                        relShip: '',
-                        prov: '',
-                        /*  city: '',
-                          barangay: '',*/
-                        remarks: '',
-                    });
-
-                    setFocus({
-                        name: false,
-                        conNum: false,
-                        relShip: false,
-                        prov: false,
-                        /* city: false,
-                         barangay: false,*/
-                        remarks: false,
-                    })
-                }
-
-            })
-            .catch((error) => {
-                console.log(error)
-                api['error']({
-                    message: 'Something went wrong',
-                    description: error.message,
-                });
-            })
-    }
-
-    async function onClickEdit() {
-        let errors = {};
-
-        // Validate Name
-        if (!validateFullName(getInfo.name)) {
-            errors.name = 'Name is required.';
-        }
-
-        // Validate Contact Number
-        if (!validateContactNumber(getInfo.conNum)) {
-            errors.conNum = 'Contact number should have exactly 11 digits.';
-        }
-
-        // Validate Relationship
-        if (!validateFullRelationship(getInfo.relShip)) {
-            errors.relShip = 'Relationship is required.';
-        }
-
-        // If there are errors, set them and don't proceed
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            return;
-        }
-
-        // Clear errors if validation passes
-        setFieldErrors({ name: '', conNum: '', relShip: '', remarks: '' })
-
-        getRelationshipList.refetch()
-        provinceList.refetch()
-        /*cityList.refetch()
-        brgyList.refetch()*/
-
-        const data = {
-            CharacterRefId: getInfo.key,
-            FullName: getInfo.name,
-            Relationship: GetReshipId(),
-            MobileNo: getInfo.conNum,
-            Remarks: getInfo.remarks || '',
-          /*  BarangayId: getInfo.barangay ? GetBrgyId().toString() : '',
-            MunicipalityId: getInfo.city ? GetCityId().toString() : '',
-            */
-            ProvinceId: getInfo.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
-            ModUser: Creator
-        };
-        await axios.post('/editCharacterRef', data)
-            .then((result) => {
-                api[result.data.status]({
-                    message: result.data.message,
-                    description: result.data.description,
-                });
-
                 if (result.data.status === 'success') {
                     queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
                     setStat(true);
                     setAddStat(false);
                     setEditingKey('');
                     setInfo({
-                        key: '',
                         name: '',
                         conNum: '',
                         relShip: '',
                         prov: '',
-                        /* city: '',
-                         barangay: '',*/
                         remarks: '',
                     });
-                    setFocus({
-                        name: false,
-                        conNum: false,
-                        relShip: false,
-                        prov: false,
-                        /* city: false,
-                         barangay: false,*/
-                        remarks: false,
-                    });
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 api['error']({
                     message: 'Something went wrong',
                     description: error.message,
                 });
-            })
-    }
+            }
+        }
+    })
 
-    async function onClickDelete(e) {
+    async function onClickSave() {
         try {
-            const result = await axios.post(`/delete/${e}`);
-            queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
-            api[result.data.status]({
-                message: result.data.message,
-                description: result.data.description
-            });
+            const row = await form.validateFields();
+            setStat(false);
+            onClickSaveData.mutate(row);
         } catch (error) {
-            api['error']({
-                message: 'Something went wrong',
-                description: error.message
-            });
+            console.error('Validation failed:', error);
         }
     }
 
+
+    const onClickEditData = useMutation({
+        mutationFn: async (row) => {
+
+            const data = {
+                CharacterRefId: editingKey,
+                FullName: row.name,
+                Relationship: GetReshipId(),
+                MobileNo: row.conNum,
+                Remarks: row.remarks || '',
+                ProvinceId: row.prov ? (GetProvId() ? GetProvId().toString() : '') : '',
+                ModUser: Creator
+            };
+
+
+            await axios.post('/POST/P61UCR', data)
+                .then((result) => {
+                    api[result.data.status]({
+                        message: result.data.message,
+                        description: result.data.description,
+                    });
+
+                    if (result.data.status === 'success') {
+                        queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
+                        setStat(true);
+                        setAddStat(false);
+                        setEditingKey('');
+                        setInfo({
+                            key: '',
+                            name: '',
+                            conNum: '',
+                            relShip: '',
+                            prov: '',
+                            remarks: '',
+                        });
+                    }
+                })
+                .catch((error) => {
+                    api['error']({
+                        message: 'Something went wrong',
+                        description: error.message,
+                    });
+                })
+
+        }
+    })
+
+    async function onClickEdit() {
+        try {
+            const row = await form.validateFields();
+            onClickEditData.mutate(row);
+        } catch (error) {
+            console.error('Validation failed:', error);
+        }
+    }
+
+
+    const onClickDeteleData = useMutation({
+        mutationFn: async (e) => {
+            try {
+                const result = await axios.post(`/POST/P62DCR/${e}`);
+                queryClient.invalidateQueries({ queryKey: ['getCharacterRef'] }, { exact: true });
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description
+                });
+            } catch (error) {
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message
+                });
+            }
+        }
+    })
+
+    async function onClickDelete(e) {
+        setDeleteKey(e);
+        onClickDeteleData.mutate(e, {
+            onSettled: () => {
+                setDeleteKey(null);
+            },
+        });
+    }
+
+    function DISABLE_STATUS(LOCATION, LoanStatus) {
+        const userRole = GetData('ROLE') ? GetData('ROLE').toString() : "";
+        if (!userRole) {
+            return (LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
+        }
+        const roleConditions = {
+            '30': ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'],
+            '40': ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'],
+            '20': ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/for-re-application', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '50': ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '55': ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '60': ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/special-lane', '/ckfi/assessement/credit', '/ckfi/queue-bucket', '/ckfi/for-verification', '/ckfi/pre-check', '/ckfi/returned/marketing', '/ckfi/returned/credit-associate', '/ckfi/reassessed/credit-officer', '/ckfi/for-approval', '/ckfi/on-waiver', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'],
+            '70': ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed', '/ckfi/undecided',
+                '/ckfi/returned/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
+            '80': ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/approved', '/ckfi/confirmation', '/ckfi/confirmed', '/ckfi/undecided',
+                '/ckfi/returned/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'],
+        };
+
+        if (roleConditions[userRole]) {
+            return roleConditions[userRole].includes(LOCATION);
+        }
+
+        return false;
+    }
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
+    const disabledStatuses = [
+        'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
+        'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
+        'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
+        'RETURN TO CREDIT OFFICER', 'COMPLIED - LACK OF DOCUMENTS'
+    ];
+    const [form] = Form.useForm();
     const columns = [
         {
-            title: GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
-                || GetStatus === 'TAGGED FOR RELEASE' || GetStatus === 'ON WAIVER' || GetStatus === 'CONFIRMATION' || GetStatus === 'CONFIRMED' || GetStatus === 'UNDECIDED' ||
-                GetStatus === 'FOR DISBURSEMENT' || GetStatus === 'RELEASED' || GetStatus === 'RETURN TO LOANS PROCESSOR' || GetStatus === 'APPROVED (TRANS-OUT)' || GetStatus === 'RETURN TO CREDIT OFFICER' || GetStatus === 'RELEASED'
-                ? (<></>)
-                : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                    <Tooltip title='Add'>
-                        <Button className='bg-[#3b0764]' type='primary' disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || getAddStat}
-                            icon={<PlusOutlined style={{ fontSize: '15px' }} />}
-                            onClick={() => {
-                                setFocus({
-                                    name: false,
-                                    conNum: false,
-                                    remarks: false,
-                                })
-                                setStat(false)
-                                setEditingKey(0);
-                                setAddStat(!getAddStat)
-                                setInfo({
-                                    ...getInfo,
-                                    name: '',
-                                    conNum: '',
-                                    relShip: '',
-                                    prov: '',
-                                /*city: '',
-                                barangay: '',
-                               */ remarks: '',
-                                })
-                            }} />
-                    </Tooltip>
-                </ConfigProvider>),
+            title: (
+                <div className="flex items-center">
+                {!DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
+                        <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                            <Tooltip title="Add">
+                                <Button
+                                    className="mr-2 xs:mr-3 md:ml-2 lg:ml-2 bg-[#3b0764]"
+                                    type="primary"
+                                    icon={<PlusOutlined style={{ fontSize: '15px' }} />}
+                                    onClick={() => {
+                                        const record = { key: 0, name: '', conNum: '', relShip: '', prov: '', remarks: '' };
+                                        edit(record);
+                                        setStat(false);
+                                        setEditingKey(0);
+                                        setAddStat(!getAddStat);
+                                        setInfo({
+                                            ...getInfo,
+                                            name: '',
+                                            conNum: '',
+                                            relShip: '',
+                                            prov: '',
+                                            remarks: '',
+                                        });
+                                    }}
+                                />
+                            </Tooltip>
+                        </ConfigProvider>
+                    )}
+                </div>
+            ),
             dataIndex: 'no',
             key: 'no',
-            width: '40px',
+            width: '5%',
             fixed: 'left',
-            align: 'center'
+            align: 'center',
         },
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: '150px',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Contact Number',
             dataIndex: 'conNum',
             key: 'conNum',
-            width: '100px',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Relationship',
             dataIndex: 'relShip',
             key: 'relShip',
-            width: '100px',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Province',
             dataIndex: 'prov',
             key: 'prov',
-            width: '120px',
+            width: '15%',
             editable: true,
         },
-        /*{
-            title: 'City / Municipality',
-            dataIndex: 'city',
-            key: 'city',
-            width: '120px',
-            editable: true,
-        },
-        {
-            title: 'Barangay',
-            dataIndex: 'barangay',
-            key: 'barangay',
-            width: '120px',
-            editable: true,
-        },*/
         {
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '120px',
+            width: '20%',
             editable: true,
         },
         {
-            hidden: GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
-                || GetStatus === 'TAGGED FOR RELEASE' || GetStatus === 'ON WAIVER' || GetStatus === 'CONFIRMATION' || GetStatus === 'CONFIRMED' || GetStatus === 'UNDECIDED' ||
-                GetStatus === 'FOR DISBURSEMENT' || GetStatus === 'RELEASED' || GetStatus === 'RETURN TO LOANS PROCESSOR'
-                ? true : false,
+            hidden: DISABLE_STATUS(localStorage.getItem('SP')) || disabledStatuses.includes(GetStatus),
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            width: '60px',
+            width: '10%',
             fixed: 'right',
             align: 'center',
             render: (_, record) => {
@@ -462,134 +388,105 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     return (
                         <Space>
                             <Tooltip title="Save">
-                                <Popconfirm
-                                    title="Are you sure you want to save this record?"
-                                    onConfirm={() => { onClickSave(); }}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button icon={<SaveOutlined />} type='primary' />
-                                </Popconfirm>
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button
+                                        icon={<SaveOutlined />}
+                                        type="primary"
+                                        onClick={onClickSave}
+                                        loading={onClickSaveData.isPending}
+                                        className="bg-[#2b972d]"
+                                    />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel this record?"
-                                    onConfirm={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            relShip: false,
-                                            prov: false,
-                                            /* city: false,
-                                             barangay: false,*/
-                                            remarks: false,
-                                        })
-                                        setStat(true)
-                                        setAddStat(!getAddStat)
-                                        setEditingKey('')
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type="primary"
+                                    danger
+                                    onClick={() => {
+                                        setStat(true);
+                                        setAddStat(!getAddStat);
+                                        setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="Cancel"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
-                    )
-                }
-                else {
+                    );
+                } else {
                     return editable ? (
                         <Space>
                             <Tooltip title="Save">
-                                <Button onClick={() => {
-                                    onClickEdit()
-                                }} icon={<SaveOutlined />} type='primary' />
+                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8', colorPrimaryHover: '#34b330' } }}>
+                                    <Button
+                                        icon={<SaveOutlined />}
+                                        type="primary"
+                                        onClick={onClickEdit}
+                                        loading={onClickEditData.isPending}
+                                        className="bg-[#2b972d]"
+                                    />
+                                </ConfigProvider>
                             </Tooltip>
                             <Tooltip title="Cancel">
-                                <Popconfirm
-                                    title="Are you sure you want to cancel the edit?"
-                                    onConfirm={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            relShip: false,
-                                            prov: false,
-                                            /* city: false,
-                                             barangay: false,*/
-                                            remarks: false,
-                                        })
-                                        setStat(true)
-                                        setAddStat(!getAddStat)
-                                        setEditingKey('')
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    type="primary"
+                                    danger
+                                    onClick={() => {
+                                        setStat(true);
+                                        setAddStat(!getAddStat);
+                                        setEditingKey('');
                                     }}
-                                    okText="Yes"
-                                    cancelText="Cancel"
-                                >
-                                    <Button icon={<CloseOutlined />} type='primary' danger />
-                                </Popconfirm>
+                                />
                             </Tooltip>
                         </Space>
                     ) : (
                         <Space>
                             <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                                <Tooltip title='Edit'>
-                                    <Button className='bg-[#3b0764]' disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || editingKey !== ''} onClick={() => {
-                                        setFocus({
-                                            name: false,
-                                            conNum: false,
-                                            relShip: false,
-                                            prov: false,
-                                            /* city: false,
-                                             barangay: false,*/
-                                            remarks: false,
-                                        })
-                                        edit(record)
-                                        setAddStat(!getAddStat)
-                                    }}
-                                        type='primary' icon={<MdEditSquare />} />
+                                <Tooltip title="Edit">
+                                    <Button
+                                        className="bg-[#3b0764]"
+                                        onClick={() => {
+                                            edit(record);
+                                            setAddStat(!getAddStat);
+                                        }}
+                                        type="primary"
+                                        icon={<MdEditSquare />}
+                                        disabled={editingKey !== ''}
+                                    />
                                 </Tooltip>
                             </ConfigProvider>
                             <Tooltip title="Delete">
                                 <Popconfirm
                                     title="Are you sure you want to delete this record?"
-                                    onConfirm={() => {
-                                        onClickDelete(record.key)
-                                    }}
+                                    onConfirm={() => onClickDelete(record.key)}
                                     okText="Yes"
-                                    cancelText="Cancel"  >
-                                    <Button disabled={role === '60' || User === 'Lp' || GetStatus === 'FOR APPROVAL' || editingKey !== ''} icon={<DeleteOutlined />} type='primary' danger />
-
+                                    cancelText="Cancel"
+                                >
+                                    <Button
+                                        icon={<DeleteOutlined />}
+                                        type="primary"
+                                        danger
+                                        disabled={editingKey !== ''}
+                                        loading={deleteKey === record.key}
+                                    />
                                 </Popconfirm>
                             </Tooltip>
                         </Space>
-                    )
+                    );
                 }
-            }
+            },
         },
     ];
-
-    const [getFocus, setFocus] = React.useState({
-        name: false,
-        conNum: false,
-        relShip: false,
-        prov: false,
-        /*city: false,
-        barangay: false,*/
-        remarks: false,
-    })
 
     const [editingKey, setEditingKey] = React.useState('');
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
-        setInfo({
-            ...getInfo,
+        form.setFieldsValue({
             key: record.key,
             name: record.name,
             conNum: record.conNum,
             relShip: record.relShip,
             prov: record.prov,
-            /*city: record.city,
-            barangay: record.barangay,*/
             remarks: record.remarks,
         })
         setEditingKey(record.key);
@@ -610,6 +507,36 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         };
     });
 
+
+    async function onChangeProvince(value) {
+        form.setFieldsValue({ 'prov': value });
+    }
+
+    async function onChangeRelationship(value) {
+        form.setFieldsValue({ 'relShip': value });
+    }
+
+    async function onChangeContactNo(e, pointer) {
+        if (pointer === 'contactNo') {
+            let value = e;
+
+            // Limit to 11 characters and ensure only numbers are input
+            if (!/^\d*$/.test(value)) return; // Allow only digits
+            value = value.slice(0, 11); // Limit to 11 digits
+
+            form.setFieldsValue({ 'contactNo': value });
+        }
+    }
+
+    async function onChangeToUpper(e, pointer) {
+        if (pointer === 'name') {
+            form.setFieldsValue({ 'name': toUpperText(e) });
+        }
+        else {
+            form.setFieldsValue({ 'remarks': toUpperText(e) });
+        }
+    }
+
     const EditableCell = ({
         editing,
         dataIndex,
@@ -621,102 +548,74 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         ...restProps
     }) => {
         const inputNode = dataIndex === 'prov'
-            ? <Select id='prov' className='w-[100%]' value={getInfo.prov || undefined} placeholder={'Province'} options={provinceList.data?.map((x) => ({ value: x.provinceDescription, label: x.provinceDescription, }))}
-                onChange={(e) => { setInfo({ ...getInfo, prov: e, city: '', barangay: '' }) }}
-                autoFocus={getFocus.prov}
-                onKeyDown={handleTabPress}
-                showSearch
-                filterOption={(input, option) =>
-                    option.label.toLowerCase().includes(input.toLowerCase())
-                }
-            />
-            /* : dataIndex === 'city'
-                 ? <Select id='city' className='w-[100%]' value={getInfo.city || undefined} placeholder={'City / Municipality'} options={cityList.data?.map((x) => ({ value: x.munDesc, label: x.munDesc, }))}
-                     onChange={(e) => { setInfo({ ...getInfo, city: e }) }}
-                     autoFocus={getFocus.city}
-                     onKeyDown={handleTabPress}
-                     />
-                 : dataIndex === 'barangay'
-                     ? <Select id='barangay' className='w-[100%]' value={getInfo.barangay || undefined} placeholder={'Barangay'} options={brgyList.data?.map((x) => ({ value: x.description, label: x.description, }))}
-                         onChange={(e) => { setInfo({ ...getInfo, barangay: e }) }}
-                         autoFocus={getFocus.barangay}
-                         onKeyDown={handleTabPress}
-                     /> */
+            ? (
+                <Select
+                    className='w-[10rem]'
+                    onChange={(value) => { onChangeProvince(value); }}
+                    placeholder='Province'
+                    options={provinceList.data?.map((x) => ({ value: x.provinceDescription, label: x.provinceDescription, }))}
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                />
+            )
             : dataIndex === 'relShip' ? (
-                <>
-                    <Select id='relShip' className='w-[100%]' value={getInfo.relShip || undefined} placeholder={'Relationship'} options={getRelationshipList.data?.map((x) => ({ value: x.description, label: x.description, }))}
-                        onChange={(e) => { setInfo({ ...getInfo, relShip: e }) }}
-                        autoFocus={getFocus.relShip}
-                        onKeyDown={handleTabPress}
-                        showSearch
-                        filterOption={(input, option) =>
-                            option?.label?.toLowerCase().includes(input.toLowerCase())
-                        }
-                    />
-                    {fieldErrors.relShip && (
-                        <div className="text-red-500 mt-1 text-[7px] font-bold text-center">
-                            {fieldErrors.relShip}
-                        </div>
-                    )}
-                </>
+                <Select
+                    className='w-[10rem]'
+                    onChange={(value) => { onChangeRelationship(value); }}
+                    placeholder={'Relationship'}
+                    options={getRelationshipList.data?.map(x => ({ value: x.code, label: x.description }))}
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                />
             )
                 : dataIndex === 'name' ? (
                     <>
-                        <Input id='name' value={getInfo.name.toUpperCase()} onChange={(e) => { setInfo({ ...getInfo, name: e.target.value.toUpperCase() }); }} placeholder='Name' autoFocus={getFocus.name}
-                            onKeyDown={handleTabPress}
-                            onClick={() => handleFocus('name')} />
-                        {fieldErrors.name && (
-                            <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.name}</div>
-                        )}
+
+                        <Input
+                            className='w-[12rem]'
+                            onChange={(e) => { onChangeToUpper(e.target.value, 'name'); }}
+                            placeholder='Name' />
+
                     </>
                 )
                     : dataIndex === 'conNum' ? (
                         <>
                             <Input
-                                id='conNum'
-                                value={getInfo.conNum}
-                                onChange={(e) => {
-                                    let value = e.target.value.replace(/\D/g, '');
-
-                                    if (value.length > 11) {
-                                        value = value.slice(0, 11);
-                                    }
-
-                                    if (!value.startsWith('09')) {
-                                        value = '09' + value.slice(2);
-                                    }
-
-                                    setInfo({ ...getInfo, conNum: value });
-                                    setContactError('');
-                                }}
+                                className='w-[9rem]'
+                                onChange={(e) => onChangeContactNo(e.target.value, 'conNum')}
                                 placeholder='Contact Number'
-                                autoFocus={getFocus.conNum}
-                                onKeyDown={handleTabPress}
-                                onClick={() => handleFocus('conNum')}
+                                maxLength={11}
                             />
-                            {fieldErrors.conNum && (
-                                <div className="text-red-500 mt-1 text-[7px] font-bold text-center">{fieldErrors.conNum}</div>
-                            )}
                         </>
                     )
                         : (
                             <>
-                                <Input id='remarks' value={getInfo.remarks.toUpperCase()} onChange={(e) => { setInfo({ ...getInfo, remarks: e.target.value.toUpperCase() }); }} placeholder='Remarks'
-                                    autoFocus={getFocus.remarks}
-                                    onKeyDown={handleTabPress}
-                                    onClick={() => handleFocus('remarks')} />
-                                {fieldErrors.remarks && (
-                                    <div className='text-red-500 mt-1 text-[7px] font-bold text-center'> {fieldErrors.remarks}</div>
-                                )}
+                                <Input
+                                    className='w-[12rem]'
+                                    onChange={(e) => { onChangeToUpper(e.target.value, 'remarks'); }}
+                                    placeholder='Remarks' />
                             </>
                         )
 
         return (
             <td {...restProps}>
-                {editing ? (
-                    <>
-                        {inputNode}
-                    </>
+                {editing ? (<Form.Item name={dataIndex} style={{ margin: 0, }} rules={
+                    dataIndex === 'conNum'
+                        ? [
+                            { required: true, message: `Please input ${title}` },
+                            { pattern: /^09\d{9}$/, message: 'Must start with "09" and be 11 digits' }
+                        ]
+                        : dataIndex === 'name' || dataIndex === 'relShip'
+                            ? [{ required: true, message: `Please input ${title}` }]
+                            : [] // No validation rules for 'prov' and 'remarks'
+                }
+                >
+                    {inputNode}
+                </Form.Item>
                 ) : (
                     children
                 )}
@@ -724,94 +623,53 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         );
     };
 
-    function handleTabPress(event) {
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            const formElements = Array.from(document.querySelectorAll('input, select'));
-            const currentIndex = formElements.indexOf(event.target);
-            const nextIndex = (currentIndex + 1) % formElements.length;
-
-            formElements[nextIndex]?.focus();
-            if (formElements[nextIndex]?.id === 'name') {
-                handleFocus('name');
-            } else if (formElements[nextIndex]?.id === 'conNum') {
-                handleFocus('conNum');
-            } else if (formElements[nextIndex]?.id === 'relShip') {
-                handleFocus('relShip');
-            } else if (formElements[nextIndex]?.id === 'prov') {
-                handleFocus('prov');
-            }/* else if (formElements[nextIndex]?.id === 'city') {
-                handleFocus('city');
-            } else if (formElements[nextIndex]?.id === 'barangay') {
-                handleFocus('barangay');
-            }*/ else if (formElements[nextIndex]?.id === 'remarks') {
-                handleFocus('remarks');
-            }
-        }
-    }
-    function handleFocus(field) {
-        setFocus({
-            name: field === 'name',
-            conNum: field === 'conNum',
-            relShip: field === 'relShip',
-            prov: field === 'prov',
-            /* city: field === 'city',
-             barangay: field === 'barangay',*/
-            remarks: field === 'remarks',
-        });
-    }
-
     const dataOnly = getCharacterRef.data?.filter(x => x.key !== 0);
+
     return (
         <div className={classname}>
             {User !== 'Credit' && User !== 'Lp' && (<StatusRemarks isEdit={!isEdit} User={User} data={data} />)}
             {contextHolder}
-            <div className='mt-[9rem] w-full'>
-                <div className='mt-[-4rem]'>
+            <div className='w-full px-2'>
+                <div>
                     <center>
                         <SectionHeader title="List of Character Reference" />
                     </center>
                 </div>
-                <div className='mt-[2rem]'>
-                <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                    <Table
-                        columns={mergedColumns.map(col => ({
-                            ...col,
-                            width: col.width || 'auto',
-                        }))}
-                        dataSource={
-                            loading
-                            ? []
-                            : (getStat === false
-                                ? getCharacterRef.data?.map((x) => ({
-                                    key: x.key,
-                                    no: x.no,
-                                    name: x.name,
-                                    conNum: x.conNum,
-                                    relShip: x.relShip,
-                                    prov: x.prov,
-                                    remarks: x.remarks
-                                }))
-                                : dataOnly?.map((x) => ({
-                                    key: x.key,
-                                    no: x.no,
-                                    name: x.name,
-                                    conNum: x.conNum,
-                                    relShip: x.relShip,
-                                    prov: x.prov,
-                                    remarks: x.remarks
-                                }))
-                            )
-                        }
-                        components={{ body: { cell: EditableCell } }}
-                        rowClassName='editable-row'
-                        pagination={false}
-                        loading={{
-                            spinning: loading,  
-                            indicator: <Spin tip="Loading..." />,  
-                        }}
-                    />
-                    </ConfigProvider>
+                <div className='mt-[0rem]'>
+                    <Form form={form} component={false}>
+                        <div className="overflow-x-auto">
+                            <Table
+                                columns={mergedColumns}
+                                dataSource={
+                                    getStat === false
+                                        ? getCharacterRef.data?.map((x) => ({
+                                            key: x.key,
+                                            no: x.no,
+                                            name: x.name,
+                                            conNum: x.conNum,
+                                            relShip: x.relShip,
+                                            prov: x.prov,
+                                            remarks: x.remarks
+                                        }))
+                                        : dataOnly?.map((x) => ({
+                                            key: x.key,
+                                            no: x.no,
+                                            name: x.name,
+                                            conNum: x.conNum,
+                                            relShip: x.relShip,
+                                            prov: x.prov,
+                                            remarks: x.remarks
+                                        }))
+                                }
+                                components={{ body: { cell: EditableCell } }}
+                                rowClassName="editable-row"
+                                pagination={false}
+                                scroll={{ x: 'max-content', y: User === 'Credit' || User === 'Lp' ? 200 : 300 }}
+                                className="table-auto"
+                                responsive={{ xs: true }}
+                            />
+                        </div>
+                    </Form>
                 </div>
             </div>
         </div>

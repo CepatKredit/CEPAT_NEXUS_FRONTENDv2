@@ -24,7 +24,7 @@ function DashMini() {
     }
 
     return (
-        <div className='flex flex-row'>
+        <div className='flex flex-row hidden md:flex'>
             {pathList()?.map((x, i) => (<MiniAnimatedCard key={i} path={x} />))}
         </div>
     )

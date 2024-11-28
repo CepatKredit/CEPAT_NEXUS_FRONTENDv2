@@ -7,6 +7,8 @@ import LabeledTextArea from '@components/global/LabeledTextArea';
 import axios from 'axios';
 import { viewModalDocxEdit } from '@hooks/ModalController';
 import { useQueryClient } from '@tanstack/react-query';
+import { toDecrypt } from '@utils/Converter';
+import { useCookies } from 'react-cookie';
 
 function EditImgInfo({ data, FileListName, Display  }) {
 
@@ -53,21 +55,23 @@ function EditImgInfo({ data, FileListName, Display  }) {
         })
     }, [data])
 
-    const token = localStorage.getItem('UTK');
+    const [cookies] = useCookies(['SESSION_ID']);
+    const cookieToken = cookies.SESSION_ID;
+    const token = localStorage.getItem('UTK'); 
     const setModalStatus = viewModalDocxEdit((state) => state.setStatus)
     async function onClickSave() {
         const dataContainer = {
             DocsID: GetDocName(getValue.fileName, 'ID'),
             DocsFileName: `${getValue.fileName} - ${randomNumber(100000, 999999)}`,
             Remarks: getValue.remarks,
-            ModUser: jwtDecode(token).USRID,
+            ModUser: jwtDecode(cookieToken).USRID,
             DocStatus: parseInt(getValue.status),
             LAI: data?.loanAppId,
             Id: data?.id,
             PRODID: 'FILE'
         }
 
-        await axios.post('/updateFileStatus', dataContainer)
+        await axios.post('/POST/P68FS', dataContainer)
             .then((result) => {
                 setModalStatus(false)
                 queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })

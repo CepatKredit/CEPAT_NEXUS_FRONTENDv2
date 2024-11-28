@@ -325,7 +325,7 @@ function DocxTable({ showModal, closeModal, Display, docTypeList, ClientId, Uplo
                 })
             }
             else {
-                await axios.post(`/uploadFileRel`, formData, {
+                await axios.post(`/POST/P147UFRL`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

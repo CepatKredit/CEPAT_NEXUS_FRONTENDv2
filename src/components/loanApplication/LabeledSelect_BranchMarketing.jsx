@@ -54,7 +54,7 @@ const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationCont
   const branchList = useQuery({
     queryKey: ["BranchListQuery"],
     queryFn: async () => {
-      const result = await axios.get("/getBranchList");
+      const result = await axios.get("/GET/G10BL");
       return result.data.list;
     },
     enabled: true,

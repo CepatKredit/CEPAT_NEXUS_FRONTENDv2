@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Select, Form } from 'antd';
-
 function LabeledSelect({ className, label, data, value, receive, disabled, readOnly }) {
     const [showHelpText, setShowHelpText] = React.useState(false);
     const [validateStatus, setValidateStatus] = React.useState('');
