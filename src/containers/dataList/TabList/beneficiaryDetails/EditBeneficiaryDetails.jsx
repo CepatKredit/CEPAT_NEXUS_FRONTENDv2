@@ -709,7 +709,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
             </Flex>
             {!Sepcoborrowfname && (
                 <center>
-                    <div className="text-center mt-[2rem] mb-[0.25rem] w-[12.5rem]">
+                    <div className="text-center mt-[2rem] mb-[0.25rem] w-[15rem]">
                         <ConfigProvider
                             theme={{
                                 token: {
@@ -724,7 +724,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 size="large"
                                 type="primary"
                             >
-                                {!showCoBorrower ? 'Cancel' : 'Additional Co-Borrower'}
+                                {!showCoBorrower ? 'Remove Additional Co-borrower' : 'Additional Co-Borrower'}
                             </Button>
                         </ConfigProvider>
                     </div>
