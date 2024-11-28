@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Typography, Button, Table } from "antd";
+import { Typography, Button, Table, Radio } from "antd";
 import { PathName } from "@utils/Conditions";
 import { BatchModal } from "@hooks/ModalController";
 import ResponsiveModal from "@components/global/ResponsiveModal";
@@ -75,13 +75,21 @@ function BatchList() {
         }
     ];
 
+    const [radioValue, setRadioValue] = React.useState('4')
+
+    const handleRadioOnChange = (e) => {
+        setRadioValue(e.target.value)
+    }
+
+
     const { modalStatus, setStatus } = BatchModal()
     const queryClient = useQueryClient();
     const token = localStorage.getItem('UTK');
+    console.log("val", radioValue, jwtDecode(token).USRID)
     const GetBatchList = useQuery({
         queryKey: ["GetBatchListQuery", jwtDecode(token).USRID],
         queryFn: async () => {
-            const result = await GET_LIST(`/GET/G101BL/${jwtDecode(token).USRID}`);
+            const result = await GET_LIST(`/GET/G101BL/${jwtDecode(token).USRID}/${radioValue}`);
             return result.list;
         },
         enabled: true,
@@ -159,6 +167,14 @@ function BatchList() {
                     {PathName(localStorage.getItem("SP"))}
                 </Typography.Title>
             </div>
+            <Radio.Group onChange={handleRadioOnChange} value={radioValue}>
+                        <Radio value={"4"}>
+                            <span className="font-bold">All</span>
+                        </Radio>
+                        <Radio value={"8"}>
+                            <span className="font-bold">FOR PROCESS</span>
+                        </Radio>
+                    </Radio.Group>
             <div className="flex flex-rows pb-2 float-end">
                 <Button className='h-[2.5rem]' type='primary' onClick={() => { setStatus(true) }} >Create Batch</Button>
             </div>

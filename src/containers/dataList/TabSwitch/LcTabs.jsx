@@ -11,12 +11,14 @@ import UploadDocs from '../TabList/UploadDocs';
 import CharacterReference from '../TabList/CharacterReference';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import TriggerFields from '@utils/TriggerFields';
+import { jwtDecode } from 'jwt-decode';
 
 function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, LoanStatus}) {
     const { id, tabs } = useParams();
     const navigate = useNavigate();
     const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const [isEdit, setEdit] = React.useState(true);
+    const token = localStorage.getItem('UTK'); 
     
     const getStatusBackgroundColor = status => {
         const colors = {
@@ -86,7 +88,7 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
                 </div>
             ),
             key: 'upload-documents',
-            children: <UploadDocs classname={'h-[22rem] xs1:h-[24rem] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} User={'LC'} data={value} LoanStatus={LoanStatus} />,
+            children: <UploadDocs classname={'h-[22rem] xs1:h-[24rem] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} User={'LC'} data={value} LoanStatus={LoanStatus} ModUser={jwtDecode(token).USRID} />,
         },
         {
             label: (

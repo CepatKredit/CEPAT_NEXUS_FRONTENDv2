@@ -15,7 +15,7 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { useDataContainer } from '@context/PreLoad';
 
-function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
+function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus, ModUser }) {
     const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
     const { getAppDetails } = React.useContext(LoanApplicationContext)
     const { GetStatus } = ApplicationStatus()
@@ -115,7 +115,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     Others <span className='text-rose-500' />
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
-                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' />
+                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' ModUser={ModUser}/>
                 </div>
             },
         ]
@@ -131,7 +131,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                         </span>,
                         children: <div className='h-[300px] overflow-y-auto'>
                             <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
-                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
                         </div>
                     })
                 }
@@ -145,7 +145,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                             </span>,
                             children: <div className='h-[300px] overflow-y-auto'>
                                 <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
-                                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
                             </div>
                         })
                     }
@@ -159,7 +159,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     </span>,
                     children: <div className='h-[300px] overflow-y-auto'>
                         <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
-                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
+                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
                     </div>
                 }
             }
@@ -173,7 +173,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
                     <FileLoader key={data.length + 1} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
-                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} className='z-50' />
+                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} className='z-50' ModUser={ModUser} />
                 </div>
             }
         }

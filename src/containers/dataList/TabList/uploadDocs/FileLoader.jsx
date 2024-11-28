@@ -20,7 +20,7 @@ import ViewPdf from './pdfToolbar/ViewPdf';
 import { toUpperText } from '@utils/Converter';
 import axios from 'axios';
 
-function FileLoader({ key, files, Display, FileListName, isClient }) {
+function FileLoader({ key, files, Display, FileListName, isClient, ModUser }) {
 
     const getModalStatus = viewModalDocxEdit((state) => state.modalStatus)
     const setModalStatus = viewModalDocxEdit((state) => state.setStatus)
@@ -119,7 +119,7 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
                 DocsID: GetDocName(getValue.fileName, 'ID'),
                 DocsFileName: `${getValue.fileName} - ${randomNumber(100000, 999999)}`,
                 Remarks: getValue.remarks,
-                ModUser: jwtDecode(token).USRID,
+                ModUser: ModUser,
                 DocStatus: parseInt(getValue.status),
                 LAI: getFileData?.loanAppId,
                 Id: getFileData?.id,
@@ -149,11 +149,11 @@ function FileLoader({ key, files, Display, FileListName, isClient }) {
     return (
         <div className='flex flex-wrap' key={key}>
             {contextHolder}
-            <EditPdfInfo showModal={getPDFStatus} closeModal={() => { setPDFStatus(false) }} toolBar={'Default'} data={getFileData} FileListName={FileListName} isClient={isClient} />
+            <EditPdfInfo showModal={getPDFStatus} closeModal={() => { setPDFStatus(false) }} toolBar={'Default'} data={getFileData} FileListName={FileListName} isClient={isClient} ModUser={ModUser} />
             <ViewPdf showModal={modalStatus} closeModal={() => { setStatus(false) }} />
             <ZindexModal showModal={getModalStatus} closeModal={() => { setModalStatus(false) }}
                 modalWidth={'400px'} modalTitle={'Edit Document'} contextHeight={isClient === 'USER' ? 'h-[320px]' : 'h-[200px]'} contextInside={(<>
-                    <EditImgInfo data={getFileData} FileListName={FileListName} Display={isClient} className='z-50' />
+                    <EditImgInfo data={getFileData} FileListName={FileListName} Display={isClient} className='z-50' ModUser={ModUser} />
                 </>)} />
             {/* {
                 FileList('') === 'EMPTY'

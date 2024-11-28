@@ -25,6 +25,8 @@ import { SearchOutlined } from "@ant-design/icons";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
+import { useQueryClient } from "@tanstack/react-query";
+import { toDecrypt } from "@utils/Converter";
 
 function SideNav() {
   //   const handleFilterChange = (e) => {
@@ -59,6 +61,7 @@ function SideNav() {
     left: 0,
   });
   const [searchValue, setSearchValue] = React.useState("");
+  const queryClient = useQueryClient();
 
   const { width: screenWidth } = useWindowDimensions(); 
   React.useEffect(() => {
@@ -147,6 +150,9 @@ function SideNav() {
                   onClick={({ key }) => {
                     navigate(key);
                     localStorage.setItem("SP", key);
+                    queryClient.invalidateQueries(
+                      ["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))],
+                      { exact: true })
                   }}
                   ref={menuRef}
                   mode="inline"
@@ -166,7 +172,7 @@ function SideNav() {
               className={`text-center p-2 fixed bottom-0 transition-all duration-300 ease-in-out ${collapsed ? "w-[4vw]" : "w-[12vw]"
                 }`}
             >
-              <span className="text-xs text-gray-600">v2.0.3</span>
+              <span className="text-xs text-gray-600 font-semibold bg-white bg-opacity-80">v2.0.3</span>
             </div>
           </div>
         </Sider>

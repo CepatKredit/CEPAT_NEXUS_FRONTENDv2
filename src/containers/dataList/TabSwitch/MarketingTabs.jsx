@@ -24,6 +24,7 @@ import AuditTrail from "../TabList/AuditTrail";
 import { GetData } from "@utils/UserData";
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import TriggerFields from "@utils/TriggerFields";
+import { jwtDecode } from "jwt-decode";
 
 
 function MarketingTabs({
@@ -44,6 +45,8 @@ function MarketingTabs({
     localStorage.getItem("activeTab") || "deduplication"
   );
   const { updateAppDetails } = React.useContext(LoanApplicationContext)
+
+  const token = localStorage.getItem('UTK'); 
 
   function onChangeTab(e) {
     //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
@@ -179,6 +182,7 @@ function MarketingTabs({
           Uploader={Uploader}
           data={value}
           LoanStatus={LoanStatus}
+          ModUser={jwtDecode(token).USRID}
         />
       ),
     },

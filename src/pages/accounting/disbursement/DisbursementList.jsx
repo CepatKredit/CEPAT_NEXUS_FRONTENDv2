@@ -32,6 +32,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
         enabled: true
     })
 
+    
     function GetBankDetails(container, command) {
         let data_container = ''
         getBank?.map((x) => {
@@ -179,10 +180,10 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             key: '',
             firstName: '',
             lastName: '',
-            paymentType: '',
+            // paymentType: '',
             bankName: '',
             bankAcctNo: '',
-            amount: '',
+            // amount: '',
             purpose: '',
             status: '',
             traceId: '',
@@ -285,7 +286,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             dataIndex: 'paymentType',
             align: 'center',
             width: '100px',
-            editable: true,
+            // editable: true,
         },
         {
             title: 'Bank Name',
@@ -315,7 +316,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             align: 'center',
             width: '80px',
             fixed: 'right',
-            editable: true,
+            // editable: true,
         },
         {
             title: 'Status',

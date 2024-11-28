@@ -19,6 +19,7 @@ import { BankGeneration } from "@hooks/ModalController";
 import Generation from "./Generation";
 
 function ForDisbursement() {
+  
   const [getSearch, setSearch] = React.useState("");
   const [expandedRowKey, setExpandedRowKey] = React.useState(null);
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ function ForDisbursement() {
           </div>
           <>
             <div className="flex flex-rows pb-2 min-w-[30%] float-end">
-              <Button className='mr-2' size='large' type='primary' onClick={(x) => { setStatus(true) }}>Bank Generation</Button>
+              {/* <Button className='mr-2' size='large' type='primary' onClick={(x) => { setStatus(true) }}>Bank Generation</Button> */}
               <Input
                 className="w-[100%]"
                 addonAfter={<SearchOutlined />}

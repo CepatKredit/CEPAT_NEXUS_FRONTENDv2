@@ -45,6 +45,7 @@ function NetProceeds({ data }) {
   const isFetching = useIsFetching({
     queryKey: ["DisbursementListQuery", data.LAN.props.children, getData.Type],
   });
+  
 
   React.useEffect(() => {
     GetClient.refetch();

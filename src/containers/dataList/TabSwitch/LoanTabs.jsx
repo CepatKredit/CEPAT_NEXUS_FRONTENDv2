@@ -31,6 +31,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ReleaseDocuments from '../TabList/ReleaseDocuments';
 import StatusRemarks from '../TabList/StatusRemarks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { jwtDecode } from 'jwt-decode';
 
 
 function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, FileType, value, valueAmount, LoanStatus, ClientId }) {
@@ -59,6 +60,7 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
             }
         }
     };
+    const token = localStorage.getItem('UTK'); 
     //  const Lc_valid = !data.loanProd || ((data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') && !data.ofwDeptDate)
     // || !data.loanPurpose || !data.loanType || !data.loanAmount || !data.loanTerms;
 
@@ -260,7 +262,7 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} />,
+            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ModUser={jwtDecode(token).USRID}/>,
         },
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Release Documents</span></div>,

@@ -631,6 +631,7 @@ function LoanApplicationTracker({ data }) {
           }
           Display={""}
           ClientId={toDecrypt(localStorage.getItem("CLID"))}
+          ModUser={toDecrypt(localStorage.getItem("CLID"))}
           FileType={getAppDetails.loanProd}
           Uploader={getAppDetails.borrowersCode}
           LoanStatus={getAppDetails.loanStatus}
