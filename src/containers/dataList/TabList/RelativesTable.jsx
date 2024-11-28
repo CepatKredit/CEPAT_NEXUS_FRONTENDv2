@@ -388,13 +388,6 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
             editable: true,
         }]),
         {
-            title: 'Contact Number',
-            dataIndex: 'contactNo',
-            key: 'contactNo',
-            width: '14%',
-            editable: true,
-        },
-        {
             title: 'Age',
             dataIndex: 'birthdate',
             key: 'birthdate',
@@ -405,14 +398,21 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
             title: 'School / Employment',
             dataIndex: 'workEducStatus',
             key: 'workEducStatus',
-            width: '17%',
+            width: '15%',
             editable: true,
         },
         {
             title: 'Relationship',
             dataIndex: 'relationship',
             key: 'relationship',
-            width: '20%',
+            width: '15%',
+            editable: true,
+        },
+        {
+            title: 'Remarks',
+            dataIndex: 'contactNo',
+            key: 'contactNo',
+            width: '21%',
             editable: true,
         },
         {
@@ -530,13 +530,15 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
             form.setFieldsValue({ 'fullName': toUpperText(e) });
         } else if (pointer === 'suffix') {
             form.setFieldsValue({ 'suffix': e });
+        } else if (pointer === 'contactNo') {
+            form.setFieldsValue({ 'contactNo': e });
         } else {
             form.setFieldValue({ 'birthdate': e });
         }
     }
 
 
-    async function onChangeContactNo(e, pointer) {
+    /*async function onChangeContactNo(e, pointer) {
         if (pointer === 'contactNo') {
             let value = e;
 
@@ -545,7 +547,7 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
 
             form.setFieldsValue({ 'contactNo': value });
         }
-    }
+    }*/
 
     async function onChangedropdown(e, pointer) {
         if (pointer === 'workEducStatus') {
@@ -591,10 +593,9 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
                     ? (
                         <>
                             <Input
-                                className='w-[8rem]'
-                                onChange={(e) => onChangeContactNo(e.target.value, 'contactNo')}
-                                placeholder='Contact Number'
-                                maxLength={11}
+                                className='w-[14rem]'
+                                onChange={(e) => onChangeToUpper(e.target.value, 'contactNo')}
+                                placeholder='Remarks'
                             />
                         </>
                     )
@@ -603,7 +604,7 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
 
 
                             <Input
-                                className='w-[3rem]'
+                                className='w-[4rem] ml-[-1rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'birthdate'); }}
                                 placeholder='Age' />
 
@@ -649,9 +650,7 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
                     dataIndex === 'contactNo'
                         ? [
                             {
-                                pattern: /^09\d{9}$/,
-                                message: 'Must start with "09" and be 11 digits',
-                                validateTrigger: ['onChange', 'onBlur'],
+                                // No validation for remarks
                             },
                         ]
                         : dataIndex === 'suffix'
