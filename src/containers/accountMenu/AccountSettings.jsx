@@ -64,7 +64,7 @@ function AccountSettings() {
         <Dropdown menu={{ items }} placement="bottom">
             <div className='flex flex-row'>
                 <IoMdPerson className='mx-[5px] mt-[4px]' style={{ fontSize: '20px', color: 'white' }} />
-                <span className='font-bold text-lg text-stone-100 cursor-pointer'>{getGreeting()}😊, {firstName} </span>            
+                <span className='font-bold text-lg text-stone-100 cursor-pointer'>{getGreeting()}, {firstName} </span>            
             </div>
         </Dropdown>
     )

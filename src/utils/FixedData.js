@@ -532,163 +532,31 @@ export const Religion = () => {
         },
         {
             value: 2,
-            label: 'Islam'
+            label: 'Iglesia Ni Cristo'
         },
         {
             value: 3,
-            label: 'Evangelicals (Philippine Council of Evangelical Churches)'
+            label: 'Muslim'
         },
         {
             value: 4,
-            label: 'Iglesia ni Cristo'
+            label: 'Christian / Born-Again Christian'
         },
         {
             value: 5,
-            label: 'Aglipayan (Philippine Independent Church)'
+            label: 'El Shaddai'
         },
         {
             value: 6,
-            label: 'Seventh-day Adventist'
-        },
-        {
-            value: 7,
             label: 'Jehovah’s Witnesses'
         },
         {
+            value: 7,
+            label: 'Church of Latter Day Saints / Mormon'
+        },
+        {
             value: 8,
-            label: 'Buddhism'
-        },
-        {
-            value: 9,
-            label: 'Protestant'
-        },
-        {
-            value: 10,
-            label: 'Hinduism'
-        },
-        {
-            value: 11,
-            label: 'Judaism'
-        },
-        {
-            value: 12,
-            label: 'Mormon (Church of Jesus Christ of Latter-day Saints)'
-        },
-        {
-            value: 13,
-            label: 'Baha’i Faith'
-        },
-        {
-            value: 14,
-            label: 'Methodist'
-        },
-        {
-            value: 15,
-            label: 'United Church of Christ in the Philippines (UCCP)'
-        },
-        {
-            value: 16,
-            label: 'Pentecostal'
-        },
-        {
-            value: 17,
-            label: 'Baptist'
-        },
-        {
-            value: 18,
-            label: 'Anglican (Episcopal Church in the Philippines)'
-        },
-        {
-            value: 19,
-            label: 'Other Christian denominations'
-        },
-        {
-            value: 20,
-            label: 'Unitarian Universalism'
-        },
-        {
-            value: 21,
-            label: 'Animism (Indigenous/Tribal Religions)'
-        },
-        {
-            value: 22,
-            label: 'Sikhism'
-        },
-        {
-            value: 23,
-            label: 'Taoism'
-        },
-        {
-            value: 24,
-            label: 'Falun Gong'
-        },
-        {
-            value: 25,
-            label: 'Zoroastrianism'
-        },
-        {
-            value: 26,
-            label: 'Confucianism'
-        },
-        {
-            value: 27,
-            label: 'Church of the Nazarene'
-        },
-        {
-            value: 28,
-            label: 'Scientology'
-        },
-        {
-            value: 29,
-            label: 'Apostolic Catholic Church'
-        },
-        {
-            value: 30,
-            label: 'Eastern Orthodox Christianity'
-        },
-        {
-            value: 31,
-            label: 'Quakers (Society of Friends)'
-        },
-        {
-            value: 32,
-            label: 'Church of Christ (Iglesia sa Dios, Kay Kristo Hesus)'
-        },
-        {
-            value: 33,
-            label: 'Rizalista Religious Movements'
-        },
-        {
-            value: 34,
-            label: 'Aetherius Society'
-        },
-        {
-            value: 35,
-            label: 'Kabbalah'
-        },
-        {
-            value: 36,
-            label: 'New Thought'
-        },
-        {
-            value: 37,
-            label: 'Wicca'
-        },
-        {
-            value: 38,
-            label: 'Druze'
-        },
-        {
-            value: 39,
-            label: 'Shintoism'
-        },
-        {
-            value: 40,
-            label: 'Neo-Paganism'
-        },
-        {
-            value: 41,
-            label: 'Universal Church of the Kingdom of God'
+            label: 'Muslim'
         }
     ]
     return dataList;
