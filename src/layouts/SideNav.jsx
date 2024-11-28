@@ -11,8 +11,8 @@ import {
   Space,
   Input,
 } from "antd";
-import Logo from "@assets/images/Nexus_v3a1.png";
-import small from "@assets/images/Nexus_v3a2.png";
+import Logo from "@assets/images/Nexus_v3a.png";
+import small from "@assets/images/small-logo.png";
 import AccountSettings from "@containers/accountMenu/AccountSettings";
 import DashMini from "@layouts/DashMini";
 import SessionTimeout from "@auth/SessionTimeout";
