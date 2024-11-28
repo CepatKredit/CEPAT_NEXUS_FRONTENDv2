@@ -151,7 +151,7 @@ function EditLoanDetails({ data, receive, User }) {
                 group={'Default'}
                 compname={'Loan Product'}
             />
-            {User !== 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL') ? (
+            {/*User !== 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL') ? (
                 <DatePickerOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label={"font-bold"}
@@ -170,7 +170,7 @@ function EditLoanDetails({ data, receive, User }) {
                     compname={'Departure Date'}
 
                 />
-            ) : null}
+            ) : null*/}
             <SelectOpt
                 className_dmain="mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"

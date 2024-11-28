@@ -5,6 +5,7 @@ export const UpdateLoanDetails = async ({
     //LoanDetails
     LoanAppId, //Not null
     Tab = null, //if null it will not update
+    DuplicateChecker = true,
     BorrowersCode = null,
     Origin = null,
     Dpa = null,
@@ -412,7 +413,8 @@ export const UpdateLoanDetails = async ({
     var check = 0;
     var duplicate_result = null;
 
-    if (FirstName !== null || LastName !== null) {
+    if (DuplicateChecker && (FirstName !== null || LastName !== null)) {
+        console.log('Running OFW Duplicate Checker')
         await axios.post('/POST/P47CL', checkLoan)
             .then((result) => {
                 result.data?.list.map(() => { check = 1; })
@@ -436,7 +438,7 @@ export const UpdateLoanDetails = async ({
     if ((acbfname && (acbfname === FirstName)) || (acblname && (acblname === LastName))) {
         console.log('Update Additional Co-Borrower Kaiser...')
     }*/
-
+    console.log('UPDATE DETAILS ',data)
     if (check === 0) {
         await axios.post('/POST/P48UD', data)
             .then((result) => {

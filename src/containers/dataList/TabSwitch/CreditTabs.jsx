@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Tabs, Space, Anchor, Button, notification, ConfigProvider } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { MdApproval } from "react-icons/md";
@@ -37,12 +37,12 @@ import { FocusHook } from '@hooks/ComponentHooks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import TriggerFields from '@utils/TriggerFields';
 
-function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading,User }) {
+function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading, User }) {
     //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
     const { GetStatus } = ApplicationStatus();
-    const { updateAppDetails } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
     const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
@@ -63,6 +63,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
     const addCoborrow = (getValue) => {
         setAddCoborrower(getValue);
     };
+
 
     const fetchRelativesAndUpdateCount = async () => {
         if (BorrowerId) {
@@ -134,7 +135,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             ] : []),
 
         ].some(field => {
-           // console.log(`field: ${field}, value:`, value[field]);
+            // console.log(`field: ${field}, value:`, value[field]);
             const condition = value[field] === undefined || value[field] === '' || value[field] === false;
             //console.log(`result field ${field}:`, condition);
             return condition;
@@ -146,7 +147,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
 
     const toggleEditMode = async () => {
         if (isEdit) { //Add validation
-            console.log(!Required())
+            //console.log(!Required())
             if (true) { // Assuming validation passes for this example
                 //focus('ofwbdate') working na to
                 updateData();
@@ -163,6 +164,15 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
 
 
     async function updateData() {
+        
+        if (getAppDetails.ofwfname === '' || getAppDetails.ofwlname === '' || getAppDetails.ofwbdate === '' || getAppDetails.ofwbdate === undefined) {
+            api['warning']({
+                message: 'Incomplete OFW Basic Information',
+                description: "OFW Details must have a First Name, Last Name and Birthdate before saving",
+            });
+            return;
+        }
+
         const data_loan = {
             LoanAppId: value.loanIdCode,
             BorrowersCode: value.ofwBorrowersCode,
@@ -182,14 +192,13 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             //ConsultantProfile: value.consultantfblink,
 
             ModUser: jwtDecode(token).USRID,
-
         }
-
 
         const data_ofw = {
             LoanAppId: value.loanIdCode,
             BorrowersCode: value.ofwBorrowersCode,
             Tab: 2,
+            DuplicateChecker: false,
             FirstName: value.ofwfname,
             MiddleName: value.ofwmname || '',
             LastName: value.ofwlname,
@@ -250,7 +259,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             FSalary: value.FSalary ? parseFloat(value.FSalary.toString().replaceAll(',', '')) : 0.00,
             PSalary: value.PSalary ? parseFloat(value.PSalary.toString().replaceAll(',', '')) : 0.00,
             Salary: value.ofwsalary ? parseFloat(value.ofwsalary.toString().replaceAll(',', '')) : 0.00,
-            ContractDate: value.ContractDate ? mmddyy(value.ContractDate) : null,
+            ContractDate: value.ContractDate ? mmddyy(value.ContractDate) : '',
             ContractDuration: value.ContractDuration ? parseInt(value.ContractDuration) : null,
             UnliContract: value.UnliContract ? 1 : 0,//Use when checkbox
             //departure date in the loan details
@@ -385,13 +394,14 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             AcbStayYears: value.AcbStayYears || 0,
             RecUser: jwtDecode(token).USRID
         };
+
         const checkLoan = {
             LoanAppId: value.loanIdCode,
             FirstName: value.ofwfname,
             LastName: value.ofwlname,
             Birthday: value.ofwbdate,
         }
-
+        console.log('Update ', data_loan, data_ofw)
         if (value.ofwfname !== null || value.ofwlname !== null) {
             await axios.post('/POST/P47CL', checkLoan)
                 .then((result) => {
@@ -418,7 +428,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
 
         if (!sepcoborrowfname && !addCoborrower) { //if no add coborrow and showaddcoborrow is true
             //Start to insert Acb and then update all
-         //   console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
+            //   console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
             try {
                 const result2 = await axios.post('/POST/P43AACB', acb_data);
                 api[result2.data.status]({
@@ -548,7 +558,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                     <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
                     <div className='flex flex-row'>
                         <div
-                            id="scrollable-container" 
+                            id="scrollable-container"
                             className={`w-full overflow-y-auto mx-2 mb-9 ${isEdit ? 'h-[70vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}
                         >
                             <div id='Loan-Details'>
@@ -574,12 +584,12 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
                             </div>
                         </div>
                         <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${isEdit ? 'h-[40vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}>
-                        <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+                            <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
                                 <Anchor
                                     replace
                                     affix={false}
                                     targetOffset={50}
-                                    getContainer={() => document.getElementById('scrollable-container')} 
+                                    getContainer={() => document.getElementById('scrollable-container')}
                                     items={[
                                         { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
                                         { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
@@ -597,7 +607,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
             ),
         },
         {
-            label: (<div className='flex flex-row'> <MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div> ),
+            label: (<div className='flex flex-row'> <MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>),
             key: 'NDI',
             children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={true} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />
         },
@@ -624,7 +634,7 @@ function CreditTabs({presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Upl
         {
             label: <div className='flex flex-row'><MdOutlineUpdate style={{ fontSize: '20px', marginRight: 5 }} /><span>Update Status</span></div>,
             key: 'last-update-by',
-            children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} setActiveKey={setActiveKey}/></div>,
+            children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} setActiveKey={setActiveKey} /></div>,
         },
     ].filter(Boolean);
 

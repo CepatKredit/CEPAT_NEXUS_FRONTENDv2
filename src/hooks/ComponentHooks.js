@@ -184,7 +184,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
           setIconVisible(true);
           setValidationMessage('');
           setStatus('');
-          receive(mmddyy(date))
+          receive(date? mmddyy(date) : '')
         }
       } else if (debouncedInput.length === 0 && (rendered === false || rendered === undefined)) {
         setStatus('error');
@@ -245,7 +245,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
     }
   }, [value, getAppDetails.MarriedPBCB, KeyName]);
 
-  const handleBlur = (date) => {
+  const handleBlur = (date) => { //Immedietly trigger update receive from context
     if (debouncedInput.length === 10 && CheckDateValid(date)) { //Inputvalue is not defined after initilized
       if (!hookDateValid(KeyName, date)) {
         setStatus('error');
@@ -255,13 +255,15 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
         setIconVisible(true);
         setValidationMessage('');
         setStatus('');
-        receive(mmddyy(date))
+        receive(date? mmddyy(date) : '')
       }
     } else if (debouncedInput.length === 0) {
       setStatus('error');
+      receive()
       setValidationMessage(dateMessage(KeyName, 'Empty'));
     } else {
       setStatus('error');
+      receive()
       setValidationMessage(dateMessage(KeyName, 'Invalid'));
     }
   };

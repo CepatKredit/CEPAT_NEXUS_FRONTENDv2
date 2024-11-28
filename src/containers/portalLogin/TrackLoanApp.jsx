@@ -36,7 +36,7 @@ function TrackLoanApp() {
       let guid = "";
       await axios
         .post("/POST/P46TL", {
-          LoanId: getAppDetails.loanIdCode,
+          LoanId: getAppDetails.loanIdCode? (getAppDetails.loanIdCode.length >= 13 ? getAppDetails.loanIdCode : `LA-OFW-${getAppDetails.loanIdCode}`) : '',
           BirthDate: getAppDetails.ofwbdate,
         })
         .then((result) => {
