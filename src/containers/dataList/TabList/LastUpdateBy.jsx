@@ -208,6 +208,13 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
 
                 try {
                     await axios.post('/POST/P139UCA', checkListData);
+                    if (getUpdate.Status === 'PRE-CHECK') {
+                        localStorage.setItem('SP', '/ckfi/pre-check')
+                    navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
+                    } else if (getUpdate.Status === 'FOR APPROVAL') {
+                        localStorage.setItem('SP', '/ckfi/for-approval')
+                    navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
+                    }
                     api['success']({
                         message: 'Application Status',
                         description: 'Status updated',
@@ -294,7 +301,6 @@ IF YOU HAVE ANY QUESTIONS OR NEED FURTHER ASSISTANCE, PLEASE FEEL FREE TO CONTAC
                         if((getUpdate.Status === 'SCREENING' || getUpdate.Status === 'FOR CALLBACK' || 
                                 getUpdate.Status === 'INTERVIEW')) {
                             localStorage.setItem('SP', '/ckfi/queue-bucket')
-                            console.log("INSIDE IF", `${localStorage.getItem('SP')}/${id}/${localStorage.getItem("activeTab")}`, "TAB", tabs);
                             navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);
                         } else {
                             navigate(`${localStorage.getItem('SP')}/${data.loanAppCode}/deduplication`);

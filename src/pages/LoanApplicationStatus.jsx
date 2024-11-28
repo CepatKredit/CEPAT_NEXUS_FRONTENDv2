@@ -68,7 +68,7 @@ function LoanApplicationTracker({ data }) {
     textAreaRef.current.select();
     document.execCommand("copy");
     e.target.focus();
-  
+
     messageApi.open({
       type: "info",
       content: "Copied to clipboard!",
@@ -105,9 +105,7 @@ function LoanApplicationTracker({ data }) {
         return { remarksEx: "" };
       }
       try {
-        const result = await axios.get(
-          `/GET/G37R/${getAppDetails.loanIdCode}`
-        );
+        const result = await axios.get(`/GET/G37R/${getAppDetails.loanIdCode}`);
         return result?.data?.list?.[0] || { remarksEx: "" };
       } catch (error) {
         console.error("Failed to fetch remarks:", error);
@@ -134,9 +132,9 @@ function LoanApplicationTracker({ data }) {
   }, [getAppDetails.ofwresidences]);
 
   React.useEffect(() => {
-    console.log("STATUS", getAppDetails.loanStatus, "DATAA",getRemarks.data)
+    console.log("STATUS", getAppDetails.loanStatus, "DATAA", getRemarks.data);
     ClientData.refetch();
-  }, [])
+  }, []);
 
   React.useEffect(() => {
     if (skipRender.current) {
@@ -663,7 +661,7 @@ function LoanApplicationTracker({ data }) {
     },
   ];
 
-  console.log()
+  console.log();
   return (
     <ConfigProvider
       theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}
@@ -683,16 +681,10 @@ function LoanApplicationTracker({ data }) {
           <div className="mb-6">
             <div className="flex flex-wrap justify-between items-center">
               <div className="flex items-center space-x-3">
-                <Button
+                {/* <Button
                   className="h-[2rem]"
                   type="text"
-                  icon={<LeftOutlined />}
-                  onClick={() => {
-                    // localStorage.removeItem('CLID');
-                    resetAppDetails();
-                    navigate("/");
-                  }}
-                />
+                /> */}
                 <Title level={3} className="h-[1.5rem]">
                   Loan Application Tracker
                 </Title>
@@ -710,7 +702,7 @@ function LoanApplicationTracker({ data }) {
               </div>
             </div>
           </div>
-          <div className="mb-6">
+          {/* <div className="mb-6"> */}
             <div className="flex flex-wrap justify-between items-start lg:items-center">
               <div className="w-full lg:w-auto mb-4 lg:mb-0">
                 <Typography.Text type="secondary">
@@ -750,8 +742,23 @@ function LoanApplicationTracker({ data }) {
                 />
               </div>
             </div>
-          </div>
+          {/* </div> */}
           <Tabs defaultActiveKey="Details" items={items} />
+          <div className="flex justify-center my-2">
+              <ConfigProvider theme={{ token: { colorPrimary: "#31B235" } }}>
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={() => {
+                    // localStorage.removeItem('CLID');
+                    resetAppDetails();
+                    navigate("/");
+                  }}
+                >
+                  Submit
+                </Button>
+              </ConfigProvider>
+            </div>
         </Content>
       </Layout>
     </ConfigProvider>

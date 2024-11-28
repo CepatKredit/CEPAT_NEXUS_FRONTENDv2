@@ -55,14 +55,15 @@ function DocxTable({
     setMaxFilesFlag(fileList.length - 1 > 20);
     CheckList.refetch();
   }
+  
+  React.useEffect(() => {    
+    if (fileList.length  > 20) {
+    setMaxFilesFlag(true);
+  } else {
+    setMaxFilesFlag(false);
+  }}, [fileList.length])
 
   async function handleBeforeUpload(file) {
-    const MAX_FILES = 20;
-    if (fileList.length + 1 > MAX_FILES) {
-      setMaxFilesFlag(true);
-    } else {
-      setMaxFilesFlag(false);
-    }
 
     let checkType;
     if (file.name.match(/\.(jpeg|jpg|png|gif|pdf)$/) !== null) {
@@ -98,10 +99,11 @@ function DocxTable({
       });
     }
 
-    setFileList((prev) => [
-      ...prev,
-      { uid: file.uid, name: file.name, status: "uploading" },
-    ]);
+    // setFileList((prev) => [
+    //   ...prev,
+    //   { uid: file.uid, name: file.name, status: "uploading" },
+    // ]);
+    setMaxFilesFlag(fileList.length + 1 > MAX_FILES);
     CheckList.refetch();
     return checkType || Upload.LIST_IGNORE;
   }
@@ -482,8 +484,6 @@ function DocxTable({
     display: false,
     file: "",
   });
-  console.log(maxFilesFlag, "FLAGG");
-  console.log(ClientId, "goFILE");
 
   return (
     <>

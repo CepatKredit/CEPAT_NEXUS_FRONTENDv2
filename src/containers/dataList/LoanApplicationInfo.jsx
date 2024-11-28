@@ -264,7 +264,7 @@ function LoanApplicationInfo() {
 
                 ]);
                 SET_LOADING_INTERNAL('ClientDataInfo', false);
-                return data;
+                return result.list;
             } catch (error) {
                 console.error('Error fetching data:', error);
                 SET_LOADING_INTERNAL('ClientDataInfo', false);

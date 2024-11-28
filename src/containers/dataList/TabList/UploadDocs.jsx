@@ -34,10 +34,11 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
 
     const token = localStorage.getItem('UTK');
     const FileListQuery = useQuery({
-        queryKey: ['FileListQuery'],
+        queryKey: ['FileListQuery', ClientId, FileType, toUpperText(Uploader)],
         queryFn: async () => {
             try {
-                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${Uploader}`)
+                if (ClientId !== undefined || "") return [];
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${toUpperText(Uploader)}`)
                 SET_LOADING_INTERNAL('UploadDocs', false);
                 return result.list
             } catch (error) {
@@ -46,13 +47,14 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 return [];
             }
         },
-        enabled: true
+        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+        retryDelay: 1000,
     })
 
-    /* React.useEffect(() => {
-         SET_LOADING_INTERNAL('UploadDocs', true)
-         FileListQuery.refetch();
-     }, [getAppDetails]);*/
+    //  React.useEffect(() => {
+    //      SET_LOADING_INTERNAL('UploadDocs', true)
+    //      FileListQuery.refetch();
+    //  }, [getAppDetails]);
 
     function GetFile(id, command) {
         let count = 0;
@@ -206,7 +208,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
 
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
-                clearFileList()
+                // clearFileList()
             }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} />
             <div className="space-x-[1.5rem]">
                 {
