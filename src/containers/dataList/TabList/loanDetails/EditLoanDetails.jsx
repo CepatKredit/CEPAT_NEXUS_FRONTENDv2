@@ -136,7 +136,7 @@ function EditLoanDetails({ data, receive, User }) {
                 />
             )}
             <SelectOpt
-                className_dmain="mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
+                className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
                 label={<>Loan Product <span className="text-red-500">*</span></>}
                 value={getAppDetails.loanProd}
@@ -172,7 +172,7 @@ function EditLoanDetails({ data, receive, User }) {
                 />
             ) : null*/}
             <SelectOpt
-                className_dmain="mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
+                className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
                 label={<>Loan Application Type <span className="text-red-500">*</span></>}
                 value={getAppDetails.loanType}
@@ -209,7 +209,7 @@ function EditLoanDetails({ data, receive, User }) {
 
                 />)}
             <SelectOpt
-                className_dmain="mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
+                className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
                 label={<>Purpose <span className="text-red-500">*</span></>}
                 placeHolder={'Purpose'}
@@ -226,7 +226,7 @@ function EditLoanDetails({ data, receive, User }) {
                 compname={'Loan Purpose'}
             />
             <InputOpt
-                className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                 className_label="font-bold"
                 label={<>{User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'} <span className="text-red-500">*</span></>}
                 placeHolder={User === 'Credit' ? 'Applied Loan Amount' : 'Loan Amount'}
@@ -246,7 +246,7 @@ function EditLoanDetails({ data, receive, User }) {
             />
 
             <SelectOpt
-                className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                 className_label="font-bold"
                 label={<>Applied Loan Terms <span className="text-red-500">*</span></>}
                 placeholder="Enter Loan Terms"
@@ -309,7 +309,7 @@ function EditLoanDetails({ data, receive, User }) {
                 )}
             {getAppDetails.channelId == 10 ? (<>
                 <SelectOpt
-                    className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                    className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
                     label={<>Loan Consultant <span className="text-red-500">*</span></>}
                     placeHolder={"Loan Consultant"}
@@ -328,10 +328,10 @@ function EditLoanDetails({ data, receive, User }) {
                     InvalidMsg={'Invalid Loan Consultant'}
                 />
 
-                {User === 'LC' || User === 'Credit'
+                {User !== 'LC' || User === 'Credit'
                     ? (<></>)
                     : (<LabeledInput_Contact
-                        className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                        className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                         className_label="font-bold"
                         value={getAppDetails.consultNumber}
                         receive={(e) => updateAppDetails({ name: 'consultNumber', value: e })}
@@ -343,7 +343,7 @@ function EditLoanDetails({ data, receive, User }) {
                 {User === 'MARKETING'
                     ? (<></>)
                     : (<LabeledInput
-                        className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                        className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                         className_label="font-bold"
                         value={getAppDetails.consultantfblink}
                         receive={(e) => updateAppDetails({ name: 'consultantfblink', value: e })}

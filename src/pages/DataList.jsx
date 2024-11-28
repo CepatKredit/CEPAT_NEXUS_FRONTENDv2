@@ -69,7 +69,7 @@ function DataList() {
   const paginatedData = filteredData?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="mx-[1%] my-[2%] xs1:my-[-30%] sm:my-[0%] md:my-[2%]">
+    <div className="mx-[1%] my-[2%] xs1:my-[-35%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[2%] overflow-hidden">
       <div className="flex flex-row gap-3">
         <MdOutlineManageAccounts style={{ fontSize: '40px', color: '#483d8b' }} hidden />
         <Typography.Title level={2}>{PathName(localStorage.getItem('SP'))}</Typography.Title>
@@ -93,7 +93,7 @@ function DataList() {
 
       <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
         <Spin spinning={AppDataListQuery.isFetching} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center" size="large">
-          <div className="flex flex-wrap gap-4 max-h-[400px] overflow-y-auto justify-center items-center">
+          <div className="flex flex-wrap gap-4 max-h-[420px]  xs1:max-h-[400px] xs2:max-h-[350px] xs:max-h-[420px] sm:max-h-[420px] overflow-y-auto justify-center items-center">
             <div className="w-full xs:w-[19rem] md:hidden">
               {paginatedData?.length === 0 ? (
                 <div className="w-full flex justify-center items-center mt-5">

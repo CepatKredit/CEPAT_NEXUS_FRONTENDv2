@@ -76,10 +76,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
 
             {contextHolder}
-            <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
+            <Flex className="w-full  mt-5 xs1:mt-2 2xl:mt-5" justify="center" gap="small" wrap>
 
                 <InputOpt
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>First Name <span className="text-red-500">*</span></>}
                     value={data.ofwfname}
@@ -94,7 +94,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     compname={'First Name'}
                 />
                 <InputOpt
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={'Middle Name'}
                     value={data.ofwmname}
@@ -110,7 +110,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     compname={'Middle Name'}
                 />
                 <InputOpt
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Last Name <span className="text-red-500">*</span></>}
                     value={data.ofwlname}
@@ -125,7 +125,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     compname={'Last Name'}
                 />
                 <LabeledSelect_Suffix
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Suffix <span className="text-red-500">*</span></>}
                     placeHolder='Suffix'
@@ -137,7 +137,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     rendered={rendered}
                 />
                 <DatePickerOpt
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Birthdate <span className="text-red-500">*</span></>}
                     placeHolder='Enter Birthdate'
@@ -156,7 +156,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 />
                 {User === 'Credit' && (
                     <LabeledInput //create default input field for display
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'Age'}
                         receive={(e) => updateAppDetails({ name: 'ofwage', value: e })}
@@ -167,7 +167,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
 
                 <LabeledSelect
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Gender <span className="text-red-500">*</span></>}
                     placeHolder='Gender'
@@ -180,7 +180,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     rendered={rendered}
                 />
                 <LabeledInput_OfwContact
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Mobile Number <span className="text-red-500">*</span></>}
                     placeHolder='Mobile Number'
@@ -195,7 +195,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledInput_OfwContact
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'Other Mobile Number'}
                         placeHolder='Other Mobile Number'
@@ -210,7 +210,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         required={false}
                     />)}
                 <InputOpt
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Email Address <span className="text-red-500">*</span></>}
                     placeHolder='Email Address'
@@ -225,7 +225,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
                 />
                 {User === 'Credit' ? (
-                    <div className="mt-5 w-[18.75rem] h-[3.875rem">
+                    <div className="mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem">
                         <label className="font-bold">Facebook Name / Profile <span className="text-red-500">*</span></label>
                         <input
                             type="text"
@@ -258,7 +258,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     </div>
                 ) : (
                     <LabeledInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeHolder='Facebook Name / Profile'
@@ -275,7 +275,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
                         placeHolder='Group Chat'
@@ -292,7 +292,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {(User === 'Credit' && addCoborrower) && (
                     <SelectOpt
-                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Relationship to Additional <span className="text-red-500">*</span></>}
                         value={data.benrelationship}
@@ -311,7 +311,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'Credit' && (
                     <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label='font-bold'
                         label={<>Religion <span className="text-red-500">*</span></>}
                         placeHolder='Religion'
@@ -324,7 +324,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'Credit' && (
                     <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         data={Overseas()}
                         label={<>PEP <span className="text-red-500">*</span></>}
@@ -336,7 +336,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                     />)}
                 <LabeledSelect
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Marital Status <span className="text-red-500">*</span></>}
                     placeHolder='Marital Status'
@@ -364,7 +364,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     User !== 'LC' && (
                         <>
                             <InputOpt
-                                className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                                className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
                                 label={<>Spouse Name <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Name'
@@ -380,7 +380,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             />
 
                             <DatePickerOpt
-                                className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                                className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
                                 label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Birthdate'
@@ -395,7 +395,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             />
                             {User === 'Credit' && (
                                 <LabeledSelect
-                                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                                     className_label={'font-bold'}
                                     label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
                                     placeHolder='Spouse Source of Income'
@@ -407,7 +407,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 />)}
                             {User === 'Credit' && (
                                 <InputOpt
-                                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                                     className_label={'font-bold'}
                                     label={<>Spouse Income <span className="text-red-500">*</span></>}
                                     placeHolder='Spouse Income'
@@ -426,7 +426,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'Credit' &&
                     (<SelectOpt
-                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
                         value={data.RelationshipBen}
@@ -460,7 +460,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'LC' && (
                     <LabeledInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         className_dsub={''}
                         label={"Dependents"}
@@ -493,14 +493,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     type={"present"}
                     disabled={isEdit}
                     category={"marketing"}
-                    className_dmain={`mt-5 w-full xs:w-[18.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                    className_dmain={`mt-5 xs1:mt-2 2xl:mt-5 xs1:mt-2 2xl:mt-5 xs1:mt-2 2xl:mt-5 w-full xs:w-[18.75rem] sm:w-[18.75rem] md:w-[18.75rem] lg:w-[18.75rem] xl:w-[18.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
                         } 3xl:w-[20.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     vertical_algin={true}
                     rendered={rendered}
                 />
                 <LabeledSelect
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Type of Residence <span className="text-red-500">*</span></>}
                     placeHolder='Type of Residence'
@@ -513,7 +513,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 />
                 {data.ofwresidences === 3 || data.ofwresidences === 2 ? (
                     <InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>{data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
                         value={data.ofwrent}
@@ -531,7 +531,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Landmark <span className="text-red-500">*</span></>}
                         placeHolder='Landmark'
@@ -548,7 +548,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'Credit' && (
                     <InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Proof of Billing Remarks <span className="text-red-500">*</span></>}
                         placeHolder='Remarks'
@@ -566,7 +566,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledInput_LengthStay
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Length of Stay <span className="text-red-500">*</span></>}
                         disabled={isEdit}
@@ -580,7 +580,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledSelect_CollectionArea
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'Collection Area'}
                         placeHolder='Collection Area'
@@ -610,7 +610,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"permanent"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                        className_dmain={`mt-5 xs1:mt-2 2xl:mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
                             } 3xl:w-[20.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         vertical_algin={true}
@@ -632,7 +632,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         type={"provincial"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={`mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                        className_dmain={`mt-5 xs1:mt-2 2xl:mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
                             } 3xl:w-[20.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         vertical_algin={true}
@@ -646,7 +646,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledSelect_ValidId
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'Valid ID Type'}
                         placeHolder='Valid ID Type'
@@ -661,7 +661,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'ID Number'}
                         placeHolder='ID type Number'
@@ -682,7 +682,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<SelectOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem] mt-[-0.1rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem] mt-[-0.1rem]'}
                         className_label={'font-bold'}
                         label={<>Country of Employment for OFW or Joining Port for SEAFARER <span className="text-red-500">*</span></>}
                         placeHolder='Country'
@@ -702,7 +702,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     User === 'Credit' ? (
 
                          <SelectOpt
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             label={<>Job Category <span className="text-red-500">*</span></>}
                             value={data.JobCategory}
@@ -720,7 +720,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />
                     ) : (
                         <LabeledInput_Fullname
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={<>Job Title / Position <span className="text-red-500">*</span></>}
                             readOnly={isEdit}
@@ -732,7 +732,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />))}
                 {User === 'Credit' && (
                     <SelectOpt
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             label={<>Position <span className="text-red-500">*</span></>}
                             value={data.ofwjobtitle}
@@ -751,7 +751,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     )}
                 {User === 'Credit' && (
                     <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Employment Status <span className="text-red-500">*</span></>}
                         placeHolder='Employment Status'
@@ -764,7 +764,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL') && (
                     <InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Principal Employer <span className="text-red-500">*</span></>}
                         placeHolder='Principal Employer'
@@ -781,7 +781,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     User === 'LC'
                         ? (<></>)
                         : (<LabeledSelectAgency
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={<>{User === 'Credit' ? 'Agency' : 'Company/ Employer / Agency Name'} <span className="text-red-500"> *</span></>}
                             placeHolder={User === 'Credit' ? 'Agency Name' : 'Company/ Employer / Agency Name'}
@@ -796,7 +796,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />))}
                 {User === 'Credit' && (
                     <LabeledInput_ForeignCurrency
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Salary in Foreign Currency <span className="text-red-500">*</span></>}
                         placeHolder='Foreign Salary'
@@ -812,7 +812,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User !== 'Credit' &&
                     (<InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Salary <span className="text-red-500">*</span></>}
                         placeHolder='Salary'
@@ -829,7 +829,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {/*User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={'Agency Address'}
                             placeHolder='Agency Address'
@@ -839,7 +839,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={'License Validity'}
                             placeHolder='License Validity'
@@ -849,7 +849,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={'Status'}
                             placeHolder='Status'
@@ -859,7 +859,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={'Contact Person'}
                             placeHolder='Contact Person'
@@ -869,7 +869,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={'Designation'}
                             placeHolder='Designation'
@@ -879,7 +879,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)*/}
                 {User === 'Credit' && (
                     <DatePickerOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Contract Date <span className="text-red-500">*</span></>}
                         placeHolder='Contract Date'
@@ -896,7 +896,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />)}
                 {User === 'Credit' && (<>
                     <LabeledInput_Numeric
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Contract Duration <span className="text-red-500">*</span></>}
                         rendered={rendered}
@@ -1151,7 +1151,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {(User === 'MARKETING' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL'))) && (
                     <>
                         <LabeledSelect
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={<>Highest Educational Attainment <span className="text-red-500">*</span></>}
                             placeHolder='Highest Educational Attainment'
@@ -1163,7 +1163,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             showSearch={!isEdit}
                         />
                         <InputOpt
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                             className_label={'font-bold'}
                             label={'Course'}
                             placeHolder='Course'
@@ -1180,7 +1180,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<InputOpt
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'School'}
                         placeHolder='School'

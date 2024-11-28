@@ -131,7 +131,7 @@ function SideNav() {
                 </div>
               </center>
             )}
-            <div className="overflow-y-hidden hover:overflow-y-auto h-[90vh]">
+            <div className="overflow-y-hidden hover:overflow-y-auto h-[100vh] xs1:h-[100vh] xs:h-[90vh]">
               <ConfigProvider
                 theme={{
                   components: {
@@ -187,7 +187,7 @@ function SideNav() {
                     <MenuFoldOutlined style={{ fontSize: "1.3rem" }} />
                   )
                 }
-                className="hidden xs1:hidden sm:hidden lg:block"
+                className="hidden xs1:hidden sm:hidden md:block"
                 onClick={() => setCollapsed(!collapsed)}
                 style={{
                   width: 50,

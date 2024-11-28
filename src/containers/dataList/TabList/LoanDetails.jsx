@@ -207,9 +207,9 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
             <div
                 className={`w-full ${(User === 'MARKETING' || User === 'LC') ?
                         (isEdit ?
-                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[58vh] 3xl:h-[64vh] overflow-y-auto'
+                            'xs1:h-[65vh] xs2:h-[55vh] xs:h-[69vh] sm:h-[44vh] md:h-[30vh] lg:h-[30vh] xl:h-[49vh] 2xl:h-[58vh] 3xl:h-[64vh] overflow-y-auto'
                             :
-                            'xs:h-[42vh] sm:h-[44vh] md:h-[46vh] lg:h-[70vh] xl:h-[49vh] 2xl:h-[48vh] 3xl:h-[56vh] overflow-y-auto'
+                            'xs1:h-[55vh] xs2:h-[45vh] xs:h-[50vh] sm:h-[44vh] md:h-[28vh] lg:h-[25vh] xl:h-[49vh] 2xl:h-[48vh] 3xl:h-[56vh] overflow-y-auto'
                         ) : ''}`}>
                 {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                     <ViewLoanDetails data={data} User={User} />
