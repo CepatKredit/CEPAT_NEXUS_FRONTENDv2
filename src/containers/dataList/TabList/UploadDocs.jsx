@@ -28,6 +28,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             const result = await GET_LIST(`/GET/G16FT/${FileType}`)
             return result.list
         },
+        enabled: true,
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
     })
@@ -46,15 +47,15 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 return [];
             }
         },
-        enabled:true,
+        enabled: true,
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
     })
 
-     React.useEffect(() => {
-         SET_LOADING_INTERNAL('UploadDocs', true)
-         FileListQuery.refetch();
-     }, []);
+    React.useEffect(() => {
+        SET_LOADING_INTERNAL('UploadDocs', true)
+        FileListQuery.refetch();
+    }, []);
 
     function GetFile(id, command) {
         let count = 0;
@@ -117,7 +118,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     Others <span className='text-rose-500' />
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
-                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' ModUser={ModUser}/>
+                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' ModUser={ModUser} />
                 </div>
             },
         ]
