@@ -103,8 +103,11 @@ function LcTabs({ value, ClientId, FileType, Uploader, BorrowerId, presaddress, 
     ];
     return (
         <div className="relative w-full">
-            <div className="absolute top-[-10px] right-0 mt-1 xs1:mt-[-40px] hidden md:hidden lg:mt-1 2xl:mt-1 mr-4 text-right">
-                <div className={`inline-flex font-bold items-center px-10 py-2 rounded-full ${getStatusBackgroundColor(value.loanAppStat)}`}>{value.loanAppStat} </div>
+            <div className="absolute top-[-10px] right-0 mt-1 xs1:mt-[-40px] sm:block md:hidden lg:block lg:mt-1 2xl:mt-1 mr-4 xs:mr-0 lg:mr-2 xl:mr-4 text-right">
+                <div className={`inline-flex font-bold items-center px-10 py-2 
+                                    xs1:px-5 sm:px-4 md:px-6 lg:px-6 xl:px-8 2xl:px-10
+                                    xs1:py-1 sm:py-1 md:py-2 lg:py-2 xl:py-2
+                                    rounded-full text-centerrounded-full ${getStatusBackgroundColor(value.loanAppStat)}`}>{value.loanAppStat} </div>
             </div>
             <Tabs
                 onChange={onChangeTab}

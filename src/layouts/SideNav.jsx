@@ -63,14 +63,14 @@ function SideNav() {
   const [searchValue, setSearchValue] = React.useState("");
   const queryClient = useQueryClient();
 
-  const { width } = useWindowDimensions(); 
-  
+  const { width } = useWindowDimensions();
+
 
   React.useEffect(() => {
-    if (width <= 768) {  
-      setCollapsed(true); 
+    if (width <= 768) {
+      setCollapsed(true);
     } else {
-      setCollapsed(false); 
+      setCollapsed(false);
     }
   }, [width]);
   const handleSearchClick = () => {
@@ -186,7 +186,6 @@ function SideNav() {
                     <MenuFoldOutlined style={{ fontSize: "1.3rem" }} />
                   )
                 }
-                className="hidden xs1:hidden sm:hidden md:block"
                 onClick={() => setCollapsed(!collapsed)}
                 style={{
                   width: 50,
@@ -196,7 +195,7 @@ function SideNav() {
                   color: "white",
                 }}
               />
-              <div className="flex flex-row items-center hidden md:flex"> 
+              <div className="flex flex-row items-center hidden md:flex">
                 <div className="mx-2 my-[4px]">
                   <span className="font-bold text-lg text-stone-100">
                     Search
@@ -205,21 +204,19 @@ function SideNav() {
                 <Space.Compact>
                   <Select
                     placeholder="filter search"
-                    style={{ width: 110 }}
+                    className="w-[110px] md:w-[120px] lg:w-[140px] xl:w-[160px] 2xl:w-[110px]"
                     options={[
                       { label: "Loan ID", value: "loanID" },
-                      {
-                        label: "Full Name",
-                        value: "name",
-                      },
+                      { label: "Full Name", value: "name" },
                     ]}
                   />
+
                   <Input
                     placeholder="search..."
                     allowClear
-                    style={{ width: 170 }}
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
+                    className="w-[170px] md:w-[130px] lg:w-[150px] xl:w-[170px] 2xl:w-[170px]"
                   />
                   <Button
                     type="default"

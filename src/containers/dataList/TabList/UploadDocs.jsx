@@ -46,15 +46,15 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 return [];
             }
         },
-        enabled:true,
+        enabled: true,
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
     })
 
-     React.useEffect(() => {
-         SET_LOADING_INTERNAL('UploadDocs', true)
-         FileListQuery.refetch();
-     }, []);
+    React.useEffect(() => {
+        SET_LOADING_INTERNAL('UploadDocs', true)
+        FileListQuery.refetch();
+    }, []);
 
     function GetFile(id, command) {
         let count = 0;
@@ -117,7 +117,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     Others <span className='text-rose-500' />
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
-                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' ModUser={ModUser}/>
+                    <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' ModUser={ModUser} />
                 </div>
             },
         ]
@@ -213,19 +213,17 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             <div className="space-x-[1.5rem]">
                 {
                     !DISABLE_STATUS(localStorage.getItem('SP'), GetStatus) ? (
-                        (GetStatus === "LACK OF DOCUMENTS" || GetStatus === "RECEIVED") && (
-                            <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                                <Button
-                                    size="large"
-                                    className="ml-6 mb-2 bg-[#3b0764]"
-                                    type="primary"
-                                    onClick={() => setModalStatus(true)}
-                                    disabled={User === 'Lp'}
-                                >
-                                    Upload Document
-                                </Button>
-                            </ConfigProvider>
-                        )
+                        <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                            <Button
+                                size="large"
+                                className="ml-6 mb-2 bg-[#3b0764]"
+                                type="primary"
+                                onClick={() => setModalStatus(true)}
+                                disabled={User === 'Lp'}
+                            >
+                                Upload Document
+                            </Button>
+                        </ConfigProvider>
                     ) : null
                 }
                 <div className={classname}>
