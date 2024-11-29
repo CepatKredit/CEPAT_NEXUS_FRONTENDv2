@@ -167,9 +167,9 @@ function Charges({ LoanAppId, data, User, }) {
         let netProceeds = 0;
 
         if (chargetype === 2) {
-            netProceeds = approvedAmount + parseFloat(others);
+            netProceeds = approvedAmount - parseFloat(others);
         } else if (chargetype === 1) {
-            netProceeds = approvedAmount + parseFloat(totalCharges);
+            netProceeds = approvedAmount - parseFloat(totalCharges);
         }
 
 
