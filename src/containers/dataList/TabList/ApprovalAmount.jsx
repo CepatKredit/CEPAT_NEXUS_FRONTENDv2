@@ -152,10 +152,10 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     
             const result = await UpdateLoanDetails(payload); // Call the API
             if (result.data.status === "success") {
-                api.success({
+              /*  api.success({
                     message: 'Success',
                     description: result.data.description || 'ApprvTerms updated successfully!',
-                });
+                });*/
             } else {
                 api.warning({
                     message: 'Error: Failed to Update ApprvTerms',

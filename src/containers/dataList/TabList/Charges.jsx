@@ -146,7 +146,7 @@ function Charges({ LoanAppId, data, User, }) {
             IBFTFee +
             others
         ).toFixed(2);
-    
+
 
 
         // Default value for PNValue calculation
@@ -165,42 +165,58 @@ function Charges({ LoanAppId, data, User, }) {
         // console.log('Approved', approvedAmount, '*', terms, '*', (interestRate/100), '+', approvedAmount, '=')
 
         // Compute netProceeds based on ChargeType
+        const sumForNetProceddsLTP = parseFloat(totalCharges) + parseFloat(processingFee) + parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee + others;
+        const sumForNetProceddsAmort = parseFloat(processingFee) + parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee + others;
+
+
+        /*// Log detailed computations
+        console.log("Processing Fee:", processingFee);
+        console.log("CRF:", crf);
+        console.log("Notarial:", Notarial);
+        console.log("PNDST:", pndst);
+        console.log("Service Fee:", serviceFee);
+        console.log("DocuSign:", DocuSign);
+        console.log("IBFT Fee:", IBFTFee);
+        console.log("Others:", others);
+        console.log("Total Charges:", totalCharges);
+
+        // Log the results of computations
+        console.log("Sum for Net Proceeds LTP:", sumForNetProceddsLTP);
+        console.log("Sum for Net Proceeds Amort:", sumForNetProceddsAmort);*/
+
+
         let netProceeds = 0;
 
-        if (chargetype === 1) {
-            netProceeds = parseFloat(totalCharges) > 0
-                ? approvedAmount + parseFloat(totalCharges)
-                : approvedAmount; // If TotalCharges is 0, only use ApprovedAmount
-        } else if (chargetype === 2) {
-            netProceeds = parseFloat(others) > 0
-                ? approvedAmount + parseFloat(others)
-                : approvedAmount; // If Others is 0, only use ApprovedAmount
+        if (chargetype === 2) {
+            netProceeds = approvedAmount + parseFloat(sumForNetProceddsLTP);
+        } else if (chargetype === 1) {
+            netProceeds = approvedAmount + parseFloat(sumForNetProceddsAmort);
         }
 
 
-       // Total charges
-    const chargesSum =  parseFloat(processingFee) +  parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee;
-    const baseAmount = approvedAmount + chargesSum;
+        // Total charges
+        const chargesSum = parseFloat(processingFee) + parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee;
+        const baseAmount = approvedAmount + chargesSum;
 
-  //  console.log('chargessum', baseAmount);
-   // console.log('chargessum', chargesSum);
-    // Compute Monthly Amortization
-    let monthlyAmortization = 0;
-    if (chargetype === 1 && gracePeriod === 2) {
-        monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / terms;
-    } else if (chargetype === 1 && gracePeriod === 1) {
-        monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / (terms - 1);
-    } else if (chargetype === 2 && gracePeriod === 2) {
-        monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / terms;
-    } else if (chargetype === 2 && gracePeriod === 1) {
-        monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / (terms - 1);
-      /* console.log('yes amort,,,,,,', 'approveamount', approvedAmount, '+', 'chargessum', chargesSum, '=', 'total:', baseAmount,
-          'then base Amount', baseAmount, 'X', terms, 'X', '0.025',  'then +', baseAmount, 'then / 11 = amort is ', monthlyAmortization
-        )*/
-    }
+        //  console.log('chargessum', baseAmount);
+        // console.log('chargessum', chargesSum);
+        // Compute Monthly Amortization
+        let monthlyAmortization = 0;
+        if (chargetype === 1 && gracePeriod === 2) {
+            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / terms;
+        } else if (chargetype === 1 && gracePeriod === 1) {
+            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / (terms - 1);
+        } else if (chargetype === 2 && gracePeriod === 2) {
+            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / terms;
+        } else if (chargetype === 2 && gracePeriod === 1) {
+            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / (terms - 1);
+            /* console.log('yes amort,,,,,,', 'approveamount', approvedAmount, '+', 'chargessum', chargesSum, '=', 'total:', baseAmount,
+                'then base Amount', baseAmount, 'X', terms, 'X', '0.025',  'then +', baseAmount, 'then / 11 = amort is ', monthlyAmortization
+              )*/
+        }
 
 
-        
+
 
 
         // Optionally, you can set the processingFee in the state as well
@@ -286,7 +302,7 @@ function Charges({ LoanAppId, data, User, }) {
 
     React.useEffect(() => {
         console.log('termssssssssss', getAppDetails.ApprvTerms)
-    },[])
+    }, [])
 
     // Function to generate options for the terms dropdown (always 3 to 24)
     const generateTermOptions = () => {
@@ -434,7 +450,7 @@ function Charges({ LoanAppId, data, User, }) {
                                     >
                                         {generateTermOptions()}
                                     </Select>
-                                    
+
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 mt-2 justify-center items-center">
