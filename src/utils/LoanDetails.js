@@ -438,7 +438,7 @@ export const UpdateLoanDetails = async ({
     if ((acbfname && (acbfname === FirstName)) || (acblname && (acblname === LastName))) {
         console.log('Update Additional Co-Borrower Kaiser...')
     }*/
-    console.log('UPDATE DETAILS ',data)
+    //console.log('UPDATE DETAILS ',data)
     if (check === 0) {
         await axios.post('/POST/P48UD', data)
             .then((result) => {

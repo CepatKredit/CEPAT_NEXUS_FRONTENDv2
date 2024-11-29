@@ -86,15 +86,15 @@ function EditLoanDetails({ data, receive, User }) {
                 <SelectOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
-                    value={getAppDetails.loanBranch}
-                    receive={(e) => updateAppDetails({ name: 'loanBranch', value: e })}
+                    value={getAppDetails.loanBranchId}
+                    receive={(e) => updateAppDetails({ name: 'loanBranchId', value: e })}
                     label={User === 'Credit' ? 'Loan Branch' : 'Assigned Branch'}
                     category={User !== 'Credit' ? 'MARKETING' : undefined}
                     options={branchFilter(User !== 'Credit' && GetData('ROLE').toString() === '20')}
                     rendered={rendered}
                     disabled={User !== 'LC'? true : false}
 
-                    KeyName={'loanBranch'}
+                    KeyName={'loanBranchId'}
                     EmptyMsg={'Loan Branch Required'}
                     InvalidMsg={'Invalid Loan Branch'}
                     group={''}
@@ -274,9 +274,9 @@ function EditLoanDetails({ data, receive, User }) {
 
                 {User !== 'LC' || User === 'Credit'
                     ? (<></>)
-                    : (<>{/*
-                        <InputOpt
-                        className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                    : (<>
+                      {/*  <InputOpt
+                            className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                             className_label="font-bold"
                             label={'Loan Consultant No.'}
                             readOnly={isEdit}
@@ -286,13 +286,13 @@ function EditLoanDetails({ data, receive, User }) {
                             rendered={rendered}
                             KeyName={'consultNumber'}
                             format={'+639'}
-                            group={'Contact'}
+                            group={'ContactNo'}
                             compname={'Loan Consultant No.'}
-
-                            required={false}
-                        />*/} <LabeledInput_Contact
-                        className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                        className_label="font-bold"
+                           // required={false}
+                        /> */}
+                         <LabeledInput_Contact
+                            className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                            className_label="font-bold"
                             value={getAppDetails.consultNumber}
                             receive={(e) => updateAppDetails({ name: 'consultNumber', value: e })}
                             label={'Loan Consultant No.'}
@@ -300,6 +300,8 @@ function EditLoanDetails({ data, receive, User }) {
                             required={false}
                             rendered={rendered}
                         />
+                       
+                       
                     </>)}
                 {User === 'MARKETING'
                     ? (<></>)

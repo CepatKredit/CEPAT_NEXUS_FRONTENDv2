@@ -104,7 +104,7 @@ function ViewLoanDetails({ data, User }) {
       ),
       children: data.ofwDeptDate || "",
     },
-    User !== "LC" && {
+    User === "LC" && {
       key: "5",
       label: (
         <span

@@ -391,6 +391,7 @@ function LoanDetails({ loanrendered, setloanrendered, direct }) {
             />
           </div>
           {GetData("ROLE") !== null ? (
+          GetData("ROLE").toString() === "20" ||
             GetData("ROLE").toString() === "30" ||
               GetData("ROLE").toString() === "40" ? (
               <div className="flex flex-col justify-center items-center w-[850px] ">

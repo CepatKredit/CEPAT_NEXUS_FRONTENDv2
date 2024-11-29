@@ -78,7 +78,7 @@ function DatePickerOpt({
             autoCapitalize='off'
             aria-autocomplete='off'
             autoSave='off'
-
+            autoComplete="off"
             size="large"
             placeholder={placeHolder}
             value={inputValue}
@@ -96,7 +96,7 @@ function DatePickerOpt({
             autoCapitalize='off'
             aria-autocomplete='off'
             autoSave='off'
-
+            autoComplete='off'
             size="large"
             style={{ width: "100%" }}
             open={isDatePickerOpen}

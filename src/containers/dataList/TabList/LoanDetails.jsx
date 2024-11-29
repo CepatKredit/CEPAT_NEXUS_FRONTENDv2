@@ -5,7 +5,7 @@ import { Button, notification, ConfigProvider, Spin } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { mmddyy } from '@utils/Converter';
+import { mmddyy, toDecrypt } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
 import { GetBranchCode, GetPurposeId } from '@api/base-api/BaseApi';
 import StatusRemarks from './StatusRemarks';
@@ -82,7 +82,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
     }, [getTab]);
 
     const Lc_valid = !data.loanProd || ((data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') && !data.ofwDeptDate)
-        || !data.loanPurpose || !data.loanType || !data.loanAmount || !data.loanTerms;
+        || !data.loanPurpose || !data.loanType || !data.loanAmount || !data.loanTerms || !data.loanBranch;
 
     const Marketing_valid = !data.loanProd || ((data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') && !data.ofwDeptDate)
         || !data.loanPurpose || !data.loanType || !data.loanBranch || !data.loanAmount || !data.channel || !data.loanTerms;
@@ -121,15 +121,15 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
                     Tab: 1,
                     BorrowersCode: data.ofwBorrowersCode,
                     Dpa: 1,
-                    Product: data.loanProd || null,
-                    BranchId: data.loanBranchId || null,
-                    Purpose: data.loanPurpose || null,
-                    LoanType: data.loanType || null,
+                    Product: data.loanProd || 0,
+                    BranchId: data.loanBranchId || 0,
+                    Purpose: data.loanPurpose || 0,
+                    LoanType: data.loanType || 0,
                     DepartureDate: data.ofwDeptDate ? mmddyy(data.ofwDeptDate) : '',
                     Amount: data.loanAmount ? parseFloat(data.loanAmount.toString().replaceAll(',', '')) : 0.00,
-                    Terms: data.loanTerms || null,
-                    Channel: data.channelId || null, //check
-                    Consultant: data.consultName || '',
+                    Terms: data.loanTerms || 0,
+                    Channel: data.channelId || 0, //check
+                    Consultant: toDecrypt(localStorage.getItem('USRFN')) || '',
                     ConsultantNo: data.consultNumber || '',
                     ConsultantProfile: data.consultantfblink || '',
                     // ReferredBy: null,
@@ -146,6 +146,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
                     queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true })
                     setEdit(!isEdit);
                 } else {
+                    console.log(result)
                     api['warning']({
                         message: 'Error: Failed to Update',
                         description: "Fail Connection",
@@ -153,8 +154,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
                 }
 
             } else {
-                //var BranchCode = await GetBranchCode(data.loanBranch);
-                //var PurposeId = await GetPurposeId(data.loanPurpose);
+
                 const value = {
                     LoanAppId: data.loanIdCode,
                     Tab: 1,
@@ -163,7 +163,7 @@ function LoanDetails({ getTab, classname, data, receive, User, creditisEdit }) {
                     DepartureDate: data.ofwDeptDate ? mmddyy(data.ofwDeptDate) : '',
                     Purpose: data.loanPurpose || null,
                     LoanType: data.loanType || null,
-                    BranchId: data.loanBranchId || null,
+                    BranchId: data.loanBranchId || 0,
                     Amount: data.loanAmount ? parseFloat(data.loanAmount.toString().replaceAll(',', '')) : 0.00,
                     Channel: data.channelId || null,
                     Terms: data.loanTerms || null,
