@@ -24,7 +24,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     const clearFileList = FileUpload((state) => state.clearList)
     const [fetchTime, setFetchTime] = React.useState(null);
     const DocListQuery = useQuery({
-        queryKey: ['DocListQuery'],
+        queryKey: ['DocListQuery',FileType],
         queryFn: async () => {
             const result = await GET_LIST(`/GET/G16FT/${FileType}`)
             return result.list

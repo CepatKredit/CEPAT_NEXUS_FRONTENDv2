@@ -76,18 +76,15 @@ function SideNav() {
 
   const getRightPosition = () => {
     if (width < 768) {
-      // For smaller screens, adjust positioning as needed
-      return 'right-2';  // Change to a smaller margin for xs/sm
+      return 'right-2'; 
     }
     if (width < 1024) {
-      // For medium screens (md), set a larger margin
-      return 'right-4';
+      return 'right-2';
     }
     if (width < 1280) {
-      // For large screens (lg), adjust again
-      return 'right-5';
+      return 'right-2';
     }
-    return 'right-10';  // For extra-large screens (xl and above)
+    return 'right-5'; 
   };
   const handleSearchClick = () => {
     const token = localStorage.getItem("UTK");
@@ -146,7 +143,7 @@ function SideNav() {
                 </div>
               </center>
             )}
-            <div className="overflow-y-hidden hover:overflow-y-auto h-[100vh] xs1:h-[100vh] xs:h-[91.2vh]">
+            <div className="overflow-y-hidden hover:overflow-y-auto h-[100vh] xs1:h-[86.1vh] xs:h-[89.1vh] 2xl:h-[89.1vh]">
               <ConfigProvider
                 theme={{
                   components: {
@@ -232,7 +229,7 @@ function SideNav() {
                       allowClear
                       value={searchValue}
                       onChange={(e) => setSearchValue(e.target.value)}
-                      className="w-[170px] md:w-[130px] lg:w-[150px] xl:w-[170px] 2xl:w-[170px]"
+                      className="w-[170px] md:w-[110px] lg:w-[150px] xl:w-[170px] 2xl:w-[170px]"
                     />
                     <Button
                       type="default"
