@@ -1,13 +1,13 @@
 import React from 'react';
 import { Flex } from 'antd';
-import LabeledInput_Contact from '@components/marketing/LabeledInput_Contact';
 import { LoanType, Hckfi, LoanTerms } from '@utils/FixedData';
-import dayjs from 'dayjs';
 import { GetData } from '@utils/UserData';
 import { useDataContainer } from '@context/PreLoad';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import SelectOpt from '@components/optimized/SelectOpt';
 import InputOpt from '@components/optimized/InputOpt';
+import DatePickerOpt from '@components/optimized/DatePickerOpt';
+import { disableDate_deployment } from '@utils/Formatting';
 function EditLoanDetails({ data, receive, User }) {
     const [isEdit, setEdit] = React.useState(false);
     const isFirstRender = React.useRef(true);
@@ -83,23 +83,23 @@ function EditLoanDetails({ data, receive, User }) {
                     compname={'Loan Application ID'}
                     required={false}
                 />)}
-                <SelectOpt
-                    className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                    className_label="font-bold"
-                    value={getAppDetails.loanBranchId}
-                    receive={(e) => updateAppDetails({ name: 'loanBranchId', value: e })}
-                    label={User === 'Credit' ? 'Loan Branch' : 'Assigned Branch'}
-                    category={User !== 'Credit' ? 'MARKETING' : undefined}
-                    options={branchFilter(User !== 'Credit' && GetData('ROLE').toString() === '20')}
-                    rendered={rendered}
-                    disabled={User !== 'LC'? true : false}
+            <SelectOpt
+                className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
+                className_label="font-bold"
+                value={getAppDetails.loanBranchId}
+                receive={(e) => updateAppDetails({ name: 'loanBranchId', value: e })}
+                label={User === 'Credit' ? 'Loan Branch' : 'Assigned Branch'}
+                category={User !== 'Credit' ? 'MARKETING' : undefined}
+                options={branchFilter(User !== 'Credit' && GetData('ROLE').toString() === '20')}
+                rendered={rendered}
+                disabled={User !== 'LC' ? true : false}
 
-                    KeyName={'loanBranchId'}
-                    EmptyMsg={'Loan Branch Required'}
-                    InvalidMsg={'Invalid Loan Branch'}
-                    group={''}
-                    compname={'Loan Branch'}
-                />
+                KeyName={'loanBranchId'}
+                EmptyMsg={'Loan Branch Required'}
+                InvalidMsg={'Invalid Loan Branch'}
+                group={''}
+                compname={'Loan Branch'}
+            />
             <SelectOpt
                 className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
@@ -116,6 +116,25 @@ function EditLoanDetails({ data, receive, User }) {
                 group={'Default'}
                 compname={'Loan Product'}
             />
+            {(User !== 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')) && (
+                <DatePickerOpt
+                    className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
+                    className_label={'font-bold'}
+                    label={<>OFW Departure Date <span className="text-red-500">*</span></>}
+                    value={getAppDetails.ofwDeptDate}
+                    receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
+                    //disabled={!isEdit && !(getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')}
+                    placeHolder="Departure Date"
+                    disabledate={disableDate_deployment}
+                    rendered={rendered}
+
+                    EmptyMsg={'Departure Date Required'}
+                    InvalidMsg={'Invalid Departure Date'}
+                    KeyName={'ofwDeptDate'}
+                    group={'TodayOnward'}
+                    compname={'Departure Date'}
+
+                />)}
             <SelectOpt
                 className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
@@ -275,7 +294,7 @@ function EditLoanDetails({ data, receive, User }) {
                 {User !== 'LC' || User === 'Credit'
                     ? (<></>)
                     : (<>
-                      {/*  <InputOpt
+                        <InputOpt
                             className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                             className_label="font-bold"
                             label={'Loan Consultant No.'}
@@ -288,20 +307,8 @@ function EditLoanDetails({ data, receive, User }) {
                             format={'+639'}
                             group={'ContactNo'}
                             compname={'Loan Consultant No.'}
-                           // required={false}
-                        /> */}
-                         <LabeledInput_Contact
-                            className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
-                            className_label="font-bold"
-                            value={getAppDetails.consultNumber}
-                            receive={(e) => updateAppDetails({ name: 'consultNumber', value: e })}
-                            label={'Loan Consultant No.'}
-                            type='contact'
                             required={false}
-                            rendered={rendered}
                         />
-                       
-                       
                     </>)}
                 {User === 'MARKETING'
                     ? (<></>)

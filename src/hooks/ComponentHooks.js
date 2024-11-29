@@ -3,7 +3,7 @@ import { mmddyy } from '@utils/Converter';
 import { debouncef } from '@utils/Debounce';
 import { CharacterLimit, DateFormat, FormatComma, FormatCurrency, inputFormat, Uppercase } from '@utils/Formatting';
 import { dateMessage, inputMessage } from '@utils/MessageValidationList';
-import { checkAgeisValid, CheckAmountValid, CheckContactNo, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
+import { checkAgeisValid, CheckAmountValid, CheckContactNo, CheckDateValid, checkDeployisValid, CheckEmailValid, CheckFBLinkValid, CheckIncomeValid, CheckRentAmortValid } from '@utils/Validations';
 import dayjs from 'dayjs';
 import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'react';
 
@@ -18,10 +18,12 @@ function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, Em
   //LETTERS
   if (group === 'Email' && CheckEmailValid(input)) {//For Email
     return { valid: true, value: input, errmsg: '' }; //As-is
-  } else if (group === 'Contact' && input !== '' && CheckContactNo(input, format)) { //For letters / number
+  } else if (group === 'ContactNo' && /*input !== '' &&*/ CheckContactNo(input, format)) { //For Numbers
     return { valid: true, value: inputFormat(format, input), errmsg: '' }; //Change format to uppercase
   } else if (group === 'Uppercase' && input !== '') { //For letters / number
     return { valid: true, value: Uppercase(input), errmsg: '' }; //Change format to uppercase
+  } else if (group === 'FBLink' && input !== '' && CheckFBLinkValid(input)) { //FBlink Format
+    return { valid: true, value: inputFormat(format, input), errmsg: '' }; //Change format to http link
   } else if (group === 'Default' && input !== '') { //For No-case sensitive
     return { valid: true, value: input, errmsg: '' }; //As-is
     //CURRENCY
@@ -119,8 +121,8 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
   };
 }
 
-export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg, setRendered) {
-  const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
+export function DateComponentHook(value, rendered, receive, KeyName, setRendered, InvalidMsg, EmptyMsg) {
+  const { getAppDetails } = useContext(LoanApplicationContext)
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const [inputValue, setInputValue] = useState(value ? dayjs(value).format('MM-DD-YYYY') : '');
@@ -128,14 +130,6 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
   const [datePickerValue, setDatePickerValue] = useState(value ? dayjs(value, 'MM-DD-YYYY') : '');
   const [debouncedInput, setDebouncedInput] = useState(inputValue);
   const [validationMessage, setValidationMessage] = useState('');
-
-  /* affected all clearing
-    useEffect(() => {
-        setStatus("");
-        setIconVisible(false)
-        setInputValue('')
-        setDebouncedInput('')
-    }, [!getAppDetails.dataPrivacy])*/
 
   const debounceChange = useCallback((formattedValue) => {
     setDebouncedInput(formattedValue);
@@ -172,7 +166,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
         if (!hookDateValid(KeyName, date)) {
           setRendered(true);
           setStatus('error');
-          setValidationMessage(dateMessage(KeyName, 'Invalid'));
+          setValidationMessage(InvalidMsg);
 
         } else {
           setRendered(true);
@@ -187,11 +181,11 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
       } else if (rendered === true && debouncedInput.length === 0) {
         setRendered(true);
         setStatus('error');
-        setValidationMessage(dateMessage(KeyName, 'Empty'));
+        setValidationMessage(EmptyMsg);
       } else {
         setRendered(true);
         setStatus('error');
-        setValidationMessage(dateMessage(KeyName, 'Invalid'));
+        setValidationMessage(InvalidMsg);
         receive()
       }
     }, 300);
@@ -222,7 +216,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
         setInputValue(value ? dayjs(value).format('MM-DD-YYYY') : '');
         if (!hookDateValid(KeyName, value)) {
           setStatus('error');
-          setValidationMessage(dateMessage(KeyName, 'Invalid'));
+          setValidationMessage(InvalidMsg);
         } else {
           setStatus('');
           setValidationMessage('');
@@ -233,7 +227,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
           setDatePickerValue('');
           setInputValue('');
           setStatus('error');
-          setValidationMessage(dateMessage(KeyName, 'Empty'));
+          setValidationMessage(EmptyMsg);
         }
       }
       setRendered(true); // Ensure it reflects the rendered state
@@ -244,7 +238,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
     if (debouncedInput.length === 10 && CheckDateValid(date)) { //Inputvalue is not defined after initilized
       if (!hookDateValid(KeyName, date)) {
         setStatus('error');
-        setValidationMessage(dateMessage(KeyName, 'Invalid'));
+        setValidationMessage(EmptyMsg);
         receive()
       } else {
         setIconVisible(true);
@@ -255,11 +249,11 @@ export function DateComponentHook(value, rendered, receive, KeyName, notValidMsg
     } else if (debouncedInput.length === 0) {
       setStatus('error');
       receive()
-      setValidationMessage(dateMessage(KeyName, 'Empty'));
+      setValidationMessage(EmptyMsg);
     } else {
       setStatus('error');
       receive()
-      setValidationMessage(dateMessage(KeyName, 'Invalid'));
+      setValidationMessage(InvalidMsg);
     }
   };
 
@@ -318,7 +312,6 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     if (maxchar && value.length > maxchar) {
       value = value.slice(0, maxchar);
     }
-
     const res = hookInputValid(KeyName, value, comp_name, format, group, InvalidMsg, EmptyMsg);
     statusValidation(res.valid, res.value, res.errmsg, true, 800);
   }

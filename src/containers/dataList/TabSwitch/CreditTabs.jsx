@@ -486,7 +486,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             if (!value || !value.VesselIMO || value.VesselIMO.length < 6) return null;
             try {
                 const result = await axios.get(`/GET/G113SVD/${value.VesselIMO}`);
-                updateAppDetails({ name: 'VesselInfo', value: result.data });
+                updateAppDetails({ name: 'VesselInfo', value: typeof result.data === 'string'? result.data : 'No Gathered Data!' });
             } catch (error) {
                 updateAppDetails({ name: 'VesselInfo', value: 'No Gathered Data!' });
                 // console.log(error);

@@ -17,10 +17,8 @@ function DatePickerOpt({
   className_label,
   className_dsub,
   KeyName,
-  notValidMsg,
   disabledate,
 
-  group,
   compname,
   InvalidMsg = 'Date is not Valid',
   EmptyMsg = `${compname} Required`,
@@ -39,7 +37,7 @@ function DatePickerOpt({
     setDatePickerOpen,
     validationMessage,
     handleBlur,
-  } = DateComponentHook(value, rendered, receive, KeyName, notValidMsg, setRendered, InvalidMsg, EmptyMsg);
+  } = DateComponentHook(value, rendered, receive, KeyName, setRendered, InvalidMsg, EmptyMsg);
 
   const inputRef = useRef(null);
   const { setfocus } = useContext(LoanApplicationContext)
@@ -114,7 +112,7 @@ function DatePickerOpt({
         )}
         {isRendered && ((required || required === undefined) && status === 'error') && (
           <div className="text-xs text-red-500 pt-1 pl-2">
-            {validationMessage || notValidMsg}
+            {validationMessage}
           </div>
         )}
       </div>

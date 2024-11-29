@@ -17,7 +17,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
-    const { SET_LOADING_INTERNAL, getAppDetails } = React.useContext(LoanApplicationContext);
+    const { SET_LOADING_INTERNAL, getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext);
     const suffixRef = React.useRef();
     const { setCount } = getDependentsCount();
     const saveButtonRef = React.useRef();
@@ -41,11 +41,8 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     const [getStat, setStat] = React.useState(true);
     React.useEffect(() => {
         getRelatives.refetch()
+        
     }, [BorrowerId]);
-
-    /*React.useEffect(() => {
-        console.log('isofwito....', isOfw);
-    },[getAppDetails])*/
 
     const getRelatives = useQuery({
         queryKey: ['getRelatives', BorrowerId, isOfw],
@@ -62,10 +59,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
                     WorkEducStatus: '',
                     Relationship: '',
                 }];
-
                 result.data.list?.map((x, i) => {
-
-
                     dataList.push({
                         key: x.code,
                         no: i + 1,
@@ -79,7 +73,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
                 });
 
                 const updatedCount = dataList.length;
-                setCount(updatedCount);
+                updateAppDetails({ name: 'ofwdependents', value: updatedCount - 1 })
                 onUpdateCount(updatedCount);
                 SET_LOADING_INTERNAL('DependentsTABLE', false);
                 return dataList;

@@ -17,7 +17,7 @@ export const generateLoanDataLc = (getAppDetails) => {
         ConsultantNo: getAppDetails.consultNumber,
         ConsultantProfile: getAppDetails.consultProfile ? ChangeText(getAppDetails.consultProfile) : '',
         RecUser: jwtDecode(token).USRID,
-        Branch: 11,
+        Branch: getAppDetails.loanBranch || 11,
         // Additional fields for LC
         FirstName: getAppDetails.ofwfname,
         MiddleName: getAppDetails.ofwmname,

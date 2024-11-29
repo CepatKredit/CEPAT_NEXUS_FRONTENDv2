@@ -44,16 +44,13 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const { TextArea } = Input;
     const [api, contextHolder] = notification.useNotification();
     const [relativesCount, setRelativesCount] = useState(0);
+    const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
 
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
     }, []);
 
-    useEffect(() => {
-        receive({ name: 'ofwdependents', value: Count - 1 });
-    }, [Count]);
-
-    const [getAge, setAge] = useState(data.ofwbdate)
+    const [getAge, setAge] = useState(getAppDetails.ofwbdate ? Age(getAppDetails.ofwbdate) : 0)
 
     const rendered = true;
     function generateYearOptions(maxYears) {
@@ -64,13 +61,29 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
         return options;
     }
 
-    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST } = useDataContainer();
+    const handleDoubleClick = (() => {
+        let clickCount = 0;
+        return (e) => {
+            if (!isEdit && getAppDetails.ofwfblink && getAppDetails.ofwfblink.startsWith('https://')) {
+                e.preventDefault();
+                clickCount++;
+                setTimeout(() => {
+                    if (clickCount >= 2) {
+                        window.open(getAppDetails.ofwfblink, '_blank');
+                    }
+                    clickCount = 0; // Reset click count after handling
+                }, 300); // Adjust timeout for double-click detection
+            }
+        };
+    })();
+
+    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX } = useDataContainer();
+
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
     const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
-    const { getAppDetails, updateAppDetails, queryDetails } = useContext(LoanApplicationContext)
     const JOB_CATEGORY = JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
-    const JOB_TITLE = JobTitle(data.JobCategory) ? JobTitle(data.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
-
+    const JOB_TITLE = JobTitle(getAppDetails.JobCategory) ? JobTitle(getAppDetails.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
+    const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
     return (
         <div>
             {(User === 'MARKETING' || User === 'LC') && (
@@ -105,59 +118,96 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>First Name <span className="text-red-500">*</span></>}
-                    value={data.ofwfname}
+                    value={getAppDetails.ofwfname}
                     placeHolder='First Name'
                     receive={(e) => updateAppDetails({ name: 'ofwfname', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
+
                     KeyName={'ofwfname'}
+                    format={'Default'}
                     group={'Uppercase'}
                     compname={'First Name'}
+
+                    EmptyMsg={'First Name Required'}
+                    InvalidMsg={'Invalid First Name'}
                 />
                 <InputOpt
                     className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={'Middle Name'}
-                    value={data.ofwmname}
+                    value={getAppDetails.ofwmname}
                     placeHolder='Middle Name'
                     receive={(e) => updateAppDetails({ name: 'ofwmname', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={false}
-                    required={false}
+
                     KeyName={'ofwmname'}
+                    format={'Default'}
                     group={'Uppercase'}
                     compname={'Middle Name'}
+
+                //EmptyMsg={'First Name Required'}
+                //InvalidMsg={'Invalid First Name'}
                 />
                 <InputOpt
                     className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Last Name <span className="text-red-500">*</span></>}
-                    value={data.ofwlname}
+                    value={getAppDetails.ofwlname}
                     placeHolder='Last Name'
                     receive={(e) => updateAppDetails({ name: 'ofwlname', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
+
                     KeyName={'ofwlname'}
+                    format={'Default'}
                     group={'Uppercase'}
                     compname={'Last Name'}
+
+                    EmptyMsg={'Last Name Required'}
+                    InvalidMsg={'Invalid Last Name'}
                 />
-                <LabeledSelect_Suffix
+                <SelectOpt
                     className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Suffix <span className="text-red-500">*</span></>}
-                    placeHolder='Suffix'
-                    value={data.ofwsuffix}
-                    receive={(e) => updateAppDetails({ name: 'ofwsuffix', value: e })}
-                    disabled={isEdit}
-                    showSearch
-                    isEdit={isEdit}
+                    value={getAppDetails.ofwsuffix}
                     rendered={rendered}
+                    showSearch
+                    receive={(e) => updateAppDetails({ name: 'ofwsuffix', value: e })}
+                    options={OFW_SUFFIX}
+
+                    EmptyMsg={'Suffix Required'}
+                    InvalidMsg={'Invalid Suffix'}
+                    KeyName={'ofwsuffix'}
+                    group={'Default'}
+                    compname={'Suffix'}
+
+                />
+                <DatePickerOpt
+                    className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_label={'font-bold'}
+                    label={<>OFW Departure Date <span className="text-red-500">*</span></>}
+                    value={getAppDetails.ofwDeptDate}
+                    receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
+                    //disabled={!isEdit && !(getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')}
+                    placeHolder="Departure Date"
+                    disabledate={disableDate_deployment}
+                    rendered={rendered}
+
+                    EmptyMsg={'Departure Date Required'}
+                    InvalidMsg={'Invalid Departure Date'}
+                    KeyName={'ofwDeptDate'}
+                    group={'TodayOnward'}
+                    compname={'Departure Date'}
+
                 />
                 <DatePickerOpt
                     className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -167,48 +217,68 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => {
                         updateAppDetails({ name: 'ofwbdate', value: e });
                         setAge(Age(e))
-                        //receive({ name: 'age', value: calculateAge(e) });
                     }}
-                    value={data.ofwbdate}
+                    value={getAppDetails.ofwbdate}
                     category={'marketing'}
                     disabled={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
+
+                    EmptyMsg={'Birthdate Required'}
+                    InvalidMsg={'Invalid Birthdate'}
                     KeyName={'ofwbdate'}
-                    notValidMsg={'Birthdate Required'}
+                    group={'AgeLimit20'}
+                    compname={'Birthdate'}
+
                 />
                 {User === 'Credit' && (
-                    <LabeledInput //create default input field for display
+                    <InputOpt
                         className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={'Age'}
-                        receive={(e) => updateAppDetails({ name: 'ofwage', value: e })}
                         value={getAge ? getAge : 0}
-                        readOnly={true}
                         placeHolder='Age'
+                        receive={(e) => updateAppDetails({ name: 'ofwage', value: e })}
+                        category={'marketing'}
+                        readOnly={isEdit}
+                        isEdit={isEdit}
                         rendered={rendered}
-                    />)}
+                        required={false}
 
-                <LabeledSelect
+                        KeyName={'ofwlname'}
+                        format={'Default'}
+                        group={'Uppercase'}
+                        compname={'Last Name'}
+
+                    //EmptyMsg={'Age Required'}
+                    //InvalidMsg={'Invalid Age'}
+                    />
+                )}
+                <SelectOpt
                     className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Gender <span className="text-red-500">*</span></>}
-                    placeHolder='Gender'
-                    value={data.ofwgender}
-                    data={Gender()}
-                    receive={(e) => updateAppDetails({ name: 'ofwgender', value: e })}
-                    category={'marketing'}
-                    disabled={isEdit}
-                    isEdit={isEdit}
+                    value={getAppDetails.ofwgender}
                     rendered={rendered}
+                    showSearch
+                    receive={(e) => updateAppDetails({ name: 'ofwgender', value: e })}
+                    options={Gender()}
+
+                    EmptyMsg={'Gender Required'}
+                    InvalidMsg={'Invalid Gender'}
+                    KeyName={'ofwgender'}
+                    group={'Default'}
+                    compname={'Gender'}
+
                 />
+
                 <LabeledInput_OfwContact
                     className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
                     label={<>Mobile Number <span className="text-red-500">*</span></>}
                     placeHolder='Mobile Number'
-                    data={data}
-                    value={data.ofwmobile}
+                    data={getAppDetails}
+                    value={getAppDetails.ofwmobile}
                     receive={(e) => updateAppDetails({ name: 'ofwmobile', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
@@ -222,8 +292,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={'Other Mobile Number'}
                         placeHolder='Other Mobile Number'
-                        data={data}
-                        value={data.ofwothermobile}
+                        data={getAppDetails}
+                        value={getAppDetails.ofwothermobile}
                         receive={(e) => updateAppDetails({ name: 'ofwothermobile', value: e })}
                         category={'marketing'}
                         type='contact'
@@ -237,48 +307,46 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     className_label={'font-bold'}
                     label={<>Email Address <span className="text-red-500">*</span></>}
                     placeHolder='Email Address'
-                    value={data.ofwemail}
+                    value={getAppDetails.ofwemail}
                     receive={(e) => updateAppDetails({ name: 'ofwemail', value: e })}
                     category={'marketing'}
                     isEdit={isEdit}
                     rendered={rendered}
+
                     KeyName={'ofwemail'}
+                    format={'Default'}
                     group={'Email'}
-                    compname={'Email Address'}
+                    compname={'Email'}
+
+                    EmptyMsg={'Email Required'}
+                    InvalidMsg={'Invalid Email'}
 
                 />
-                {User === 'Credit' ? (
-                    <div className="mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem">
-                        <label className="font-bold">Facebook Name / Profile <span className="text-red-500">*</span></label>
-                        <input
-                            type="text"
-                            className={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.ofwfblink && data.ofwfblink.startsWith('https://')
-                                ? 'text-blue-500 underline'
-                                : 'text-black'
-                                }`}
-                            placeholder="Facebook Name / Profile"
-                            value={data.ofwfblink || ''}
-                            readOnly={isEdit}
-                            onClick={(e) => {
-                                if (!isEdit && data.ofwfblink && data.ofwfblink.startsWith('https://')) {
-                                    e.preventDefault();
-                                    window.open(
-                                        data.ofwfblink,
-                                        '_blank'
-                                    );
-                                }
-                            }}
-                            onChange={(e) => {
-                                if (!isEdit) {
-                                    const inputValue = e.target.value.trim();
-                                    const formattedValue = inputValue.startsWith('https://')
-                                        ? inputValue
-                                        : `https://www.facebook.com/${inputValue}`;
-                                    updateAppDetails({ name: 'ofwfblink', value: formattedValue });
-                                }
-                            }}
-                        />
-                    </div>
+                {User === 'Credit' ? (<>
+                    <InputOpt
+                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_label={'font-bold'}
+                        className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && getAppDetails.ofwfblink && getAppDetails.ofwfblink.startsWith('https://')
+                            ? 'text-blue-500 underline'
+                            : 'text-black'
+                            }`}
+                        label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
+                        placeholder="Facebook Name / Profile"
+                        value={getAppDetails.ofwfblink}
+                        receive={(e) => updateAppDetails({ name: 'ofwfblink', value: e })}
+                        category={'marketing'}
+                        rendered={rendered}
+                        onClick={handleDoubleClick}
+
+                        KeyName={'ofwfblink'}
+                        format={'Http'}
+                        group={'FBLink'}
+                        compname={'Facebook Name / Profile'}
+
+                        EmptyMsg={'Facebook Name / Profile Required'}
+                        InvalidMsg={'Invalid Facebook Name / Profile'}
+                    /></>
+
                 ) : (
                     <LabeledInput
                         className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -286,7 +354,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeHolder='Facebook Name / Profile'
                         readOnly={isEdit}
-                        value={data.ofwfblink || ''}
+                        value={getAppDetails.ofwfblink || ''}
                         receive={(e) => {
                             const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
                             updateAppDetails({ name: 'ofwfblink', value: formattedValue });
@@ -302,7 +370,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
                         placeHolder='Group Chat'
-                        value={data.ofwgroupchat}
+                        value={getAppDetails.ofwgroupchat}
                         receive={(e) => updateAppDetails({ name: 'ofwgroupchat', value: e })}
                         category={'marketing'}
                         readOnly={isEdit}
@@ -318,7 +386,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Relationship to Additional <span className="text-red-500">*</span></>}
-                        value={data.benrelationship}
+                        value={getAppDetails.benrelationship}
                         rendered={rendered}
                         placeHolder='Relationship to Additional'
                         category={'marketing'}
@@ -339,7 +407,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Religion <span className="text-red-500">*</span></>}
                         placeHolder='Religion'
                         data={Religion()}
-                        value={data.Religion}
+                        value={getAppDetails.Religion}
                         receive={(e) => updateAppDetails({ name: 'Religion', value: e })}
                         disabled={isEdit}
                         showSearch
@@ -353,7 +421,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>PEP <span className="text-red-500">*</span></>}
                         placeHolder='PEP'
                         readOnly={isEdit}
-                        value={data.PEP}
+                        value={getAppDetails.PEP}
                         receive={(e) => updateAppDetails({ name: 'PEP', value: e })}
                         disabled={isEdit}
                         rendered={rendered}
@@ -364,18 +432,18 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     label={<>Marital Status <span className="text-red-500">*</span></>}
                     placeHolder='Marital Status'
                     disabled={isEdit}
-                    value={data.ofwmstatus}
+                    value={getAppDetails.ofwmstatus}
                     data={MaritalStatus()}
                     receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
 
-                {(User === 'Credit' || User === 'MARKETING') && (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
+                {(User === 'Credit' || User === 'MARKETING') && (getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
                     <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
                         <Checkbox
-                            checked={data.MarriedPBCB}
+                            checked={getAppDetails.MarriedPBCB}
                             onClick={() => {
-                                updateAppDetails({ name: 'MarriedPBCB', value: !data.MarriedPBCB });
+                                updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
                             }}
                             disabled={isEdit}
                         >
@@ -383,7 +451,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         </Checkbox>
                     </div>
                 )}
-                {(data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
+                {(getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
                     User !== 'LC' && (
                         <>
                             <InputOpt
@@ -393,10 +461,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 placeHolder='Spouse Name'
                                 readOnly={isEdit}
                                 receive={(e) => updateAppDetails({ name: 'ofwspouse', value: e })}
-                                value={data.ofwspouse}
+                                value={getAppDetails.ofwspouse}
                                 isEdit={isEdit}
                                 rendered={rendered}
-                                disabled={User === 'Credit' && data.MarriedPBCB}
+                                disabled={User === 'Credit' && getAppDetails.MarriedPBCB}
                                 KeyName={'ofwspouse'}
                                 group={'Uppercase'}
                                 compname={'Spouse Name'}
@@ -408,10 +476,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Birthdate'
                                 receive={(e) => updateAppDetails({ name: 'ofwspousebdate', value: e })}
-                                value={data.ofwspousebdate}
+                                value={getAppDetails.ofwspousebdate}
                                 isEdit={isEdit}
                                 rendered={rendered}
-                                disabled={User === 'Credit' && data.MarriedPBCB}
+                                disabled={User === 'Credit' && getAppDetails.MarriedPBCB}
                                 notValidMsg={'Spouse Birthdate Required'}
                                 KeyName={'ofwspousebdate'}
                                 category={'marketing'}
@@ -423,7 +491,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
                                     placeHolder='Spouse Source of Income'
                                     disabled={isEdit}
-                                    value={data.SpSrcIncome}
+                                    value={getAppDetails.SpSrcIncome}
                                     data={SpouseSourceIncome()}
                                     receive={(e) => updateAppDetails({ name: 'SpSrcIncome', value: e })}
                                     rendered={rendered}
@@ -435,7 +503,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                     label={<>Spouse Income <span className="text-red-500">*</span></>}
                                     placeHolder='Spouse Income'
                                     readOnly={isEdit}
-                                    value={data.SpIncome}
+                                    value={getAppDetails.SpIncome}
                                     receive={(e) => updateAppDetails({ name: 'SpIncome', value: e })}
                                     category={'marketing'}
                                     rendered={rendered}
@@ -452,11 +520,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
-                        value={data.RelationshipBen}
+                        value={getAppDetails.RelationshipBen}
                         rendered={rendered}
                         placeHolder='Relationship to the Beneficiary'
                         category={'marketing'}
-                        disabled={data.MarriedPBCB}
+                        disabled={getAppDetails.MarriedPBCB}
                         showSearch
                         isEdit={isEdit}
                         receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
@@ -474,7 +542,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className="w-[18.75rem] mt-4 font-bold"
                     >
                         <Input
-                            value={data.ofwdependents || '0'}
+                            value={getAppDetails.ofwdependents || '0'}
                             className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
                             readOnly
                             placeholder="No. of Dependents"
@@ -487,7 +555,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         className_dsub={''}
                         label={"Dependents"}
-                        value={data.ofwdependents || '0'}
+                        value={getAppDetails.ofwdependents || '0'}
                         receive={(e) => { updateAppDetails({ name: 'ofwdependents', value: e }); }}
                         digits={2}
                         placeHolder={'No.of Dependents'}
@@ -498,7 +566,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User !== 'LC' && (
                     <div className="w-full mt-[2rem] mx-auto">
-                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} isOfw={1} />
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={getAppDetails} isOfw={1} />
                     </div>
                 )}
 
@@ -510,7 +578,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             <Flex className='w-full' justify='center' gap='small' wrap>
                 <AddressGroup_Component
                     api={api}
-                    data={data}
+                    data={getAppDetails}
                     receive={(e) => updateAppDetails(e)}
                     presaddress={(e) => presaddress(e)}
                     type={"present"}
@@ -531,24 +599,24 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => updateAppDetails({ name: 'ofwresidences', value: e })}
                     data={Residences()}
                     category={'marketing'}
-                    value={data.ofwresidences}
+                    value={getAppDetails.ofwresidences}
                     rendered={rendered}
                 />
-                {data.ofwresidences === 3 || data.ofwresidences === 2 ? (
+                {getAppDetails.ofwresidences === 3 || getAppDetails.ofwresidences === 2 ? (
                     <InputOpt
                         className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
-                        label={<>{data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
-                        value={data.ofwrent}
+                        label={<>{getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
+                        value={getAppDetails.ofwrent}
                         receive={(e) => { updateAppDetails({ name: 'ofwrent', value: e }) }}
                         category={'direct'}
-                        placeHolder={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
+                        placeHolder={getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         rendered={rendered}
 
                         KeyName={'ofwrent'}
                         format={'Currency'}
                         group={'Rent_Amort'}
-                        compname={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
+                        compname={getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                     />
                 ) : null}
                 {User === 'LC'
@@ -579,7 +647,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         readOnly={isEdit}
                         rendered={rendered}
-                        value={data.OfwPoBRemarks}
+                        value={getAppDetails.OfwPoBRemarks}
                         receive={(e) => updateAppDetails({ name: 'OfwPoBRemarks', value: e })}
 
                         KeyName={'OfwPoBRemarks'}
@@ -594,8 +662,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Length of Stay <span className="text-red-500">*</span></>}
                         disabled={isEdit}
                         category={'marketing'}
-                        value_year={data.ofwlosYear}
-                        value_month={data.ofwlosMonth}
+                        value_year={getAppDetails.ofwlosYear}
+                        value_month={getAppDetails.ofwlosMonth}
                         receiveY={(e) => updateAppDetails({ name: 'ofwlosYear', value: e })}
                         receiveM={(e) => updateAppDetails({ name: 'ofwlosMonth', value: e })}
                         rendered={rendered}
@@ -610,10 +678,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         showSearch={true}
                         readOnly={isEdit}
-                        value_prov={data.ofwPresProv}
-                        value_mun={data.ofwPresMunicipality}
-                        value={data.collectionarea}
-                        get_presprov={data.ofwPresProv}
+                        value_prov={getAppDetails.ofwPresProv}
+                        value_mun={getAppDetails.ofwPresMunicipality}
+                        value={getAppDetails.collectionarea}
+                        get_presprov={getAppDetails.ofwPresProv}
                         receive={(e) => updateAppDetails({ name: 'collectionarea', value: e })}
                         rendered={rendered}
                         disabled={true}
@@ -627,7 +695,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     ? (<></>)
                     : (<AddressGroup_Component
                         api={api}
-                        data={data}
+                        data={getAppDetails}
                         receive={(e) => updateAppDetails(e)}
                         presaddress={(e) => presaddress(e)}
                         type={"permanent"}
@@ -649,7 +717,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     ? (<></>)
                     : (<AddressGroup_Component
                         api={api}
-                        data={data}
+                        data={getAppDetails}
                         receive={(e) => updateAppDetails(e)}
                         presaddress={(e) => presaddress(e)}
                         type={"provincial"}
@@ -676,7 +744,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         disabled={isEdit}
                         receive={(e) => updateAppDetails({ name: 'ofwvalidid', value: e })}
                         category={'marketing'}
-                        value={data.ofwvalidid}
+                        value={getAppDetails.ofwvalidid}
                         rendered={rendered}
                         required={false}
                         showSearch
@@ -690,7 +758,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='ID type Number'
                         readOnly={isEdit}
                         receive={(e) => updateAppDetails({ name: 'ofwidnumber', value: e })}
-                        value={data.ofwidnumber}
+                        value={getAppDetails.ofwidnumber}
                         isEdit={isEdit}
                         rendered={rendered}
                         required={false}
@@ -711,7 +779,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Country'
                         disabled={isEdit}
                         category={'marketing'}
-                        value={data.ofwcountry}
+                        value={getAppDetails.ofwcountry}
                         receive={(e) => updateAppDetails({ name: 'ofwcountry', value: e })}
                         rendered={rendered}
                         showSearch
@@ -728,7 +796,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             label={<>Job Category <span className="text-red-500">*</span></>}
-                            value={data.JobCategory}
+                            value={getAppDetails.JobCategory}
                             rendered={rendered}
                             placeHolder='Job Category'
                             category={'marketing'}
@@ -748,7 +816,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             label={<>Job Title / Position <span className="text-red-500">*</span></>}
                             readOnly={isEdit}
                             category={'marketing'}
-                            value={data.ofwjobtitle}
+                            value={getAppDetails.ofwjobtitle}
                             placeHolder='Job/Position'
                             receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
                             rendered={rendered}
@@ -758,7 +826,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Position <span className="text-red-500">*</span></>}
-                        value={data.ofwjobtitle}
+                        value={getAppDetails.ofwjobtitle}
                         rendered={rendered}
                         placeHolder='Position'
                         category={'marketing'}
@@ -783,20 +851,20 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Employment Status <span className="text-red-500">*</span></>}
                         placeHolder='Employment Status'
                         data={EmploymentStatus()}
-                        value={data.EmpStatus}
+                        value={getAppDetails.EmpStatus}
                         receive={(e) => updateAppDetails({ name: 'EmpStatus', value: e })}
                         disabled={isEdit}
                         showSearch
                         rendered={rendered}
                     />)}
-                {User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL') && (
+                {User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL' || getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL') && (
                     <InputOpt
                         className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
                         className_label={'font-bold'}
                         label={<>Principal Employer <span className="text-red-500">*</span></>}
                         placeHolder='Principal Employer'
                         readOnly={isEdit}
-                        value={data.PEmployer}
+                        value={getAppDetails.PEmployer}
                         receive={(e) => updateAppDetails({ name: 'PEmployer', value: e })}
                         rendered={rendered}
 
@@ -804,7 +872,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         group={'Uppercase'}
                         compname={'Principal Employer'}
                     />)}
-                {(User !== 'Credit' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL'))) && (
+                {(User !== 'Credit' || (User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL' || getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL'))) && (
                     User === 'LC'
                         ? (<></>)
                         : (<LabeledSelectAgency
@@ -817,7 +885,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 option?.label?.toString().toLowerCase().includes(input.toLowerCase())}
                             disabled={isEdit}
                             readOnly={User === 'Credit' ? isEdit : false}
-                            value={data.ofwcompany}
+                            value={getAppDetails.ofwcompany}
                             receive={(e) => updateAppDetails({ name: 'ofwcompany', value: e })}
                             rendered={rendered}
                         />))}
@@ -827,7 +895,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={<>Salary in Foreign Currency <span className="text-red-500">*</span></>}
                         placeHolder='Foreign Salary'
-                        data={data}
+                        data={getAppDetails}
                         receive={(e) => updateAppDetails({ name: 'FCurrency', value: e })}
                         receiveForeign={(e) => updateAppDetails({ name: 'FSalary', value: e })}
                         receiveConvert={(e) => updateAppDetails({ name: 'PSalary', value: e })}
@@ -844,7 +912,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Salary <span className="text-red-500">*</span></>}
                         placeHolder='Salary'
                         readOnly={isEdit}
-                        value={data.ofwsalary}
+                        value={getAppDetails.ofwsalary}
                         receive={(e) => updateAppDetails({ name: 'ofwsalary', value: e })}
                         category={'direct'}
                         rendered={rendered}
@@ -911,7 +979,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Contract Date <span className="text-red-500">*</span></>}
                         placeHolder='Contract Date'
                         receive={(e) => updateAppDetails({ name: 'ContractDate', value: e })}
-                        value={data.ContractDate}
+                        value={getAppDetails.ContractDate}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
@@ -928,7 +996,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Contract Duration <span className="text-red-500">*</span></>}
                         rendered={rendered}
                         receive={(e) => updateAppDetails({ name: 'ContractDuration', value: e })}
-                        value={data.ContractDuration}
+                        value={getAppDetails.ContractDuration}
                         placeHolder={'No. of Months'}
                         category={'marketing'}
                         digits={2}
@@ -951,11 +1019,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     <div className="col-span-6 flex justify-center items-center mt-8">
                         <Checkbox
                             disabled={isEdit}
-                            checked={data.UnliContract}
+                            checked={getAppDetails.UnliContract}
                             onChange={() => {
                                 updateAppDetails({
                                     name: 'UnliContract',
-                                    value: !data.UnliContract,
+                                    value: !getAppDetails.UnliContract,
                                 });
                             }} />
                         <label className="ml-2 font-bold">Unlimited Contract</label>
@@ -963,13 +1031,13 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 </div>)}
             <Flex className='w-full' justify='center' gap='small' wrap>
 
-                {(User === 'Credit' && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL')) && (
+                {(User === 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')) && (
                     <DatePickerOpt
                         KeyName={'ofwDeptDate'}
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={<>OFW Departure Date <span className="text-red-500">*</span></>}
-                        value={data.ofwDeptDate}
+                        value={getAppDetails.ofwDeptDate}
                         receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
                         //disabled={!isEdit && !(getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')}
                         placeHolder="Departure Date"
@@ -985,7 +1053,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Years as OFW or Seafarer'
                         disabled={isEdit}
                         category={'marketing'}
-                        value={data.YrsOfwSeafarer}
+                        value={getAppDetails.YrsOfwSeafarer}
                         receive={(e) => updateAppDetails({ name: 'YrsOfwSeafarer', value: e })}
                         showSearch={true}
                         optionFilterProp="children"
@@ -993,7 +1061,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         data={generateYearOptions(50)}
                     />)}
-                {User === 'Credit' && (data.loanProd === '0303-VA' || data.loanProd === '0303-VL') && (
+                {User === 'Credit' && (getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL') && (
                     <>
                         <InputOpt
                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
@@ -1001,7 +1069,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             label={<>Name of Vessel <span className="text-red-500">*</span></>}
                             placeHolder='Name of Vessel'
                             readOnly={isEdit}
-                            value={data.VesselName}
+                            value={getAppDetails.VesselName}
                             receive={(e) => updateAppDetails({ name: 'VesselName', value: e })}
                             category={'direct'}
                             rendered={rendered}
@@ -1016,7 +1084,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             label={<>IMO Vessel <span className="text-red-500">*</span></>}
                             placeHolder='IMO Vessel'
                             readOnly={isEdit}
-                            value={data.VesselIMO}
+                            value={getAppDetails.VesselIMO}
                             receive={(e) => updateAppDetails({ name: 'VesselIMO', value: e })}
                             category={'direct'}
                             rendered={rendered}
@@ -1025,7 +1093,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             group={'Uppercase'}
                             compname={'IMO Vessel'}
                         />
-                        {data.VesselIMO && (
+                        {getAppDetails.VesselIMO && (
                             <div className="mt-8">
                                 <label className="font-bold block">Information of the Vessel</label>
                                 <ConfigProvider
@@ -1039,7 +1107,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 >
                                     <TextArea
                                         className="w-[920px] h-[70vh] p-1 border border-gray-300 rounded-md resize-none"
-                                        value={data.VesselInfo}
+                                        value={getAppDetails.VesselInfo}
                                         onChange={(e) => updateAppDetails({ name: 'VesselInfo', value: e.target.value })}
                                         style={{
                                             resize: 'none',
@@ -1055,7 +1123,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             label={<>Type of Vessel <span className="text-red-500">*</span></>}
                             placeHolder='Type of Vessel'
                             readOnly={isEdit}
-                            value={data.VesselType}
+                            value={getAppDetails.VesselType}
                             receive={(e) => updateAppDetails({ name: 'VesselType', value: e })}
                             category={'direct'}
                             rendered={rendered}
@@ -1067,14 +1135,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
                     </>
                 )}
-                {User === 'Credit' && data.loanProd === '0303-VA' && (
+                {User === 'Credit' && getAppDetails.loanProd === '0303-VA' && (
                     <InputOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Exact Location'}
                         placeHolder='Exact Location'
                         readOnly={isEdit}
-                        value={data.ExactLocation}
+                        value={getAppDetails.ExactLocation}
                         receive={(e) => updateAppDetails({ name: 'ExactLocation', value: e })}
                         category={'marketing'}
                         required={false}
@@ -1083,14 +1151,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         group={'Uppercase'}
                         compname={'Exact Location'}
                     />)}
-                {User === 'Credit' && data.loanProd === '0303-WA' && (
+                {User === 'Credit' && getAppDetails.loanProd === '0303-WA' && (
                     <InputOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Possible Vacation'}
                         placeHolder='Possible Vacation'
                         readOnly={isEdit}
-                        value={data.PossVacation}
+                        value={getAppDetails.PossVacation}
                         receive={(e) => updateAppDetails({ name: 'PossVacation', value: e })}
                         category={'marketing'}
                         required={false}
@@ -1106,7 +1174,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Beneficiary or Allotment Name <span className="text-red-500">*</span></>}
                         placeHolder='Allotment Name'
                         readOnly={isEdit}
-                        value={data.AllotName}
+                        value={getAppDetails.AllotName}
                         receive={(e) => updateAppDetails({ name: 'AllotName', value: e })}
                         category={'direct'}
                         rendered={rendered}
@@ -1132,7 +1200,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     <InputOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label="font-bold"
-                        value={data.AllotAmount}
+                        value={getAppDetails.AllotAmount}
                         receive={(e) => updateAppDetails({ name: 'AllotAmount', value: e })}
                         label={<>Remittance or Allotment Amount <span className="text-red-500">*</span></>}
                         placeHolder={'Amount'}
@@ -1163,7 +1231,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Remittance / Allotment Channel (Gcash, Bank) <span className="text-red-500">*</span></>}
                         placeHolder='Allotment Channel'
                         data={AllotChannel()}
-                        value={data.AllotChannel}
+                        value={getAppDetails.AllotChannel}
                         receive={(e) => updateAppDetails({ name: 'AllotChannel', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
@@ -1175,7 +1243,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 ? (<></>)
                 : (<SectionHeader title="Educational Background" />)}
             <Flex className='w-full' justify='center' gap='small' wrap>
-                {(User === 'MARKETING' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL'))) && (
+                {(User === 'MARKETING' || (User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL'))) && (
                     <>
                         <LabeledSelect
                             className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -1184,7 +1252,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             placeHolder='Highest Educational Attainment'
                             disabled={isEdit}
                             data={EducationalAttainment()}
-                            value={data.ofwHighestEdu}
+                            value={getAppDetails.ofwHighestEdu}
                             receive={(e) => updateAppDetails({ name: 'ofwHighestEdu', value: e })}
                             rendered={rendered}
                             showSearch={!isEdit}
@@ -1195,7 +1263,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             label={'Course'}
                             placeHolder='Course'
                             disabled={isEdit}
-                            value={data.ofwcourse}
+                            value={getAppDetails.ofwcourse}
                             receive={(e) => { updateAppDetails({ name: 'ofwcourse', value: e }); }}
                             readOnly={isEdit}
                             required={false}
@@ -1212,7 +1280,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={'School'}
                         placeHolder='School'
                         readOnly={isEdit}
-                        value={data.ofwschool}
+                        value={getAppDetails.ofwschool}
                         receive={(e) => updateAppDetails({ name: 'ofwschool', value: e })}
                         category={'marketing'}
                         required={false}

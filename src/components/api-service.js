@@ -78,7 +78,7 @@ export function ComponentPreloads() {
 
   const [getSuffix, setSuffix] = React.useState([]);
   useQuery({
-    queryKey: ["getSuffix"],
+    queryKey: ["SuffixList"],
     queryFn: async () => {
       const result = await GET_LIST("/GET/G28S");
       setSuffix(result.list);
