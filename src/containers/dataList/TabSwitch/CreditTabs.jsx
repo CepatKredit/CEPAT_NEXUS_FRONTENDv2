@@ -42,7 +42,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
     const { GetStatus } = ApplicationStatus();
-    const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails, showSaveButtonContext } = React.useContext(LoanApplicationContext)
     const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
@@ -63,6 +63,11 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     const addCoborrow = (getValue) => {
         setAddCoborrower(getValue);
     };
+
+    /*React.useEffect(() =>
+    {
+        console.log('hahahahahahaha',showSaveButtonContext )
+    },[showSaveButtonContext])*/
 
 
     const fetchRelativesAndUpdateCount = async () => {
@@ -538,6 +543,40 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         'RETURN TO CREDIT OFFICER', 'COMPLIED - LACK OF DOCUMENTS'
     ];
 
+
+    // Utility function for dynamic anchor items
+    const getAnchorItems = () => {
+        if (["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd)) {
+            // For specific loan products
+            return [
+                { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+                { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+            ];
+        } else {
+            // Default anchor items for other loan products
+            return [
+                { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+                { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+            ];
+        }
+    };
+
+
+    React.useEffect(() => {
+        console.log('jjjjjjjjjjjjjjjjjjjjjj', getAppDetails.MarriedPBCB)
+    },[getAppDetails])
+
+
     //Trigger Fields
     TriggerFields('CREDIT');
 
@@ -566,42 +605,150 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                             <div id='Loan-Details'>
                                 <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} creditisEdit={isEdit} User={'Credit'} />
                             </div>
-                           <div id='OFW-Details'>
-                                <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
-                            </div>
-                            <div id="Employment-History" className="w-full">
-                                <EmploymentHistoryTable data={value} isEdit={isEdit} />
-                            </div>
-                            <div id='Credit-History' className="w-full ">
-                                <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} />
-                            </div>
-                            <div id='Owned-Assets' className="w-full">
-                                <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} />
-                            </div>
-                            <div id='Character-Reference' className="w-full">
-                                <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
-                            </div>
-                            <div id='Beneficiary-Details'>
-                                <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit} sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
-                            </div>
+                            {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                                <>
+                                    {/* Container A */}
+                                    <div id='OFW-Details'>
+                                        <OfwDetails
+                                            loading={loading}
+                                            isEditCRAM={isEdit}
+                                            getTab={'ofw-details'}
+                                            classname={'h-auto'}
+                                            presaddress={presaddress}
+                                            data={value}
+                                            receive={(e) => { updateAppDetails(e) }}
+                                            BorrowerId={BorrowerId}
+                                            creditisEdit={isEdit}
+                                            User={'Credit'}
+                                            addCoborrower={addCoborrower}
+                                        />
+                                        {/* Additional Sections inside Container A */}
+                                        <div id="Employment-History" className="w-full">
+                                            <EmploymentHistoryTable data={value} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Credit-History' className="w-full ">
+                                            <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Owned-Assets' className="w-full">
+                                            <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Character-Reference' className="w-full">
+                                            <CharacterReference
+                                                loading={loading}
+                                                BorrowerId={BorrowerId}
+                                                Creator={Uploader}
+                                                data={value}
+                                                User={'Credit'}
+                                                isEdit={isEdit}
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Container B */}
+                                    <div id='Beneficiary-Details'>
+                                        <BeneficiaryDetails
+                                            loading={loading}
+                                            getTab={'beneficiary-details'}
+                                            presaddress={presaddress}
+                                            classname={'h-auto'}
+                                            data={value}
+                                            receive={(e) => { updateAppDetails(e); }}
+                                            BorrowerId={BorrowerId}
+                                            User={'Credit'}
+                                            creditisEdit={isEdit}
+                                            sepcoborrowfname={sepcoborrowfname}
+                                            sepBenfname={sepBenfname}
+                                            setAddCoborrow={addCoborrow}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    {/* Switch positions */}
+                                    {/* Container B */}
+                                    <div id='Beneficiary-Details'>
+                                        <BeneficiaryDetails
+                                            loading={loading}
+                                            getTab={'beneficiary-details'}
+                                            presaddress={presaddress}
+                                            classname={'h-auto'}
+                                            data={value}
+                                            receive={(e) => { updateAppDetails(e); }}
+                                            BorrowerId={BorrowerId}
+                                            User={'Credit'}
+                                            creditisEdit={isEdit}
+                                            sepcoborrowfname={sepcoborrowfname}
+                                            sepBenfname={sepBenfname}
+                                            setAddCoborrow={addCoborrow}
+                                        />
+                                    </div>
+                                    {/* Container A */}
+                                    <div
+                                        id="OFW-Details"
+                                        style={{
+                                            marginTop: isEdit
+                                                ? getAppDetails?.MarriedPBCB !== 1
+                                                    ? showSaveButtonContext
+                                                        ? '50rem'
+                                                        : '125rem'
+                                                    : getAppDetails?.MarriedPBCB === 1
+                                                        ? showSaveButtonContext
+                                                            ? '75rem'
+                                                            : '150rem'
+                                                        : undefined
+                                                : undefined, // Fallback if isEdit is false
+                                            transition: 'margin-top 0.5s ease', // Smooth transition for marginTop
+                                        }}
+                                    >
+
+                                        <OfwDetails
+                                            loading={loading}
+                                            isEditCRAM={isEdit}
+                                            getTab={'ofw-details'}
+                                            presaddress={presaddress}
+                                            data={value}
+                                            classname={'h-auto'}
+                                            receive={(e) => { updateAppDetails(e) }}
+                                            BorrowerId={BorrowerId}
+                                            creditisEdit={isEdit}
+                                            User={'Credit'}
+                                            addCoborrower={addCoborrower}
+                                        />
+                                        {/* Additional Sections inside Container A */}
+                                        <div id="Employment-History" className="w-full">
+                                            <EmploymentHistoryTable data={value} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Credit-History' className="w-full ">
+                                            <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Owned-Assets' className="w-full">
+                                            <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Character-Reference' className="w-full">
+                                            <CharacterReference
+                                                loading={loading}
+                                                BorrowerId={BorrowerId}
+                                                Creator={Uploader}
+                                                data={value}
+                                                User={'Credit'}
+                                                isEdit={isEdit}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
                         </div>
                         <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${isEdit ? 'h-[40vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}>
                             <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+
                                 <Anchor
                                     replace
                                     affix={false}
                                     targetOffset={50}
                                     getContainer={() => document.getElementById('scrollable-container')}
-                                    items={[
-                                        { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
-                                        { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
-                                        { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
-                                        { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
-                                        { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
-                                        { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
-                                        { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
-                                    ]}
-                                />
+                                    items={getAnchorItems()}
+                                />;
+
                             </ConfigProvider>
                         </div>
                     </div>

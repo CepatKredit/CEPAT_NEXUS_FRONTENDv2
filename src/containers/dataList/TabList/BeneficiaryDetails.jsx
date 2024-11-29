@@ -17,7 +17,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, User, creditisEdit, BorrowerId, sepcoborrowfname, sepBenfname, setAddCoborrow, loading, isEditCRAM }) {
-    const { getAppDetails } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, setShowSaveButtonContext } = React.useContext(LoanApplicationContext)
     const [api, contextHolder] = notification.useNotification()
     const [isEdit, setEdit] = useState(false);
     const { GetStatus } = ApplicationStatus();
@@ -25,6 +25,11 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
     const didMountRef = useRef(false);
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
+
+    React.useEffect(() => {
+        setShowSaveButtonContext(showCoBorrower);
+    }, [showCoBorrower, setShowSaveButtonContext]);
+
 
     const [relativesCount, setRelativesCount] = React.useState(0);
     const fetchRelativesAndUpdateCount = () => {

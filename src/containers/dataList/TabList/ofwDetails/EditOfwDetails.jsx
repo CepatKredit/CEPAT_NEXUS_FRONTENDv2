@@ -73,6 +73,29 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
     return (
         <div>
+            {(User === 'MARKETING' || User === 'LC') && (
+                <SectionHeader title="Personal Information" />
+            )}
+
+            {User !== 'MARKETING' && User !== 'LC' && (
+               <SectionHeader
+               title={
+                 ["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd) ? (
+                   <>
+                     Principal Borrower
+                     <br />
+                     <span className="text-sm">(OFW Details)</span>
+                   </>
+                 ) : (
+                   <>
+                     Co-Borrower
+                     <br />
+                     <span className="text-sm">(OFW Details)</span>
+                   </>
+                 )
+               }
+             />
+            )}
 
 
             {contextHolder}

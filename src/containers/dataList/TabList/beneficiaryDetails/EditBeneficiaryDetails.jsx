@@ -173,7 +173,31 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
     return (
         <div className='h-[65vh]'>
             {contextHolder}
-            <SectionHeader title="Personal Information" />
+            {(User === 'MARKETING' || User === 'LC') && (
+                <SectionHeader title="Personal Information" />
+            )}
+
+            {User !== 'MARKETING' && User !== 'LC' && (
+               <SectionHeader
+               title={
+                 ["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd) ? (
+                   <>
+                     Co-Borrower
+                     <br />
+                     <span className="text-sm">(Beneficiary Details)</span>
+                   </>
+                 ) : (
+                   <>
+                     Principal Borrower
+                     <br />
+                     <span className="text-sm">(Beneficiary Details)</span>
+                   </>
+                 )
+               }
+             />
+            )}
+
+
             <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
                 <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
