@@ -13,7 +13,7 @@ function SelectExpense({ data, event, excludeItems }) {
     const NDIExpenseListQuery = useQuery({
         queryKey: ['NDIExpenseList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getNDI/${parseInt(24)}`)
+            const result = await GET_LIST(`/GET/G24N/${parseInt(24)}`)
             return result.list
         },
         refetchInterval: (data) => {
@@ -28,7 +28,7 @@ function SelectExpense({ data, event, excludeItems }) {
     const token = localStorage.getItem('UTK');
     const onClickAdd = useMutation({
         mutationFn: async () => {
-            await axios.post(`/addNDISelection/${parseInt(22)}/${newValue}/${jwtDecode(token).USRID}`)
+            await axios.post(`/POST/P74ANS/${parseInt(22)}/${newValue}/${jwtDecode(token).USRID}`)
                 .then((result) => {
                     setValue('')
                     NDIExpenseListQuery.refetch()
@@ -54,7 +54,7 @@ function SelectExpense({ data, event, excludeItems }) {
     const handleScroll = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setScrollCount((prevCount) => {
-                if (prevCount + 1 >= 15) {
+                if (prevCount + 1 >= 5) {
                     if (selectRef.current) {
                         selectRef.current.blur();
                     }

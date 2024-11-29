@@ -12,7 +12,7 @@ import { toUpperText } from '@utils/Converter';
 import { jwtDecode } from 'jwt-decode';
 import { useQueryClient } from '@tanstack/react-query';
 
-function EditPdfInfo({ showModal, closeModal, toolBar, data, isClient }) {
+function EditPdfInfo({ showModal, closeModal, toolBar, data, isClient, ModUser }) {
 
     const queryClient = useQueryClient()
     const { GetData, setStatus } = viewPDFViewer()
@@ -36,14 +36,14 @@ function EditPdfInfo({ showModal, closeModal, toolBar, data, isClient }) {
             DocsID: data?.docsId,
             DocsFileName: data?.docsFileName,
             Remarks: getValue.remarks,
-            ModUser: jwtDecode(token).USRID,
+            ModUser: ModUser,
             DocStatus: parseInt(getValue.status),
             LAI: data?.loanAppId,
             Id: data?.id,
             PRODID: 'FILE'
         }
 
-        await axios.post('/updateFileStatus', dataContainer)
+        await axios.post('/POST/P68FS', dataContainer)
             .then((result) => {
                 setStatus(false)
                 queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })

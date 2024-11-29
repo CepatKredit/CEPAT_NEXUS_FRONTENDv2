@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Input } from 'antd';
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function  LabeledInput_NotRequired({
     required,
@@ -13,8 +14,11 @@ function  LabeledInput_NotRequired({
     type = 'text',  // Default to 'text' input
     className_dmain,
     className_label,
-    className_dsub
+    className_dsub,
+    fieldName
 }) {
+    
+const { updateAppDetails } = React.useContext(LoanApplicationContext)
     const [getStatus, setStatus] = React.useState('');
     const [getIcon, setIcon] = React.useState(false);
     const [inputValue, setInputValue] = React.useState(type === 'contact' ? (value || '09') : (value || ''));
@@ -30,12 +34,12 @@ function  LabeledInput_NotRequired({
                         newValue = '09' + newValue.slice(2);
                     }
                     setInputValue(newValue);
-                    receive();
+                    updateAppDetails({ name: fieldName, value: null });
                     setStatus('error');
                     setIcon(true);
                 } else if (newValue.length === 11) {
                     setInputValue(newValue);
-                    receive(newValue);
+                    updateAppDetails({ name: fieldName, value: newValue });
                     setStatus('');
                     setIcon(true);
                 }
@@ -44,7 +48,7 @@ function  LabeledInput_NotRequired({
             // Handle regular text and non-required text inputs
             const upperValue = newValue.toUpperCase();  // Convert to uppercase for all other inputs
             setInputValue(upperValue);
-            receive(upperValue);
+            updateAppDetails({ name: fieldName, value: upperValue });
 
             if (required && !upperValue) {
                 setStatus('error');

@@ -5,6 +5,7 @@ export const UpdateLoanDetails = async ({
     //LoanDetails
     LoanAppId, //Not null
     Tab = null, //if null it will not update
+    DuplicateChecker = true,
     BorrowersCode = null,
     Origin = null,
     Dpa = null,
@@ -126,6 +127,11 @@ export const UpdateLoanDetails = async ({
     OtherExposure = null,
     TotalExposure = null,
     CRORemarks = null,
+    ForApprovalBy = null,
+    ForApprovalDate = null,
+    CremanBy = null,
+    CremanDate = null,
+    
     // Present Address Tables
     OfwPoBRemarks = null,
     BenPoBRemarks = null,
@@ -325,6 +331,12 @@ export const UpdateLoanDetails = async ({
         OtherExposure: OtherExposure,
         TotalExposure: TotalExposure,
         CRORemarks: CRORemarks,
+        ForApprovalBy: ForApprovalBy,
+        ForApprovalDate: ForApprovalDate,
+        CremanBy: CremanBy,
+        CremanDate: CremanDate,
+
+
         // Present Address Tables
         OfwPoBRemarks: OfwPoBRemarks,
         BenPoBRemarks: BenPoBRemarks,
@@ -388,7 +400,7 @@ export const UpdateLoanDetails = async ({
         ModUser: ModUser,
     }
 
-    console.log(data)
+    //console.log(data)
     let fresult = null;
 
     const checkLoan = {
@@ -401,8 +413,9 @@ export const UpdateLoanDetails = async ({
     var check = 0;
     var duplicate_result = null;
 
-    if (FirstName !== null || LastName !== null) {
-        await axios.post('/checkLoan', checkLoan)
+    if (DuplicateChecker && (FirstName !== null || LastName !== null)) {
+        console.log('Running OFW Duplicate Checker')
+        await axios.post('/POST/P47CL', checkLoan)
             .then((result) => {
                 result.data?.list.map(() => { check = 1; })
                 duplicate_result = result;
@@ -414,6 +427,7 @@ export const UpdateLoanDetails = async ({
 
         console.log(check)
     }
+    /*
     //check if fullname is changed, update kaiser no display
     if ((ofwfname && (ofwfname === FirstName)) || (ofwlname && (ofwlname === LastName))) {
         console.log('Update OFW Kaiser...')
@@ -423,10 +437,10 @@ export const UpdateLoanDetails = async ({
     }
     if ((acbfname && (acbfname === FirstName)) || (acblname && (acblname === LastName))) {
         console.log('Update Additional Co-Borrower Kaiser...')
-    }
-
+    }*/
+    console.log('UPDATE DETAILS ',data)
     if (check === 0) {
-        await axios.post('/updateDetails', data)
+        await axios.post('/POST/P48UD', data)
             .then((result) => {
                 fresult = result;
             })
