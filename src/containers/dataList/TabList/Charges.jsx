@@ -164,33 +164,12 @@ function Charges({ LoanAppId, data, User, }) {
 
         // console.log('Approved', approvedAmount, '*', terms, '*', (interestRate/100), '+', approvedAmount, '=')
 
-        // Compute netProceeds based on ChargeType
-        const sumForNetProceddsLTP = parseFloat(totalCharges) + parseFloat(processingFee) + parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee + others;
-        const sumForNetProceddsAmort = parseFloat(processingFee) + parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee + others;
-
-
-        /*// Log detailed computations
-        console.log("Processing Fee:", processingFee);
-        console.log("CRF:", crf);
-        console.log("Notarial:", Notarial);
-        console.log("PNDST:", pndst);
-        console.log("Service Fee:", serviceFee);
-        console.log("DocuSign:", DocuSign);
-        console.log("IBFT Fee:", IBFTFee);
-        console.log("Others:", others);
-        console.log("Total Charges:", totalCharges);
-
-        // Log the results of computations
-        console.log("Sum for Net Proceeds LTP:", sumForNetProceddsLTP);
-        console.log("Sum for Net Proceeds Amort:", sumForNetProceddsAmort);*/
-
-
         let netProceeds = 0;
 
         if (chargetype === 2) {
-            netProceeds = approvedAmount + parseFloat(sumForNetProceddsLTP);
+            netProceeds = approvedAmount + parseFloat(others);
         } else if (chargetype === 1) {
-            netProceeds = approvedAmount + parseFloat(sumForNetProceddsAmort);
+            netProceeds = approvedAmount + parseFloat(totalCharges);
         }
 
 
