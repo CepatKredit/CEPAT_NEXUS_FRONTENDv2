@@ -227,7 +227,7 @@ function MarketingTabs({
 
   React.useEffect(() => {
     setActiveKey(tabs || 'deduplication');
-    console.log("HALAAA", tabs)
+    // console.log("HALAAA", tabs)
 }, [tabs]);
 
   return (

@@ -410,6 +410,23 @@ function DocxTable({
             "The file is too large and cannot be uploaded. Please reduce the size of the file and try again.",
         });
       } else {
+        queryClient.setQueryData(
+          ["FileListQuery", ClientId, FileType, Uploader],
+          (oldData) => {
+            const newFiles = fileList.map((x) => ({
+              docsID: x.docsID,
+              status: x.status,
+              remarks: x.remarks,
+              docStatus: x.docStatus,
+              fileName: x.file.name,
+              file: x.file,
+              extension: x.file.type.split("/").pop(),
+              recDate: new Date().toISOString(),
+            }));
+            return [...(oldData || []), ...newFiles];
+          }
+        );
+
         await axios
           .post(`/POST/P66UFR`, formData, {
             headers: {
@@ -428,11 +445,11 @@ function DocxTable({
             clearList();
             setModalStatus(false);
             queryClient.invalidateQueries(
-              { queryKey: ["DocListQuery"] },
+              { queryKey: ["DocListQuery", FileType] },
               { exact: true }
             );
             queryClient.invalidateQueries(
-              { queryKey: ["FileListQuery"] },
+              { queryKey: ["FileListQuery", ClientId, FileType, Uploader] },
               { exact: true }
             );
             queryClient.invalidateQueries(

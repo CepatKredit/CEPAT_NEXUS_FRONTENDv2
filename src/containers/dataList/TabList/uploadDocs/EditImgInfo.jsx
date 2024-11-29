@@ -11,7 +11,7 @@ import { toDecrypt } from '@utils/Converter';
 import { useCookies } from 'react-cookie';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function EditImgInfo({ data, FileListName, Display, ModUser }) {
+function EditImgInfo({ data, FileListName, Display, ModUser, ClientId, FileType, Uploader }) {
 
     const queryClient = useQueryClient()
     const [api, contextHolder] = notification.useNotification();
@@ -77,8 +77,8 @@ function EditImgInfo({ data, FileListName, Display, ModUser }) {
         await axios.post('/POST/P68FS', dataContainer)
             .then((result) => {
                 setModalStatus(false)
-                queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
-                queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
+                queryClient.invalidateQueries({ queryKey: ['DocListQuery', FileType ] }, { exact: true })
+                queryClient.invalidateQueries({ queryKey: ['FileListQuery', ClientId, FileType, Uploader ] }, { exact: true })
                 queryClient.invalidateQueries({ queryKey: ['ReleaseDocListQuery'] }, { exact: true })
                 queryClient.invalidateQueries({ queryKey: ['ReleaseFileListQuery'] }, { exact: true })
                 api[result.data.status]({

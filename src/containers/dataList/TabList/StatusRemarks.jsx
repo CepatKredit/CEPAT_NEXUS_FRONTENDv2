@@ -104,7 +104,7 @@ function StatusRemarks({ isEdit, User, data, setUrgentApp }) {
                 return 'bg-blue-500 text-white';
         }
     }
-console.log('STATUS',getRemarks.data?.status)
+// console.log('STATUS',getRemarks.data?.status)
     return (
         <div className={isEdit ? 'h-[5rem]' : ''}>
             <div className="w-full mx-auto">
