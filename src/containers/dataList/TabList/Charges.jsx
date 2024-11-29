@@ -112,8 +112,11 @@ function Charges({ LoanAppId, data, User, }) {
         const approvedAmount = parseFloat(String(getAppDetails.ApprvAmount).replace(/,/g, ''));
         const PFR = getAppDetails.PFR; // Use PFR from the state or defaultPFR
         const CFRF = getAppDetails?.CFRF;
-        const terms = parseFloat(getAppDetails.loanTerms);
+        const Notarial = parseFloat(getAppDetails.Notarial) || 0;
+        const DocuSign = parseFloat(getAppDetails.DocuSign) || 0;
+        const terms = parseFloat(getAppDetails.ApprvTerms);
         const gracePeriod = getAppDetails.GracePeriod;
+        const IBFTFee = parseFloat(getAppDetails.IBFTFee) || 0;
         const others = parseFloat(String(getAppDetails.Others).replace(/,/g, ''));
         const chargetype = getAppDetails.ChargeType;
 
@@ -133,23 +136,33 @@ function Charges({ LoanAppId, data, User, }) {
             serviceFee = '0.00'; // Default value if no valid grace period
         }
 
-        const totalCharges = (parseFloat(processingFee) + parseFloat(others || 0)).toFixed(2)
-      
+        const totalCharges = (
+            parseFloat(processingFee) +
+            parseFloat(crf) +
+            Notarial + // Ensure Notarial is included
+            parseFloat(pndst) +
+            parseFloat(serviceFee) +
+            DocuSign +
+            IBFTFee +
+            others
+        ).toFixed(2);
+    
+
 
         // Default value for PNValue calculation
         let pnValue = 0;
         const interestRate = parseFloat(getAppDetails.InterestRate) || 0;
-        const ibftFee = parseFloat(getAppDetails.IBFTFee);
+        //const ibftFee = parseFloat(getAppDetails.IBFTFee);
 
 
         if (chargetype === 1) {
             pnValue = (approvedAmount * terms * (interestRate / 100)) + approvedAmount;
         } else if (chargetype === 2) {
-            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-            pnValue = (baseAmount * terms * (interestRate / 100)) + baseAmount;
+            const pnbaseAmount = approvedAmount + (totalCharges - others);
+            pnValue = (pnbaseAmount * terms * (interestRate / 100)) + pnbaseAmount;
         }
 
-       // console.log('Approved', approvedAmount, '*', terms, '*', (interestRate/100), '+', approvedAmount, '=')
+        // console.log('Approved', approvedAmount, '*', terms, '*', (interestRate/100), '+', approvedAmount, '=')
 
         // Compute netProceeds based on ChargeType
         let netProceeds = 0;
@@ -165,20 +178,29 @@ function Charges({ LoanAppId, data, User, }) {
         }
 
 
-        // Computation for monthly amortization
-        let monthlyAmortization = 0;
-        if (chargetype === 1 && gracePeriod === 2) {
-            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + (approvedAmount / terms);
-        } else if (chargetype === 1 && gracePeriod === 1) {
-            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + (approvedAmount / terms) - 1;
-        } else if (chargetype === 2 && gracePeriod === 2) {
-            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + (baseAmount / terms);
-        } else if (chargetype === 2 && gracePeriod === 1) {
-            const baseAmount = approvedAmount + parseFloat(processingFee) - ibftFee;
-            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + (baseAmount / terms) - 1;
-        }
+       // Total charges
+    const chargesSum =  parseFloat(processingFee) +  parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee;
+    const baseAmount = approvedAmount + chargesSum;
 
+  //  console.log('chargessum', baseAmount);
+   // console.log('chargessum', chargesSum);
+    // Compute Monthly Amortization
+    let monthlyAmortization = 0;
+    if (chargetype === 1 && gracePeriod === 2) {
+        monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / terms;
+    } else if (chargetype === 1 && gracePeriod === 1) {
+        monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / (terms - 1);
+    } else if (chargetype === 2 && gracePeriod === 2) {
+        monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / terms;
+    } else if (chargetype === 2 && gracePeriod === 1) {
+        monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / (terms - 1);
+      /* console.log('yes amort,,,,,,', 'approveamount', approvedAmount, '+', 'chargessum', chargesSum, '=', 'total:', baseAmount,
+          'then base Amount', baseAmount, 'X', terms, 'X', '0.025',  'then +', baseAmount, 'then / 11 = amort is ', monthlyAmortization
+        )*/
+    }
+
+
+        
 
 
         // Optionally, you can set the processingFee in the state as well
@@ -193,7 +215,7 @@ function Charges({ LoanAppId, data, User, }) {
             NetProceeds: netProceeds.toFixed(2),
             MonthlyAmortization: monthlyAmortization.toFixed(2),
         }));
-    }, [getAppDetails?.loanType,  getAppDetails.IBFTFee, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.Terms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
+    }, [getAppDetails?.loanType, getAppDetails.IBFTFee, getAppDetails.ChargeType, getAppDetails.Others, getAppDetails.GracePeriod, getAppDetails.ApprvTerms, getAppDetails?.loanProd, getAppDetails?.PFR, getAppDetails?.CFRF, getAppDetails?.InterestRate, getAppDetails?.ApprvAmount, getAppDetails.PFR, getAppDetails.CFRF]);
 
 
 
@@ -207,7 +229,7 @@ function Charges({ LoanAppId, data, User, }) {
             try {
                 //console.log('LOanappid ito..', LoanAppId)
                 const result = await GET_LIST(`/GET/G114CL/${isLoanAppId}`)
-              //   console.log('chargesssss', result);
+                //   console.log('chargesssss', result);
                 setAppDetails(prevDetails => ({
                     ...prevDetails,
                     PFR: result.list[0]?.processingFeeRate,
@@ -254,12 +276,17 @@ function Charges({ LoanAppId, data, User, }) {
     // Define the onChange function for the Terms dropdown
     const handleTermChange = (value) => {
         // Simply update the loan terms without any condition checks
-        updateAppDetails({ name: 'loanTerms', value });
+        updateAppDetails({ name: 'ApprvTerms', value });
         setAppDetails((prevState) => ({
             ...prevState,
             Terms: value, // Update the state with the selected term
         }));
+        console.log('Updated Terms:', value);
     };
+
+    React.useEffect(() => {
+        console.log('termssssssssss', getAppDetails.ApprvTerms)
+    },[])
 
     // Function to generate options for the terms dropdown (always 3 to 24)
     const generateTermOptions = () => {
@@ -280,19 +307,19 @@ function Charges({ LoanAppId, data, User, }) {
     };
 
     // Separate display formatting for when commas are needed
-   /* const formatNumberForDisplay = (value) => {
-        return value.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 20,
-        });
-    };*/
+    /* const formatNumberForDisplay = (value) => {
+         return value.toLocaleString('en-US', {
+             minimumFractionDigits: 2,
+             maximumFractionDigits: 20,
+         });
+     };*/
 
     const formatNumberForDisplay = (value) => {
         // Check if the value is undefined or null
         if (value === undefined || value === null) {
             return value; // Return the value as is
         }
-        
+
         // Proceed with formatting if the value is defined
         return value.toLocaleString('en-US', {
             minimumFractionDigits: 2,
@@ -313,10 +340,10 @@ function Charges({ LoanAppId, data, User, }) {
     const formatNumberWithCommasReadOnly = (value) => {
         if (value === null || value === undefined) return '';
         return parseFloat(value).toLocaleString('en-US', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
         });
-      };
+    };
     return (
         <>
             {contextHolder}
@@ -401,12 +428,13 @@ function Charges({ LoanAppId, data, User, }) {
                                 <div className='w-[15rem]'>
                                     <Select
                                         className='w-[15rem]'
-                                        value={getAppDetails.loanTerms}  // Ensure it's always based on getAppDetails.loanTerms
+                                        value={getAppDetails.ApprvTerms}  // Ensure it's always based on getAppDetails.loanTerms
                                         onChange={handleTermChange}
                                         placeholder="Select terms"
                                     >
                                         {generateTermOptions()}
                                     </Select>
+                                    
                                 </div>
                             </Space>
                             <Space className="w-full mb-2 mt-2 justify-center items-center">
@@ -632,7 +660,7 @@ function Charges({ LoanAppId, data, User, }) {
                                 <div className="w-[15rem]">
                                     <Input
 
-                                        value={getAppDetails.Terms || data.loanTerms}
+                                        value={getAppDetails.ApprvTerms || data.ApprvTerms}
                                         readOnly
 
                                     />

@@ -134,9 +134,57 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     };
 
 
+
+
+
+
+    async function updateApprvTerms() {
+        try {
+            const payload = {
+                BorrowersCode: data.ofwBorrowersCode,
+                LoanAppId: data.loanIdCode, // Loan Application ID
+                ApprvTerms: getAppDetails.ApprvTerms, // Only update terms
+                ModUser: jwtDecode(token).USRID, // Modified by user
+                Tab: 1,
+            };
+    
+            console.log('Payload for ApprvTerms Update:', payload);
+    
+            const result = await UpdateLoanDetails(payload); // Call the API
+            if (result.data.status === "success") {
+                api.success({
+                    message: 'Success',
+                    description: result.data.description || 'ApprvTerms updated successfully!',
+                });
+            } else {
+                api.warning({
+                    message: 'Error: Failed to Update ApprvTerms',
+                    description: result.data.description || 'Failed to update ApprvTerms.',
+                });
+            }
+    
+            queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+        } catch (error) {
+            console.error('Error updating ApprvTerms:', error);
+            api.error({
+                message: 'Error',
+                description: 'An error occurred while updating ApprvTerms.',
+            });
+        }
+    }
+    
+
+
+
+
+
     const onClickSaveData = useMutation({
         mutationFn: async () => {
             try {
+
+                // Update ApprvTerms separately
+                await updateApprvTerms();
+
                 if (
                     parseFloat(getAppDetails.CFRF) === 0 ||
                     parseFloat(getAppDetails.InterestRate) === 0 ||
@@ -178,7 +226,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                     };
 
                     await axios.post('POST/P143AC/', payload);
-                    console.log('payloadssss', payload);
+                    // console.log('payloadssss', payload);
                     api.success({
                         message: 'Success',
                         description: 'Charges Updated successfully!',
@@ -229,11 +277,11 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
 
             <div
                 className={`w-full overflow-y-auto ${((GetData('ROLE') === '70' || GetData('ROLE') === '80') ?
-                        'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[45vh] 3xl:h-[65vh]' :
-                        ((!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
-                            ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
-                            : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]')
-                    )
+                    'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[45vh] 3xl:h-[65vh]' :
+                    ((!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
+                        ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
+                        : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]')
+                )
                     }`}
             >
                 {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
