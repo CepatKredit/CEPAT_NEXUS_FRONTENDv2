@@ -40,13 +40,13 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             const startTime = performance.now();
             try {
                 const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${toUpperText(Uploader)}`)
-            //     const endTime = performance.now();
-            // setFetchTime((endTime - startTime).toFixed(2)); 
+                //     const endTime = performance.now();
+                // setFetchTime((endTime - startTime).toFixed(2)); 
                 SET_LOADING_INTERNAL('UploadDocs', false);
                 return result.list
             } catch (error) {
-            //     const endTime = performance.now();
-            // setFetchTime((endTime - startTime).toFixed(2)); 
+                //     const endTime = performance.now();
+                // setFetchTime((endTime - startTime).toFixed(2)); 
                 console.error(error);
                 SET_LOADING_INTERNAL('UploadDocs', false);
                 return [];
@@ -57,23 +57,23 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
         retryDelay: 1000,
     })
 
-    // React.useEffect(() => {
-    //     SET_LOADING_INTERNAL('UploadDocs', true)
-    //     FileListQuery.refetch();
-    // }, []);
-        React.useEffect(() => {
-        SET_LOADING_INTERNAL('UploadDocs', true);
-        if (FileListQuery.isFetched) {
-            SET_LOADING_INTERNAL('UploadDocs', false);
-        }
-    }, [FileListQuery.isFetched])
+    React.useEffect(() => {
+        SET_LOADING_INTERNAL('UploadDocs', true)
+        FileListQuery.refetch();
+    }, []);
+    /* React.useEffect(() => {
+     SET_LOADING_INTERNAL('UploadDocs', true);
+     if (FileListQuery.isFetched) {
+         SET_LOADING_INTERNAL('UploadDocs', false);
+     }
+ }, [FileListQuery.isFetched])*/
 
     const processedData = React.useMemo(() => {
         const count = {};
         const file_list = {};
         const count_arch = {};
         const file_arch = {};
-    
+
         FileListQuery.data?.forEach((x) => {
             if (x.docStatus === 1) {
                 if (!file_list[x.docsId]) {
@@ -113,7 +113,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 count_arch[x.docsId]++;
             }
         });
-    
+
         return { count, file_list, count_arch, file_arch };
     }, [FileListQuery.data]);
 
@@ -184,7 +184,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     //             return;
     //     }
     // }
-    
+
     function CollapseList() {
         const data = [
             {
@@ -219,13 +219,13 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                             <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                         </span>,
                         children: <div className='h-[300px] overflow-y-auto'>
-                             {FileListQuery.isFetching ? (
+                            {FileListQuery.isFetching ? (
                                 <Spin tip="Loading files..." size="small" className="text-green-500">
                                     <div className="h-full w-full"></div>
                                 </Spin>
                             ) : (
-                            <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
-                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
+                                <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
+                                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
                             )}</div>
                     })
                 }
@@ -239,19 +239,19 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                             </span>,
                             children: (<div className='h-[300px] overflow-y-auto'>
                                 {FileListQuery.isFetching ? (
-                                <Spin tip="Loading files..." size="small" className="text-green-500">
-                                    <div className="h-full w-full"></div>
-                                </Spin>
-                            ) : (
-                                <FileLoader 
-                                key={i} 
-                                files={GetFile(x.id, 'FILE')} 
-                                FileListName={DocListQuery.data} 
-                                className='z-50'
-                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} 
-                                isClient={Display} 
-                                ModUser={ModUser} />
-                            )}
+                                    <Spin tip="Loading files..." size="small" className="text-green-500">
+                                        <div className="h-full w-full"></div>
+                                    </Spin>
+                                ) : (
+                                    <FileLoader
+                                        key={i}
+                                        files={GetFile(x.id, 'FILE')}
+                                        FileListName={DocListQuery.data}
+                                        className='z-50'
+                                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'}
+                                        isClient={Display}
+                                        ModUser={ModUser} />
+                                )}
                             </div>
                             )
                         })
@@ -266,13 +266,13 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     </span>,
                     children: <div className='h-[300px] overflow-y-auto'>
                         {FileListQuery.isFetching ? (
-                                <Spin tip="Loading files..." size="small" className="text-green-500">
-                                    <div className="h-full w-full"></div>
-                                </Spin>
-                            ) : (
-                        <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
-                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
-                            )}</div>
+                            <Spin tip="Loading files..." size="small" className="text-green-500">
+                                <div className="h-full w-full"></div>
+                            </Spin>
+                        ) : (
+                            <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
+                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
+                        )}</div>
                 }
             }
         })
@@ -312,7 +312,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
     }
     const [getStatus, setStatus] = React.useState(false)
     React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
-    return (    
+    return (
         <div>
             <StatusRemarks isEdit={!isEdit} User={User} data={getAppDetails} />
 

@@ -182,8 +182,8 @@ function SideNav() {
                 />
               </ConfigProvider>
             </div>
-            <div className={`flex flex-row justify-center text-center h-[1rem] w-full`} >
-              <span className="text-xs text-gray-600 font-semibold bg-white bg-opacity-80">v2.0.4</span>
+            <div className={`text-center p-2 fixed bottom-0 transition-all duration-300 ease-in-out ${collapsed ? "w-[4vw]" : "w-[12vw]"}`}    >
+              <span className="text-xs text-gray-600">v2.0.4</span>
             </div>
           </div>
         </Sider>
