@@ -109,6 +109,18 @@ console.log('STATUS',getRemarks.data?.status)
         <div className={isEdit ? 'h-[5rem]' : ''}>
             <div className="w-full mx-auto">
                 <Space className="w-full flex justify-center">
+                    {isEdit && User !== 'LC' && (
+                        <div className="relative mb-3 flex justify-start xs:left-1 sm:left-1 md:left-1 lg:right-3">
+                            <div
+                                className={`inline-flex font-bold items-center 
+                                    px-6 xs:px-5 sm:px-4 md:px-6 lg:px-6 xl:px-8 2xl:px-10
+                                    py-1 xs:py-1 sm:py-1 md:py-2 lg:py-2 xl:py-2
+                                    rounded-full text-center ${getStatusBackgroundColor(getRemarks.data?.status)}`}
+                            >
+                                {getRemarks.data?.status}
+                            </div>
+                        </div>
+                    )}
                     {isEdit && User === 'LC' && (
                         <div className="relative mb-3 flex justify-start xs:left-1 sm:left-1 md:left-1 lg:right-3 hidden md:block lg:hidden">
                             <div

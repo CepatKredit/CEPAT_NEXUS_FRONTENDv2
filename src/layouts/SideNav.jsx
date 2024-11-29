@@ -73,6 +73,22 @@ function SideNav() {
       setCollapsed(false);
     }
   }, [width]);
+
+  const getRightPosition = () => {
+    if (width < 768) {
+      // For smaller screens, adjust positioning as needed
+      return 'right-2';  // Change to a smaller margin for xs/sm
+    }
+    if (width < 1024) {
+      // For medium screens (md), set a larger margin
+      return 'right-4';
+    }
+    if (width < 1280) {
+      // For large screens (lg), adjust again
+      return 'right-5';
+    }
+    return 'right-10';  // For extra-large screens (xl and above)
+  };
   const handleSearchClick = () => {
     const token = localStorage.getItem("UTK");
     const userID = jwtDecode(token).USRID
@@ -113,7 +129,7 @@ function SideNav() {
     <SessionTimeout>
       <Layout>
         <Sider
-          className=" w-[100vw] md:w-[15vw] lg:w-[18vw] xl:w-[14vw] 2xl:w-[12vw] h-[100vh] shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]"
+          className="h-[100vh] shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] w-[100vw] md:w-[15vw] lg:w-[18vw] xl:w-[14vw] 2xl:w-[12vw] "
           trigger={null}
           collapsible
           collapsed={collapsed}
@@ -130,7 +146,7 @@ function SideNav() {
                 </div>
               </center>
             )}
-            <div className="overflow-y-hidden hover:overflow-y-auto h-[100vh] xs1:h-[100vh] xs:h-[90vh]">
+            <div className="overflow-y-hidden hover:overflow-y-auto h-[100vh] xs1:h-[100vh] xs:h-[91.2vh]">
               <ConfigProvider
                 theme={{
                   components: {
@@ -174,55 +190,59 @@ function SideNav() {
         <Layout>
           <Header className="pl-[.5em] h-[5em] bg-gradient-to-r from-[#34b331] from-30% via-[#00ff00] via-12% to-[#187817]">
             <div className="flex flex-row">
-              <Button
-                type="text"
-                icon={
-                  collapsed ? (
-                    <MenuUnfoldOutlined style={{ fontSize: "1.3rem" }} />
-                  ) : (
-                    <MenuFoldOutlined style={{ fontSize: "1.3rem" }} />
-                  )
-                }
-                onClick={() => setCollapsed(!collapsed)}
-                style={{
-                  width: 50,
-                  height: 50,
-                  marginLeft: 5,
-                  marginTop: 10,
-                  color: "white",
-                }}
-              />
-              <div className="flex flex-row items-center hidden md:flex">
-                <div className="mx-2 my-[4px]">
-                  <span className="font-bold text-lg text-stone-100">
-                    Search
-                  </span>
-                </div>
-                <Space.Compact>
-                  <Select
-                    placeholder="filter search"
-                    className="w-[110px] md:w-[120px] lg:w-[140px] xl:w-[160px] 2xl:w-[110px]"
-                    options={[
-                      { label: "Loan ID", value: "loanID" },
-                      { label: "Full Name", value: "name" },
-                    ]}
-                  />
+              {width >= 640 && (
+                <Button
+                  type="text"
+                  icon={
+                    collapsed ? (
+                      <MenuUnfoldOutlined style={{ fontSize: "1.3rem" }} />
+                    ) : (
+                      <MenuFoldOutlined style={{ fontSize: "1.3rem" }} />
+                    )
+                  }
+                  onClick={() => setCollapsed(!collapsed)}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    marginLeft: 5,
+                    marginTop: 10,
+                    color: "white",
+                  }}
+                />
+              )}
+              {width >= 640 && (
+                <div className="flex flex-row items-center">
+                  <div className="mx-2 my-[4px]">
+                    <span className="font-bold text-lg md:text-sm lg:text-lg text-stone-100">
+                      Search
+                    </span>
+                  </div>
+                  <Space.Compact>
+                    <Select
+                      placeholder="filter search"
+                      className="w-[110px] md:w-[110px] lg:w-[140px] xl:w-[160px] 2xl:w-[110px]"
+                      options={[
+                        { label: "Loan ID", value: "loanID" },
+                        { label: "Full Name", value: "name" },
+                      ]}
+                    />
 
-                  <Input
-                    placeholder="search..."
-                    allowClear
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    className="w-[170px] md:w-[130px] lg:w-[150px] xl:w-[170px] 2xl:w-[170px]"
-                  />
-                  <Button
-                    type="default"
-                    onClick={handleSearchClick}
-                    icon={<SearchOutlined />}
-                  />
-                </Space.Compact>
-              </div>
-              <div className="my-[1.3rem] absolute right-5">
+                    <Input
+                      placeholder="search..."
+                      allowClear
+                      value={searchValue}
+                      onChange={(e) => setSearchValue(e.target.value)}
+                      className="w-[170px] md:w-[130px] lg:w-[150px] xl:w-[170px] 2xl:w-[170px]"
+                    />
+                    <Button
+                      type="default"
+                      onClick={handleSearchClick}
+                      icon={<SearchOutlined />}
+                    />
+                  </Space.Compact>
+                </div>
+              )}
+              <div className={`my-[1.3rem] absolute ${getRightPosition()}`}>
                 <AccountSettings />
               </div>
             </div>

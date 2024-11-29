@@ -83,7 +83,6 @@ function EditLoanDetails({ data, receive, User }) {
                     compname={'Loan Application ID'}
                     required={false}
                 />)}
-            {User !== 'LC' && (
                 <SelectOpt
                     className_dmain={'mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
@@ -93,7 +92,7 @@ function EditLoanDetails({ data, receive, User }) {
                     category={User !== 'Credit' ? 'MARKETING' : undefined}
                     options={branchFilter(User !== 'Credit' && GetData('ROLE').toString() === '20')}
                     rendered={rendered}
-                    disabled={true}
+                    disabled={User !== 'LC'? true : false}
 
                     KeyName={'loanBranch'}
                     EmptyMsg={'Loan Branch Required'}
@@ -101,7 +100,6 @@ function EditLoanDetails({ data, receive, User }) {
                     group={''}
                     compname={'Loan Branch'}
                 />
-            )}
             <SelectOpt
                 className_dmain="mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]"
                 className_label="font-bold"
