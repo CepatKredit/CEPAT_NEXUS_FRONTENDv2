@@ -28,7 +28,6 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             const result = await GET_LIST(`/GET/G16FT/${FileType}`)
             return result.list
         },
-        enabled: true,
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
     })
@@ -214,19 +213,17 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             <div className="space-x-[1.5rem]">
                 {
                     !DISABLE_STATUS(localStorage.getItem('SP'), GetStatus) ? (
-                        (GetStatus === "LACK OF DOCUMENTS" || GetStatus === "RECEIVED") && (
-                            <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                                <Button
-                                    size="large"
-                                    className="ml-6 mb-2 bg-[#3b0764]"
-                                    type="primary"
-                                    onClick={() => setModalStatus(true)}
-                                    disabled={User === 'Lp'}
-                                >
-                                    Upload Document
-                                </Button>
-                            </ConfigProvider>
-                        )
+                        <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                            <Button
+                                size="large"
+                                className="ml-6 mb-2 bg-[#3b0764]"
+                                type="primary"
+                                onClick={() => setModalStatus(true)}
+                                disabled={User === 'Lp'}
+                            >
+                                Upload Document
+                            </Button>
+                        </ConfigProvider>
                     ) : null
                 }
                 <div className={classname}>

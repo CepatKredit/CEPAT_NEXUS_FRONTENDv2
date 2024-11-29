@@ -298,9 +298,9 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     <div className={`w-full mt-4 ${
                     (User === 'MARKETING' || User === 'LC') ? 
                         (isEdit ? 
-                            'xs:h-[42vh] sm:h-[44vh] md:h-[70vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[55vh] 3xl:h-[61vh] overflow-y-auto' 
+                            'xs1:h-[42vh] xs:h-[60vh] sm:h-[44vh] md:h-[70vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[55vh] 3xl:h-[61vh] overflow-y-auto' 
                             : 
-                            'xs:h-[42vh] sm:h-[44vh] md:h-[55vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[53vh] overflow-y-auto'
+                            'xs1:h-[42vh] xs:h-[55vh] sm:h-[44vh] md:h-[55vh] lg:h-[48vh] xl:h-[49vh] 2xl:h-[45vh] 3xl:h-[53vh] overflow-y-auto'
                         )  : ''}`}>      
                 {(User === 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                     <ViewOfwDetails data={data} User={User} RelativesCount={relativesCount} receive={receive} />
