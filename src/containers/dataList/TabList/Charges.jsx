@@ -170,9 +170,9 @@ function Charges({ LoanAppId, data, User, }) {
         let netProceeds = 0;
 
         if (chargetype === 2) {
-            netProceeds = approvedAmount + parseFloat(others);
+            netProceeds = approvedAmount - parseFloat(others);
         } else if (chargetype === 1) {
-            netProceeds = approvedAmount + parseFloat(totalCharges);
+            netProceeds = approvedAmount - parseFloat(totalCharges);
         }
 
 
@@ -180,22 +180,33 @@ function Charges({ LoanAppId, data, User, }) {
         const chargesSum = parseFloat(processingFee) + parseFloat(crf) + Notarial + parseFloat(pndst) + parseFloat(serviceFee) + DocuSign + IBFTFee;
         const baseAmount = approvedAmount + chargesSum;
 
-        //  console.log('chargessum', baseAmount);
+          //console.log('chargessum', baseAmount);
         // console.log('chargessum', chargesSum);
         // Compute Monthly Amortization
         let monthlyAmortization = 0;
+
+        
         if (chargetype === 1 && gracePeriod === 2) {
-            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / terms;
+           const monthlyAmortizationNo = (approvedAmount * terms * (interestRate / 100)) + approvedAmount;
+            monthlyAmortization = monthlyAmortizationNo / terms;
         } else if (chargetype === 1 && gracePeriod === 1) {
-            monthlyAmortization = (approvedAmount * terms * (interestRate / 100)) + approvedAmount / (terms - 1);
+           const monthlyAmortizationNo = (approvedAmount * terms * (interestRate / 100)) + approvedAmount;
+            monthlyAmortization = monthlyAmortizationNo / (terms - 1);
         } else if (chargetype === 2 && gracePeriod === 2) {
-            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / terms;
+            const monthlyAmortizationNo = (baseAmount * terms * (interestRate / 100)) + baseAmount;
+            monthlyAmortization = monthlyAmortizationNo / terms;
         } else if (chargetype === 2 && gracePeriod === 1) {
-            monthlyAmortization = (baseAmount * terms * (interestRate / 100)) + baseAmount / (terms - 1);
-            /* console.log('yes amort,,,,,,', 'approveamount', approvedAmount, '+', 'chargessum', chargesSum, '=', 'total:', baseAmount,
+           const monthlyAmortizationNo = (baseAmount * terms * (interestRate / 100)) + baseAmount;
+            monthlyAmortization = monthlyAmortizationNo / (terms - 1);
+            
+             
+           /*  console.log('yes amort,,,,,,', 'approveamount', approvedAmount, '+', 'chargessum', chargesSum, '=', 'total:', baseAmount,
                 'then base Amount', baseAmount, 'X', terms, 'X', '0.025',  'then +', baseAmount, 'then / 11 = amort is ', monthlyAmortization
               )*/
         }
+        console.log('yes amort,,,,,,', 'approveamount', approvedAmount, 'X', terms, 'X', '0.025',  'then +', approvedAmount,'/',  terms, 'then / 11 = amort is ', monthlyAmortization
+        )
+
 
 
 
