@@ -28,7 +28,7 @@ function InputOpt({
 }) {
 
     const [isFocused, setIsFocused] = useState();
-    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, isFocused, InvalidMsg, EmptyMsg, CustomLength);
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, isFocused, InvalidMsg, EmptyMsg, readOnly);
     const isValidationEnabled = !readOnly && required;
 
     return (

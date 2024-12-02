@@ -272,7 +272,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, setRendered
   };
 }
 
-export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group, isDisabled, isFocused, InvalidMsg, EmptyMsg) {
+export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group, isDisabled, isFocused, InvalidMsg, EmptyMsg, readOnly) {
   const [inputValue, setInputValue] = useState(initialValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
@@ -331,7 +331,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   }, [rendered]);
 
   useEffect(() => {
-    if (isDisabled || isFocused) {
+    if (isDisabled || isFocused || readOnly) {
       handleChange(initialValue);
     }
   }, [initialValue])

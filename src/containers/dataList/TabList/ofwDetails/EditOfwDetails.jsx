@@ -242,18 +242,18 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={'Age'}
                         value={getAge ? getAge : 0}
-                        placeHolder='Age'
-                        receive={(e) => updateAppDetails({ name: 'ofwage', value: e })}
+                        placeHolder='select Birthdate'
+                        receive={(e) => setAge(e || 0)}
                         category={'marketing'}
-                        readOnly={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
                         required={false}
+                        readOnly={true}
 
-                        KeyName={'ofwlname'}
+                        KeyName={'age'}
                         format={'Default'}
                         group={'Uppercase'}
-                        compname={'Last Name'}
+                        compname={'Age'}
 
                     //EmptyMsg={'Age Required'}
                     //InvalidMsg={'Invalid Age'}
@@ -413,6 +413,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
                 )}
                 {User === 'Credit' && (
+                    
                     <LabeledSelect
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
@@ -874,19 +875,29 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     />
                 )}
                 {User === 'Credit' && (
-                    <LabeledSelect
-                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                    <SelectOpt
+                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-5'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Employment Status <span className="text-red-500">*</span></>}
-                        placeHolder='Employment Status'
-                        data={EmploymentStatus()}
                         value={getAppDetails.EmpStatus}
-                        receive={(e) => updateAppDetails({ name: 'EmpStatus', value: e })}
-                        disabled={isEdit}
-                        showSearch
                         rendered={rendered}
-                    />)}
+                        placeHolder='Position'
+                        category={'marketing'}
+                        disabled={isEdit}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'EmpStatus', value: e })}
+                        options={EmploymentStatus()}
+                        notValidMsg={'Position Required'}
+                        KeyName={'EmpStatus'}
+                        group={'Default'}
+                        showSearch
+
+                        EmptyMsg={'Position Required'}
+                        InvalidMsg={'Invalid Position'}
+                        compname={'Position'}
+                    />
+                   )}
                 {User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL' || getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL') && (
                     <InputOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
