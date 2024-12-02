@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, ConfigProvider, Row, Col, Flex, notification, message, Form, Input } from 'antd';
+import { Button, ConfigProvider, Row, Col, Flex, notification, message, Form, Input, Checkbox } from 'antd';
 import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
 import LabeledInput_UpperCase from '@components/marketing/LabeledInput_UpperCase';
 import LabeledInput from '@components/marketing/LabeledInput';
@@ -31,6 +31,7 @@ import RelativesTable from '@containers/dataList/TabList/RelativesTable';
 import { getDependentsCount } from '@hooks/DependentsController';
 import { useStore } from 'zustand';
 import { CheckDateValid } from '@utils/Validations';
+import { removeLinkFormat } from '@utils/Formatting';
 
 
 function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcoborrowfname, showCoBorrower, setShowCoBorrower, sepBenfname, User }) {
@@ -67,24 +68,44 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
     //Preload Selects   
     const { GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX } = useDataContainer();
     const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
-
     const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
 
     const handleDoubleClick = (() => {
         let clickCount = 0;
-        return (e) => {
-            if (!isEdit && getAppDetails.benfblink && getAppDetails.benfblink.startsWith('https://')) {
+        return (borrower) => (e) => {
+            if (!isEdit && ((borrower === 'Ben' && getAppDetails.benfblink) || (borrower === 'Acb' && getAppDetails.coborrowfblink))) {
                 e.preventDefault();
                 clickCount++;
                 setTimeout(() => {
                     if (clickCount >= 2) {
-                        window.open(getAppDetails.benfblink, '_blank');
+                        window.open(`https://www.facebook.com/${borrower === 'Ben' ? getAppDetails.benfblink : getAppDetails.coborrowfblink}`, '_blank');
                     }
                     clickCount = 0; // Reset click count after handling
                 }, 300); // Adjust timeout for double-click detection
             }
         };
     })();
+
+    /*
+        const handleDoubleClicks = ((borrower) => {
+            let clickCount = 0;
+            return (e) => {
+                if (!isEdit && (
+                    (borrower === 'Ben' && getAppDetails.benfblink && getAppDetails.benfblink.startsWith('https://')) ||
+                    (borrower === 'Acb' && getAppDetails.coborrowfblink && getAppDetails.coborrowfblink.startsWith('https://'))
+                )) {
+                    e.preventDefault();
+                    clickCount++;
+                    setTimeout(() => {
+                        if (clickCount >= 2) {
+                            const url = borrower === 'Ben' ? getAppDetails.benfblink : getAppDetails.coborrowfblink;
+                            window.open(url, '_blank');
+                        }
+                        clickCount = 0; // Reset click count after handling
+                    }, 300); // Adjust timeout for double-click detection
+                }
+            };
+        })();*/
 
     /*const handleAddCoborrower = async () => {
          setTriggerValidation(true);
@@ -312,17 +333,27 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     //InvalidMsg={'Invalid Age'}
                     />
                 )}
-                <LabeledSelect
-                    className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                    className_label='font-bold'
+
+                <SelectOpt
+                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_label={'font-bold'}
                     label={<>Gender <span className="text-red-500">*</span></>}
-                    placeHolder='Please select'
-                    data={Gender()}
-                    value={data.bengender}
-                    receive={(e) => updateAppDetails({ name: 'bengender', value: e })}
-                    disabled={isEdit}
+                    value={getAppDetails.bengender}
                     rendered={rendered}
+                    placeHolder={'Select Gender'}
+                    showSearch
+                    receive={(e) => updateAppDetails({ name: 'bengender', value: e })}
+                    options={Gender()}
+
+                    EmptyMsg={'Gender Required'}
+                    InvalidMsg={'Invalid Gender'}
+                    KeyName={'bengender'}
+                    group={'Default'}
+                    compname={'Gender'}
+
                 />
+
+
                 <InputOpt
                     className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                     className_label={'font-bold'}
@@ -339,47 +370,79 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
 
                 />
 
-                <LabeledInput_Contact
+                <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                    className_label={'font-bold'}
-                    className_dsub={''}
+                    className_label="font-bold"
                     label={<>Mobile Number <span className="text-red-500">*</span></>}
-                    placeHolder='Mobile Number'
                     readOnly={isEdit}
-                    value={data.benmobile}
-                    receive={(e) => { updateAppDetails({ name: 'benmobile', value: e }) }}
+                    value={getAppDetails.benmobile}
+                    receive={(e) => updateAppDetails({ name: 'benmobile', value: e })}
                     category={'marketing'}
                     rendered={rendered}
-                />
-                <LabeledInput_Contact
-                    className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                    className_label={'font-bold'}
-                    className_dsub={''}
-                    label={'Other Mobile Number'}
-                    placeHolder='Other Mobile Number'
-                    readOnly={isEdit}
-                    value={data.benothermobile}
-                    receive={(e) => { updateAppDetails({ name: 'benothermobile', value: e }) }}
-                    category={'marketing'}
-                    rendered={rendered}
-                    required={false}
+                    placeHolder={'Enter Mobile No.'}
+                    KeyName={'benmobile'}
+                    format={'+639'}
+                    group={'ContactNo'}
+                    compname={'Contact No.'}
+
+                    EmptyMsg={'Mobile No. Required'}
+                    InvalidMsg={'Invalid Mobile No.'}
                 />
 
-                <LabeledSelect
+                <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                    className_label={'font-bold'}
-                    className_dsub={''}
-                    label={<>Marital Status <span className="text-red-500">*</span></>}
-                    placeHolder='Marital Status'
-                    disabled={isEdit}
-                    //value={data.benmstatus}
-                    value={data.benmstatus}
-                    data={MaritalStatus()}
-                    receive={(e) => { updateAppDetails({ name: 'benmstatus', value: e }) }}
+                    className_label="font-bold"
+                    label={<>Other Mobile Number <span className="text-red-500">*</span></>}
+                    readOnly={isEdit}
+                    value={getAppDetails.benothermobile}
+                    receive={(e) => updateAppDetails({ name: 'benothermobile', value: e })}
                     category={'marketing'}
-                    showSearch
                     rendered={rendered}
+                    placeHolder={'Enter Other Mobile No.'}
+                    KeyName={'benothermobile'}
+                    format={'+639'}
+                    group={'ContactNo'}
+                    compname={'Contact No.'}
+
+                    EmptyMsg={'Mobile No. Required'}
+                    InvalidMsg={'Invalid Mobile No.'}
                 />
+
+                <SelectOpt
+                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_label={'font-bold'}
+                    label={<>Marital Status <span className="text-red-500">*</span></>}
+                    value={getAppDetails.benmstatus}
+                    rendered={rendered}
+                    placeHolder='Marital Status'
+                    showSearch
+                    receive={(e) => updateAppDetails({ name: 'benmstatus', value: e })}
+                    options={MaritalStatus()}
+
+                    EmptyMsg={'Marital Status Required'}
+                    InvalidMsg={'Invalid Marital Status'}
+                    KeyName={'benmstatus'}
+                    group={'Default'}
+                    compname={'Marital Status'}
+
+                />
+                {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                    <></>) :
+                    (User === 'Credit' || User === 'MARKETING') && (getAppDetails.benmstatus === 2 || getAppDetails.benmstatus === 5 || getAppDetails.benmstatus === 6) && (
+                        <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
+                            <Checkbox
+                                checked={getAppDetails.MarriedPBCB}
+                                onClick={() => {
+                                    updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
+                                }}
+                                disabled={isEdit}
+                            >
+                                If the PB and CB are married to each other
+                            </Checkbox>
+                        </div>
+                    )};
+
+
                 {(data.benmstatus === 2 || data.benmstatus === 5 || data.benmstatus === 6) ? (
                     <>
                         <InputOpt
@@ -396,6 +459,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             KeyName={'benspouse'}
                             group={'Uppercase'}
                             compname={'Spouse Name'}
+                            EmptyMsg={'Spouse Name Required'}
+                            InvalidMsg={'Invalid Spouse Name'}
                         />
 
                         <DatePickerOpt
@@ -405,30 +470,39 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                             placeHolder='Enter Birthdate'
                             receive={(e) => { updateAppDetails({ name: 'benspousebdate', value: e }) }}
+                            disabled={User === 'Credit' && data.MarriedPBCB}
 
                             value={data.benspousebdate}
                             isEdit={isEdit}
                             rendered={rendered}
-                            notValidMsg={'Birthdate Required'}
-                            KeyName={'benspousebdate'}
-                            category={'marketing'}
-                            disabled={User === 'Credit' && data.MarriedPBCB}
 
+                            KeyName={'benspousebdate'}
+                            group={'AgeLimit20'}
+                            compname={'Spouse Birthdate'}
+                            EmptyMsg={'Spouse Birthdate Required'}
+                            InvalidMsg={'Invalid Spouse Birthdate'}
                         />
 
                         {User === 'Credit' && (
-                            <LabeledSelect
-                                className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            <SelectOpt
+                                className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
                                 label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
-                                placeHolder='Spouse Source of Income'
-                                value={data.BenSpSrcIncome}
-                                data={SpouseSourceIncome()}
-                                receive={(e) => updateAppDetails({ name: 'BenSpSrcIncome', value: e })}
+                                value={getAppDetails.BenSpSrcIncome}
                                 rendered={rendered}
-                                disabled={User === 'Credit' && data.MarriedPBCB}
+                                placeHolder='Spouse Source of Income'
+                                showSearch
+                                receive={(e) => updateAppDetails({ name: 'BenSpSrcIncome', value: e })}
+                                options={SpouseSourceIncome()}
 
-                            />)}
+                                EmptyMsg={'Spouse Source of Income Required'}
+                                InvalidMsg={'Invalid Spouse Source of Income'}
+                                KeyName={'BenSpSrcIncome'}
+                                group={'Default'}
+                                compname={'Spouse Source of Income'}
+
+                            />
+                        )}
                         {User === 'Credit' && (
                             <InputOpt
                                 className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
@@ -451,19 +525,20 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                 ) : null}
                 {User === 'Credit' ? (
                     <InputOpt
-                        className_dmain={`mt-5 w-[18.75rem] h-[3.875rem]`}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
-                        className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.benfblink && data.benfblink.startsWith('https://')
-                                ? 'text-blue-500 underline'
-                                : 'text-black'
-                                }`}
+                        className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && getAppDetails.benfblink
+                            ? 'text-blue-500 underline'
+                            : 'text-black'
+                            }`}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeholder="Facebook Name / Profile"
-                        value={getAppDetails.benfblink}
-                        receive={(e) => updateAppDetails({ name: 'benfblink', value: e })}
+                        value={`https://www.facebook.com/${removeLinkFormat(getAppDetails.benfblink)}`}//just in case to remove existing data
+                        receive={(e) => updateAppDetails({ name: 'benfblink', value: e.slice(25) })}
                         category={'marketing'}
                         rendered={rendered}
-                        onClick={handleDoubleClick}
+                        onClick={handleDoubleClick('Ben')}
 
                         KeyName={'benfblink'}
                         format={'Http'}
@@ -473,6 +548,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         EmptyMsg={'Facebook Name / Profile Required'}
                         InvalidMsg={'Invalid Facebook Name / Profile'}
                     />
+
                 ) : (
                     <LabeledInput
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
@@ -517,37 +593,60 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             isEdit={isEdit}
                             receive={(e) => updateAppDetails({ name: 'benrelationship', value: e })}
                             options={GET_RELATIONSHIP}
-                            notValidMsg={'Relationship to the OFW Required'}
+                            showSearch
+
+                            EmptyMsg={'Relationship to the OFW Required'}
+                            InvalidMsg={'Invalid Relationship to the OFW'}
                             KeyName={'benrelationship'}
                             group={'Default'}
-                            showSearch
+                            compname={'Relationship to the OFW'}
                         />
                     )}
                 {User === 'Credit' && (
-                    <LabeledSelect
+                    <SelectOpt
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                        className_label='font-bold'
+                        className_label={'font-bold'}
                         label={<>Source of Income <span className="text-red-500">*</span></>}
-                        placeHolder='Please select'
-                        data={SpouseSourceIncome()}
                         value={data.BenSrcIncome}
+                        rendered={rendered}
+                        placeHolder='Source of Income'
+                        category={'marketing'}
+                        disabled={data.MarriedPBCB}
+                        isEdit={isEdit}
                         receive={(e) => updateAppDetails({ name: 'BenSrcIncome', value: e })}
-                        disabled={isEdit}
-                        rendered={rendered}
-                    />)}
-                {User === 'Credit' && (
-                    <LabeledSelect
-                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                        className_label='font-bold'
-                        label={<>Religion <span className="text-red-500">*</span></>}
-                        placeHolder='Please select'
-                        data={Religion()}
-                        value={data.BenReligion}
-                        receive={(e) => updateAppDetails({ name: 'BenReligion', value: e })}
+                        options={SpouseSourceIncome()}
                         showSearch
-                        disabled={isEdit}
+
+                        EmptyMsg={'Source of Income Required'}
+                        InvalidMsg={'Invalid Source of Income'}
+                        KeyName={'BenSrcIncome'}
+                        group={'Default'}
+                        compname={'Source of Income'}
+                    />
+
+                )}
+                {User === 'Credit' && (
+                    <SelectOpt
+                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_label={'font-bold'}
+                        label={<>Religion <span className="text-red-500">*</span></>}
+                        value={data.BenReligion}
                         rendered={rendered}
-                    />)}
+                        placeHolder='Select Religion'
+                        category={'marketing'}
+                        disabled={data.MarriedPBCB}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'BenReligion', value: e })}
+                        options={Religion()}
+                        showSearch
+
+                        EmptyMsg={'Religion Required'}
+                        InvalidMsg={'Invalid Religion'}
+                        KeyName={'BenReligion'}
+                        group={'Default'}
+                        compname={'Religion'}
+                    />
+                )}
                 {User === 'Credit' && (
                     <>
                         <LabeledSelect
@@ -928,7 +1027,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             triggerValidation={triggerValidation}
                             rendered={rendered}
                         />
-                        <LabeledInput_Contact
+                        {/* <LabeledInput_Contact
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
@@ -940,7 +1039,26 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             category={'marketing'}
                             triggerValidation={triggerValidation}
                             rendered={rendered}
+                        />*/}
+
+                        <InputOpt
+                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_label="font-bold"
+                            label={<>Mobile Number <span className="text-red-500">*</span></>}
+                            readOnly={isEdit}
+                            value={getAppDetails.coborrowmobile}
+                            receive={(e) => updateAppDetails({ name: 'coborrowmobile', value: e })}
+                            category={'marketing'}
+                            rendered={rendered}
+                            KeyName={'coborrowmobile'}
+                            format={'+639'}
+                            group={'ContactNo'}
+                            compname={'Contact No.'}
+
+                            EmptyMsg={'Mobile No. Required'}
+                            InvalidMsg={'Invalid Mobile No.'}
                         />
+
                         <LabeledInput_Contact
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
@@ -1010,8 +1128,13 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     rendered={rendered}
                                     disabled={isEdit}
                                     notValidMsg={'Birthdate Required'}
-                                    KeyName={'coborrowerspousebdate'}
                                     category={'marketing'}
+
+                                    EmptyMsg={'Birthdate Required'}
+                                    InvalidMsg={'Invalid Birthdate'}
+                                    KeyName={'coborrowerspousebdate'}
+                                    group={'AgeLimit20'}
+                                    compname={'Spouse Birthdate'}
                                 />
 
                                 {User === 'Credit' && (
@@ -1041,39 +1164,31 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             </>
                         ) : null}
                         {User === 'Credit' ? (
-                            <div className="mt-5 w-[18.75rem] h-[3.875rem">
-                                <label className="font-bold">Facebook Name / Profile <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.coborrowfblink && data.coborrowfblink.startsWith('https://')
-                                        ? 'text-blue-500 underline'
-                                        : 'text-black'
-                                        }`}
-                                    placeholder="Facebook Name / Profile"
-                                    value={data.coborrowfblink || ''}
-                                    readOnly={isEdit}
-                                    onClick={(e) => {
-                                        if (!isEdit && data.coborrowfblink && data.coborrowfblink.startsWith('https://')) {
-                                            e.preventDefault();
-                                            window.open(
-                                                data.coborrowfblink,
-                                                '_blank'
-                                            );
-                                        }
-                                    }}
-                                    onChange={(e) => {
-                                        if (!isEdit) {
-                                            const inputValue = e.target.value.trim();
-                                            const formattedValue = inputValue.startsWith('https://')
-                                                ? inputValue
-                                                : `https://www.facebook.com/${inputValue}`;
-                                            updateAppDetails({ name: 'coborrowfblink', value: formattedValue });
-                                        }
-                                    }}
-                                />
-                            </div>
+                            <InputOpt
+                                className_dmain={`mt-5 w-[18.75rem] h-[3.875rem]`}
+                                className_label={'font-bold'}
+                                className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.coborrowfblink && data.coborrowfblink.startsWith('https://')
+                                    ? 'text-blue-500 underline'
+                                    : 'text-black'
+                                    }`}
+                                label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
+                                placeholder="Facebook Name / Profile"
+                                value={getAppDetails.coborrowfblink}
+                                receive={(e) => updateAppDetails({ name: 'coborrowfblink', value: e })}
+                                category={'marketing'}
+                                rendered={rendered}
+                                onClick={handleDoubleClick('Ben')}
+
+                                KeyName={'coborrowfblink'}
+                                format={'Http'}
+                                group={'FBLink'}
+                                compname={'Facebook Name / Profile'}
+
+                                EmptyMsg={'Facebook Name / Profile Required'}
+                                InvalidMsg={'Invalid Facebook Name / Profile'}
+                            />
                         ) : (
+
                             <LabeledInput
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}

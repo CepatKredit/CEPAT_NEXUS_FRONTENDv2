@@ -17,6 +17,7 @@ import SelectOpt from "@components/optimized/SelectOpt";
 import { useDataContainer } from "@context/PreLoad";
 import DatePickerOpt from "@components/optimized/DatePickerOpt";
 import { toUpperText } from "@utils/Converter";
+import InputOpt from "@components/optimized/InputOpt";
 dayjs.extend(customParseFormat);
 
 function BeneficiaryDetails({
@@ -33,8 +34,8 @@ function BeneficiaryDetails({
   const { GET_OFW_SUFFIX, GET_RELATIONSHIP_LIST } = useDataContainer();
   const classname_main =
     "flex flex-col xs1:flex-col 2xl:flex-row mt-2 xs1:mt-3 2xl:mt-2 w-full xs1:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs:h-auto 2xl:h-[60px]";
-    const className_label = "mb-2 xs1:mb-0 xs1:mr-4 w-full xs1:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
-    const className_dsub = "w-full xs1:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[400px]";
+  const className_label = "mb-2 xs1:mb-0 xs1:mr-4 w-full xs1:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
+  const className_dsub = "w-full xs1:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[400px]";
   React.useEffect(() => {
     setbenrendered(true);
   }, [setbenrendered]);
@@ -64,8 +65,8 @@ function BeneficiaryDetails({
           category={"direct"}
           rendered={benrendered}
         />
-         <div className={`${classname_main} flex items-center `}>
-         <label className="mb-5 xs1:mb-1 sm:mb-5 xs1:mr-1 sm:mr-4 w-full sm:w-[252px]">
+        <div className={`${classname_main} flex items-center `}>
+          <label className="mb-5 xs1:mb-1 sm:mb-5 xs1:mr-1 sm:mr-4 w-full sm:w-[252px]">
             Middle Name
           </label>
           <ConfigProvider
@@ -77,8 +78,8 @@ function BeneficiaryDetails({
               },
             }}
           >
-          <div className="relative flex items-center w-full sm:w-[420px] mb-5 xs1:mb-1 sm:mb-5">
-          <Input
+            <div className="relative flex items-center w-full sm:w-[420px] mb-5 xs1:mb-1 sm:mb-5">
+              <Input
                 className="w-full"
                 fieldName="benmname"
                 placeholder={
@@ -179,7 +180,6 @@ function BeneficiaryDetails({
           required={true}
           showSearch
           notValidMsg={"Suffix is required."}
-          KeyName={"bensuffix"}
           receive={(e) => {
             updateAppDetails({
               name: "bensuffix",
@@ -191,6 +191,12 @@ function BeneficiaryDetails({
             value: item.code,
           }))}
           rendered={benrendered}
+
+          KeyName={"bensuffix"}
+          group={'Default'}
+          compname={'Suffix'}
+          EmptyMsg={'Suffix Required'}
+          InvalidMsg={'Invalid Suffix'}
         />
         {/* <DatePicker_BDate
           className_dmain={classname_main}
@@ -232,11 +238,14 @@ function BeneficiaryDetails({
               value: e,
             });
           }}
-          notValidMsg={"OFW Birth Date is required."}
           disabled={false || !getAppDetails.dataPrivacy}
-          KeyName={"benbdate"}
           rendered={benrendered}
-          // disabledate={disableDate_deployment}
+
+          KeyName={"benbdate"}
+          group={'Default'}
+          compname={'Birth Date'}
+          EmptyMsg={'Birth Date Required'}
+          InvalidMsg={'Invalid Birth Date'}
         />
         <GenderRadioGroup
           classname_main={classname_main}
@@ -280,7 +289,6 @@ function BeneficiaryDetails({
           required={true}
           showSearch
           notValidMsg={"Marital Status is required."}
-          KeyName={"benmstatus"}
           receive={(e) => {
             updateAppDetails({
               name: "benmstatus",
@@ -292,6 +300,12 @@ function BeneficiaryDetails({
             value: item.value,
           }))}
           rendered={benrendered}
+
+          KeyName={"benmstatus"}
+          group={'Default'}
+          compname={'Marital Status'}
+          EmptyMsg={'Marital Status Required'}
+          InvalidMsg={'Invalid Marital Status'}
         />
         <LabeledInput_Email
           className_dmain={classname_main}
@@ -309,38 +323,25 @@ function BeneficiaryDetails({
           category={"direct"}
           rendered={benrendered}
         />
-        <LabeledInput_Contact
+
+        <InputOpt
           className_dmain={classname_main}
           className_label={className_label}
           className_dsub={className_dsub}
-          label={
-            <>
-              Contact Number <span className="text-red-500">*</span>
-            </>
-          }
-          fieldName="bennumber"
-          error_status={"Contact Number is required."}
-          category={"direct"}
-          placeHolder={"Contact No."}
+          label={<>Contact Number <span className="text-red-500">*</span></>}
+          value={getAppDetails.bennumber}
+          receive={(e) => updateAppDetails({ name: 'bennumber', value: e })}
+          category={'marketing'}
           rendered={benrendered}
+          placeHolder={'Enter Contact No.'}
+          KeyName={'bennumber'}
+          format={'+639'}
+          group={'ContactNo'}
+          compname={'Contact No.'}
+
+          EmptyMsg={'Contact No. Required'}
+          InvalidMsg={'Invalid Contact No.'}
         />
-        {/* <LabeledSelect_Relationship
-          className_dmain={classname_main}
-          className_label={className_label}
-          className_dsub={className_dsub}
-          label={
-            <>
-              Relationship to the OFW (Kaano-ano mo si OFW)
-              <span className="text-red-500">*</span>
-            </>
-          }
-          error_status={"Relationship is required."}
-          fieldName="benrelationship"
-          category={"direct"}
-          placeHolder={"Relationship"}
-          rendered={benrendered}
-          showSearch
-        /> */}
 
         <SelectOpt
           className_dmain={classname_main}
@@ -357,8 +358,12 @@ function BeneficiaryDetails({
           placeHolder={"Relationship"}
           required={true}
           showSearch
-          notValidMsg={"Relationship is required."}
           KeyName={"benrelationship"}
+          group={'Default'}
+          compname={'Relationship to the OFW'}
+          EmptyMsg={'Relationship to the OFW Required'}
+          InvalidMsg={'Invalid Relationship to the OFW'}
+
           receive={(e) => {
             updateAppDetails({
               name: "benrelationship",

@@ -136,8 +136,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         placeHolder={"Suffix"}
         required={true}
         showSearch
-        notValidMsg={"Suffix is required."}
-        KeyName={"ofwsuffix"}
         receive={(e) => {
           updateAppDetails({
             name: "ofwsuffix",
@@ -149,6 +147,12 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
           value: item.code,
         }))}
         rendered={ofwrendered}
+
+        KeyName={"ofwsuffix"}
+        group={'Default'}
+        compname={'Suffix'}
+        EmptyMsg={'Suffix Required'}
+        InvalidMsg={'Invalid Suffix'}
       />
       <DatePickerOpt
         className_dmain={classname_main}
@@ -170,9 +174,13 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         }}
         notValidMsg={"OFW Birth Date is required."}
         disabled={false || !getAppDetails.dataPrivacy}
-        KeyName={"ofwbdate"}
         rendered={ofwrendered}
-      // disabledate={disableDate_deployment}
+
+        KeyName={"ofwbdate"}
+        group={'AgeLimit20'}
+        compname={'Birth Date'}
+        EmptyMsg={'Birth Date Required'}
+        InvalidMsg={'Invalid Birth Date'}
       />
       <GenderRadioGroup
         classname_main={classname_main}
@@ -198,7 +206,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         required={true}
         showSearch
         notValidMsg={"Marital Status is required."}
-        KeyName={"ofwmstatus"}
         receive={(e) => {
           updateAppDetails({
             name: "ofwmstatus",
@@ -210,6 +217,12 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
           value: item.value,
         }))}
         rendered={ofwrendered}
+
+        KeyName={"ofwmstatus"}
+        group={'Default'}
+        compname={'Marital Status'}
+        EmptyMsg={'Marital Status Required'}
+        InvalidMsg={'Invalid Marital Status'}
       />
 
       <LabeledInput_Numeric
@@ -319,7 +332,6 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         required={true}
         showSearch
         notValidMsg={"Residence is required."}
-        KeyName={"ofwresidences"}
         receive={(e) => {
           updateAppDetails({
             name: "ofwresidences",
@@ -331,6 +343,12 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
           value: item.value,
         }))}
         rendered={ofwrendered}
+
+        KeyName={"ofwresidences"}
+        group={'Default'}
+        compname={'Type of Residence'}
+        EmptyMsg={'Type of Residence Required'}
+        InvalidMsg={'Invalid Type of Residence'}
       />
 
       {(getAppDetails.ofwresidences === 3 ||

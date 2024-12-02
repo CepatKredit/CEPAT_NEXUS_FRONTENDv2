@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Tabs, Space, Anchor, Button, notification, ConfigProvider } from 'antd';
+import { Tabs, Space, Anchor, Button, notification, ConfigProvider, Modal, message } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { MdApproval } from "react-icons/md";
 import { MdOutlineUpdate } from "react-icons/md";
@@ -46,14 +46,35 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
+    const { confirm } = Modal;
+
     function onChangeTab(e) {
-        //VALIDATION - Check if the current items is equal to the initial values? change to other tab : open modal confirmation( yes/no? reset values to initial : stop going to tab/ continue in current tab)
-        //if(validate)
-        //console.log(e)
+        if (isEdit && e !== 'CRAM') {
+            confirm({
+                title: "Are you sure you want to cancel?",
+                content: "All unsaved changes will be lost if you proceed.",
+                okText: "Cancel Editing",
+                cancelText: "Continue Editing",
+                okType: "danger",
+                centered: true,
+                onOk() {
+                    message.success("All changes were canceled.");
+                    setActiveKey(e);
+                    localStorage.setItem('activeTab', e);
+                    navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
+                    setEdit(false)
+                },
+                onCancel() {
+                    message.info("Continue editing.");
+                    return;
+                },
+            });
+        }
         setActiveKey(e);
         localStorage.setItem('activeTab', e);
         navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
     }
+
 
     const [addCoborrower, setAddCoborrower] = React.useState(false);
     const token = localStorage.getItem('UTK')
@@ -64,10 +85,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         setAddCoborrower(getValue);
     };
 
-    /*React.useEffect(() =>
-    {
-        console.log('hahahahahahaha',showSaveButtonContext )
-    },[showSaveButtonContext])*/
 
 
     const fetchRelativesAndUpdateCount = async () => {
@@ -162,6 +179,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     description: 'Please complete all required details.',
                 });
             }
+            setEdit(false)
         } else {
             setEdit(true)
         }
@@ -486,7 +504,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             if (!value || !value.VesselIMO || value.VesselIMO.length < 6) return null;
             try {
                 const result = await axios.get(`/GET/G113SVD/${value.VesselIMO}`);
-                updateAppDetails({ name: 'VesselInfo', value: typeof result.data === 'string'? result.data : 'No Gathered Data!' });
+                updateAppDetails({ name: 'VesselInfo', value: typeof result.data === 'string' ? result.data : 'No Gathered Data!' });
             } catch (error) {
                 updateAppDetails({ name: 'VesselInfo', value: 'No Gathered Data!' });
                 // console.log(error);
@@ -847,7 +865,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                         <Button
                                             type="primary"
                                             icon={<CloseOutlined />}
-                                            onClick={() => setEdit(false)}
+                                            onClick={() => { setEdit(false); queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true }); }}
                                             size="large"
                                             className="-mt-5"
                                         >

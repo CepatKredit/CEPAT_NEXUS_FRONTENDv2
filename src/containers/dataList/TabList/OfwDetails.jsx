@@ -74,7 +74,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
     const toggleEditMode = async () => {
         if (isEdit) {
             if (GetData('ROLE').toString() === '20') {
-                if (Lc_valid) {
+                if (false) {
                     api['warning']({
                         message: 'Incomplete Details',
                         description: 'Please complete all required details.',
@@ -113,7 +113,7 @@ function OfwDetails({ getTab, classname, data, receive, presaddress, User, Borro
                     Dependent: data.ofwdependents ? parseInt(data.ofwdependents) : 0,
                     Email: data.ofwemail,
                     MobileNo: data.ofwmobile,
-                    FBProfile: data.ofwfblink,
+                    FbProfile: data.ofwfblink,
                     Salary: parseFloat(data.ofwsalary.toString().replaceAll(',', '')),
                     Ownership: data.ofwresidences,
                     RentAmount: data.ofwrent ? parseFloat(data.ofwrent.toString().replaceAll(',', '')) : 0,

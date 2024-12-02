@@ -6,6 +6,14 @@ function FormatWithComma(num) { //Comma
     return parts.join('.');
 }
 
+export function removeLinkFormat(text){
+    if(text.startsWith('https://www.facebook.com/')){
+        return text.slice(25);
+    }else{
+        return text;
+    }
+}
+
 export function FormatComma(num) {
     return FormatWithComma(num);
 }
@@ -57,13 +65,13 @@ export const inputFormat = (format, input) => {
         const res = DecimalLimit(result); //decimal trigger
         return (FormatWithComma(res ? res.replaceAll(',', '') : '')); //format with comma(s)
     }else if (format === '+639') {
-        if (!input.startsWith('+639')) {
+        if (!input || !input.startsWith('+639')) {
             input = '+639';
         }
         const sanitizedInput = input.slice(4).replace(/[^0-9]/g, ''); 
         return `+639${sanitizedInput}`;
     }else if(format === 'Http'){
-        if(!input.startsWith('https://www.facebook.com/')) {
+        if(!input || !input.startsWith('https://www.facebook.com/')) {
             input = 'https://www.facebook.com/'
         }
         const res = input.slice(25);

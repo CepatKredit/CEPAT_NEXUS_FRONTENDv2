@@ -18,7 +18,7 @@ function TriggerFields(ROLE) {
                     updateAppDetails({ name: field, value: value });
                     latestValueRef.current = value; // Update `latestValueRef` after applying the update
                 }
-            }), 
+            }),
         [updateAppDetails]
     );
 
@@ -144,6 +144,13 @@ function TriggerFields(ROLE) {
 
     }, [getAppDetails.loanProd])
 
+    React.useEffect(()=>{
+        if (!getRendered) return;
+        if (getAppDetails.loanProd !== '0303-DHW' && getAppDetails.loanProd !== '0303-VL' && getAppDetails.loanProd !== '0303-WL') {
+            updateAppDetails({ name: 'MarriedPBCB', value: false });
+        }
+    }, [getAppDetails.benmstatus])
+
     React.useEffect(() => {
         if (!getRendered) return;
 
@@ -236,49 +243,52 @@ function TriggerFields(ROLE) {
 
     React.useEffect(() => {
         if (!getRendered) return;
+        if (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL') {
+            if (getAppDetails.MarriedPBCB) {
+                const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
+                const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
 
-        if (getAppDetails.MarriedPBCB) {
-            const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
-            const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
+                const updates = {
+                    ofwspouse: spouseBenName,
+                    ofwspousebdate: getAppDetails.benbdate,
+                    SpSrcIncome: '',
+                    SpIncome: '',
+                    benspouse: spouseOfwName,
+                    benspousebdate: getAppDetails.ofwbdate,
+                    BenSpSrcIncome: 1,
+                    BenSpIncome: getAppDetails.PSalary,
+                    benmstatus: getAppDetails.ofwmstatus,
+                    RelationshipBen: getRelationship(getAppDetails.ofwmstatus),
+                    benrelationship: getRelationship(getAppDetails.ofwmstatus),
+                };
 
-            const updates = {
-                ofwspouse: spouseBenName,
-                ofwspousebdate: getAppDetails.benbdate,
-                SpSrcIncome: '',
-                SpIncome: '',
-                benspouse: spouseOfwName,
-                benspousebdate: getAppDetails.ofwbdate,
-                BenSpSrcIncome: 1,
-                BenSpIncome: getAppDetails.PSalary,
-                benmstatus: getAppDetails.ofwmstatus,
-                RelationshipBen: getRelationship(getAppDetails.ofwmstatus),
-                benrelationship: getRelationship(getAppDetails.ofwmstatus),
-            };
+                Object.entries(updates).forEach(([name, value]) => {
+                    updateAppDetails({ name, value });
+                });
+            } else {
+                const updates = {
+                    ofwspouse: '',
+                    ofwspousebdate: '',
+                    SpSrcIncome: '',
+                    SpIncome: '',
+                    benmstatus: '',
+                    benspouse: '',
+                    benspousebdate: '',
+                    BenSpSrcIncome: '',
+                    BenSpIncome: '',
+                    BenSrcIncome: '',
+                    BenIncome: '',
+                    benrelationship: '',
+                    RelationshipBen: '',
+                };
 
-            Object.entries(updates).forEach(([name, value]) => {
-                updateAppDetails({ name, value });
-            });
-        } else {
-            const updates = {
-                ofwspouse: '',
-                ofwspousebdate: '',
-                SpSrcIncome: '',
-                SpIncome: '',
-                benmstatus: '',
-                benspouse: '',
-                benspousebdate: '',
-                BenSpSrcIncome: '',
-                BenSpIncome: '',
-                BenSrcIncome: '',
-                BenIncome: '',
-                benrelationship: '',
-                RelationshipBen: '',
-            };
-
-            Object.entries(updates).forEach(([name, value]) => {
-                updateAppDetails({ name, value });
-            });
+                Object.entries(updates).forEach(([name, value]) => {
+                    updateAppDetails({ name, value });
+                });
+            }
         }
+
+
     }, [getAppDetails.MarriedPBCB]);
 
     // Source of Income

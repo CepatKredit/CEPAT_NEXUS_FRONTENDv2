@@ -36,6 +36,7 @@ import SelectOpt from '@components/optimized/SelectOpt';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import InputOpt from '@components/optimized/InputOpt';
 import { Age } from '@utils/Calculations';
+import { removeLinkFormat } from '@utils/Formatting';
 
 
 function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, BorrowerId, addCoborrower }) {
@@ -64,12 +65,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const handleDoubleClick = (() => {
         let clickCount = 0;
         return (e) => {
-            if (!isEdit && getAppDetails.ofwfblink && getAppDetails.ofwfblink.startsWith('https://')) {
+            if (!isEdit && getAppDetails.ofwfblink) {
                 e.preventDefault();
                 clickCount++;
                 setTimeout(() => {
                     if (clickCount >= 2) {
-                        window.open(getAppDetails.ofwfblink, '_blank');
+                        window.open(`https://www.facebook.com/${getAppDetails.ofwfblink}`, '_blank');
                     }
                     clickCount = 0; // Reset click count after handling
                 }, 300); // Adjust timeout for double-click detection
@@ -150,6 +151,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     format={'Default'}
                     group={'Uppercase'}
                     compname={'Middle Name'}
+                    required={false}
 
                 //EmptyMsg={'First Name Required'}
                 //InvalidMsg={'Invalid First Name'}
@@ -193,25 +195,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     compname={'Suffix'}
 
                 />
-                <DatePickerOpt
-                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
-                        } w-[18.75rem] h-[3.875rem]`}
-                    className_label={'font-bold'}
-                    label={<>OFW Departure Date <span className="text-red-500">*</span></>}
-                    value={getAppDetails.ofwDeptDate}
-                    receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
-                    //disabled={!isEdit && !(getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')}
-                    placeHolder="Departure Date"
-                    disabledate={disableDate_deployment}
-                    rendered={rendered}
 
-                    EmptyMsg={'Departure Date Required'}
-                    InvalidMsg={'Invalid Departure Date'}
-                    KeyName={'ofwDeptDate'}
-                    group={'TodayOnward'}
-                    compname={'Departure Date'}
-
-                />
                 <DatePickerOpt
                     className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                         } w-[18.75rem] h-[3.875rem]`}
@@ -336,14 +320,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
-                        className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && getAppDetails.ofwfblink && getAppDetails.ofwfblink.startsWith('https://')
+                        className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && getAppDetails.ofwfblink
                             ? 'text-blue-500 underline'
                             : 'text-black'
                             }`}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeholder="Facebook Name / Profile"
-                        value={getAppDetails.ofwfblink}
-                        receive={(e) => updateAppDetails({ name: 'ofwfblink', value: e })}
+                        value={`https://www.facebook.com/${removeLinkFormat(getAppDetails.ofwfblink)}`}//just in case to remove existing data
+                        receive={(e) => updateAppDetails({ name: 'ofwfblink', value: e.slice(25) })}
                         category={'marketing'}
                         rendered={rendered}
                         onClick={handleDoubleClick}
@@ -358,21 +342,42 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     /></>
 
                 ) : (
-                    <LabeledInput
+                    <InputOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeHolder='Facebook Name / Profile'
-                        readOnly={isEdit}
-                        value={getAppDetails.ofwfblink || ''}
-                        receive={(e) => {
-                            const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
-                            updateAppDetails({ name: 'ofwfblink', value: formattedValue });
-                        }}
                         isEdit={isEdit}
+                        category={'marketing'}
+                        readOnly={isEdit}
                         rendered={rendered}
+                        value={getAppDetails.ofwfblink}
+                        receive={(e) => updateAppDetails({ name: 'ofwfblink', value: e ? removeLinkFormat(e) : '' })}
+
+                        KeyName={'ofwfblink'}
+                        group={'Default'}
+                        compname={'Facebook Name / Profile'}
+
+                        InvalidMsg='Invalid Facebook Name/Profile'
+                        EmptyMsg='Facebook Name/Profile Required'
                     />
+                    /*
+                         <LabeledInput
+                                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                                } w-[18.75rem] h-[3.875rem]`}
+                                            className_label={'font-bold'}
+                                            label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
+                                            placeHolder='Facebook Name / Profile'
+                                            readOnly={isEdit}
+                                            value={getAppDetails.ofwfblink || ''}
+                                            receive={(e) => {
+                                                const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
+                                                updateAppDetails({ name: 'ofwfblink', value: formattedValue });
+                                            }}
+                                            isEdit={isEdit}
+                                            rendered={rendered}
+                                        />*/
                 )}
                 {User === 'LC'
                     ? (<></>)
@@ -406,14 +411,17 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         isEdit={isEdit}
                         receive={(e) => updateAppDetails({ name: 'RelationshipAdd', value: e })}
                         options={GET_RELATIONSHIP}
-                        notValidMsg={'Relationship to Additional Required'}
+
+                        EmptyMsg={'Relationship to Additional Required'}
+                        InvalidMsg={'Invalid Relationship to Additional'}
                         KeyName={'RelationshipAdd'}
                         group={'Default'}
+                        compname={'Relationship to Additional'}
                     />
 
                 )}
                 {User === 'Credit' && (
-                    
+
                     <LabeledSelect
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
@@ -453,20 +461,21 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
-
-                {(User === 'Credit' || User === 'MARKETING') && (getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
-                    <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
-                        <Checkbox
-                            checked={getAppDetails.MarriedPBCB}
-                            onClick={() => {
-                                updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
-                            }}
-                            disabled={isEdit}
-                        >
-                            If the PB and CB are married to each other
-                        </Checkbox>
-                    </div>
-                )}
+                {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                    User === 'Credit' || User === 'MARKETING') && (getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
+                        <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
+                            <Checkbox
+                                checked={getAppDetails.MarriedPBCB}
+                                onClick={() => {
+                                    updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
+                                }}
+                                disabled={isEdit}
+                            >
+                                If the PB and CB are married to each other
+                            </Checkbox>
+                        </div>
+                    ) : (<></>)
+                }
                 {(getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
                     User !== 'LC' && (
                         <>
@@ -498,9 +507,13 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 isEdit={isEdit}
                                 rendered={rendered}
                                 disabled={User === 'Credit' && getAppDetails.MarriedPBCB}
-                                notValidMsg={'Spouse Birthdate Required'}
-                                KeyName={'ofwspousebdate'}
                                 category={'marketing'}
+
+                                KeyName={'ofwspousebdate'}
+                                EmptyMsg={'Birthdate Required'}
+                                InvalidMsg={'Invalid Birthdate'}
+                                group={'AgeLimit20'}
+                                compname={'Birthdate'}
                             />
                             {User === 'Credit' && (
                                 <LabeledSelect
@@ -549,9 +562,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         isEdit={isEdit}
                         receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
                         options={GET_RELATIONSHIP}
-                        notValidMsg={'Relationship to Beneficiary Required'}
+
+                        EmptyMsg={'Relationship to the Beneficiary Required'}
+                        InvalidMsg={'Invalid Relationship to the Beneficiary'}
                         KeyName={'RelationshipBen'}
                         group={'Default'}
+                        compname={'Relationship to the Beneficiary'}
                     />
                     )}
                 {User !== 'LC' && (
@@ -812,8 +828,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         showSearch
                         options={get_country_list}
+
+                        EmptyMsg={'Relationship to the Beneficiary Required'}
+                        InvalidMsg={'Invalid Relationship to the Beneficiary'}
                         KeyName={'ofwcountry'}
-                        notValidMsg={'Country Required'}
+                        group={'WithNegative'}
+                        compname={'Relationship to the Beneficiary'}
                     />)}
                 {User === 'LC' ? (
                     <></>
@@ -832,10 +852,13 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             isEdit={isEdit}
                             receive={(e) => updateAppDetails({ name: 'JobCategory', value: e })}
                             options={JOB_CATEGORY}
-                            notValidMsg={'Job Category Required'}
+                            showSearch
+
+                            EmptyMsg={'Job Category Required'}
+                            InvalidMsg={'Invalid Job Category'}
                             KeyName={'JobCategory'}
                             group={'Default'}
-                            showSearch
+                            compname={'Job Category'}
                         />
                     ) : (
                         <LabeledInput_Fullname
@@ -875,7 +898,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'Credit' && (
                     <SelectOpt
-                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-5'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Employment Status <span className="text-red-500">*</span></>}
@@ -896,7 +919,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         InvalidMsg={'Invalid Position'}
                         compname={'Position'}
                     />
-                   )}
+                )}
                 {User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL' || getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL') && (
                     <InputOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
@@ -1034,9 +1057,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         disabled={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
-                        notValidMsg={'Contract Date Required'}
+
                         KeyName={'ContractDate'}
-                    // disabledate={disableDate_deployment}
+                        group={'Default'}
+                        compname={'Contract Date'}
+                        EmptyMsg={'Contract Date Required'}
+                        InvalidMsg={'Invalid Contract Date'}
 
                     />)}
                 {User === 'Credit' && (<>
@@ -1084,7 +1110,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
                 {(User === 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')) && (
                     <DatePickerOpt
-                        KeyName={'ofwDeptDate'}
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={<>OFW Departure Date <span className="text-red-500">*</span></>}
@@ -1094,7 +1119,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder="Departure Date"
                         disabledate={disableDate_deployment}
                         rendered={rendered}
-                        notValidMsg={'Departure Date Required'}
+
+                        KeyName={'ofwDeptDate'}
+                        EmptyMsg={'OFW Departure Date Required'}
+                        InvalidMsg={'Invalid OFW Departure Date'}
+                        group={'TodayOnward'}
+                        compname={'OFW Departure Date'}
                     />)}
                 {User === 'Credit' && (
                     <LabeledSelect

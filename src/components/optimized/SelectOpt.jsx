@@ -41,6 +41,7 @@ function SelectOpt({
         filteredOptions,
         handleSelectChange,
         handleKeyDown,
+        dropdownOpen,
         setDropdownOpen,
         selected,
         ErrorMsg,
@@ -71,7 +72,7 @@ function SelectOpt({
         }
     }, [KeyName, filteredOptions]);
 
-    const [dropdownOpen, setDropdownVisible] = useState(false);
+   // const [dropdownOpen, setDropdownVisible] = useState(false);
 
     const debouncedSearch = useCallback(
         debounce((value) => setSearchInput(value), 300),
@@ -83,7 +84,7 @@ function SelectOpt({
     };
 
     const handleDropdownVisibleChange = (open) => {
-        setDropdownVisible(open);
+        setDropdownOpen(open); // Ensure this updates correctly
     };
 
     const handleBlur = () => {
@@ -153,13 +154,13 @@ function SelectOpt({
                         placeholder={placeHolder}
                         onChange={handleSelectChange}
                         onBlur={() => { handleBlur }}
-                        onFocus={() => { setDropdownVisible(true)}}
+                        onFocus={() => setDropdownOpen(true)} // Explicitly open dropdown on focus
                         showSearch={showSearch}
                         filterOption={false}
                         onSearch={handleSearch}
                         onKeyDown={handleKeyDown}
                         readOnly={readOnly}
-                        open={dropdownOpen}
+                        open={dropdownOpen} // Ensure dropdown respects the state
                         onDropdownVisibleChange={handleDropdownVisibleChange}
                         status={isRendered && !disabled && (required || required === undefined) ? status : false}
                         style={{

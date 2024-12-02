@@ -22,7 +22,7 @@ const isValidDeployDate = (dateStr) => {
 }
 
 const isValidFbLink = (value) => {
-  return value.startsWith('https://');
+  return value.startsWith('https://www.facebook.com/') && value.slice(25) !== '';
 }
 
 export const CheckAmountValid = (value) => {

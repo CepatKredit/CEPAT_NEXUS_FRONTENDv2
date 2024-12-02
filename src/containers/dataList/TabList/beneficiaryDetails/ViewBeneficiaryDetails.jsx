@@ -4,7 +4,7 @@ import { Descriptions } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { Gender, MaritalStatus, Residences,Overseas,SpouseSourceIncome ,Religion } from '@utils/FixedData';
-import { mmddyy } from '@utils/Converter';
+import { mmddyy, ReturnText } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
 import { getDependentsCount } from '@hooks/DependentsController';
 import { useStore } from 'zustand';
@@ -73,8 +73,19 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
         { key: '7', label: <span className={`font-semibold ${data.benemail ? 'text-black' : 'text-red-600'}`}>Email Address</span>, children: data.benemail || '' },
         { key: '8', label: <span className={`font-semibold ${data.benmobile ? 'text-black' : 'text-red-600'}`}>Mobile Number</span>, children: data.benmobile || '' },
         { key: '9', label: <span className='font-semibold text-black'>Other Number</span>, children: data.benothermobile || '' },
-        { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.benfblink || '' },
-         User !== 'LC' && { key: '12', label: <span className={`font-semibold ${data.benrelationship ? 'text-black' : 'text-red-600'}`}>Relationship to OFW</span>, children: relationshipOptions?.find(relationship => relationship.code === data.benrelationship)?.description || '' },
+        User !== 'Credit' && { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.benfblink || '' },
+        User === 'Credit' && { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.benfblink ? (
+            <a
+                href={`https://www.facebook.com/${ReturnText(data.benfblink)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+            >
+                {`https://www.facebook.com/${ReturnText(data.benfblink)}`}
+            </a>
+        ) : ''
+    },
+        User !== 'LC' && { key: '12', label: <span className={`font-semibold ${data.benrelationship ? 'text-black' : 'text-red-600'}`}>Relationship to OFW</span>, children: relationshipOptions?.find(relationship => relationship.code === data.benrelationship)?.description || '' },
          (User === 'Credit' || User === 'Lp') && { key: '13', label: <span className={`font-semibold ${data.BenSrcIncome ? 'text-black' : 'text-red-600'}`}>Source of Income</span>, children:SpouseSourceIncome().find(BenSrcIncome => BenSrcIncome.value === data.BenSrcIncome)?.label || '' },
          (User === 'Credit' || User === 'Lp') && { key: '14', label: <span className={`font-semibold ${data.BenReligion ? 'text-black' : 'text-red-600'}`}>Religion</span>,  children: Religion().find(x => x.value === data.BenReligion)?.label || '' },
          (User === 'Credit' || User === 'Lp') && { key: '15', label: <span className={`font-semibold ${data.BenFormerOFW ? 'text-black' : 'text-red-600'}`}>Former OFW (Overseas Filipino Worker)</span>, children: Overseas().find(BenFormerOFW => BenFormerOFW.value === data.BenFormerOFW)?.label || '' },
@@ -131,7 +142,19 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
         { key: '8', label: <span className='font-semibold text-black'>Mobile Number</span>, children: data.coborrowmobile ? data.coborrowmobile.replace('/','-') : '' },
         { key: '9', label: <span className='font-semibold text-black'>Other Mobile Number</span>, children: data.coborrowothermobile? data.coborrowothermobile.replace('/','-') : '' },
         { key: '10', label: <span className='font-semibold text-black'>Email Address</span>, children: data.coborrowemail || '' },
-        { key: '11', label: <span className='font-semibold text-black'>Facebook Name / Profile</span>, children: data.coborrowfblink || '' },
+       // { key: '11', label: <span className='font-semibold text-black'>Facebook Name / Profile</span>, children: data.coborrowfblink || '' },
+        User !== 'Credit' && { key: '11', label: <span className={`font-semibold ${data.coborrowfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.coborrowfblink || '' },
+        User === 'Credit' && { key: '11', label: <span className={`font-semibold ${data.coborrowfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.coborrowfblink ? (
+            <a
+                href={`https://www.facebook.com/${ReturnText(data.coborrowfblink)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+            >
+                {`https://www.facebook.com/${ReturnText(data.coborrowfblink)}`}
+            </a>
+        ) : ''
+    },
         {/*(User === 'Credit' || User === 'Lp') && { key: '12', label: <span className="font-semibold text-black">Group Chat</span>, children: data.AcbGrpChat || '' },*/},
         User !== 'LC' && { key: '13', label: <span className="font-semibold text-black">Relationship to OFW</span>, children: relationshipOptions?.find(relationship => relationship.code === data.AcbRelationship)?.description || '' },
         (User === 'Credit' || User === 'Lp') && { key: '14', label: <span className='font-semibold text-black'>Source of Income</span>, children: SpouseSourceIncome().find(AcbSrcIncome => AcbSrcIncome.value === data.AcbSrcIncome)?.label || '' },

@@ -42,11 +42,11 @@ function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, Em
   }
 }
 
-export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value = '', setRendered,  InvalidMsg, EmptyMsg) {
+export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value = '', setRendered, InvalidMsg, EmptyMsg) {
   const [status, setStatus] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selected, setselected] = useState(value );
+  const [selected, setselected] = useState(value);
   const [debouncedInput, setDebouncedInput] = useState(selected);
   const [ErrorMsg, setErrorMsg] = useState('EMPTY')
 
@@ -55,6 +55,7 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
   }, []);
 
   const filteredOptions = useMemo(() => {
+    if (!options || options.length === 0) return [];
     if (KeyName === 'ofwcountry') {
       return options.filter(option =>
         option.name.toLowerCase().includes(search ? search.toLowerCase() : '')
@@ -173,7 +174,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, setRendered
           setIconVisible(true);
           setValidationMessage('');
           setStatus('');
-          receive(date? mmddyy(date) : '')
+          receive(date ? mmddyy(date) : '')
         }
       } else if (debouncedInput.length === 0 && (rendered === false || rendered === undefined)) {
         setStatus('error');
@@ -244,7 +245,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, setRendered
         setIconVisible(true);
         setValidationMessage('');
         setStatus('');
-        receive(date? mmddyy(date) : '')
+        receive(date ? mmddyy(date) : '')
       }
     } else if (debouncedInput.length === 0) {
       setStatus('error');
@@ -312,6 +313,12 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     if (maxchar && value.length > maxchar) {
       value = value.slice(0, maxchar);
     }
+    // Only format the value if necessary
+    if (format === 'Http' && value.startsWith('https://www.facebook.com/')) {
+      const res = value.slice(25); // Remove existing prefix for reprocessing
+      value = `https://www.facebook.com/${res}`;
+    }
+
     const res = hookInputValid(KeyName, value, comp_name, format, group, InvalidMsg, EmptyMsg);
     statusValidation(res.valid, res.value, res.errmsg, true, 800);
   }
@@ -331,10 +338,18 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   }, [rendered]);
 
   useEffect(() => {
-    if (isDisabled || isFocused || readOnly) {
-      handleChange(initialValue);
+    if (rendered) {
+      setIconVisible(true);
+      const res = hookInputValid(KeyName, initialValue || '', comp_name, format, group, InvalidMsg, EmptyMsg);
+      statusValidation(
+        res.valid,
+        format === 'Http' ? inputFormat(format, res.value || '') : res.value,
+        res.errmsg,
+        true,
+        100
+      );
     }
-  }, [initialValue])
+  }, [rendered, initialValue]);
 
   useEffect(() => {
     handleBlur();

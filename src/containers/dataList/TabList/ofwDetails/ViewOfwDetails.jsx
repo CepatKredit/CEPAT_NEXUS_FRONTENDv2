@@ -48,13 +48,13 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         enabled: true,
         retryDelay: 1000,
     });
-    const {GET_CURRENCY_LIST } = useDataContainer();
+    const { GET_CURRENCY_LIST } = useDataContainer();
     const { GET_COUNTRY_LIST } = useDataContainer();
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({
-      value: x.code,
-      label: x.description,
-      negative: x.isNegative,
-      name: x.description
+        value: x.code,
+        label: x.description,
+        negative: x.isNegative,
+        name: x.description
     })) || [];
 
     function formatNumberWithCommas(num) {
@@ -92,7 +92,18 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
 
         User !== 'LC' && { key: '9', label: <span className="font-semibold text-black">Other Mobile Number</span>, children: data.ofwothermobile || '' },
         { key: '10', label: <span className={`font-semibold ${data.ofwemail ? 'text-black' : 'text-red-600'}`}>Email Address</span>, children: data.ofwemail || '' },
-        { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: ReturnText(data.ofwfblink) || '' },
+        User !== 'Credit' && { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: ReturnText(data.ofwfblink) || '' },
+        User === 'Credit' && { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.ofwfblink ? (
+                <a
+                    href={`https://www.facebook.com/${ReturnText(data.ofwfblink)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                >
+                    {`https://www.facebook.com/${ReturnText(data.ofwfblink)}`}
+                </a>
+            ) : ''
+        },
         User !== 'LC' && { key: '12', label: <span className={`font-semibold ${data.ofwgroupchat ? 'text-black' : 'text-red-600'}`}>Group Chat</span>, children: data.ofwgroupchat || '' },
         (User === 'Credit' || User === 'Lp') && { key: '13', label: <span className={`font-semibold ${data.RelationshipBen ? 'text-black' : 'text-red-600'}`}>Relationship to Beneficiary</span>, children: relationshipOptions?.find(relationship => relationship.code === data.RelationshipBen)?.description || '' },
         (User === 'Credit' || User === 'Lp') && data.sepcoborrowfname && { key: '14', label: <span className={`font-semibold ${data.RelationshipAdd ? 'text-black' : 'text-red-600'}`}>Relationship to Additional Co Borrower</span>, children: relationshipOptions?.find(relationship => relationship.code === data.RelationshipAdd)?.description || '' },
@@ -146,18 +157,23 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
 
     const idItems = [
         User !== 'LC' && { key: '41', label: <span className="font-semibold text-black">Valid ID Type</span>, children: IDtypeOption?.find(idtype => idtype.id === data.ofwvalidid)?.name || '' },
-        User !== 'LC' && { key: '42', label: <span className="font-semibold text-black">ID Number</span>, children: data.ofwidnumber || '' },        
-        User !== 'LC' && { key: '43', label: (<span className={`font-semibold ${data.ofwcountry ? 'text-black' : 'text-red-600'}`}>Country of Employment</span>),children: (<span className={`${GET_COUNTRY_LIST?.find((country) => country.code === data.ofwcountry || country.label === data.ofwcountry
-                  )?.isNegative ? ' font-bold text-[#e8000d]' : 'text-black'}`}>
+        User !== 'LC' && { key: '42', label: <span className="font-semibold text-black">ID Number</span>, children: data.ofwidnumber || '' },
+        User !== 'LC' && {
+            key: '43', label: (<span className={`font-semibold ${data.ofwcountry ? 'text-black' : 'text-red-600'}`}>Country of Employment</span>), children: (<span className={`${GET_COUNTRY_LIST?.find((country) => country.code === data.ofwcountry || country.label === data.ofwcountry
+            )?.isNegative ? ' font-bold text-[#e8000d]' : 'text-black'}`}>
                 {GET_COUNTRY_LIST?.find(
-                  (country) => country.code === data.ofwcountry || country.label === data.ofwcountry)?.description || ''}</span>),},
-        User !== 'LC' && { key: '44', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>{(User === 'Credit' || User === 'Lp') ? 'Job Category' : 'Job Title / Position'}</span>),
-            children: (User === 'Credit' || User === 'Lp') ? JobCategory()?.find(jobcategory => jobcategory.value === data.JobCategory)?.label || '' : data.ofwjobtitle || '' },
+                    (country) => country.code === data.ofwcountry || country.label === data.ofwcountry)?.description || ''}</span>),
+        },
+        User !== 'LC' && {
+            key: '44', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>{(User === 'Credit' || User === 'Lp') ? 'Job Category' : 'Job Title / Position'}</span>),
+            children: (User === 'Credit' || User === 'Lp') ? JobCategory()?.find(jobcategory => jobcategory.value === data.JobCategory)?.label || '' : data.ofwjobtitle || ''
+        },
         (User === 'Credit' || User === 'Lp') && { key: '45', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>Position</span>), children: JobTitle(data.JobCategory)?.find(ofwjobtitle => ofwjobtitle.value === data.ofwjobtitle)?.label || '' },
         (User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL') && { key: '46', label: <span className={`font-semibold ${data.PEmployer ? 'text-black' : 'text-red-600'}`}>Principal Employer</span>, children: data.PEmployer || '' },
         (User !== 'LC' && ((User !== 'Credit' && User !== 'Lp') || ((User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL')))) && {
             key: '47', label: <span className={`font-semibold ${data.ofwcompany ? 'text-black' : 'text-red-600'}`}>
-                {(User === 'Credit' || User === 'Lp') ? 'Agency' : 'Company/Employer/Agency Name'}</span>, children: data.ofwcompany || '' },
+                {(User === 'Credit' || User === 'Lp') ? 'Agency' : 'Company/Employer/Agency Name'}</span>, children: data.ofwcompany || ''
+        },
         // User === 'Credit' && { key: '45', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-red-600'}`}>Agency Address</span>, children: data.agencyaddress || '' },
         // User === 'Credit' && { key: '46', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-red-600'}`}>License Validity</span>, children: data.license || '' },
         // User === 'Credit' && { key: '47', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-red-600'}`}>Status</span>, children: data.ofwstatus || '' },
@@ -167,7 +183,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         (User === 'Credit' || User === 'Lp') && { key: '48', label: <span className={`font-semibold ${data.FSalary ? 'text-black' : 'text-red-600'}`}>Salary in Foreign Currency </span>, children: data.FSalary ? `${formatNumberWithCommas(formatToTwoDecimalPlaces(data.FSalary.toString()))} ${data.FCurrency}` : '' },
         User !== 'Credit' && { key: '71', label: <span className={`font-semibold ${data.ofwsalary ? 'text-black' : 'text-red-600'}`}>Salary</span>, children: `${formatNumberWithCommas(formatToTwoDecimalPlaces(data.ofwsalary)).toString()}` || '' },
         User === 'Credit' && { key: '72', label: <span className={`font-semibold ${data.PSalary ? 'text-black' : 'text-red-600'}`}>Salary in Peso</span>, children: data.PSalary ? `\u20B1 ${formatNumberWithCommas(formatToTwoDecimalPlaces(data.PSalary)).toString()}` : '' },
-        (User === 'Credit' && { key: '73', label: <span className={`font-semibold ${data.ContractDate ? 'text-black' : 'text-red-600'}`}>Contract Date</span>, children: data.ContractDate ? mmddyy(data.ContractDate) : ''}),
+        (User === 'Credit' && { key: '73', label: <span className={`font-semibold ${data.ContractDate ? 'text-black' : 'text-red-600'}`}>Contract Date</span>, children: data.ContractDate ? mmddyy(data.ContractDate) : '' }),
         (User === 'Credit' || User === 'Lp') && { key: '52', label: <span className={`font-semibold ${data.ContractDuration ? 'text-black' : 'text-red-600'}`}>Contract Duration</span>, children: data.ContractDuration ? data.ContractDuration : '' },
         (User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') && { key: '53', label: <span className={`font-semibold ${data.ofwDeptDate ? 'text-black' : 'text-red-600'}`}>Departure Date</span>, children: data.ofwDeptDate ? mmddyy(data.ofwDeptDate) : '' },
         (User === 'Credit' || User === 'Lp') && { key: '54', label: <span className="font-semibold text-black w-[8rem]">Unlimited Contract</span>, children: (<span>{data.UnliContract ? 'YES' : 'NO'}</span>) },
@@ -215,7 +231,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
                         >
                             <FcGoogle className="text-3xl" />
                         </a>
-                    )}                
+                    )}
                 </div>
             </div>}
                 column={User === 'LC' ? { md: 2, lg: 3, xl: 4 } : { md: 1, lg: 2, xl: 3 }}
