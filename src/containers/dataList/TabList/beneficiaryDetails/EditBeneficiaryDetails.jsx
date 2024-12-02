@@ -70,16 +70,15 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
 
     const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
 
-    const handleDoubleClick = ((borrower) => {
+    const handleDoubleClick = (() => {
         let clickCount = 0;
         return (e) => {
-            if (!isEdit && (borrower === 'Ben' && (getAppDetails.benfblink && getAppDetails.benfblink.startsWith('https://')))
-                (borrower === 'Acb' && (getAppDetails.coborrowfblink && getAppDetails.coborrowfblink.startsWith('https://')))) {
+            if (!isEdit && getAppDetails.benfblink && getAppDetails.benfblink.startsWith('https://')) {
                 e.preventDefault();
                 clickCount++;
                 setTimeout(() => {
                     if (clickCount >= 2) {
-                        window.open(borrower === 'Ben' ? getAppDetails.benfblink : getAppDetails.coborrowfblink, '_blank');
+                        window.open(getAppDetails.benfblink, '_blank');
                     }
                     clickCount = 0; // Reset click count after handling
                 }, 300); // Adjust timeout for double-click detection
@@ -455,16 +454,16 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         className_dmain={`mt-5 w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && data.benfblink && data.benfblink.startsWith('https://')
-                            ? 'text-blue-500 underline'
-                            : 'text-black'
-                            }`}
+                                ? 'text-blue-500 underline'
+                                : 'text-black'
+                                }`}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeholder="Facebook Name / Profile"
                         value={getAppDetails.benfblink}
                         receive={(e) => updateAppDetails({ name: 'benfblink', value: e })}
                         category={'marketing'}
                         rendered={rendered}
-                        onClick={handleDoubleClick('Ben')}
+                        onClick={handleDoubleClick}
 
                         KeyName={'benfblink'}
                         format={'Http'}
