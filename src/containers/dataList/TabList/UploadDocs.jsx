@@ -40,13 +40,9 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             const startTime = performance.now();
             try {
                 const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${toUpperText(Uploader)}`)
-                //     const endTime = performance.now();
-                // setFetchTime((endTime - startTime).toFixed(2)); 
                 SET_LOADING_INTERNAL('UploadDocs', false);
                 return result.list
             } catch (error) {
-                //     const endTime = performance.now();
-                // setFetchTime((endTime - startTime).toFixed(2)); 
                 console.error(error);
                 SET_LOADING_INTERNAL('UploadDocs', false);
                 return [];
@@ -61,12 +57,6 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
         SET_LOADING_INTERNAL('UploadDocs', true)
         FileListQuery.refetch();
     }, []);
-    /* React.useEffect(() => {
-     SET_LOADING_INTERNAL('UploadDocs', true);
-     if (FileListQuery.isFetched) {
-         SET_LOADING_INTERNAL('UploadDocs', false);
-     }
- }, [FileListQuery.isFetched])*/
 
     const processedData = React.useMemo(() => {
         const count = {};
@@ -193,7 +183,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 <Flex className="flex flex-col justify-center">
                 <span className='font-bold'>
                     Others &nbsp;
-                    {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                    {FileListQuery.isFetching && (<Spin size="small" className="text-green-500" />)}
+                    {FileListQuery.isFetching && (<span className="text-green-500 fony-semibold">&nbsp; Loading files...</span>)}
                     <span className='text-rose-500' />
                 </span>
                 </Flex>,
@@ -222,7 +213,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                         label: 
                         <span className='font-bold'>
                             {x.docsType}&nbsp;
-                            {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                            {FileListQuery.isFetching && (<Spin size="small" className="text-green-500" />)}
+                            {FileListQuery.isFetching && (<span className="text-green-500 fony-semibold">&nbsp; Loading files...</span>)}
                             <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                         </span>,
                         children: <div className='h-[300px] overflow-y-auto'>
@@ -243,7 +235,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                             label: 
                             <span className='font-bold'>
                                 {x.docsType}&nbsp;
-                                {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                                {FileListQuery.isFetching && (<Spin size="small" className="text-green-500" />)}
+                                {FileListQuery.isFetching && (<span className="text-green-500 fony-semibold">&nbsp; Loading files...</span>)}
                                 <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                             </span>,
                             children: (<div className='h-[300px] overflow-y-auto'>
@@ -272,7 +265,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     key: 0,
                     label: <span className='font-bold'>
                         Others &nbsp;
-                        {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                        {FileListQuery.isFetching && (<Spin size="small" className="text-green-500" />)}
+                        {FileListQuery.isFetching && (<span className="text-green-500 fony-semibold">&nbsp; Loading files...</span>)}
                         <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                     </span>,
                     children: <div className='h-[300px] overflow-y-auto'>
@@ -293,7 +287,8 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 key: data.length + 1,
                 label: <span className='font-bold'>
                     Archive &nbsp;
-                    {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                    {FileListQuery.isFetching && (<Spin size="small" className="text-green-500" />)}
+                    {FileListQuery.isFetching && (<span className="text-green-500 fony-semibold">&nbsp; Loading files...</span>)}
                     <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
