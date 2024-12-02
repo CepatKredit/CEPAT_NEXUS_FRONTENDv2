@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form } from 'antd';
+import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, Spin, Form, Dropdown } from 'antd';
 import { SaveOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
@@ -549,6 +549,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         children,
         ...restProps
     }) => {
+        const [isDropdownOpen, setDropdownOpen] = React.useState(false);
         const inputNode = dataIndex === 'prov'
             ? (
                 <Select
@@ -560,6 +561,9 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     filterOption={(input, option) =>
                         option.label.toLowerCase().includes(input.toLowerCase())
                     }
+                    onFocus={() => setDropdownOpen(true)}
+                    onBlur={() => setDropdownOpen(false)}
+                    open={isDropdownOpen}
                 />
             )
             : dataIndex === 'relShip' ? (
@@ -572,6 +576,9 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     filterOption={(input, option) =>
                         option.label.toLowerCase().includes(input.toLowerCase())
                     }
+                    onFocus={() => setDropdownOpen(true)}
+                    onBlur={() => setDropdownOpen(false)}
+                    open={isDropdownOpen}
                 />
             )
                 : dataIndex === 'name' ? (

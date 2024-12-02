@@ -83,7 +83,7 @@ function OwnedAsset({ data, User }) {
     });
 
     React.useEffect(() => {
-        if(getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined){
+        if (getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined) {
             SET_LOADING_INTERNAL('AssetTABLE', true)
             getOwnedAssets.refetch();
         }
@@ -160,7 +160,7 @@ function OwnedAsset({ data, User }) {
                     PlateNo: row.plateNo,
                     ModUser: jwtDecode(token).USRID
                 };
-                console.log('Data to be sent to the server:', data);
+            //    console.log('Data to be sent to the server:', data);
                 const result = await axios.post('/POST/P134UOA', data);
                 api[result.data.status]({
                     message: result.data.message,
@@ -326,7 +326,7 @@ function OwnedAsset({ data, User }) {
             editable: true,
         },
         {
-            title: 'Make / Loacation',
+            title: 'Make / Location',
             dataIndex: 'make',
             key: 'make',
             width: '15%',
@@ -482,26 +482,39 @@ function OwnedAsset({ data, User }) {
         ...restProps
     }) => {
 
-      const [autoPlaceHolder, setAutoPlaceHolder] = React.useState({
-        make: 'Make',
-        year: 'Year Model',
-      });
+        const [isDropOpen, setDropOpen] = React.useState(false);
+
+        const [autoPlaceHolder, setAutoPlaceHolder] = React.useState({
+            make: 'Make',
+            year: 'Year Model',
+        });
 
         React.useEffect(() => {
-            const categoryValue = form.getFieldValue('category');
-            if ([7, 8, 9].includes(categoryValue)) {
-                setAutoPlaceHolder({
-                    make: 'Location',
-                    year: 'Year Acquired',
-                });
-
-            } else {
-                setAutoPlaceHolder({
-                    make: 'Make',
-                    year: 'Year Model',
-                });
-            }
-        }, [form.getFieldValue('category')]);
+            const handleTabKeyPress = (e) => {
+                if (e.key === 'Tab') {
+                    const categoryValue = form.getFieldValue('category');
+                    if ([7, 8, 9].includes(categoryValue)) {
+                        setAutoPlaceHolder({
+                            make: 'Location',
+                            year: 'Year Acquired',
+                        });
+                    } else {
+                        setAutoPlaceHolder({
+                            make: 'Make',
+                            year: 'Year Model',
+                        });
+                    }
+                }
+            };
+        
+            // Add event listener for keydown
+            window.addEventListener('keydown', handleTabKeyPress);
+        
+            // Cleanup listener on unmount
+            return () => {
+                window.removeEventListener('keydown', handleTabKeyPress);
+            };
+        }, [form]); 
 
         const inputNode = dataIndex === 'category'
             ? (
@@ -518,6 +531,9 @@ function OwnedAsset({ data, User }) {
                         filterOption={(input, option) =>
                             option.label.toLowerCase().includes(input.toLowerCase())
                         }
+                        onFocus={() => setDropOpen(true)}
+                        onBlur={() => setDropOpen(false)}
+                        open={isDropOpen}
                     />
                 </>
             )

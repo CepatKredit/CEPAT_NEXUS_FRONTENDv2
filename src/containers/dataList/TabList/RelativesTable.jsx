@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Typography, Button, Table, Input, ConfigProvider, notification, Select, Tooltip, Popconfirm, Space, DatePicker, Spin, Form } from 'antd';
 import { SaveOutlined, EditOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
@@ -41,7 +41,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     const [getStat, setStat] = React.useState(true);
     React.useEffect(() => {
         getRelatives.refetch()
-        
+
     }, [BorrowerId]);
 
     const getRelatives = useQuery({
@@ -91,9 +91,10 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     });
 
     React.useEffect(() => {
-if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
-        SET_LOADING_INTERNAL('DependentsTABLE', true)
-        getRelatives.refetch();}
+        if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined) {
+            SET_LOADING_INTERNAL('DependentsTABLE', true)
+            getRelatives.refetch();
+        }
     }, [getAppDetails.loanIdCode]);
 
 
@@ -211,7 +212,7 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
                     ModUser: jwtDecode(token).USRID,
                     IsOfw: isOfw,
                 };
-                console.log(data)
+                //console.log(data)
                 const result = await axios.post('/POST/P76UR', data);
                 api[result.data.status]({
                     message: result.data.message,
@@ -563,6 +564,9 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
         children,
         ...restProps
     }) => {
+
+        const [dropdownOpen, setDropdownOpen] = React.useState(false);
+
         const inputNode = dataIndex === 'fullName'
             ? (
                 <>
@@ -587,7 +591,7 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
                     ? (
                         <>
                             <Input
-                                className='w-[14rem]'
+                                className='w-[12rem]'
                                 onChange={(e) => onChangeToUpper(e.target.value, 'contactNo')}
                                 placeholder='Remarks'
                             />
@@ -607,7 +611,7 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
                             ? (<>
                                 <Select
                                     className='w-[10rem]'
-                                    onChange={(value) => { onChangedropdown(value); }}
+                                    onChange={(value) => onChangedropdown(value, 'workEducStatus')}
                                     placeholder="School / Employment"
                                     options={WorkEducStatusOption().map(x => ({
                                         value: x.value,
@@ -617,6 +621,9 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
                                     filterOption={(input, option) =>
                                         option.label.toLowerCase().includes(input.toLowerCase())
                                     }
+                                    onFocus={() => setDropdownOpen(true)} 
+                                    onBlur={() => setDropdownOpen(false)} 
+                                    open={dropdownOpen}
                                 />
 
                             </>
@@ -625,14 +632,16 @@ if (getAppDetails.loanIdCode !== '' && getAppDetails.loanIdCode !== undefined){
 
                                 <Select
                                     className='w-[10rem]'
-                                    onChange={(value) => { onChangedropdown(value); }}
+                                    onChange={(value) =>  onChangedropdown(value, 'relationship') }
                                     placeholder='Relationship'
                                     options={getRelationshipList.data?.map(x => ({ value: x.description, label: x.description }))}
                                     showSearch
                                     filterOption={(input, option) =>
                                         option.label.toLowerCase().includes(input.toLowerCase())
                                     }
-                                    onFocus={(e) => e.target.click()}
+                                    onFocus={() => setDropdownOpen(true)}
+                                    onBlur={() => setDropdownOpen(false)}
+                                    open={dropdownOpen}
                                 />
 
                             </>
