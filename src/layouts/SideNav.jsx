@@ -143,7 +143,7 @@ function SideNav() {
                 </div>
               </center>
             )}
-            <div className="overflow-y-hidden hover:overflow-y-auto h-[100vh] xs1:h-[86.1vh] xs:h-[89.1vh] 2xl:h-[89.1vh]">
+            <div className="overflow-y-hidden hover:overflow-y-auto h-[110vh] xs1:h-[86.1vh] xs:h-[89.1vh] 2xl:h-[88.1vh]">
               <ConfigProvider
                 theme={{
                   components: {
