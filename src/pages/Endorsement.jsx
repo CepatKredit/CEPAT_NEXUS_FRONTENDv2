@@ -39,12 +39,11 @@ function Endorsement() {
     const lc_ofwdetails =  !isValidOFWDetailsLc(getAppDetails);
 
     React.useEffect(() => {
-        if (!getAppDetails.dataPrivacy) {
+        if (getAppDetails.dataPrivacy === 0) {
           resetAppDetails();
         }
       }, [getAppDetails.dataPrivacy]);
 
-      console.log("ENDORSEMENT", getAppDetails)
 
     async function insertDirect() {
 

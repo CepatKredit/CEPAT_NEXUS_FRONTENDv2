@@ -1,4 +1,4 @@
-import { Collapse, ConfigProvider, Button, Spin } from 'antd'
+import { Collapse, ConfigProvider, Button, Spin, Flex } from 'antd'
 import React from 'react';
 import { viewModalUploadDocx } from '@hooks/ModalController';
 import { FileUpload } from '@hooks/FileController';
@@ -189,9 +189,14 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
         const data = [
             {
                 key: 0,
-                label: <span className='font-bold'>
-                    Others <span className='text-rose-500' />
-                </span>,
+                label: 
+                <Flex className="flex flex-col justify-center">
+                <span className='font-bold'>
+                    Others &nbsp;
+                    {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                    <span className='text-rose-500' />
+                </span>
+                </Flex>,
                 // children: <div className='h-[300px] overflow-y-auto'>
                 //     <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' ModUser={ModUser} />
                 // </div>
@@ -214,8 +219,10 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 if (Display === 'USER') {
                     data.push({
                         key: i + 1,
-                        label: <span className='font-bold'>
-                            {x.docsType}
+                        label: 
+                        <span className='font-bold'>
+                            {x.docsType}&nbsp;
+                            {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
                             <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                         </span>,
                         children: <div className='h-[300px] overflow-y-auto'>
@@ -233,8 +240,10 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                     if (GetFile(x.id, 'COUNT') !== 0) {
                         data.push({
                             key: i + 1,
-                            label: <span className='font-bold'>
-                                {x.docsType}
+                            label: 
+                            <span className='font-bold'>
+                                {x.docsType}&nbsp;
+                                {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
                                 <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                             </span>,
                             children: (<div className='h-[300px] overflow-y-auto'>
@@ -262,7 +271,9 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
                 data[0] = {
                     key: 0,
                     label: <span className='font-bold'>
-                        Others <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                        Others &nbsp;
+                        {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                        <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                     </span>,
                     children: <div className='h-[300px] overflow-y-auto'>
                         {FileListQuery.isFetching ? (
@@ -281,7 +292,9 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
             data[data.length + 1] = {
                 key: data.length + 1,
                 label: <span className='font-bold'>
-                    Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
+                    Archive &nbsp;
+                    {FileListQuery.isFetching && (<Spin size="small" className="text-green-500"><span className="text-green-500">"Loading files..."</span></Spin>)}
+                    <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
                 </span>,
                 children: <div className='h-[300px] overflow-y-auto'>
                     <FileLoader key={data.length + 1} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
