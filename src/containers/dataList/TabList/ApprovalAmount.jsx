@@ -38,7 +38,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             const id = jwtDecode(token).USRID;
             console.log('LAI', data.loanIdCode)
             console.log('User', jwtDecode(token).USRID)
-            const result = await GET_LIST(`/getApprovedDataList/${data.loanIdCode}/${id}`);
+            const result = await GET_LIST(`/GET/G149GA/${data.loanIdCode}/${id}`);
             console.log('test', result)
             setIsEligibleToApprove(result.list[0].isEligible);
         } catch (error) {
@@ -51,6 +51,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             fetchEligibility();
         }
     }, [data.loanIdCode, token]);
+    
 
     const ApprvAmount_valid = !data.ApprovAmount || !data.approvTerms || !data.ApprvInterestRate || !data.MonthlyAmort || !data.TotalExposure;
 
@@ -133,11 +134,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
     };
 
-
-
-
-
-
     async function updateApprvTerms() {
         try {
             const payload = {
@@ -172,11 +168,6 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             });
         }
     }
-    
-
-
-
-
 
     const onClickSaveData = useMutation({
         mutationFn: async () => {
@@ -277,7 +268,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
 
             <div
                 className={`w-full overflow-y-auto ${((GetData('ROLE') === '70' || GetData('ROLE') === '80') ?
-                    'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[45vh] 3xl:h-[65vh]' :
+                    'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[49vh] 3xl:h-[60vh]' :
                     ((!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
                         ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
                         : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]')
@@ -320,7 +311,7 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
             </div>
 
             <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-                {GetData('ROLE') !== '70' && GetData('ROLE') !== '80' && !isEdit && !isEligibleToApprove && (
+            {!isEdit && !isEligibleToApprove && GetData('ROLE') !== '70' && GetData('ROLE') !== '80' && (
                     <ConfigProvider
                         theme={{
                             token: {

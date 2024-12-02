@@ -605,8 +605,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     type={"present"}
                     disabled={isEdit}
                     category={"marketing"}
-                    className_dmain={`mt-5 xs1:mt-2 2xl:mt-5 xs1:mt-2 2xl:mt-5 xs1:mt-2 2xl:mt-5 w-full xs:w-[18.75rem] sm:w-[18.75rem] md:w-[18.75rem] lg:w-[18.75rem] xl:w-[18.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
-                        } 3xl:w-[20.75rem] h-[3.875rem]`}
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'}  w-full xs:w-[18.75rem] sm:w-[18.75rem] md:w-[18.75rem] lg:w-[18.75rem] xl:w-[18.75rem] ${User === 'Credit' || User === 'Lp' ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'} 3xl:w-[20.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     vertical_algin={true}
                     rendered={rendered}
@@ -802,7 +801,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<SelectOpt
-                        className_dmain={'mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem] mt-[-0.1rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'} w-[18.75rem] h-[3.875rem] mt-[-0.1rem]`}
                         className_label={'font-bold'}
                         label={<>Country of Employment for OFW or Joining Port for SEAFARER <span className="text-red-500">*</span></>}
                         placeHolder='Country'
@@ -876,7 +875,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'Credit' && (
                     <SelectOpt
-                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-5'
+                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Employment Status <span className="text-red-500">*</span></>}

@@ -11,6 +11,8 @@ import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import { GetData } from '@utils/UserData';
 import { toUpperText } from '@utils/Converter';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { useWindowDimensions } from '@hooks/GetWindowScreenSize';
+import ModCharacterReference from '@containers/mobileView/MobCharacterReference';
 
 
 function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data }) {
@@ -21,6 +23,8 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     const { GetStatus } = ApplicationStatus();
     const [contactError, setContactError] = React.useState('');
     const [deleteKey, setDeleteKey] = React.useState(null);
+    const { width } = useWindowDimensions(); // Get screen width
+    const isMobile = width <= 768;
     const [getInfo, setInfo] = React.useState({
         key: '',
         name: '',
@@ -645,6 +649,17 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     </center>
                 </div>
                 <div className='mt-[0rem]'>
+                {isMobile ? (
+                <ModCharacterReference
+                    BorrowerId={BorrowerId}
+                    Creator={Creator}
+                    form={form}
+                    getCharacterRef={getCharacterRef}
+                    getRelationshipList={getRelationshipList}
+                    provinceList={provinceList}
+                    onClickSaveData={onClickSaveData}
+                />
+            ) : (
                     <Form form={form} component={false}>
                         <div className="overflow-x-auto">
                             <Table
@@ -679,6 +694,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                             />
                         </div>
                     </Form>
+                    )}
                 </div>
             </div>
         </div>

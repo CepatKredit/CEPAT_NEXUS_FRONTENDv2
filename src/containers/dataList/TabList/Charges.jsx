@@ -347,7 +347,7 @@ function Charges({ LoanAppId, data, User, }) {
             {contextHolder}
             <div className='h-[58vh]'>
                 <div className='w-[76vw] mx-auto pt-4 ml-[6rem]'>
-                    <div className='ml-[-8rem]'>
+                    <div className='ml-[-4.5rem]'>
                         <SectionHeader title="Charges" />
                     </div>
                     <Row gutter={16} className='font-bold text-xl pb-4'>
@@ -470,7 +470,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-                            {/* ialgay dito ang label ng Loan Charges*/}
                             <Space className="w-full mb-5 mt-5 justify-center items-center">
                                 <div className='w-[10rem] text-center ml-[7rem]'>Loan Charges</div>
                             </Space>
@@ -493,9 +492,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     </Radio.Group>
                                 </div>
                             </Space>
-
-
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className='w-[10rem] '>Processing Fee</div>
                                 <div className='w-[15rem]'>
@@ -572,8 +568,6 @@ function Charges({ LoanAppId, data, User, }) {
                                 <div className='w-[15rem]'>
                                     <Input
                                         value={formatNumberForDisplay(getAppDetails.Others)}
-
-
                                         onChange={(e) => {
                                             const rawValue = e.target.value;
                                             const numericValue = removeNonNumeric(rawValue);
@@ -587,7 +581,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
                             <Space className='pt-6 w-full mb-2 justify-center items-center'>
                                 <div className='w-[10rem] '>Total Charges</div>
                                 <div className='w-[15rem]'>
@@ -615,7 +608,6 @@ function Charges({ LoanAppId, data, User, }) {
                                 </div>
                             </Space>
                         </Col>
-
                         <Col span={12}>
                             <Space className="w-full mb-5 mt-5 justify-center items-center ml-[-3rem]">
                                 <div className='w-[10rem] text-center ml-[7rem]'>Other Charges</div>
@@ -634,7 +626,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
@@ -643,8 +634,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
@@ -653,18 +642,14 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-
                                         value={getAppDetails.ApprvTerms || data.ApprvTerms}
                                         readOnly
-
                                     />
                                 </div>
                             </Space>
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
@@ -673,7 +658,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
@@ -731,8 +715,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
@@ -741,7 +723,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
@@ -795,7 +776,6 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
@@ -804,16 +784,8 @@ function Charges({ LoanAppId, data, User, }) {
                                     />
                                 </div>
                             </Space>
-
-
-
-
-
-
                         </Col>
-
                     </Row>
-
                 </div>
             </div >
         </>

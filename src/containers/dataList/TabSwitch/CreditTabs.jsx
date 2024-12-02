@@ -540,7 +540,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
         'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'COMPLIED - LACK OF DOCUMENTS'
+         'COMPLIED - LACK OF DOCUMENTS'
     ];
 
 
@@ -804,7 +804,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     onChange={onChangeTab}
                     items={TabsItems}
                 />
-                {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
+                { activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
                     <ConfigProvider
                         theme={{
                             token: {
