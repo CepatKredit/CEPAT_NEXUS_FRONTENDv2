@@ -56,7 +56,8 @@ function Charges({ LoanAppId, data, User, }) {
             !getAppDetails?.InterestRate &&
             !getAppDetails?.DocuSign &&
             !getAppDetails?.IBFTFee &&
-            !getAppDetails?.Notarial
+            !getAppDetails?.Notarial &&
+            !getAppDetails?.GracePeriod
         ) {
             let defaultPFR = '';
             let defaultCFRF = '';
@@ -64,6 +65,7 @@ function Charges({ LoanAppId, data, User, }) {
             let defaultDocuSign = 300;  // Default value for DocuSign
             let defaultIBFTFee = 300;   // Default value for IBFTFee
             let defaultNotarial = 300;
+            let defaultGracePeriod = 2;
 
             // Default value for PFR based on loanType
             if (getAppDetails?.loanType === 1) {
@@ -105,6 +107,7 @@ function Charges({ LoanAppId, data, User, }) {
                 DocuSign: defaultDocuSign,  // Set temporary DocuSign value
                 IBFTFee: defaultIBFTFee,
                 Notarial: defaultNotarial,
+                GracePeriod: defaultGracePeriod,
             }));
         }
 
@@ -117,7 +120,7 @@ function Charges({ LoanAppId, data, User, }) {
         const terms = parseFloat(getAppDetails.ApprvTerms);
         const gracePeriod = getAppDetails.GracePeriod;
         const IBFTFee = parseFloat(getAppDetails.IBFTFee) || 0;
-        const others = parseFloat(String(getAppDetails.Others).replace(/,/g, ''));
+        const others = parseFloat(String(getAppDetails.Others).replace(/,/g, '')) || 0;
         const chargetype = getAppDetails.ChargeType;
 
         const processingFee = ((parseFloat(PFR) / 100) * approvedAmount).toFixed(2);
