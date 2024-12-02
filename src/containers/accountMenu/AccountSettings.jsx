@@ -5,12 +5,29 @@ import { ConfigProvider, Dropdown } from 'antd';
 import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie';
 import { toDecrypt } from '@utils/Converter';
+import { useAuth } from '@auth/AuthProvider';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function AccountSettings() {
+    const { logout } = useAuth();
+    const {resetAppDetails } = React.useContext(LoanApplicationContext)
 
-    const [cookies, setCookie, removeCookie] = useCookies();
+    // const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
     const USRNAME = toDecrypt(localStorage.getItem('USRFN'));
+
+    const getGreeting = () => {
+        const currentHour = new Date().getHours();
+        if (currentHour < 12) {
+            return 'Good morning';
+        } else if (currentHour < 18) {
+            return 'Good afternoon';
+        } else {
+            return 'Good evening';
+        }
+    };
+    const firstName = USRNAME.split(' ')[0];
+
     const items = [
         {
             label: 'My Account',
@@ -22,19 +39,24 @@ function AccountSettings() {
             key: '2',
             danger: true,
             icon: <LogoutOutlined style={{ fontSize: '18px' }} />,
+            // onClick: () => {
+            //     removeCookie('SESSION_ID')
+            //     localStorage.removeItem('UTK');
+            //     localStorage.removeItem('UPTH');
+            //     localStorage.removeItem('PTH');
+            //     localStorage.removeItem('SP');
+            //     localStorage.removeItem('USRFN');
+            //     localStorage.removeItem('USRDT');
+            //     localStorage.removeItem('SIDC');
+            //     localStorage.removeItem('activeTab');
+            //     removeCookie('SESSION_ID')
+            //     navigate('/')
+            // }
             onClick: () => {
-                removeCookie('SESSION_ID')
-                localStorage.removeItem('UTK');
-                localStorage.removeItem('UPTH');
-                localStorage.removeItem('PTH');
-                localStorage.removeItem('SP');
-                localStorage.removeItem('USRFN');
-                localStorage.removeItem('USRDT');
-                localStorage.removeItem('SIDC');
-                localStorage.removeItem('activeTab');
-                removeCookie('SESSION_ID')
-                navigate('/')
-            }
+                logout(); 
+                resetAppDetails();
+                navigate('/'); 
+            },
         },
     ];
 
@@ -42,7 +64,7 @@ function AccountSettings() {
         <Dropdown menu={{ items }} placement="bottom">
             <div className='flex flex-row'>
                 <IoMdPerson className='mx-[5px] mt-[4px]' style={{ fontSize: '20px', color: 'white' }} />
-                <span className='font-bold text-lg text-stone-100 cursor-pointer'>{USRNAME}</span>
+                <span className='font-bold text-lg text-stone-100 cursor-pointer'>{getGreeting()}😊, {firstName} </span>            
             </div>
         </Dropdown>
     )

@@ -1,5 +1,5 @@
 import { Collapse, ConfigProvider, Button, Spin } from 'antd'
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { viewModalUploadDocx } from '@hooks/ModalController';
 import { FileUpload } from '@hooks/FileController';
 import FileLoader from './uploadDocs/FileLoader'
@@ -12,91 +12,178 @@ import moment from 'moment'
 import { jwtDecode } from 'jwt-decode';
 import { GetData } from '@utils/UserData';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { useDataContainer } from '@context/PreLoad';
 
-function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
-const [loading, setLoading] = useState(true);
+function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, data, isEdit, LoanStatus, ModUser }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
+    const { getAppDetails } = React.useContext(LoanApplicationContext)
     const { GetStatus } = ApplicationStatus()
     const getModalStatus = viewModalUploadDocx((state) => state.modalStatus)
     const setModalStatus = viewModalUploadDocx((state) => state.setStatus)
     const clearFileList = FileUpload((state) => state.clearList)
+    const [fetchTime, setFetchTime] = React.useState(null);
     const DocListQuery = useQuery({
-        queryKey: ['DocListQuery'],
+        queryKey: ['DocListQuery',FileType],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${FileType}`)
+            const result = await GET_LIST(`/GET/G16FT/${FileType}`)
             return result.list
         },
-        enabled: true,
+        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
-        staleTime: 5 * 1000
     })
 
     const token = localStorage.getItem('UTK');
     const FileListQuery = useQuery({
-        queryKey: ['FileListQuery'],
+        queryKey: ['FileListQuery', ClientId, FileType, toUpperText(Uploader)],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileList/${ClientId}/${FileType}/${Uploader}`)
-            setLoading(false);
-            return result.list
+            const startTime = performance.now();
+            try {
+                const result = await GET_LIST(`/GET/G17FL/${ClientId}/${FileType}/${toUpperText(Uploader)}`)
+                //     const endTime = performance.now();
+                // setFetchTime((endTime - startTime).toFixed(2)); 
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return result.list
+            } catch (error) {
+                //     const endTime = performance.now();
+                // setFetchTime((endTime - startTime).toFixed(2)); 
+                console.error(error);
+                SET_LOADING_INTERNAL('UploadDocs', false);
+                return [];
+            }
         },
-        enabled: true,
+        enabled: DocListQuery.isSuccess,
+        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
         retryDelay: 1000,
-        staleTime: 5 * 1000
     })
-    
+
+    React.useEffect(() => {
+        SET_LOADING_INTERNAL('UploadDocs', true)
+        FileListQuery.refetch();
+    }, []);
+    /* React.useEffect(() => {
+     SET_LOADING_INTERNAL('UploadDocs', true);
+     if (FileListQuery.isFetched) {
+         SET_LOADING_INTERNAL('UploadDocs', false);
+     }
+ }, [FileListQuery.isFetched])*/
+
+    const processedData = React.useMemo(() => {
+        const count = {};
+        const file_list = {};
+        const count_arch = {};
+        const file_arch = {};
+
+        FileListQuery.data?.forEach((x) => {
+            if (x.docStatus === 1) {
+                if (!file_list[x.docsId]) {
+                    file_list[x.docsId] = [];
+                    count[x.docsId] = 0;
+                }
+                file_list[x.docsId].push({
+                    fileName: x.docsFileName.toString(),
+                    file: x.base64,
+                    extension: x.fileExtension,
+                    remarks: x.remarks,
+                    docStatus: x.docStatus,
+                    docsId: x.docsId,
+                    id: x.id,
+                    docsFileName: x.docsFileName,
+                    loanAppId: ClientId,
+                    recDate: moment(x.recDate).format('MM/DD/YYYY hh:mm A').toString(),
+                });
+                count[x.docsId]++;
+            } else if (x.docStatus === 0) {
+                if (!file_arch[x.docsId]) {
+                    file_arch[x.docsId] = [];
+                    count_arch[x.docsId] = 0;
+                }
+                file_arch[x.docsId].push({
+                    fileName: x.docsFileName.toString(),
+                    file: x.base64,
+                    extension: x.fileExtension,
+                    remarks: x.remarks,
+                    docStatus: x.docStatus,
+                    docsId: x.docsId,
+                    id: x.id,
+                    docsFileName: x.docsFileName,
+                    loanAppId: ClientId,
+                    recDate: moment(x.recDate).format('MM/DD/YYYY hh:mm A').toString(),
+                });
+                count_arch[x.docsId]++;
+            }
+        });
+
+        return { count, file_list, count_arch, file_arch };
+    }, [FileListQuery.data]);
+
     function GetFile(id, command) {
-        let count = 0;
-        let file_list = []
-        let count_arch = 0
-        let file_arch = []
-        FileListQuery.data?.map((x) => {
-            if (x.docsId === id && x.docStatus === 1) {
-                count += 1;
-                file_list.push({
-                    fileName: x.docsFileName.toString(),
-                    file: x.base64,
-                    extension: x.fileExtension,
-                    remarks: x.remarks,
-                    docStatus: x.docStatus,
-                    docsId: x.docsId,
-                    id: x.id,
-                    docsFileName: x.docsFileName,
-                    loanAppId: ClientId,
-                    recDate: moment(x.recDate).format('MM/DD/YYYY hh:mm A').toString()
-                })
-            }
-
-            if (x.docStatus === 0) {
-                count_arch += 1;
-                file_arch.push({
-                    fileName: x.docsFileName.toString(),
-                    file: x.base64,
-                    extension: x.fileExtension,
-                    remarks: x.remarks,
-                    docStatus: x.docStatus,
-                    docsId: x.docsId,
-                    id: x.id,
-                    docsFileName: x.docsFileName,
-                    loanAppId: ClientId,
-                    recDate: moment(x.recDate).format('MM/DD/YYYY hh:mm A').toString()
-                })
-            }
-        })
-
         switch (toUpperText(command)) {
             case 'COUNT':
-                return count;
+                return processedData.count[id] || 0;
             case 'FILE':
-                return file_list;
-
+                return processedData.file_list[id] || [];
             case 'COUNT-ARCH':
-                return count_arch;
+                return processedData.count_arch[id] || 0;
             case 'FILE-ARCH':
-                return file_arch;
-
+                return processedData.file_arch[id] || [];
             default:
-                return;
+                return [];
         }
     }
+
+    // function GetFile(id, command) {
+    //     let count = 0;
+    //     let file_list = []
+    //     let count_arch = 0
+    //     let file_arch = []
+    //     FileListQuery.data?.map((x) => {
+    //         if (x.docsId === id && x.docStatus === 1) {
+    //             count += 1;
+    //             file_list.push({
+    //                 fileName: x.docsFileName.toString(),
+    //                 file: x.base64,
+    //                 extension: x.fileExtension,
+    //                 remarks: x.remarks,
+    //                 docStatus: x.docStatus,
+    //                 docsId: x.docsId,
+    //                 id: x.id,
+    //                 docsFileName: x.docsFileName,
+    //                 loanAppId: ClientId,
+    //                 recDate: moment(x.recDate).format('MM/DD/YYYY hh:mm A').toString()
+    //             })
+    //         }
+
+    //         if (x.docStatus === 0) {
+    //             count_arch += 1;
+    //             file_arch.push({
+    //                 fileName: x.docsFileName.toString(),
+    //                 file: x.base64,
+    //                 extension: x.fileExtension,
+    //                 remarks: x.remarks,
+    //                 docStatus: x.docStatus,
+    //                 docsId: x.docsId,
+    //                 id: x.id,
+    //                 docsFileName: x.docsFileName,
+    //                 loanAppId: ClientId,
+    //                 recDate: moment(x.recDate).format('MM/DD/YYYY hh:mm A').toString()
+    //             })
+    //         }
+    //     })
+
+    //     switch (toUpperText(command)) {
+    //         case 'COUNT':
+    //             return count;
+    //         case 'FILE':
+    //             return file_list;
+    //         case 'COUNT-ARCH':
+    //             return count_arch;
+    //         case 'FILE-ARCH':
+    //             return file_arch;
+    //         default:
+    //             return;
+    //     }
+    // }
 
     function CollapseList() {
         const data = [
@@ -105,25 +192,71 @@ const [loading, setLoading] = useState(true);
                 label: <span className='font-bold'>
                     Others <span className='text-rose-500' />
                 </span>,
-                children: <div className='h-[300px] overflow-y-auto'>
-                    <FileLoader key={0} files={GetFile('Others', 'FILE')} />
-                </div>
+                // children: <div className='h-[300px] overflow-y-auto'>
+                //     <FileLoader key={0} files={GetFile('Others', 'FILE')} className='z-50' ModUser={ModUser} />
+                // </div>
+                children: (
+                    <div className="h-[300px] overflow-y-auto">
+                        {FileListQuery.isFetching ? (
+                            <Spin tip="Loading files..." size="small" className="text-green-500">
+                                <div className="h-full w-full"></div>
+                            </Spin>
+                        ) : (
+                            <FileLoader key={0} files={GetFile('Others', 'FILE')} className="z-50" ModUser={ModUser} />
+                        )}
+                    </div>
+                ),
             },
         ]
 
         DocListQuery.data?.map((x, i) => {
             if (x.docsType !== 'Others') {
-                data.push({
-                    key: i + 1,
-                    label: <span className='font-bold'>
-                        {x.docsType}
-                        <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
-                    </span>,
-                    children: <div className='h-[300px] overflow-y-auto'>
-                        <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
-                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
-                    </div>
-                })
+                if (Display === 'USER') {
+                    data.push({
+                        key: i + 1,
+                        label: <span className='font-bold'>
+                            {x.docsType}
+                            <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                        </span>,
+                        children: <div className='h-[300px] overflow-y-auto'>
+                            {FileListQuery.isFetching ? (
+                                <Spin tip="Loading files..." size="small" className="text-green-500">
+                                    <div className="h-full w-full"></div>
+                                </Spin>
+                            ) : (
+                                <FileLoader key={i} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
+                                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
+                            )}</div>
+                    })
+                }
+                else {
+                    if (GetFile(x.id, 'COUNT') !== 0) {
+                        data.push({
+                            key: i + 1,
+                            label: <span className='font-bold'>
+                                {x.docsType}
+                                <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
+                            </span>,
+                            children: (<div className='h-[300px] overflow-y-auto'>
+                                {FileListQuery.isFetching ? (
+                                    <Spin tip="Loading files..." size="small" className="text-green-500">
+                                        <div className="h-full w-full"></div>
+                                    </Spin>
+                                ) : (
+                                    <FileLoader
+                                        key={i}
+                                        files={GetFile(x.id, 'FILE')}
+                                        FileListName={DocListQuery.data}
+                                        className='z-50'
+                                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'}
+                                        isClient={Display}
+                                        ModUser={ModUser} />
+                                )}
+                            </div>
+                            )
+                        })
+                    }
+                }
             }
             else {
                 data[0] = {
@@ -132,55 +265,89 @@ const [loading, setLoading] = useState(true);
                         Others <span className='text-rose-500'>{GetFile(x.id, 'COUNT') === 0 ? '' : `(${GetFile(x.id, 'COUNT')})`}</span>
                     </span>,
                     children: <div className='h-[300px] overflow-y-auto'>
-                        <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data}
-                            Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} />
-                    </div>
+                        {FileListQuery.isFetching ? (
+                            <Spin tip="Loading files..." size="small" className="text-green-500">
+                                <div className="h-full w-full"></div>
+                            </Spin>
+                        ) : (
+                            <FileLoader key={0} files={GetFile(x.id, 'FILE')} FileListName={DocListQuery.data} className='z-50'
+                                Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} isClient={Display} ModUser={ModUser} />
+                        )}</div>
                 }
             }
         })
 
-        data[data.length + 1] = {
-            key: data.length + 1,
-            label: <span className='font-bold'>
-                Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
-            </span>,
-            children: <div className='h-[300px] overflow-y-auto'>
-                <FileLoader key={0} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
-                    Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} />
-            </div>
+        if (Display === 'USER') {
+            data[data.length + 1] = {
+                key: data.length + 1,
+                label: <span className='font-bold'>
+                    Archive <span className='text-rose-500'>{GetFile('', 'COUNT-ARCH') === 0 ? '' : `(${GetFile('', 'COUNT-ARCH')})`}</span>
+                </span>,
+                children: <div className='h-[300px] overflow-y-auto'>
+                    <FileLoader key={data.length + 1} files={GetFile('', 'FILE-ARCH')} FileListName={DocListQuery.data}
+                        Display={GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' ? '' : 'USER'} className='z-50' ModUser={ModUser} />
+                </div>
+            }
         }
-
         return data
     }
-
+    function DISABLE_STATUS(LOCATION, LoanStatus) {
+        if (!GetData('ROLE')) {
+            return !(LoanStatus === 'RECEIVED' || LoanStatus === 'LACK OF DOCUMENTS');
+        }
+        if (GetData('ROLE').toString() === '30' || GetData('ROLE').toString() === '40') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined', '/ckfi/for-re-application', '/ckfi/assessement/credit'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '20') {
+            return ['/ckfi/credit-list', '/ckfi/under-credit', '/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/for-re-application', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            return ['/ckfi/for-approval', '/ckfi/approved', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '60') {
+            return ['/ckfi/approved', '/ckfi/queue-bucket', '/ckfi/under-lp', '/ckfi/released', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '70') {
+            return ['/ckfi/for-docusign', '/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/returned/credit-associate', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        } else if (GetData('ROLE').toString() === '80') {
+            return ['/ckfi/for-disbursement', '/ckfi/released', '/ckfi/reassessed/credit-officer', '/ckfi/on-waiver', '/ckfi/cancelled', '/ckfi/declined'].includes(LOCATION);
+        }
+        return false;
+    }
+    const [getStatus, setStatus] = React.useState(false)
+    React.useEffect(() => { setStatus(DISABLE_STATUS(localStorage.getItem('SP'))); }, [localStorage.getItem('SIDC')])
     return (
         <div>
-            <StatusRemarks isEdit={!isEdit} User={User} data={data} />
+            <StatusRemarks isEdit={!isEdit} User={User} data={getAppDetails} />
 
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
-                clearFileList()
+                // clearFileList()
             }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} />
-            <div className='space-x-[1.5rem]'>
+            <div className="space-x-[1.5rem]">
                 {
-                    GetStatus === 'RELEASED' || GetStatus === 'CANCELLED' || GetStatus === 'DECLINED' || GetStatus === 'FOR RE-APPLICATION' || GetStatus === 'FOR DOCUSIGN' || GetStatus === 'OK FOR DOCUSIGN'
-                        || GetStatus === 'TAGGED FOR RELEASE' || GetStatus === 'ON WAIVER' || GetStatus === 'CONFIRMATION' || GetStatus === 'CONFIRMED' || GetStatus === 'UNDECIDED' ||
-                        GetStatus === 'FOR DISBURSEMENT' || GetStatus === 'RELEASED' || GetStatus === 'RETURN TO LOANS PROCESSOR' || GetStatus === 'APPROVED (TRANS-OUT)' ||
-                        LoanStatus === 'COMPLIED - LACK OF DOCUMENTS'
-                        ? (<></>)
-                        : (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                            <Button size='large' className='ml-6 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }} disabled={User === 'Lp'} >Upload Document</Button>
-                        </ConfigProvider>)
+                    !DISABLE_STATUS(localStorage.getItem('SP'), GetStatus) ? (
+                        <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
+                            <Button
+                                size="large"
+                                className="ml-6 mb-2 bg-[#3b0764]"
+                                type="primary"
+                                onClick={() => setModalStatus(true)}
+                                disabled={User === 'Lp'}
+                            >
+                                Upload Document
+                            </Button>
+                        </ConfigProvider>
+                    ) : null
                 }
-                <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                    <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                        <div className={classname}>
-                            <div className='mr-[.5rem]'>
-                                <Collapse items={CollapseList()} />
-                            </div>
-                        </div>
-                    </Spin>
-                </ConfigProvider>
+                <div className={classname}>
+                    <div className="mr-[.5rem]">
+                        <Collapse items={DocListQuery.isFetched ? CollapseList()
+                            : (<div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-white bg-opacity-50 z-50">
+                                <Spin
+                                    spinning={true}
+                                    tip="Please wait..."
+                                    className="text-green-500"
+                                />
+                            </div>)} />
+                    </div>
+                </div>
             </div>
         </div>
     )

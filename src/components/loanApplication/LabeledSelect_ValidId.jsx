@@ -29,7 +29,7 @@ function LabeledSelec_ValidId({
   const getValidIdSelect = useQuery({
     queryKey: ["getValidIdSelect"],
     queryFn: async () => {
-      const result = await axios.get("/OFWDetails/getIDtype");
+      const result = await axios.get("/GET/G27IT");
       return result.data.list;
     },
     refetchInterval: (data) => {
@@ -87,6 +87,10 @@ function LabeledSelec_ValidId({
           disabled={disabled}
           size="large"
           placeholder={placeHolder}
+          showSearch
+          filterOption={(input, option) =>
+              option?.label.toLowerCase().includes(input.toLowerCase())
+          }
           onChange={(e) => {
             onChange(e);
           }}
