@@ -572,9 +572,9 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     };
 
 
-    React.useEffect(() => {
+    /*React.useEffect(() => {
         console.log('jjjjjjjjjjjjjjjjjjjjjj', getAppDetails.MarriedPBCB)
-    },[getAppDetails])
+    },[getAppDetails])*/
 
 
     //Trigger Fields
@@ -686,14 +686,14 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                         id="OFW-Details"
                                         style={{
                                             marginTop: isEdit
-                                                ? getAppDetails?.MarriedPBCB !== 1
+                                                ? getAppDetails?.MarriedPBCB === 1
                                                     ? showSaveButtonContext
                                                         ? '50rem'
                                                         : '125rem'
-                                                    : getAppDetails?.MarriedPBCB === 1
+                                                    : getAppDetails?.MarriedPBCB !== 1
                                                         ? showSaveButtonContext
-                                                            ? '75rem'
-                                                            : '150rem'
+                                                            ? '77rem'
+                                                            : '152rem'
                                                         : undefined
                                                 : undefined, // Fallback if isEdit is false
                                             transition: 'margin-top 0.5s ease', // Smooth transition for marginTop
@@ -747,7 +747,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                     targetOffset={50}
                                     getContainer={() => document.getElementById('scrollable-container')}
                                     items={getAnchorItems()}
-                                />;
+                                />
 
                             </ConfigProvider>
                         </div>

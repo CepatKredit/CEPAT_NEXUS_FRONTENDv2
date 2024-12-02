@@ -338,7 +338,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
                 )}
             
 
-                {getAppDetails?.MarriedPBCB === 1 && (
+                {getAppDetails?.MarriedPBCB !== 1 && (
                     !isEditCRAM && !isEdit && !creditisEdit && User !== 'LC' ? (
                         <div className='w-full px-2'>
                             <RelativesTable

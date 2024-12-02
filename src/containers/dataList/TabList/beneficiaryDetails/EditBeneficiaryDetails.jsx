@@ -631,7 +631,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     />
                 )}
 {/* dito ibabato ang check galing context upang gamitin sa condition na pag display ng relativetavle na once 1 ang makuha sa context ididisplay nya ito realtime then pag naman 0 hindi */}
-                {getAppDetails?.MarriedPBCB === 1 && (User !== 'LC' && (
+                {getAppDetails?.MarriedPBCB !== 1 && (User !== 'LC' && (
                     <div className="w-full mt-[2rem] mx-auto">
                         <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} isOfw={2} />
                     </div>

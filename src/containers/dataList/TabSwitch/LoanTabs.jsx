@@ -35,6 +35,7 @@ import { jwtDecode } from 'jwt-decode';
 
 
 function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, FileType, value, valueAmount, LoanStatus, ClientId }) {
+    const { getAppDetails } = React.useContext(LoanApplicationContext);
     const [isEdit, setEdit] = React.useState(false);
     const [activeKey, setActiveKey] = React.useState('CRAM');
     const [relativesCount, setRelativesCount] = React.useState(0);
@@ -60,7 +61,7 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
             }
         }
     };
-    const token = localStorage.getItem('UTK'); 
+    const token = localStorage.getItem('UTK');
     //  const Lc_valid = !data.loanProd || ((data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') && !data.ofwDeptDate)
     // || !data.loanPurpose || !data.loanType || !data.loanAmount || !data.loanTerms;
 
@@ -182,6 +183,35 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
         }
     }
 
+
+     // Utility function for dynamic anchor items
+     const getAnchorItems = () => {
+        if (["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd)) {
+            // For specific loan products
+            return [
+                { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+                { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+            ];
+        } else {
+            // Default anchor items for other loan products
+            return [
+                { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+                { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+            ];
+        }
+    };
+
+    
     React.useEffect(() => {
         fetchRelativesAndUpdateCount();
     }, [BorrowerId]);
@@ -199,48 +229,71 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
                     <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
                     <div className='flex flex-row'>
                         <div
-                            id="scrollable-container" 
+                            id="scrollable-container"
                             className="h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[51vh] 3xl:h-[57vh] w-full overflow-y-auto mx-2 mb-9"
                         >
                             <div id='Loan-Details'>
                                 <LoanDetails getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} User={'Lp'} />
                             </div>
-                            <div id='OFW-Details'>
-                                <OfwDetails getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'} />
-                            </div>
-                            <div id='Employment-History'>
-                                <EmploymentHistoryTable data={value} isEdit={isEdit} User={'Lp'} />
-                            </div>
-                            <div id='Credit-History'>
-                                <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
-                            </div>
-                            <div id='Owned-Assets'>
-                                <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
-                            </div>
-                            <div id='Character-Reference'>
-                                <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Lp'} LoanStatus={LoanStatus} />
-                            </div>
-                            <div id='Beneficiary-Details'>
-                                <BeneficiaryDetails getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'}
-                                    sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />
-                            </div>
+                            {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                                <>
+                                    <div id='OFW-Details'>
+                                        <OfwDetails getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'} />
+
+                                        <div id='Employment-History'>
+                                            <EmploymentHistoryTable data={value} isEdit={isEdit} User={'Lp'} />
+                                        </div>
+                                        <div id='Credit-History'>
+                                            <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
+                                        </div>
+                                        <div id='Owned-Assets'>
+                                            <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
+                                        </div>
+                                        <div id='Character-Reference'>
+                                            <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Lp'} LoanStatus={LoanStatus} />
+                                        </div>
+                                    </div>
+                                    <div id='Beneficiary-Details'>
+                                        <BeneficiaryDetails getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'}
+                                            sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div id='Beneficiary-Details'>
+                                        <BeneficiaryDetails getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'}
+                                            sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} />
+                                    </div>
+                                    <div id='OFW-Details'>
+                                        <OfwDetails getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { updateAppDetails(e) }} BorrowerId={BorrowerId} User={'Lp'} />
+
+                                        <div id='Employment-History'>
+                                            <EmploymentHistoryTable data={value} isEdit={isEdit} User={'Lp'} />
+                                        </div>
+                                        <div id='Credit-History'>
+                                            <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
+                                        </div>
+                                        <div id='Owned-Assets'>
+                                            <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} User={'Lp'} />
+                                        </div>
+                                        <div id='Character-Reference'>
+                                            <CharacterReference BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Lp'} LoanStatus={LoanStatus} />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+
                         </div>
                         <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[51vh] 3xl:h-[57vh]">
                             <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+
                                 <Anchor
                                     replace
                                     affix={false}
                                     targetOffset={50}
-                                    getContainer={() => document.getElementById('scrollable-container')} 
-                                    items={[
-                                        { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
-                                        { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
-                                        { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
-                                        { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
-                                        { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
-                                        { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
-                                        { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
-                                    ]}
+                                    getContainer={() => document.getElementById('scrollable-container')}
+                                    items={getAnchorItems()}
                                 />
                             </ConfigProvider>
                         </div>
@@ -262,7 +315,7 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ModUser={jwtDecode(token).USRID}/>,
+            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ModUser={jwtDecode(token).USRID} />,
         },
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Release Documents</span></div>,
@@ -289,17 +342,17 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
         setActiveKey(tabs || 'deduplication');
         console.log("HALAAA", tabs)
     }, [tabs]);
-    
+
 
     return (
         <>
-            <Tabs 
-            activeKey={activeKey}
-            defaultActiveKey={tabs} 
-            type="card" 
-            size="middle" 
-            onChange={onChangeTab} 
-            items={TabsItems} />
+            <Tabs
+                activeKey={activeKey}
+                defaultActiveKey={tabs}
+                type="card"
+                size="middle"
+                onChange={onChangeTab}
+                items={TabsItems} />
         </>
     );
 }
