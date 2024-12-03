@@ -81,7 +81,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
     })
 
     React.useEffect(() => {
-        if(getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined){
+        if (getAppDetails.loanIdCode !== '' || getAppDetails.loanIdCode !== undefined) {
             SET_LOADING_INTERNAL('CharRefTABLE', true)
             getCharacterRef.refetch();
         }
@@ -311,7 +311,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         {
             title: (
                 <div className="flex items-center">
-                {!DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
+                    {!DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
                         <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                             <Tooltip title="Add">
                                 <Button
@@ -649,51 +649,53 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     </center>
                 </div>
                 <div className='mt-[0rem]'>
-                {isMobile ? (
-                <ModCharacterReference
-                    BorrowerId={BorrowerId}
-                    Creator={Creator}
-                    form={form}
-                    getCharacterRef={getCharacterRef}
-                    getRelationshipList={getRelationshipList}
-                    provinceList={provinceList}
-                    onClickSaveData={onClickSaveData}
-                />
-            ) : (
-                    <Form form={form} component={false}>
-                        <div className="overflow-x-auto">
-                            <Table
-                                columns={mergedColumns}
-                                dataSource={
-                                    getStat === false
-                                        ? getCharacterRef.data?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            name: x.name,
-                                            conNum: x.conNum,
-                                            relShip: x.relShip,
-                                            prov: x.prov,
-                                            remarks: x.remarks
-                                        }))
-                                        : dataOnly?.map((x) => ({
-                                            key: x.key,
-                                            no: x.no,
-                                            name: x.name,
-                                            conNum: x.conNum,
-                                            relShip: x.relShip,
-                                            prov: x.prov,
-                                            remarks: x.remarks
-                                        }))
-                                }
-                                components={{ body: { cell: EditableCell } }}
-                                rowClassName="editable-row"
-                                pagination={false}
-                                scroll={{ x: 'max-content', y: User === 'Credit' || User === 'Lp' ? 200 : 300 }}
-                                className="table-auto"
-                                responsive={{ xs: true }}
-                            />
-                        </div>
-                    </Form>
+                    {isMobile ? (
+                        <ModCharacterReference
+                            BorrowerId={BorrowerId}
+                            Creator={Creator}
+                            form={form}
+                            getCharacterRef={getCharacterRef}
+                            getRelationshipList={getRelationshipList}
+                            provinceList={provinceList}
+                            onClickSaveData={onClickSaveData}
+                        />
+                    ) : (
+                        <Form form={form} component={false}>
+                            <div className="overflow-x-auto">
+                                <Table
+                                    columns={mergedColumns}
+                                    dataSource={
+                                        getStat === false
+                                            ? getCharacterRef.data?.map((x) => ({
+                                                key: x.key,
+                                                no: x.no,
+                                                name: x.name,
+                                                conNum: x.conNum,
+                                                relShip: x.relShip,
+                                                prov: x.prov,
+                                                remarks: x.remarks
+                                            }))
+                                            : dataOnly?.map((x) => ({
+                                                key: x.key,
+                                                no: x.no,
+                                                name: x.name,
+                                                conNum: x.conNum,
+                                                relShip: x.relShip,
+                                                prov: x.prov,
+                                                remarks: x.remarks
+                                            }))
+                                    }
+                                    components={{ body: { cell: EditableCell } }}
+                                    rowClassName="editable-row"
+                                    pagination={false}
+                                    scroll={{ x: 'max-content', y: User === 'Credit' || User === 'Lp' ? 200 : 300 }}
+                                    className={`table-auto ${getAppDetails.loanProd !== '0303-DHW' &&
+                                        getAppDetails.loanProd !== '0303-VL' &&
+                                        getAppDetails.loanProd !== '0303-WL' ? 'h-[20rem]' : ''}`}
+                                    responsive={{ xs: true }}
+                                />
+                            </div>
+                        </Form>
                     )}
                 </div>
             </div>
