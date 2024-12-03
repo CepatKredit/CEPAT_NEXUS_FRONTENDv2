@@ -9,6 +9,10 @@ import { jwtDecode } from 'jwt-decode';
 import React from 'react'
 import { MdEditSquare } from 'react-icons/md';
 import BatchList from './bankGeneration/BatchList';
+import { toDecrypt } from '@utils/Converter';
+import NetProceedsGeneration from './NetProceedsGeneration';
+import LCComissionGeneration from './LCComissionGeneration';
+import DisbursementList from './disbursement/DisbursementList';
 
 function Generation({data}) {
     const { getBank, getPurpose, GET_TOTAL_AMOUNT, GET_REFRESH_LAN, SET_REFRESH_LAN } = useDataContainer();
@@ -52,12 +56,15 @@ function Generation({data}) {
         }
     }
 
-    const handleLANSelect = (e) => {
+    const handleLANSelect = (e, option) => {
         setDisburse((prevDetails) => ({
             ...prevDetails,
             LAN: e,
+            loanAppId: option.loanAppId,
+            approvedAmount: option.approvedAmount
         }))
     }
+
 
     const handleTypeRadio = (e) => {
         setDisburse((prevDetails) => ({
@@ -75,7 +82,8 @@ function Generation({data}) {
         enabled: true
     })
 
-    console.log("AASSSSSSS", getDisbursementList.data)
+    console.log("HAAA", getDisbursementList.data)
+
         
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
@@ -209,7 +217,7 @@ function Generation({data}) {
     ];
 
     return (
-        <div className='w-full flex flex-row'>
+        <div className='w-[100rem] flex flex-row'>
             <Tabs
                 tabPosition="top"
                 type="card"
@@ -226,27 +234,15 @@ function Generation({data}) {
                             options={data?.map((item) => ({
                                 label: item.loanAppCode,
                                 value: item.loanAppCode,
+                                loanAppId: item.loanAppId,
+                                approvedAmount: item.approvedAmount
                             }))}
                             value={getDisburse.LAN}
-                            onChange={handleLANSelect}
+                            onChange={(value, option) => handleLANSelect(value, option)}
                             placeholder="Select Loan Application Code"
                             />
-                            <div className='ml-2 pt-1'>
-                                <Radio.Group>
-                                    <Radio value={"INSTAPAY"}>
-                                        <span className="font-bold">INSTAPAY</span>
-                                    </Radio>
-                                    <Radio value={"PESONET"}>
-                                        <span className="font-bold">PESONET</span>
-                                    </Radio>
-                                </Radio.Group>
-                            </div>
-                            <Input className='w-fit' placeholder='Recipient Name' />
-                            <Input className='ml-2 w-fit' placeholder='Bank' />
-                            <Input className='ml-2 w-fit' placeholder='Bank Account Number' />
-                            <Input className='ml-2 w-fit' placeholder='Purpose' />
-                            <Input className='ml-2 w-fit' placeholder='Amount to Credit' />
-                            <Button className='ml-2' type='primary'>Add</Button>
+                            {getDisburse.type === "NP" ? (<NetProceedsGeneration getDisburse={getDisburse} data={data}/>) : 
+                                (<LCComissionGeneration getDisburse={getDisburse} data={data}/>)}
                         </div>
                         <Radio.Group onChange={handleTypeRadio} value={getDisburse.type}>
                                     <Radio value={"NP"}>
@@ -257,8 +253,15 @@ function Generation({data}) {
                                     </Radio>
                         </Radio.Group>
                         </div>
-                        <Table 
-                        className='w-[80rem]'
+                        <DisbursementList 
+                        LAN={getDisburse.LAN} 
+                        type={getDisburse.type} 
+                        bankList={getBank} 
+                        DisburseAmount={formatNumberWithCommas(parseFloat(getDisburse.approvedAmount).toFixed(2).toString())}
+                        
+                        />
+                        {/* <Table 
+                        className='w-90rem'
                         dataSource={getDisbursementList.data?.map((item) => ({
                             key: item.id,
                             cn: `${item.type}${item.id}`,
@@ -277,7 +280,7 @@ function Generation({data}) {
                             x: 'max-content', 
                             y: 400, 
                         }}
-                        />
+                        /> */}
                         </>
                     },
                     {

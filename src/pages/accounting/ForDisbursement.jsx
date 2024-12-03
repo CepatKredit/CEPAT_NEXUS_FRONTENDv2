@@ -38,7 +38,6 @@ function ForDisbursement() {
           localStorage.getItem("SP")
         )}`
       );
-      console.log("GUID", result.list);
       return result.list;
     },
     enabled: true,
@@ -59,7 +58,7 @@ function ForDisbursement() {
   return (
     <>
       <ResponsiveModal showModal={modalStatus} closeModal={() => { setStatus(false) }} modalTitle={<span>Bank Generation</span>}
-        modalWidth={'100rem'} contextHeight={'h-[40rem]'} contextInside={<Generation data={AppDataListQuery.data} />} />
+        modalWidth={'120rem'} contextHeight={'h-[40rem]'} contextInside={<Generation data={AppDataListQuery.data} />} />
       {GetData("ROLE").toString() === "90" ? (
         <div className="mx-[1%] my-[2%]">
           <div className="flex flex-row gap-3">
@@ -158,6 +157,7 @@ function ForDisbursement() {
                     SET_REFRESH_LAN(1)
                     setExpandedRowKey(record.key);
                     localStorage.setItem("SIDC", toEncrypt(record.CID));
+                    console.log("CID", record.CID)
                   } else {
                     setExpandedRowKey(null);
                     localStorage.removeItem("SIDC");

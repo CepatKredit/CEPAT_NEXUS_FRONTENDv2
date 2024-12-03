@@ -92,6 +92,8 @@ function NetProceeds({ data }) {
     ComputeRemaining();
   }, [data]);
 
+  console.log(data, "AAA")
+
   const [getRemaining, setRemaining] = React.useState("");
   function ComputeRemaining() {
     let value =
@@ -331,7 +333,7 @@ function NetProceeds({ data }) {
             </div>
             <div className="w-[15rem]">
               <div className="font-bold">
-                Remaining to Disburse:{" "}
+                Remaining to Disburse:
                 {formatNumberWithCommas(
                   parseFloat(getRemaining).toFixed(2).toString()
                 )}

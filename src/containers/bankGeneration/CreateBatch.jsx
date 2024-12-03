@@ -225,7 +225,8 @@ function CreateBatch() {
                     <div className='pt-2 flex flex-row flex-wrap justify-center item-center'>
                         {getData?.map((x, i) =>
                         (<Card size='small' className='h-[8rem] w-[16.5rem] m-1' hoverable key={uuidv4()} onClick={() => { onCheck(i) }}>
-                            <Card.Meta title={(<div className='text-sm' key={uuidv4()}><Checkbox key={uuidv4()} checked={x.checker} onClick={() => { onCheck(i) }}>
+                            <Card.Meta title={(<div className='text-sm' key={uuidv4()}>
+                                <Checkbox key={uuidv4()} checked={x.checker} onClick={() => { onCheck(i) }}>
                                 {x.type === 'NP'
                                     ? (<Tag color='blue'>Net Proceeds</Tag>)
                                     : (<Tag color='gold'>LC Commission</Tag>)}

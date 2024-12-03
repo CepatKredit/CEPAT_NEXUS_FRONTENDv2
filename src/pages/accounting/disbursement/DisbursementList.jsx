@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Input, Select, Space, notification, Table, Form, Popconfirm, Tooltip, ConfigProvider } from 'antd'
+import { Button, Input, Select, Space, notification, Table, Form, Popconfirm, Tooltip, ConfigProvider, Checkbox } from 'antd'
 import { SaveOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
 import { MdEditSquare } from "react-icons/md";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -7,12 +7,74 @@ import { GET_LIST } from "@api/base-api/BaseApi";
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { useDataContainer } from '@context/PreLoad';
+import { toUpperText } from '@utils/Converter';
 
 function DisbursementList({ LAN, type, DisburseAmount }) {
 
     React.useEffect(() => { getDisbursementList.refetch(); }, [LAN, type])
     const queryClient = useQueryClient()
     const [api, contextHolder] = notification.useNotification();
+
+    const [selectedRows, setSelectedRows] = React.useState([]);
+
+    function handleRowSelection(record, isChecked) {
+        setSelectedRows((prev) => {
+            if (isChecked) {
+                // Add record to selectedRows
+                return [...prev, record];
+            } else {
+                // Remove record from selectedRows
+                return prev.filter((row) => row.key !== record.key);
+            }
+        });
+    }
+
+    async function SaveChanges() {
+        let BID = toUpperText(uuidv4())
+        const container = {
+            Id: BID,
+            PaymentChannel: "",
+            BatchType: type,
+            CompanyCode: getInfo.CODE,
+            FundingAccountNumber: getInfo.FN,
+            TotalNumberOfRecords:parseInt(getValue.Count),
+            TotalAmountToDisburse: parseFloat(removeCommas(getValue.Total)),
+            RecBy: jwtDecode(token).USRID
+        }
+
+        let check = 0
+
+        await axios.post('/POST/P115ABL', container)
+            .then((result) => {
+                check = 1
+                api[result.data.status]({
+                    message: result.data.message,
+                    description: result.data.description
+                })
+            })
+            .catch((error) => {
+                console.log(error)
+                api['error']({
+                    message: 'Something went wrong',
+                    description: error.message
+                })
+            })
+        if (check === 1) {
+            getData.map(async (x) => {
+                if (x.checker === true) {
+                    await axios.post(`/POST/P116UBD/${BID}/${jwtDecode(token).USRID}/${x.id}`)
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                }
+            })
+            setInfo({ CODE: '', FN: '', TYPE: '', SELECT: '' })
+            queryClient.invalidateQueries({ queryKey: ['GetBatchListQuery', jwtDecode(token).USRID] }, { exact: true })
+            setStatus(false)
+        }
+    }
+
+    console.log("MGA NA CHECKAN", selectedRows)
 
     const { getBank, getPurpose, GET_TOTAL_AMOUNT, GET_REFRESH_LAN, SET_REFRESH_LAN } = useDataContainer()
 
@@ -260,6 +322,19 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             })
     }
     const columns = [
+        // {
+        //     title: 'Select Batch',
+        //     dataIndex: 'cb',
+        //     align: 'center',
+        //     width: '100px',
+        //     fixed: 'left',
+        //     render: (_, record) => (
+        //         <Checkbox
+        //             checked={selectedRows.some((row) => row.key === record.key)}
+        //             onChange={(e) => handleRowSelection(record, e.target.checked)}
+        //         />
+        //     ),
+        // },
         {
             title: 'Control No.',
             dataIndex: 'cn',
@@ -403,9 +478,11 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             {contextHolder}
             <Form form={form} component={false} >
                 <Table
+                // className='w-[60rem]'
                     components={{ body: { cell: EditableCell } }}
                     dataSource={getDisbursementList.data?.map((x) => ({
                         key: x.id,
+                        // cb: x,
                         cn: `${x.type}${x.id}`,
                         firstName: x.firstName,
                         lastName: x.lastName,
