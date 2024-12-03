@@ -33,25 +33,26 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
     }, [getTab]);
 
     const [isEligibleToApprove, setIsEligibleToApprove] = useState(false);
-    const fetchEligibility = async () => {
-        try {
-            const id = jwtDecode(token).USRID;
-            console.log('LAI', data.loanIdCode)
-            console.log('User', jwtDecode(token).USRID)
-            const result = await GET_LIST(`/GET/G149GA/${data.loanIdCode}/${id}`);
-            console.log('test', result)
-            setIsEligibleToApprove(result.list[0].isEligible);
-        } catch (error) {
-            console.error('Error fetching approval eligibility:', error);
-        }
-    };
-
     useEffect(() => {
         if (token && data.loanIdCode !== '') {
             fetchEligibility();
         }
     }, [data.loanIdCode, token]);
-    
+
+    const fetchEligibility = async () => {
+        try {
+            const id = jwtDecode(token).USRID;
+            console.log('LAI', data.loanIdCode);
+            console.log('User', jwtDecode(token).USRID);
+            const result = await GET_LIST(`/GET/G149GA/${data.loanIdCode}/${id}`);
+            console.log('Eligibility Result:', result.list[0].isEligible);
+            setIsEligibleToApprove(result.list[0].isEligible);
+        } catch (error) {
+            console.error('Error fetching approval eligibility:', error);
+        }
+        queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
+    };
+
 
     const ApprvAmount_valid = !data.ApprovAmount || !data.approvTerms || !data.ApprvInterestRate || !data.MonthlyAmort || !data.TotalExposure;
 
@@ -143,22 +144,22 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                 ModUser: jwtDecode(token).USRID, // Modified by user
                 Tab: 1,
             };
-    
+
             console.log('Payload for ApprvTerms Update:', payload);
-    
+
             const result = await UpdateLoanDetails(payload); // Call the API
             if (result.data.status === "success") {
-              /*  api.success({
-                    message: 'Success',
-                    description: result.data.description || 'ApprvTerms updated successfully!',
-                });*/
+                /*  api.success({
+                      message: 'Success',
+                      description: result.data.description || 'ApprvTerms updated successfully!',
+                  });*/
             } else {
                 api.warning({
                     message: 'Error: Failed to Update ApprvTerms',
                     description: result.data.description || 'Failed to update ApprvTerms.',
                 });
             }
-    
+
             queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
         } catch (error) {
             console.error('Error updating ApprvTerms:', error);
@@ -309,9 +310,8 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                         </ConfigProvider>)
                 ) : null}
             </div>
-
-            <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
-            {!isEdit && !isEligibleToApprove && GetData('ROLE') !== '70' && GetData('ROLE') !== '80' && (
+            {!!isEligibleToApprove && !isEdit && GetData('ROLE') !== '70' && GetData('ROLE') !== '80' && (
+                <div className="w-full p-5 flex justify-center items-center h-[1rem] mb-2 xs:mb-1 sm:mb-1 md:mb-2 lg:mb-3 xl:mb-4 2xl:mb-5 3xl:mb-6 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-3">
                     <ConfigProvider
                         theme={{
                             token: {
@@ -329,9 +329,8 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
                             Approve
                         </Button>
                     </ConfigProvider>
-                )}
-            </div>
-
+                </div>
+            )}
 
             {(GetData('ROLE').toString() === '60' || GetData('ROLE').toString() === '100' &&
                 ['PRE-CHECK', 'FOR APPROVAL', 'RETURN TO CREDIT OFFICER'].includes(data?.loanAppStat)) && !DISABLE_STATUS(localStorage.getItem('SP')) && (
