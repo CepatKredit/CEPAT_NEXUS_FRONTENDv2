@@ -221,7 +221,6 @@ function ModCharacterReference({ BorrowerId, Creator, form, getCharacterRef, get
         </div>
       </ConfigProvider>
 
-      {/* Modal for Add/Edit Character Reference */}
       <Modal
         title={editingKey ? "Edit Character Reference" : "Add Character Reference"}
         visible={modalVisible}
