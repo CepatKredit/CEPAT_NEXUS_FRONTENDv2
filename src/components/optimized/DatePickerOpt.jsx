@@ -41,6 +41,7 @@ function DatePickerOpt({
 
   const inputRef = useRef(null);
   const { setfocus } = useContext(LoanApplicationContext)
+  
   useEffect(() => {
     setfocus(KeyName, inputRef.current);
   }, [KeyName, setfocus])

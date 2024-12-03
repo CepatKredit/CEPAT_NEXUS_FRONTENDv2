@@ -85,6 +85,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const JOB_CATEGORY = JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
     const JOB_TITLE = JobTitle(getAppDetails.JobCategory) ? JobTitle(getAppDetails.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
     const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
+
+    //Shortening For Disabling Fields
+    let OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
+
     return (
         <div>
             {(User === 'MARKETING' || User === 'LC') && (
@@ -352,8 +356,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         readOnly={isEdit}
                         rendered={rendered}
-                        value={getAppDetails.ofwfblink}
-                        receive={(e) => updateAppDetails({ name: 'ofwfblink', value: e ? removeLinkFormat(e) : '' })}
+                        value={removeLinkFormat(getAppDetails.ofwfblink)}
+                        receive={(e) => {
+                            const formattedValue = e.includes('https://www.facebook.com/') ? e : `https://www.facebook.com/${e}`;
+                            updateAppDetails({ name: 'ofwfblink', value:formattedValue  })
+                        }}
 
                         KeyName={'ofwfblink'}
                         group={'Default'}
@@ -469,8 +476,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 onClick={() => {
                                     const newValue = !getAppDetails.MarriedPBCB;
                                     updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
-                                    setBenDependents(false);
-                                    setBenDependents(!newValue);
+                                    //setBenDependents(false); //Turning on will have conflicts in re-trigger in PBCB Trigger Fields
+                                    //setBenDependents(!newValue); //Turning on will have conflicts in re-trigger in PBCB Trigger Fields
                                 }}
                                 disabled={isEdit}
                             >
@@ -493,7 +500,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 value={getAppDetails.ofwspouse}
                                 isEdit={isEdit}
                                 rendered={rendered}
-                                disabled={User === 'Credit' && getAppDetails.MarriedPBCB}
+                                disabled={User === 'Credit' && OFW_IS_PRIM && getAppDetails.MarriedPBCB}
                                 KeyName={'ofwspouse'}
                                 group={'Uppercase'}
                                 compname={'Spouse Name'}
@@ -509,7 +516,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 value={getAppDetails.ofwspousebdate}
                                 isEdit={isEdit}
                                 rendered={rendered}
-                                disabled={User === 'Credit' && getAppDetails.MarriedPBCB}
+                                disabled={User === 'Credit' && OFW_IS_PRIM && getAppDetails.MarriedPBCB}
                                 category={'marketing'}
 
                                 KeyName={'ofwspousebdate'}
@@ -943,21 +950,21 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     User === 'LC'
                         ? (<></>)
                         : (
-                        <LabeledSelectAgency
-                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
-                                } w-[18.75rem] h-[3.875rem]`}
-                            className_label={'font-bold'}
-                            label={<>{User === 'Credit' ? 'Agency' : 'Company/ Employer / Agency Name'} <span className="text-red-500"> *</span></>}
-                            placeHolder={User === 'Credit' ? 'Agency Name' : 'Company/ Employer / Agency Name'}
-                            showSearch
-                            filterOption={(input, option) =>
-                                option?.label?.toString().toLowerCase().includes(input.toLowerCase())}
-                            disabled={isEdit}
-                            readOnly={User === 'Credit' ? isEdit : false}
-                            value={getAppDetails.ofwcompany}
-                            receive={(e) => updateAppDetails({ name: 'ofwcompany', value: e })}
-                            rendered={rendered}
-                        />))}
+                            <LabeledSelectAgency
+                                className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                    } w-[18.75rem] h-[3.875rem]`}
+                                className_label={'font-bold'}
+                                label={<>{User === 'Credit' ? 'Agency' : 'Company/ Employer / Agency Name'} <span className="text-red-500"> *</span></>}
+                                placeHolder={User === 'Credit' ? 'Agency Name' : 'Company/ Employer / Agency Name'}
+                                showSearch
+                                filterOption={(input, option) =>
+                                    option?.label?.toString().toLowerCase().includes(input.toLowerCase())}
+                                disabled={isEdit}
+                                readOnly={User === 'Credit' ? isEdit : false}
+                                value={getAppDetails.ofwcompany}
+                                receive={(e) => updateAppDetails({ name: 'ofwcompany', value: e })}
+                                rendered={rendered}
+                            />))}
                 {User === 'Credit' && (
                     <LabeledInput_ForeignCurrency
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'

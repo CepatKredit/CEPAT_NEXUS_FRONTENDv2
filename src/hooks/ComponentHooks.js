@@ -210,7 +210,7 @@ export function DateComponentHook(value, rendered, receive, KeyName, setRendered
   }, []);
 
   useEffect(() => {
-    if (KeyName === 'ofwspousebdate') {
+    if (KeyName === 'ofwspousebdate' || KeyName === 'benspousebdate') {
       if (getAppDetails.MarriedPBCB) {
         // When MarriedPBCB is true, set the value from props and validate
         setDatePickerValue(value ? dayjs(value) : '');
@@ -279,6 +279,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const latestValueRef = useRef(initialValue);
+  const latestValueRef2 = useRef(initialValue);
 
   const debouncedReceive = useMemo(
     () =>
@@ -307,6 +308,22 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     }
   };
 
+  const immediateValidation = (valid, val, error, update, delay_def) => {
+    if (valid) {
+      setStatus('');
+      setErrorMessage('');
+      setInputValue(val); // Keep the valid value in the input field
+      receive(val, delay_def); // Pass the custom delay
+    } else {
+      setStatus('error');
+      setErrorMessage(error);
+      setInputValue(val); // Keep the valid value in the input field
+      if (update) {
+        receive('', delay_def); // Pass an empty string only to the receiver
+      }
+    }
+  };
+
   const handleChange = (e) => {
     let value = e;
     const maxchar = CharacterLimit(group, format);
@@ -329,27 +346,21 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(Uppercase(res.value).replaceAll(',', '')) : '') : res.value), res.errmsg, false, 100);
   };
 
-  useEffect(() => { //INITIAL RELOAD
-    if (rendered) {
-      setIconVisible(true);
-      const res = hookInputValid(KeyName, initialValue /* || inputValue */, comp_name, format, group, InvalidMsg, EmptyMsg);
-      statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(Uppercase(res.value).replaceAll(',', '')) : '') : res.value), res.errmsg, true, 100);
-    }
-  }, [rendered]);
-
   useEffect(() => {
-    if (rendered) {
+    if (rendered && initialValue !== latestValueRef2.current) {
       setIconVisible(true);
+      setInputValue(initialValue || ''); // Update inputValue directly
       const res = hookInputValid(KeyName, initialValue || '', comp_name, format, group, InvalidMsg, EmptyMsg);
-      statusValidation(
+      immediateValidation(
         res.valid,
-        format === 'Http' ? inputFormat(format, res.value || '') : res.value,
+        format === 'Currency' ? FormatCurrency(Uppercase(res.value || '').replaceAll(',', '')) : res.value,
         res.errmsg,
         true,
         100
       );
+      latestValueRef2.current = initialValue; // Update reference
     }
-  }, [rendered, initialValue]);
+  }, [initialValue, rendered]);
 
   useEffect(() => {
     handleBlur();

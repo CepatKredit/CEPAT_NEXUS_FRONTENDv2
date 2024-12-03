@@ -5,7 +5,7 @@ import { debouncef } from "./Debounce";
 function TriggerFields(ROLE) {
     const [getRendered, setRendered] = React.useState(false)
     const skipRender = React.useRef(1); //use this
-    const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails, setAppDetails, queryDetails } = React.useContext(LoanApplicationContext)
     const delay_def = 500; //ms
 
     const latestValueRef = React.useRef(null);
@@ -141,13 +141,21 @@ function TriggerFields(ROLE) {
             const ofwPossVac = ['PossVacation']
             ClearFields(ofwPossVac)
         }
-
     }, [getAppDetails.loanProd])
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
         if (!getRendered) return;
-        if (getAppDetails.loanProd !== '0303-DHW' && getAppDetails.loanProd !== '0303-VL' && getAppDetails.loanProd !== '0303-WL') {
-            updateAppDetails({ name: 'MarriedPBCB', value: false });
+        if (/*(getAppDetails.loanProd !== '0303-DHW' && getAppDetails.loanProd !== '0303-VL' && getAppDetails.loanProd !== '0303-WL')
+            && */(getAppDetails.benmstatus === 2 || getAppDetails.benmstatus === 5 || getAppDetails.benmstatus === 6)) {
+            const updates = {
+                benspouse: '',
+                benspousebdate: '',
+                BenSpIncome: '',
+                BenSpSrcIncome: '',
+            }
+            Object.entries(updates).forEach(([name, value]) => {
+                updateAppDetails({ name, value });
+            });
         }
     }, [getAppDetails.benmstatus])
 
@@ -190,17 +198,16 @@ function TriggerFields(ROLE) {
                 updateAppDetails({ name, value });
             });
         } else {
-            updateAppDetails({ name: 'MarriedPBCB', value: false });
+      
         }
     }, [getAppDetails.ofwmstatus]);
 
-    const relationshipBen = React.useMemo(() => getAppDetails.RelationshipBen, [getAppDetails.RelationshipBen]);
     React.useEffect(() => {
         if (!getRendered) return;
-        if (relationshipBen !== '') {
+        if (getAppDetails.RelationshipBen !== '' && getAppDetails.RelationshipBen != undefined) {
             debouncedReceive('benrelationship', getRelationshipConv(getAppDetails.RelationshipBen, getAppDetails.ofwgender), delay_def); // Pass the custom delay
         }
-    }, [relationshipBen])
+    }, [getAppDetails.RelationshipBen])
 
     React.useEffect(() => {
         if (!getRendered) return;
@@ -243,52 +250,43 @@ function TriggerFields(ROLE) {
 
     React.useEffect(() => {
         if (!getRendered) return;
-        if (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL') {
-            if (getAppDetails.MarriedPBCB) {
-                const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
-                const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
 
-                const updates = {
-                    ofwspouse: spouseBenName,
-                    ofwspousebdate: getAppDetails.benbdate,
-                    SpSrcIncome: '',
-                    SpIncome: '',
-                    benspouse: spouseOfwName,
-                    benspousebdate: getAppDetails.ofwbdate,
-                    BenSpSrcIncome: 1,
-                    BenSpIncome: getAppDetails.PSalary,
-                    benmstatus: getAppDetails.ofwmstatus,
-                    RelationshipBen: getRelationship(getAppDetails.ofwmstatus),
-                    benrelationship: getRelationship(getAppDetails.ofwmstatus),
-                };
+        if (getAppDetails.MarriedPBCB) {
+            const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
+            const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
 
-                Object.entries(updates).forEach(([name, value]) => {
-                    updateAppDetails({ name, value });
-                });
-            } else {
-                const updates = {
-                    ofwspouse: '',
-                    ofwspousebdate: '',
-                    SpSrcIncome: '',
-                    SpIncome: '',
-                    benmstatus: '',
-                    benspouse: '',
-                    benspousebdate: '',
-                    BenSpSrcIncome: '',
-                    BenSpIncome: '',
-                    BenSrcIncome: '',
-                    BenIncome: '',
-                    benrelationship: '',
-                    RelationshipBen: '',
-                };
-
-                Object.entries(updates).forEach(([name, value]) => {
-                    updateAppDetails({ name, value });
-                });
-            }
+            setAppDetails((prev) => ({
+                ...prev,
+                ofwspouse: spouseBenName,
+                ofwspousebdate: getAppDetails.benbdate,
+                SpSrcIncome: '',
+                SpIncome: '',
+                benspouse: spouseOfwName,
+                benspousebdate: getAppDetails.ofwbdate,
+                BenSpSrcIncome: 1,
+                BenSpIncome: getAppDetails.PSalary,
+                benmstatus: getAppDetails.ofwmstatus,
+                RelationshipBen: getRelationship(getAppDetails.ofwmstatus),
+                benrelationship: getRelationship(getAppDetails.ofwmstatus),
+            }));
+        } else {
+            setAppDetails((prev) => ({
+                ...prev,
+                ofwspouse: '',
+                ofwspousebdate: '',
+                SpSrcIncome: '',
+                SpIncome: '',
+                benspouse: '',
+                benspousebdate: '',
+                BenSpSrcIncome: '',
+                BenSpIncome: '',
+                benmstatus: '',
+                RelationshipBen: '',
+                benrelationship: '',
+                BenSrcIncome: '',
+                BenIncome: '',
+            }));
         }
-
-
     }, [getAppDetails.MarriedPBCB]);
 
     // Source of Income

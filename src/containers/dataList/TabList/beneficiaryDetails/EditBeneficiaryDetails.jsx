@@ -195,6 +195,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
         }
     };
 
+    let OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
+
     return (
         <div className='h-[65vh]'>
             {contextHolder}
@@ -459,7 +461,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             value={data.benspouse}
                             isEdit={isEdit}
                             rendered={rendered}
-                            disabled={User === 'Credit' && data.MarriedPBCB}
+                            disabled={User === 'Credit' && OFW_IS_PRIM && data.MarriedPBCB}
                             KeyName={'benspouse'}
                             group={'Uppercase'}
                             compname={'Spouse Name'}
@@ -474,7 +476,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                             placeHolder='Enter Birthdate'
                             receive={(e) => { updateAppDetails({ name: 'benspousebdate', value: e }) }}
-                            disabled={User === 'Credit' && data.MarriedPBCB}
+                            disabled={User === 'Credit' && OFW_IS_PRIM && data.MarriedPBCB}
 
                             value={data.benspousebdate}
                             isEdit={isEdit}
@@ -554,20 +556,29 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     />
 
                 ) : (
-                    <LabeledInput
+                    <InputOpt
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeHolder='Facebook Name / Profile'
-                        readOnly={isEdit}
-                        value={data.benfblink || ''}
-                        receive={(e) => {
-                            const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
-                            updateAppDetails({ name: 'benfblink', value: formattedValue });
-                        }}
                         isEdit={isEdit}
+                        category={'marketing'}
+                        readOnly={isEdit}
                         rendered={rendered}
+                        value={removeLinkFormat(getAppDetails.benfblink)}
+                        receive={(e) => {
+                            const formattedValue = e.includes('https://www.facebook.com/') ? e : `https://www.facebook.com/${e}`;
+                            updateAppDetails({ name: 'benfblink', value:formattedValue  })
+                        }}
+
+                        KeyName={'benfblink'}
+                        group={'Default'}
+                        compname={'Facebook Name / Profile'}
+
+                        InvalidMsg='Invalid Facebook Name/Profile'
+                        EmptyMsg='Facebook Name/Profile Required'
                     />
+
                 )}
                 {/*User === 'Credit' && (
                     <LabeledInput
@@ -752,7 +763,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     />
                 )}
                 {/* dito ibabato ang check galing context upang gamitin sa condition na pag display ng relativetavle na once 1 ang makuha sa context ididisplay nya ito realtime then pag naman 0 hindi */}
-                {getAppDetails?.MarriedPBCB !== 1 && showBenDependents && (User !== 'LC' && (
+                {getAppDetails?.MarriedPBCB !== 1/* && showBenDependents */&& (User !== 'LC' && (
                     <div className="w-full mt-[2rem] mx-auto">
                         <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} isOfw={2} />
                     </div>
