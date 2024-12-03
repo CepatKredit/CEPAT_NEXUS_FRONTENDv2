@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { GET_LIST } from "@api/base-api/BaseApi";
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { useDataContainer } from '@containers/PreLoad';
+import { useDataContainer } from '@context/PreLoad';
 
 function DisbursementList({ LAN, type, DisburseAmount }) {
 
@@ -26,12 +26,13 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
     const getDisbursementList = useQuery({
         queryKey: ['DisbursementListQuery', LAN, type],
         queryFn: async () => {
-            const result = await GET_LIST(`/getDisbursementList/${LAN}/${type}`)
+            const result = await GET_LIST(`/GET/G106DL/${LAN}/${type}`)
             return result.list
         },
         enabled: true
     })
 
+    
     function GetBankDetails(container, command) {
         let data_container = ''
         getBank?.map((x) => {
@@ -179,10 +180,10 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             key: '',
             firstName: '',
             lastName: '',
-            paymentType: '',
+            // paymentType: '',
             bankName: '',
             bankAcctNo: '',
-            amount: '',
+            // amount: '',
             purpose: '',
             status: '',
             traceId: '',
@@ -214,9 +215,9 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
                 ID: key
             }
 
-            await axios.post('/updateDisbursement', container)
+            await axios.post('/POST/P123UD', container)
                 .then((result) => {
-                    queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', LAN] }, { exact: true })
+                    queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', LAN, type] }, { exact: true })
                     if (type === 'NP') {
                         SET_REFRESH_LAN(1);
                     }
@@ -239,7 +240,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
     }
 
     async function Delete(key) {
-        await axios.post(`/deleteDisbursement/${key}`)
+        await axios.post(`/POST/P124DD/${key}`)
             .then((result) => {
                 queryClient.invalidateQueries({ queryKey: ['DisbursementListQuery', LAN] }, { exact: true })
                 if (type === 'NP') {
@@ -285,7 +286,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             dataIndex: 'paymentType',
             align: 'center',
             width: '100px',
-            editable: true,
+            // editable: true,
         },
         {
             title: 'Bank Name',
@@ -315,7 +316,7 @@ function DisbursementList({ LAN, type, DisburseAmount }) {
             align: 'center',
             width: '80px',
             fixed: 'right',
-            editable: true,
+            // editable: true,
         },
         {
             title: 'Status',

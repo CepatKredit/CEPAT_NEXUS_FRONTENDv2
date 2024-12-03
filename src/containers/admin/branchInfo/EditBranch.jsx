@@ -51,7 +51,7 @@ function EditBranch() {
             ModDate: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
         };
         console.log(revData)
-        await axios.post('/updateBranch', revData)
+        await axios.post('/POST/P59UB', revData)
             .then(result => {
 
                 if (result.data.status === 'success') {

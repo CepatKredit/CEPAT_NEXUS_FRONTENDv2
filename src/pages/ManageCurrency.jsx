@@ -90,7 +90,7 @@ function ManageCurrency() {
         queryKey: ['CurrencyListQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST('/getCurrencyTable')
+                const result = await GET_LIST('/GET/G104CT')
                 setLoading(false);
                 return result.list
             } catch (error) {
@@ -105,7 +105,7 @@ function ManageCurrency() {
 
     async function remove(Id) {
         try {
-            const result = await axios.post(`/delCurrency/${Id}`);
+            const result = await axios.post(`/POST/P119DC/${Id}`);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -184,8 +184,7 @@ function ManageCurrency() {
                                             icon={<EditFilled style={{ fontSize: '18px' }} />}
                                         />
                                     </Tooltip>
-
-                                    <Popconfirm
+                                {/* <Popconfirm
                                         title="Are you sure you want to delete?"
                                         onConfirm={() => {
                                             remove(x.id)
@@ -201,6 +200,8 @@ function ManageCurrency() {
                                             />
                                         </Tooltip>
                                     </Popconfirm>
+                                    */}
+                                    
                                 </Space>)
                             }))}  // Add the sample rows here
                     />

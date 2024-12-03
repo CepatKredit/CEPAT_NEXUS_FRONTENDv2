@@ -12,7 +12,7 @@ import { toUpperText } from '@utils/Converter';
 import { jwtDecode } from 'jwt-decode';
 import { useQueryClient } from '@tanstack/react-query';
 
-function EditPdfInfo({ showModal, closeModal, toolBar, data, isClient }) {
+function EditPdfInfo({ showModal, closeModal, toolBar, data, isClient, ModUser, ClientId, FileType, Uploader }) {
 
     const queryClient = useQueryClient()
     const { GetData, setStatus } = viewPDFViewer()
@@ -36,18 +36,18 @@ function EditPdfInfo({ showModal, closeModal, toolBar, data, isClient }) {
             DocsID: data?.docsId,
             DocsFileName: data?.docsFileName,
             Remarks: getValue.remarks,
-            ModUser: jwtDecode(token).USRID,
+            ModUser: ModUser,
             DocStatus: parseInt(getValue.status),
             LAI: data?.loanAppId,
             Id: data?.id,
             PRODID: 'FILE'
         }
 
-        await axios.post('/updateFileStatus', dataContainer)
+        await axios.post('/POST/P68FS', dataContainer)
             .then((result) => {
                 setStatus(false)
-                queryClient.invalidateQueries({ queryKey: ['DocListQuery'] }, { exact: true })
-                queryClient.invalidateQueries({ queryKey: ['FileListQuery'] }, { exact: true })
+                queryClient.invalidateQueries({ queryKey: ['DocListQuery', FileType] }, { exact: true })
+                queryClient.invalidateQueries({ queryKey: ['FileListQuery', ClientId, FileType, Uploader ] }, { exact: true })
                 api[result.data.status]({
                     message: result.data.message,
                     description: result.data.description
