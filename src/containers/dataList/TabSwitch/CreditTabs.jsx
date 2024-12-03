@@ -62,17 +62,18 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     setActiveKey(e);
                     localStorage.setItem('activeTab', e);
                     navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
-                    setEdit(false)
+                    setEdit(false);
                 },
                 onCancel() {
                     message.info("Continue editing.");
-                    return;
                 },
             });
+        } else {
+            // This executes only if the condition is not met (e.g., isEdit is false or e === 'CRAM')
+            setActiveKey(e);
+            localStorage.setItem('activeTab', e);
+            navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
         }
-        setActiveKey(e);
-        localStorage.setItem('activeTab', e);
-        navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
     }
 
 
@@ -187,7 +188,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
 
 
     async function updateData() {
-
         if (getAppDetails.ofwfname === '' || getAppDetails.ofwlname === '' || getAppDetails.ofwbdate === '' || getAppDetails.ofwbdate === undefined) {
             api['warning']({
                 message: 'Incomplete OFW Basic Information',
@@ -279,7 +279,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             PEmployer: value.PEmployer || '',
             EmpStatus: value.EmpStatus || 0,
             FCurrency: value.FCurrency || '',
-            FSalary: value.FSalary ? parseFloat(value.FSalary.toString().replaceAll(',', '')) : 0.00,
+            FSalary: getAppDetails.FSalary ? parseFloat(getAppDetails.FSalary.toString().replaceAll(',', '')) : 0.00,
             PSalary: value.PSalary ? parseFloat(value.PSalary.toString().replaceAll(',', '')) : 0.00,
             Salary: value.ofwsalary ? parseFloat(value.ofwsalary.toString().replaceAll(',', '')) : 0.00,
             ContractDate: value.ContractDate ? mmddyy(value.ContractDate) : '',
@@ -558,7 +558,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
         'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-         'COMPLIED - LACK OF DOCUMENTS'
+        'COMPLIED - LACK OF DOCUMENTS'
     ];
 
 
@@ -804,12 +804,11 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} setActiveKey={setActiveKey} /></div>,
         },
     ].filter(Boolean);
-
-    React.useEffect(() => {
-        setActiveKey(tabs || 'deduplication');
-        //console.log("HALAAA", tabs)
-    }, [tabs]);
-
+    /*
+        React.useEffect(() => {
+            setActiveKey(tabs || 'deduplication');
+        }, [tabs]);
+    */
     return (
         <div>
             {contextHolder}
@@ -822,7 +821,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     onChange={onChangeTab}
                     items={TabsItems}
                 />
-                { activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
+                {activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
                     <ConfigProvider
                         theme={{
                             token: {
