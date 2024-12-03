@@ -308,7 +308,7 @@ function OtherLoanHistory({ data, User }) {
             ),
             dataIndex: 'no',
             key: 'no',
-            width: '5%',
+            width: '6%',
             align: 'center'
         },
         {
@@ -489,7 +489,7 @@ function OtherLoanHistory({ data, User }) {
             ? (
                 <>
                     <Input
-                        className='w-[13.5rem]'
+                        className='w-[12rem]'
                         onChange={(e) => { onChangeToUpper(e.target.value, 'loan'); }}
                         placeholder='Other Loans' />
                 </>
@@ -498,7 +498,7 @@ function OtherLoanHistory({ data, User }) {
                 ? (
                     <>
                         <Input
-                            className='w-[10rem]'
+                            className='w-[9rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'amount') }}
                             placeholder='Loan Approval' />
                     </>
@@ -507,7 +507,7 @@ function OtherLoanHistory({ data, User }) {
                     ? (
                         <>
                             <Input
-                                className='w-[10rem]'
+                                className='w-[9rem]'
                                 onChange={(e) => { onChangeToUpper(e.target.value, 'amortization') }}
                                 placeholder='Amortization' />
 
@@ -517,7 +517,7 @@ function OtherLoanHistory({ data, User }) {
                         ? (
                             <>
                                 <Input
-                                    className='w-[17.5rem]'
+                                    className='w-[16rem]'
                                     onChange={(e) => { onChangeToUpper(e.target.value, 'remarks') }}
                                     placeholder='Remarks' />
                             </>

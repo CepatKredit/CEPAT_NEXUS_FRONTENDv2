@@ -341,7 +341,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             ),
             dataIndex: 'no',
             key: 'no',
-            width: '5%',
+            width: '8%',
             fixed: 'left',
             align: 'center',
         },
@@ -356,14 +356,14 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             title: 'Contact Number',
             dataIndex: 'conNum',
             key: 'conNum',
-            width: '15%',
+            width: '13%',
             editable: true,
         },
         {
             title: 'Relationship',
             dataIndex: 'relShip',
             key: 'relShip',
-            width: '15%',
+            width: '12%',
             editable: true,
         },
         {
@@ -377,7 +377,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
             title: 'Remarks',
             dataIndex: 'remarks',
             key: 'remarks',
-            width: '20%',
+            width: '19%',
             editable: true,
         },
         {
@@ -589,7 +589,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     <>
 
                         <Input
-                            className='w-[12rem]'
+                            className='w-[11rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'name'); }}
                             placeholder='Name' />
 
@@ -598,7 +598,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     : dataIndex === 'conNum' ? (
                         <>
                             <Input
-                                className='w-[9rem]'
+                                className='w-[7rem]'
                                 onChange={(e) => onChangeContactNo(e.target.value, 'conNum')}
                                 placeholder='Contact Number'
                                 maxLength={11}
@@ -608,7 +608,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                         : (
                             <>
                                 <Input
-                                    className='w-[12rem]'
+                                    className='w-[11rem]'
                                     onChange={(e) => { onChangeToUpper(e.target.value, 'remarks'); }}
                                     placeholder='Remarks' />
                             </>

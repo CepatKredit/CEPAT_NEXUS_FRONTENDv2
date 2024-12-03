@@ -942,7 +942,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {(User !== 'Credit' || (User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL' || getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL'))) && (
                     User === 'LC'
                         ? (<></>)
-                        : (<LabeledSelectAgency
+                        : (
+                        <LabeledSelectAgency
                             className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                                 } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}

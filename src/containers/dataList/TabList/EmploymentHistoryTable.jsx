@@ -295,7 +295,7 @@ function EmploymentHistory({ data, User }) {
             ),
             dataIndex: 'no',
             key: 'no',
-            width: '6%',
+            width: '7%',
             align: 'center'
         },
 

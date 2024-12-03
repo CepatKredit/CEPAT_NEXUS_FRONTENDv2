@@ -361,7 +361,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
             ),
             dataIndex: 'no',
             key: 'no',
-            width: '5%',
+            width: '6%',
             align: 'center'
         },
         {
@@ -379,7 +379,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
             title: 'Suffix',
             dataIndex: 'suffix',
             key: 'suffix',
-            width: '9%',
+            width: '7%',
             editable: true,
         }]),
         {
@@ -400,14 +400,14 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
             title: 'Relationship',
             dataIndex: 'relationship',
             key: 'relationship',
-            width: '15%',
+            width: '13%',
             editable: true,
         },
         {
             title: 'Remarks',
             dataIndex: 'contactNo',
             key: 'contactNo',
-            width: '21%',
+            width: '16%',
             editable: true,
         },
         {
@@ -582,7 +582,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
                     <>
 
                         <Input
-                            className='w-[5rem] ml-[-.5rem]'
+                            className='w-[4rem] ml-[-.8rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'suffix'); }}
                             placeholder='Suffix' />
                     </>
@@ -591,7 +591,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
                     ? (
                         <>
                             <Input
-                                className='w-[12rem]'
+                                className='w-[10rem]'
                                 onChange={(e) => onChangeToUpper(e.target.value, 'contactNo')}
                                 placeholder='Remarks'
                             />

@@ -315,7 +315,7 @@ function OwnedAsset({ data, User }) {
             ),
             dataIndex: 'no',
             key: 'no',
-            width: '5%',
+            width: '6%',
             align: 'center'
         },
         {
@@ -542,7 +542,7 @@ function OwnedAsset({ data, User }) {
                     <>
 
                         <Input
-                            className='w-[10rem]'
+                            className='w-[9rem]'
                             onChange={(e) => { onChangeToUpper(e.target.value, 'make'); }}
                             placeholder={autoPlaceHolder.make} />
                     </>
