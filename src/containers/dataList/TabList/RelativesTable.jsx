@@ -566,6 +566,9 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     }) => {
 
         const [dropdownOpen, setDropdownOpen] = React.useState(false);
+        const handleDropdownVisibility = (visible) => {
+            setDropdownOpen(visible);
+        };
 
         const inputNode = dataIndex === 'fullName'
             ? (
@@ -621,9 +624,14 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
                                     filterOption={(input, option) =>
                                         option.label.toLowerCase().includes(input.toLowerCase())
                                     }
-                                    onFocus={() => setDropdownOpen(true)} 
-                                    onBlur={() => setDropdownOpen(false)} 
+                                    tabIndex={0}
                                     open={dropdownOpen}
+                                    onFocus={() => setDropdownOpen(true)}
+                                    onBlur={() => {
+
+                                        setTimeout(() => setDropdownOpen(false), 150);
+                                    }}
+                                    onDropdownVisibleChange={handleDropdownVisibility}
                                 />
 
                             </>
@@ -632,16 +640,21 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
 
                                 <Select
                                     className='w-[10rem]'
-                                    onChange={(value) =>  onChangedropdown(value, 'relationship') }
+                                    onChange={(value) => onChangedropdown(value, 'relationship')}
                                     placeholder='Relationship'
                                     options={getRelationshipList.data?.map(x => ({ value: x.description, label: x.description }))}
                                     showSearch
                                     filterOption={(input, option) =>
                                         option.label.toLowerCase().includes(input.toLowerCase())
                                     }
-                                    onFocus={() => setDropdownOpen(true)}
-                                    onBlur={() => setDropdownOpen(false)}
+                                    tabIndex={0}
                                     open={dropdownOpen}
+                                    onFocus={() => setDropdownOpen(true)}
+                                    onBlur={() => {
+
+                                        setTimeout(() => setDropdownOpen(false), 150);
+                                    }}
+                                    onDropdownVisibleChange={handleDropdownVisibility}
                                 />
 
                             </>

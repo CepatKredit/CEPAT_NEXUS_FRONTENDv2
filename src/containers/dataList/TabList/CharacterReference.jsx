@@ -304,7 +304,7 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
         'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'COMPLIED - LACK OF DOCUMENTS'
+        'RETURN TO CREDIT OFFICER'
     ];
     const [form] = Form.useForm();
     const columns = [
@@ -554,6 +554,11 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
         ...restProps
     }) => {
         const [isDropdownOpen, setDropdownOpen] = React.useState(false);
+
+        const handleDropdownVisibility = (visible) => {
+            setDropdownOpen(visible);
+        };
+
         const inputNode = dataIndex === 'prov'
             ? (
                 <Select
@@ -565,14 +570,19 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     filterOption={(input, option) =>
                         option.label.toLowerCase().includes(input.toLowerCase())
                     }
-                    onFocus={() => setDropdownOpen(true)}
-                    onBlur={() => setDropdownOpen(false)}
+                    tabIndex={0}
                     open={isDropdownOpen}
+                    onFocus={() => setDropdownOpen(true)}
+                    onBlur={() => {
+
+                        setTimeout(() => setDropdownOpen(false), 150);
+                    }}
+                    onDropdownVisibleChange={handleDropdownVisibility}
                 />
             )
             : dataIndex === 'relShip' ? (
                 <Select
-                    className='w-[10rem]'
+                    className='w-[9rem]'
                     onChange={(value) => { onChangeRelationship(value); }}
                     placeholder={'Relationship'}
                     options={getRelationshipList.data?.map(x => ({ value: x.code, label: x.description }))}
@@ -580,9 +590,14 @@ function CharacterReference({ classname, BorrowerId, Creator, isEdit, User, data
                     filterOption={(input, option) =>
                         option.label.toLowerCase().includes(input.toLowerCase())
                     }
-                    onFocus={() => setDropdownOpen(true)}
-                    onBlur={() => setDropdownOpen(false)}
+                    tabIndex={0}
                     open={isDropdownOpen}
+                    onFocus={() => setDropdownOpen(true)}
+                    onBlur={() => {
+
+                        setTimeout(() => setDropdownOpen(false), 150);
+                    }}
+                    onDropdownVisibleChange={handleDropdownVisibility}
                 />
             )
                 : dataIndex === 'name' ? (

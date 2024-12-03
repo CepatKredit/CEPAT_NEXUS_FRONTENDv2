@@ -484,6 +484,11 @@ function OwnedAsset({ data, User }) {
 
         const [isDropOpen, setDropOpen] = React.useState(false);
 
+        const handleDropdownVisibility = (visible) => {
+            setDropOpen(visible);
+        };
+
+
         const [autoPlaceHolder, setAutoPlaceHolder] = React.useState({
             make: 'Make',
             year: 'Year Model',
@@ -531,9 +536,14 @@ function OwnedAsset({ data, User }) {
                         filterOption={(input, option) =>
                             option.label.toLowerCase().includes(input.toLowerCase())
                         }
-                        onFocus={() => setDropOpen(true)}
-                        onBlur={() => setDropOpen(false)}
+                        tabIndex={0}
                         open={isDropOpen}
+                        onFocus={() => setDropOpen(true)}
+                        onBlur={() => {
+
+                            setTimeout(() => setDropOpen(false), 150);
+                        }}
+                        onDropdownVisibleChange={handleDropdownVisibility}
                     />
                 </>
             )

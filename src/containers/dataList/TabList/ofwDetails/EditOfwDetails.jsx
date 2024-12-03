@@ -468,7 +468,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 checked={getAppDetails.MarriedPBCB}
                                 onClick={() => {
                                     const newValue = !getAppDetails.MarriedPBCB;
-                                    updateAppDetails({ name: 'MarriedPBCB', value: newValue });
+                                    updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
                                     setBenDependents(false);
                                     setBenDependents(!newValue);
                                 }}
