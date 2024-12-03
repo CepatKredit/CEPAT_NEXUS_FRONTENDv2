@@ -50,7 +50,7 @@ function UnlockAccount() {
         rePassword: ''
     })
 
-    let hasMinPass = getData.password.length >= 10
+    let hasMinPass = getData.password.length >= 8
     let hasLowerChar = /(.*[a-z].*)/.test(getData.password)
     let hasUpperChar = /(.*[A-Z].*)/.test(getData.password)
     let hasNumberChar = /(.*[0-9].*)/.test(getData.password)
@@ -206,10 +206,10 @@ function UnlockAccount() {
                                                 {hasMinPass ?
                                                     <small className='text-green-500'>
 
-                                                        <CheckOutlined /> be at least minimum of 10 and maximum of 15 characters long.
+                                                        <CheckOutlined /> be at least minimum of 8 and maximum of 15 characters long.
                                                     </small> :
                                                     <small className='text-rose-500'>
-                                                        <CloseOutlined /> be at least minimum of 10 and maximum of 15 characters long.
+                                                        <CloseOutlined /> be at least minimum of 8 and maximum of 15 characters long.
 
                                                     </small>}
                                             </div>

@@ -80,7 +80,6 @@ function ResetPassword() {
                 }
 
                 let ctr_password = 0;
-                console.log("IDD", AccountId.id)
                 await axios.post(`/POST/P94CP/${toUpperText(AccountId.id)}`)
                     .then((result) => {
                         console.log(result)

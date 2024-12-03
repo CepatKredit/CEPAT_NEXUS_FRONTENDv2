@@ -79,17 +79,19 @@ function BatchList() {
 
     const handleRadioOnChange = (e) => {
         setRadioValue(e.target.value)
+        GetBatchList.refetch();
     }
 
 
     const { modalStatus, setStatus } = BatchModal()
     const queryClient = useQueryClient();
     const token = localStorage.getItem('UTK');
-    console.log("val", radioValue, jwtDecode(token).USRID)
+
     const GetBatchList = useQuery({
-        queryKey: ["GetBatchListQuery", jwtDecode(token).USRID],
+        queryKey: ["GetBatchListQuery", jwtDecode(token).USRID, radioValue],
         queryFn: async () => {
             const result = await GET_LIST(`/GET/G101BL/${jwtDecode(token).USRID}/${radioValue}`);
+            console.log(result.list)
             return result.list;
         },
         enabled: true,
