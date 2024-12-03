@@ -45,7 +45,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const { TextArea } = Input;
     const [api, contextHolder] = notification.useNotification();
     const [relativesCount, setRelativesCount] = useState(0);
-    const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails, setBenDependents } = useContext(LoanApplicationContext)
 
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
@@ -467,7 +467,10 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             <Checkbox
                                 checked={getAppDetails.MarriedPBCB}
                                 onClick={() => {
-                                    updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
+                                    const newValue = !getAppDetails.MarriedPBCB;
+                                    updateAppDetails({ name: 'MarriedPBCB', value: newValue });
+                                    setBenDependents(false);
+                                    setBenDependents(!newValue);
                                 }}
                                 disabled={isEdit}
                             >

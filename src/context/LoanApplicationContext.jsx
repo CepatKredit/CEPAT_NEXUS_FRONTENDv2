@@ -8,6 +8,7 @@ export const LoanApplicationContext = React.createContext();
 
 export const LoanApplicationProvider = ({ children, direct }) => {
   const [showSaveButtonContext, setShowSaveButtonContext] = React.useState(true);
+  const [showBenDependents, setBenDependents] = React.useState(true);
   const [api, contextHolder] = notification.useNotification();
   const [getAppDetails, setAppDetails] = React.useState(
     createInitialAppDetails(direct)
@@ -271,6 +272,8 @@ export const LoanApplicationProvider = ({ children, direct }) => {
         queryDetails,
         showSaveButtonContext,
         setShowSaveButtonContext,
+        setBenDependents,
+        showBenDependents,
       }}
     >
       {contextHolder}
