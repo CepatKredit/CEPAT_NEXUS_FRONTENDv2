@@ -16,6 +16,8 @@ import { UpdateLoanDetails } from "@utils/LoanDetails";
 import { mmddyy } from "@utils/Converter";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { isValidLoanDetails } from "@utils/Validations";
+import { GetData } from '@utils/UserData';
+
 
 function LoanDetails({ /*data*/ receive, loancases }) {
   const [isEdit, setEdit] = React.useState(false);
@@ -74,7 +76,7 @@ function LoanDetails({ /*data*/ receive, loancases }) {
       }
     });
 
-    return isValid && isValidLoanDetails(getAppDetails); 
+    return isValid && isValidLoanDetails(getAppDetails);
   };
 
   const disableDate_deployment = React.useCallback((current) => {
@@ -108,28 +110,41 @@ function LoanDetails({ /*data*/ receive, loancases }) {
     enabled: true,
     retryDelay: 1000,
   });
+  const loanProdMapping = {
+    '0303-DH': 'DHP',
+    '0303-DHW': 'DHA',
+    '0303-WA': 'LBA',
+    '0303-WL': 'LBP',
+    '0303-VA': 'SBA',
+    '0303-VL': 'SBP',
+  };
+  const convertLoanProdValue = (loanProd) => loanProdMapping[loanProd] || loanProd;
+  const role = GetData('ROLE')?.toString();
+const convertedLoanProd =
+  (role === '20' || role === '10') && getAppDetails.loanProd
+    ? convertLoanProdValue(getAppDetails.loanProd)
+    : getAppDetails.loanProd;
 
   const items = [
     {
       key: "1",
       label: <span className="font-semibold text-black">Loan Product</span>,
-      children:
-        loanProducts.data?.find((x) => x.code === getAppDetails.loanProd)
-          ?.description || "",
+      children: loanProducts.data?.find((x) => x.code === convertedLoanProd)
+        ?.description || "",
     },
     ...(getAppDetails.loanDateDep &&
-    ["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd)
+      ["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd)
       ? [
-          {
-            key: "2",
-            label: (
-              <span className="font-semibold text-black">
-                OFW Departure Date
-              </span>
-            ),
-            children: mmddyy(getAppDetails.loanDateDep) || "",
-          },
-        ]
+        {
+          key: "2",
+          label: (
+            <span className="font-semibold text-black">
+              OFW Departure Date
+            </span>
+          ),
+          children: mmddyy(getAppDetails.loanDateDep) || "",
+        },
+      ]
       : []),
     {
       key: "3",
@@ -157,10 +172,10 @@ function LoanDetails({ /*data*/ receive, loancases }) {
       label: <span className="font-semibold text-black">Loan Amount</span>,
       children: getAppDetails.loanAmount
         ? formatNumberWithCommas(
-            formatToTwoDecimalPlaces(
-              getAppDetails.loanAmount.toString().replaceAll(",", "")
-            )
+          formatToTwoDecimalPlaces(
+            getAppDetails.loanAmount.toString().replaceAll(",", "")
           )
+        )
         : "",
     },
     {
@@ -170,10 +185,10 @@ function LoanDetails({ /*data*/ receive, loancases }) {
       ),
       children: getAppDetails.ApprvAmount
         ? formatNumberWithCommas(
-            formatToTwoDecimalPlaces(
-              String(getAppDetails.ApprvAmount).replaceAll(",", "")
-            )
+          formatToTwoDecimalPlaces(
+            String(getAppDetails.ApprvAmount).replaceAll(",", "")
           )
+        )
         : "",
     },
     {
@@ -279,12 +294,12 @@ function LoanDetails({ /*data*/ receive, loancases }) {
   const handleSave = () => {
     if (!validateFields()) return;
 
-    mutate(); 
+    mutate();
     setEdit(!isEdit)
   };
 
   const handleCancel = () => {
-    reset();  
+    reset();
     setEdit(false);
     queryClient.invalidateQueries({ queryKey: ['ClientDataQuery'], exact: true });
   };
@@ -379,14 +394,14 @@ function LoanDetails({ /*data*/ receive, loancases }) {
             className_dsub=""
             label="Loan Product"
             placeHolder="Loan Product"
-            value={getAppDetails.loanProd}
+            value={convertedLoanProd}
             options={loanProducts}
             category="marketing"
           />
 
           {getAppDetails.loanProd === "0303-DHW" ||
-          getAppDetails.loanProd === "0303-VL" ||
-          getAppDetails.loanProd === "0303-WL" ? (
+            getAppDetails.loanProd === "0303-VL" ||
+            getAppDetails.loanProd === "0303-WL" ? (
             <DatePicker_Deployment
               className_dmain="w-full h-[3rem] mt-4"
               className_label="font-bold"
@@ -445,45 +460,45 @@ function LoanDetails({ /*data*/ receive, loancases }) {
         </div>
       )}
       {getAppDetails.loanStatus === "RECEIVED" && (
-      <div className="flex justify-center space-x-4 mb-2 mt-6">
-        {isEdit ? (
-          <>
+        <div className="flex justify-center space-x-4 mb-2 mt-6">
+          {isEdit ? (
+            <>
+              <Button
+                type="primary"
+                icon={<SaveOutlined />}
+                onClick={handleSave}
+                loading={isPending}
+              >
+                Save
+              </Button>
+              <Button
+                type="default"
+                // onClick={() => {
+                //   queryClient.invalidateQueries(
+                //     { queryKey: ["ClientDataQuery"] },
+                //     { exact: true }
+                //   );
+                //   setEdit(false);
+                // }}
+                onClick={handleCancel}
+                disabled={isPending}
+              >
+                Cancel
+              </Button>
+            </>
+          ) : (
             <Button
               type="primary"
-              icon={<SaveOutlined />}
-              onClick={handleSave}
-              loading={isPending}
+              icon={<EditOutlined />}
+              onClick={() => {
+                toggleEditMode();
+              }}
             >
-              Save
+              Edit
             </Button>
-            <Button
-              type="default"
-              // onClick={() => {
-              //   queryClient.invalidateQueries(
-              //     { queryKey: ["ClientDataQuery"] },
-              //     { exact: true }
-              //   );
-              //   setEdit(false);
-              // }}
-              onClick={handleCancel}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-          </>
-        ) : (
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => {
-              toggleEditMode();
-            }}
-          >
-            Edit
-          </Button>
-        )}
-      </div>
-    )}
+          )}
+        </div>
+      )}
     </div>
   );
 }

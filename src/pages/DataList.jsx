@@ -15,7 +15,7 @@ import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 import MobDataListView from '@containers/mobileView/MobDataListView';
 
 function DataList() {
-  const { width } = useWindowDimensions(); 
+  const { width } = useWindowDimensions();
   const [loading, setLoading] = React.useState(true);
   const [getSearch, setSearch] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -62,30 +62,57 @@ function DataList() {
   };
 
   return (
-    <div className="mx-[1%] my-[2%] xs1:my-[-35%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[2%] overflow-hidden">
-      <div className="flex flex-row gap-3">
-        <MdOutlineManageAccounts style={{ fontSize: '40px', color: '#483d8b' }} hidden />
-        <Typography.Title level={2}>{PathName(localStorage.getItem('SP'))}</Typography.Title>
-      </div>
-      <Divider />
-      <Button type="primary" onClick={() => { navigate(`${localStorage.getItem('SP')}/12/tab=1`) }} hidden>TEST</Button>
-
-      <div className="flex justify-between items-center mb-1">
-        <div></div>
-        <div className="w-[400px]">
+    <div className="mx-[1%] my-[2%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[2%] overflow-hidden">
+      {/* Title and Search Bar Container */}
+      <div className="flex flex-wrap items-center justify-between mb-4">
+        {/* Title Section */}
+        <div className="flex items-center gap-3">
+          <MdOutlineManageAccounts
+            style={{ fontSize: "40px", color: "#483d8b" }}
+            hidden
+          />
+          <Typography.Title level={2} className="mb-0">
+            {PathName(localStorage.getItem("SP"))}
+          </Typography.Title>
+        </div>
+        {/* Search Bar Section */}
+        <div className="w-full sm:w-[400px]">
           <Input
             addonAfter={<SearchOutlined />}
             placeholder="Search"
             size="large"
             className="w-full h-[50px] px-4"
-            onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
+            onChange={(e) => {
+              setSearch(e.target.value.toUpperCase());
+            }}
             value={getSearch}
           />
         </div>
       </div>
 
-      <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-        <Spin spinning={AppDataListQuery.isFetching} tip={<span style={{ color: 'rgb(59,7,100)' }}>Please wait...</span>} className="flex justify-center items-center" size="large">
+      <Button
+        type="primary"
+        onClick={() => {
+          navigate(`${localStorage.getItem("SP")}/12/tab=1`);
+        }}
+        hidden
+      >
+        TEST
+      </Button>
+
+      <ConfigProvider
+        theme={{
+          components: { Spin: { colorPrimary: "rgb(86,191,84)" } },
+        }}
+      >
+        <Spin
+          spinning={AppDataListQuery.isFetching}
+          tip={
+            <span style={{ color: "rgb(59,7,100)" }}>Please wait...</span>
+          }
+          className="flex justify-center items-center"
+          size="large"
+        >
           {width < 640 ? (
             <MobDataListView
               paginatedData={filteredData}
@@ -96,29 +123,56 @@ function DataList() {
             <div className="w-full">
               <ResponsiveTable
                 columns={ColumnList(3)}
-                height={'calc(95vh - 505px)'}
-                width={'100%'}
-                rows={filteredData?.map((x, i) => ({
-                  key: i,
-                  NO: i + 1,
-                  LAN: <Button key={i} onClick={() => {
-                    localStorage.setItem('SIDC', toEncrypt(x.loanAppId));
-                    localStorage.setItem('activeTab', 'deduplication')
-                    navigate(`${localStorage.getItem('SP')}/${x.loanAppCode}/deduplication`);
-                    queryClient.invalidateQueries({ queryKey: ['getRemarks', x.loanAppCode] }, { exact: true })
-                  }} type="link">{x.loanAppCode}</Button>,
-                  DOA: moment(x.recDate).format('MM/DD/YYYY'),
-                  LP: x.loanProduct,
-                  OFW: x.borrowersFullName,
-                  OFWDD: x.departureDate,
-                  BENE: x.beneficiaryFullName,
-                  LC: x.consultant,
-                  LT: x.loanType,
-                  LB: x.branch,
-                  STAT: x.statusName,
-                  UB: x.modUser,
-                  LIR: x.remarksIn
-                }))} />
+                height={"calc(95vh - 505px)"}
+                width={"100%"}
+                rows={filteredData?.map((x, i) => {
+                  const loanProductMap = {
+                    "0303-DH": "DHP",
+                    "0303-DHW": "DHA",
+                    "0303-WA": "LBA",
+                    "0303-WL": "LBP",
+                    "0303-VA": "SBA",
+                    "0303-VL": "SBP",
+                  };
+                  const isSmallScreen = window.innerWidth <= 640;
+                  return {
+                    key: i,
+                    NO: i + 1,
+                    LAN: (
+                      <Button
+                        key={i}
+                        onClick={() => {
+                          localStorage.setItem("SIDC", toEncrypt(x.loanAppId));
+                          localStorage.setItem("activeTab", "deduplication");
+                          navigate(
+                            `${localStorage.getItem("SP")}/${x.loanAppCode}/deduplication`
+                          );
+                          queryClient.invalidateQueries(
+                            { queryKey: ["getRemarks", x.loanAppCode] },
+                            { exact: true }
+                          );
+                        }}
+                        type="link"
+                      >
+                        {x.loanAppCode}
+                      </Button>
+                    ),
+                    DOA: moment(x.recDate).format("MM/DD/YYYY"),
+                    LP: isSmallScreen
+                      ? loanProductMap[x.loanProduct] || x.loanProduct
+                      : x.loanProduct,
+                    OFW: x.borrowersFullName,
+                    OFWDD: x.departureDate,
+                    BENE: x.beneficiaryFullName,
+                    LC: x.consultant,
+                    LT: x.loanType,
+                    LB: x.branch,
+                    STAT: x.statusName,
+                    UB: x.modUser,
+                    LIR: x.remarksIn,
+                  };
+                })}
+              />
             </div>
           )}
         </Spin>

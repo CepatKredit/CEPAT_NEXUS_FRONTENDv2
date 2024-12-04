@@ -1,7 +1,7 @@
-import * as React from 'react'
+import React, { useState } from "react";
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { IoMdPerson } from "react-icons/io";
-import { ConfigProvider, Dropdown } from 'antd';
+import { Tooltip, Dropdown } from "antd";
 import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie';
 import { toDecrypt } from '@utils/Converter';
@@ -15,6 +15,14 @@ function AccountSettings() {
     // const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
     const USRNAME = toDecrypt(localStorage.getItem('USRFN'));
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+
+    const handleTooltipToggle = () => {
+        setTooltipVisible(true);
+        setTimeout(() => {
+          setTooltipVisible(false); 
+        }, 10000);
+      };
 
     const getGreeting = () => {
         const currentHour = new Date().getHours();
@@ -61,13 +69,27 @@ function AccountSettings() {
     ];
 
     return (
-        <Dropdown menu={{ items }} placement="bottom">
-            <div className='flex flex-row'>
-                <IoMdPerson className='mx-[5px] mt-[4px]' style={{ fontSize: '20px', color: 'white' }} />
-                <span className='font-bold text-lg text-stone-100 cursor-pointer'>{getGreeting()}😊, {firstName} </span>            
+        <Tooltip
+          title={`${getGreeting()} 😊, ${firstName}`}
+          placement="right"
+          zIndex={1000}
+          visible={tooltipVisible}
+        >
+          <Dropdown menu={{ items }} placement="bottom">
+            <div className="flex items-center" onClick={handleTooltipToggle}>
+              {/* Icon for xs and sm screens */}
+              <IoMdPerson
+                className="mx-[5px] mt-[4px] cursor-pointer"
+                style={{ fontSize: "20px", color: "white" }}
+              />
+              {/* Full text for md and larger screens */}
+              <span className="hidden md:inline font-bold text-lg text-stone-100 cursor-pointer">
+                {getGreeting()} 😊, {firstName}
+              </span>
             </div>
-        </Dropdown>
-    )
-}
-
-export default AccountSettings
+          </Dropdown>
+        </Tooltip>
+      );
+    }
+    
+    export default AccountSettings;
