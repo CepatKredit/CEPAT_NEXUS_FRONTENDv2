@@ -13,6 +13,7 @@ import moment from 'moment';
 import { toEncrypt } from '@utils/Converter';
 import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 import MobDataListView from '@containers/mobileView/MobDataListView';
+import { GetData } from '@utils/UserData';
 
 function DataList() {
   const { width } = useWindowDimensions();
@@ -60,6 +61,7 @@ function DataList() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+  const userRole = GetData('ROLE')?.toString();
 
   return (
     <div className="mx-[1%] my-[2%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[2%] overflow-hidden">
@@ -123,18 +125,18 @@ function DataList() {
             <div className="w-full">
               <ResponsiveTable
                 columns={ColumnList(3)}
-                height={"calc(95vh - 505px)"}
+                height={"calc(110vh - 505px)"}
                 width={"100%"}
                 rows={filteredData?.map((x, i) => {
                   const loanProductMap = {
-                    "0303-DH": "DHP",
-                    "0303-DHW": "DHA",
-                    "0303-WA": "LBA",
-                    "0303-WL": "LBP",
-                    "0303-VA": "SBA",
-                    "0303-VL": "SBP",
+                    'DH - Philippines': 'DHP',
+                    'DH - Abroad': 'DHA',
+                    'OFW Loan - Abroad': 'LBA',
+                    'OFW Loan - In the Philippines': 'LBP',
+                    'Seafarer Loan - Deployed': 'SBA',
+                    'Seafarer Loan - In the Philippines': 'SBP',
                   };
-                  const isSmallScreen = window.innerWidth <= 640;
+                  const isRoleValid = userRole === '20' || userRole === '10';
                   return {
                     key: i,
                     NO: i + 1,
@@ -158,9 +160,7 @@ function DataList() {
                       </Button>
                     ),
                     DOA: moment(x.recDate).format("MM/DD/YYYY"),
-                    LP: isSmallScreen
-                      ? loanProductMap[x.loanProduct] || x.loanProduct
-                      : x.loanProduct,
+                    LP: isRoleValid ? loanProductMap[x.loanProduct] || x.loanProduct : x.loanProduct,
                     OFW: x.borrowersFullName,
                     OFWDD: x.departureDate,
                     BENE: x.beneficiaryFullName,

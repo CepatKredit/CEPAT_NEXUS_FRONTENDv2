@@ -29,7 +29,7 @@ function MobDataListView({ paginatedData, currentPage, handlePageChange }) {
   };
 
   return (
-    <div className="flex flex-wrap gap-4 max-h-[420px] xs1:max-h-[285px] xs2:max-h-[400px] xs:max-h-[510px] sm:max-h-[420px] overflow-y-auto justify-center items-center">
+    <div className="flex flex-wrap gap-4 max-h-[420px] xs1:max-h-[285px] xs2:max-h-[400px] xs:max-h-[610px] sm:max-h-[420px] overflow-y-auto justify-center items-center overflow-x-hidden">
       <div className="w-full">
         {paginatedData?.length === 0 ? (
           <div className="w-full flex justify-center items-center mt-5">

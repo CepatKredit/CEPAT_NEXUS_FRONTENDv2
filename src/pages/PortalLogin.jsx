@@ -295,8 +295,8 @@ function PortalLogin() {
 
   return (
     <div
-    className="flex flex-wrap bg-cover bg-no-repeat h-screen w-full overflow-hidden"
-    style={{ backgroundImage: `url(${FullScreenBackground})` }}
+      className="flex flex-wrap bg-cover bg-no-repeat h-screen w-full overflow-hidden"
+      style={{ backgroundImage: `url(${FullScreenBackground})` }}
     >
       {contextHolder}
 
@@ -476,7 +476,7 @@ function PortalLogin() {
       <div
         className="h-full xs1:h-[35%] xs2:h-[35%] xs:h-[35%] sm:h-[50%] md:h-[50%] lg:h-[53%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] 
         w-full xs1:w-full sm:w-[42%] md:w-[31%] lg:w-[28%] xl:w-[30%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
-        style={{ backgroundImage: `url(${LoginBackground})`}}
+        style={{ backgroundImage: `url(${LoginBackground})` }}
       >
         <div className="h-full w-full bg-stone-500/70">
           <center>
@@ -501,7 +501,7 @@ function PortalLogin() {
                       placeholder="Email Address"
                       prefix={
                         <Space.Compact className="px-2 w-[40px] text-stone-400">
-                          <IoMail  className="xs1:text-[12px] sm:text-[10px] md:text-[15px] lg:text-[15px] xl:text-[15px] 2xl:text-[20px] 3xl:text-[20px]" />
+                          <IoMail className="xs1:text-[12px] sm:text-[10px] md:text-[15px] lg:text-[15px] xl:text-[15px] 2xl:text-[20px] 3xl:text-[20px]" />
                         </Space.Compact>
                       }
                       autoComplete="off"
@@ -531,7 +531,7 @@ function PortalLogin() {
                       }}
                       prefix={
                         <Space.Compact className="px-2 w-[40px] text-stone-400">
-                           <FaKey className="xs1:text-[12px] sm:text-[10px] md:text-[15px] lg:text-[15px] xl:text-[15px] 2xl:text-[20px] 3xl:text-[20px]" />
+                          <FaKey className="xs1:text-[12px] sm:text-[10px] md:text-[15px] lg:text-[15px] xl:text-[15px] 2xl:text-[20px] 3xl:text-[20px]" />
                         </Space.Compact>
                       }
                       autoComplete="off"
@@ -645,8 +645,7 @@ function PortalLogin() {
               <div className="flex">
                 <span className="pt-[2px] pr-[5px]">{<IoLocationSharp />}</span>
                 <span>
-                  Room 2402 Jollibee Plaza, Emerald Ave., San Antonio, Pasig,
-                  Metro Manila
+                  Unit 2402 Jollibee Plaza, F. Ortigas Jr. Road, San Antonio, Ortigas Center, Pasig City
                 </span>
               </div>
               <div className="flex">

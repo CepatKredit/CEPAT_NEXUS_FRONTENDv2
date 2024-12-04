@@ -7,6 +7,7 @@ import { useCookies } from 'react-cookie';
 import { toDecrypt } from '@utils/Converter';
 import { useAuth } from '@auth/AuthProvider';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 
 function AccountSettings() {
     const { logout } = useAuth();
@@ -16,12 +17,13 @@ function AccountSettings() {
     const navigate = useNavigate()
     const USRNAME = toDecrypt(localStorage.getItem('USRFN'));
     const [tooltipVisible, setTooltipVisible] = useState(false);
+    const { width } = useWindowDimensions();
 
     const handleTooltipToggle = () => {
         setTooltipVisible(true);
         setTimeout(() => {
           setTooltipVisible(false); 
-        }, 10000);
+        }, 3000);
       };
 
     const getGreeting = () => {
@@ -67,29 +69,37 @@ function AccountSettings() {
             },
         },
     ];
+    const showTooltip = width <= 640;
 
     return (
-        <Tooltip
-          title={`${getGreeting()} 😊, ${firstName}`}
-          placement="right"
-          zIndex={1000}
-          visible={tooltipVisible}
-        >
-          <Dropdown menu={{ items }} placement="bottom">
-            <div className="flex items-center" onClick={handleTooltipToggle}>
-              {/* Icon for xs and sm screens */}
+        <Dropdown menu={{ items }} placement="bottom">
+          <div className="flex items-center" onClick={handleTooltipToggle}>
+            {/* Icon for xs and sm screens */}
+            {showTooltip ? (
+              <Tooltip
+                title={`${getGreeting()} 😊, ${firstName}`}
+                placement="right"
+                zIndex={1000}
+                visible={tooltipVisible}
+              >
+                <IoMdPerson
+                  className="mx-[5px] mt-[4px] cursor-pointer"
+                  style={{ fontSize: "20px", color: "white" }}
+                />
+              </Tooltip>
+            ) : (
               <IoMdPerson
                 className="mx-[5px] mt-[4px] cursor-pointer"
                 style={{ fontSize: "20px", color: "white" }}
               />
-              {/* Full text for md and larger screens */}
-              <span className="hidden md:inline font-bold text-lg text-stone-100 cursor-pointer">
-                {getGreeting()} 😊, {firstName}
-              </span>
-            </div>
-          </Dropdown>
-        </Tooltip>
-      );
-    }
-    
-    export default AccountSettings;
+            )}
+            {/* Full text for md and larger screens */}
+            <span className="hidden md:inline font-bold text-lg text-stone-100 cursor-pointer">
+              {getGreeting()} 😊, {firstName}
+            </span>
+          </div>
+        </Dropdown>
+    );
+}
+
+export default AccountSettings;

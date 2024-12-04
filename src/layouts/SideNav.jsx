@@ -28,6 +28,8 @@ import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 import { useQueryClient } from "@tanstack/react-query";
 import { toDecrypt } from "@utils/Converter";
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { motion, AnimatePresence } from "framer-motion";
+
 
 function SideNav() {
   //   const handleFilterChange = (e) => {
@@ -124,11 +126,12 @@ function SideNav() {
   }, []);
 
 
-  const [isVisible, setIsVisible] = React.useState(true); // State to toggle visibility
-
+  const [isVisible, setIsVisible] = React.useState(true);
   const toggleVisibility = () => {
-    setIsVisible(!isVisible); // Toggle the visibility
+    setIsVisible(!isVisible);
   };
+  const isDashboard = location.pathname === "/ckfi/dashboard";
+
   return (
     <SessionTimeout>
       <Layout>
@@ -214,38 +217,36 @@ function SideNav() {
                   }}
                 />
               )}
-              {width >= 640 && (
-                <div className="flex flex-row items-center">
-                  <div className="mx-2 my-[4px]">
-                    <span className="font-bold text-lg md:text-sm lg:text-lg text-stone-100">
-                      Search
-                    </span>
-                  </div>
-                  <Space.Compact>
-                    <Select
-                      placeholder="filter search"
-                      className="w-[110px] md:w-[110px] lg:w-[140px] xl:w-[160px] 2xl:w-[110px]"
-                      options={[
-                        { label: "Loan ID", value: "loanID" },
-                        { label: "Full Name", value: "name" },
-                      ]}
-                    />
-
-                    <Input
-                      placeholder="search..."
-                      allowClear
-                      value={searchValue}
-                      onChange={(e) => setSearchValue(e.target.value)}
-                      className="w-[170px] md:w-[110px] lg:w-[150px] xl:w-[170px] 2xl:w-[170px]"
-                    />
-                    <Button
-                      type="default"
-                      onClick={handleSearchClick}
-                      icon={<SearchOutlined />}
-                    />
-                  </Space.Compact>
+              <div className="flex flex-col xs1:flex-row items-center space-y-2 xs:space-y-0">
+                <div className="mx-2 my-[4px]">
+                  <span className="font-bold text-base xs1:text-[12px] xs:text-[12px] sm:text-lg text-stone-100">
+                    Search
+                  </span>
                 </div>
-              )}
+                <Space.Compact className="flex flex-wrap xs:flex-nowrap">
+                  <Select
+                    placeholder="Filter"
+                    className="w-[100px] xs1:w-[45px] xs2:w-[65px] xs:w-[90px] lg:w-[140px] xl:w-[160px]"
+                    options={[
+                      { label: "Loan ID", value: "loanID" },
+                      { label: "Full Name", value: "name" },
+                    ]}
+                  />
+                  <Input
+                    placeholder="Search..."
+                    allowClear
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    className="w-[120px] xs1:w-[50px] xs2:w-[70px] xs:w-[95px] lg:w-[170px] xl:w-[190px]"
+                  />
+                  <Button
+                    type="default"
+                    onClick={handleSearchClick}
+                    icon={<SearchOutlined />}
+                    className="w-full xs1:w-auto"
+                  />
+                </Space.Compact>
+              </div>
               <div className={`my-[1.3rem] absolute ${getRightPosition()}`}>
                 <AccountSettings />
               </div>
@@ -257,39 +258,38 @@ function SideNav() {
                 Button: {
                   defaultHoverBg: "rgba(255,255,255,0)",
                   onlyIconSize: 25,
-                 // primaryColor: "rgb(84,84,146)",
                 },
               },
             }}
           >
             <Content className="bg-white h-full overflow-hidden">
-              <div
-                className={`transition-all duration-500 ease-in-out overflow-hidden ${isVisible ? "max-h-[500px]" : "max-h-0"}`}
-              >
-                <center>
-                  <div className="relative h-[7rem] w-[85vw] pt-[.5em] overflow-x-hidden hover:overflow-x-auto">
-                    {isVisible && mini_dash !== "/ckfi/dashboard" ? (
-                      <DashMini />
-                    ) : (
-                      <></>
-                    )}
-                    <Button
-                      shape="circle"
-                      onClick={toggleVisibility}
-                      className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
-                      icon={isVisible ? <CaretUpOutlined /> : <CaretDownOutlined />}
-                    />
-
-
-                  </div>
-                </center>
+              <div className="relative">
+                {!isDashboard && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: isVisible ? 1 : 0, height: isVisible ? "auto" : 0 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  >
+                    <center>
+                      <div className="relative h-[7rem] w-[85vw] pt-[.5em] overflow-x-hidden hover:overflow-x-auto">
+                        {isVisible && <DashMini />}
+                      </div>
+                    </center>
+                  </motion.div>
+                )}
+                {!isDashboard && width >= 640 && (
+                  <Button
+                    shape="circle"
+                    onClick={toggleVisibility}
+                    className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
+                    icon={isVisible ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                  />
+                )}
               </div>
-
               <Outlet />
             </Content>
           </ConfigProvider>
-
-
         </Layout>
       </Layout>
 
