@@ -32,7 +32,7 @@ function LabeledSelectAgency({ className, label, value, receive, disabled, readO
     const getAgency = useQuery({
         queryKey: ['getAgency'],
         queryFn: async () => {
-            const result = await GET_LIST('/OFWDetails/GetAgency');
+            const result = await GET_LIST('/GET/G1A');
             return result.list;
         },
         refetchInterval: 30 * 1000,

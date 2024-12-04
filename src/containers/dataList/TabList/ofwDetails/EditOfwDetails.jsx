@@ -1,5 +1,5 @@
-import React, { useEffect,useState } from 'react';
-import { Flex, notification, Checkbox, Input } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
+import { Flex, notification, Checkbox, Input, Form, ConfigProvider } from 'antd';
 import LabeledInput from '@components/marketing/LabeledInput';
 import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
 import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
@@ -28,49 +28,31 @@ import LabeledSelect_CollectionArea from '@components/marketing/LabeledSelect_Co
 import DatePicker_Deployment from '@components/marketing/DatePicker_Deployment';
 import LabeledInput_ForeignCurrency from '@components/marketing/LabeledInput_ForeignCurrency';
 import RelativesTable from '@containers/dataList/TabList/RelativesTable';
-import { GET_LIST } from '@api/base-api/BaseApi';
 import { getDependentsCount } from '@hooks/DependentsController';
 import { useStore } from 'zustand';
+import DatePickerOpt from '@components/optimized/DatePickerOpt';
+import { useDataContainer } from '@context/PreLoad';
+import SelectOpt from '@components/optimized/SelectOpt';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import InputOpt from '@components/optimized/InputOpt';
+import { Age } from '@utils/Calculations';
+import { removeLinkFormat } from '@utils/Formatting';
 
 
 function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, BorrowerId, addCoborrower }) {
-    const {Count} = useStore(getDependentsCount);
+    const { Count } = useStore(getDependentsCount);
     const [isEdit, setEdit] = React.useState(false);
     const { TextArea } = Input;
     const [api, contextHolder] = notification.useNotification();
     const [relativesCount, setRelativesCount] = useState(0);
+    const { getAppDetails, updateAppDetails, setBenDependents } = useContext(LoanApplicationContext)
+
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
     }, []);
 
-    useEffect(() => {
-       
-            receive({ name: 'ofwdependents', value: Count });
-     
-    }, [Count]);
+    const [getAge, setAge] = useState(getAppDetails.ofwbdate ? Age(getAppDetails.ofwbdate) : 0)
 
-    React.useEffect(() => 
-    {
-        console.log('testcount......', data.ofwdependents);
-    },[data.ofwdependents])
-
-
-   /* React.useEffect(() =>
-    {
-        console.log('counting.....', Count);
-    },[Count])*/
-
-    const calculateAge = (birthday) => {
-        const today = new Date();
-        const birthDate = new Date(birthday);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
-
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    };
     const rendered = true;
     function generateYearOptions(maxYears) {
         const options = [];
@@ -80,105 +62,219 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
         return options;
     }
 
+    const handleDoubleClick = (() => {
+        let clickCount = 0;
+        return (e) => {
+            if (!isEdit && getAppDetails.ofwfblink) {
+                e.preventDefault();
+                clickCount++;
+                setTimeout(() => {
+                    if (clickCount >= 2) {
+                        window.open(`https://www.facebook.com/${getAppDetails.ofwfblink}`, '_blank');
+                    }
+                    clickCount = 0; // Reset click count after handling
+                }, 300); // Adjust timeout for double-click detection
+            }
+        };
+    })();
+
+    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX } = useDataContainer();
+
+    const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
+    const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+    const JOB_CATEGORY = JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
+    const JOB_TITLE = JobTitle(getAppDetails.JobCategory) ? JobTitle(getAppDetails.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
+    const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
+
+    //Shortening For Disabling Fields
+    let OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
+
     return (
         <div>
+            {(User === 'MARKETING' || User === 'LC') && (
+                <SectionHeader title="Personal Information" />
+            )}
+
+            {User !== 'MARKETING' && User !== 'LC' && (
+                <SectionHeader
+                    title={
+                        ["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd) ? (
+                            <>
+                                Principal Borrower
+                                <br />
+                                <span className="text-sm">(OFW Details)</span>
+                            </>
+                        ) : (
+                            <>
+                                Co-Borrower
+                                <br />
+                                <span className="text-sm">(OFW Details)</span>
+                            </>
+                        )
+                    }
+                />
+            )}
+
+
             {contextHolder}
-            <Flex className="w-full  mt-5" justify="center" gap="small" wrap>
-                <LabeledInput_Fullname
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+            <Flex className="w-full  mt-5 xs1:mt-2 2xl:mt-5" justify="center" gap="small" wrap>
+
+                <InputOpt
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>First Name <span className="text-red-500">*</span></>}
-                    value={data.ofwfname}
+                    value={getAppDetails.ofwfname}
                     placeHolder='First Name'
-                    receive={(e) => receive({ name: 'ofwfname', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwfname', value: e })}
+                    category={'marketing'}
+                    readOnly={isEdit}
+                    isEdit={isEdit}
+                    rendered={rendered}
+                    KeyName={'ofwfname'}
+                    format={'Default'}
+                    group={'Uppercase'}
+                    compname={'First Name'}
+                    EmptyMsg={'First Name Required'}
+                    InvalidMsg={'Invalid First Name'}
+                />
+                <InputOpt
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
+                    className_label={'font-bold'}
+                    label={'Middle Name'}
+                    value={getAppDetails.ofwmname}
+                    placeHolder='Middle Name'
+                    receive={(e) => updateAppDetails({ name: 'ofwmname', value: e })}
+                    category={'marketing'}
+                    readOnly={isEdit}
+                    isEdit={isEdit}
+                    rendered={false}
+
+                    KeyName={'ofwmname'}
+                    format={'Default'}
+                    group={'Uppercase'}
+                    compname={'Middle Name'}
+                    required={false}
+
+                //EmptyMsg={'First Name Required'}
+                //InvalidMsg={'Invalid First Name'}
+                />
+                <InputOpt
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
+                    className_label={'font-bold'}
+                    label={<>Last Name <span className="text-red-500">*</span></>}
+                    value={getAppDetails.ofwlname}
+                    placeHolder='Last Name'
+                    receive={(e) => updateAppDetails({ name: 'ofwlname', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
 
+                    KeyName={'ofwlname'}
+                    format={'Default'}
+                    group={'Uppercase'}
+                    compname={'Last Name'}
+
+                    EmptyMsg={'Last Name Required'}
+                    InvalidMsg={'Invalid Last Name'}
                 />
-                <LabeledInput_NotRequired
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                    className_label={'font-bold'}
-                    label={'Middle Name'}
-                    value={data.ofwmname}
-                    placeHolder='Middle Name'
-                    receive={(e) => receive({ name: 'ofwmname', value: e })}
-                    category={'marketing'}
-                    readOnly={isEdit}
-                    isEdit={isEdit}
-                />
-                <LabeledInput_Fullname
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                    className_label={'font-bold'}
-                    label={<>Last Name <span className="text-red-500">*</span></>}
-                    value={data.ofwlname}
-                    placeHolder='Last Name'
-                    receive={(e) => receive({ name: 'ofwlname', value: e })}
-                    category={'marketing'}
-                    readOnly={isEdit}
-                    isEdit={isEdit}
-                    rendered={rendered}
-                />
-                <LabeledSelect_Suffix
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                <SelectOpt
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Suffix <span className="text-red-500">*</span></>}
-                    placeHolder='Suffix'
-                    value={data.ofwsuffix}
-                    receive={(e) => receive({ name: 'ofwsuffix', value: e })}
-                    disabled={isEdit}
-                    showSearch
-                    isEdit={isEdit}
+                    value={getAppDetails.ofwsuffix}
                     rendered={rendered}
+                    showSearch
+                    receive={(e) => updateAppDetails({ name: 'ofwsuffix', value: e })}
+                    options={OFW_SUFFIX}
+
+                    EmptyMsg={'Suffix Required'}
+                    InvalidMsg={'Invalid Suffix'}
+                    KeyName={'ofwsuffix'}
+                    group={'Default'}
+                    compname={'Suffix'}
+
                 />
-                <DatePicker_BDate
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+
+                <DatePickerOpt
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Birthdate <span className="text-red-500">*</span></>}
-                    placeHolder='Birthdate Date'
+                    placeHolder='Enter Birthdate'
                     receive={(e) => {
-                        receive({ name: 'ofwbdate', value: e });
-                        const age = calculateAge(e);
-                        receive({ name: 'age', value: age });
+                        updateAppDetails({ name: 'ofwbdate', value: e });
+                        setAge(Age(e))
                     }}
-                    value={data.ofwbdate}
+                    value={getAppDetails.ofwbdate}
                     category={'marketing'}
                     disabled={isEdit}
                     isEdit={isEdit}
                     rendered={rendered}
+
+                    EmptyMsg={'Birthdate Required'}
+                    InvalidMsg={'Invalid Birthdate'}
+                    KeyName={'ofwbdate'}
+                    group={'AgeLimit20'}
+                    compname={'Birthdate'}
+
                 />
                 {User === 'Credit' && (
-                    <LabeledInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    <InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={'Age'}
-                        value={calculateAge(data.ofwbdate)}
-                        readOnly={true}
-                        placeHolder='Age'
+                        value={getAge ? getAge : 0}
+                        placeHolder='select Birthdate'
+                        receive={(e) => setAge(e || 0)}
+                        category={'marketing'}
+                        isEdit={isEdit}
                         rendered={rendered}
-                    />)}
-                <LabeledSelect
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        required={false}
+                        readOnly={true}
+
+                        KeyName={'age'}
+                        format={'Default'}
+                        group={'Uppercase'}
+                        compname={'Age'}
+
+                    //EmptyMsg={'Age Required'}
+                    //InvalidMsg={'Invalid Age'}
+                    />
+                )}
+                <SelectOpt
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Gender <span className="text-red-500">*</span></>}
-                    placeHolder='Gender'
-                    value={data.ofwgender}
-                    data={Gender()}
-                    receive={(e) => receive({ name: 'ofwgender', value: e })}
-                    category={'marketing'}
-                    disabled={isEdit}
-                    isEdit={isEdit}
+                    value={getAppDetails.ofwgender}
                     rendered={rendered}
+                    showSearch
+                    receive={(e) => updateAppDetails({ name: 'ofwgender', value: e })}
+                    options={Gender()}
+
+                    EmptyMsg={'Gender Required'}
+                    InvalidMsg={'Invalid Gender'}
+                    KeyName={'ofwgender'}
+                    group={'Default'}
+                    compname={'Gender'}
+
                 />
+
                 <LabeledInput_OfwContact
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Mobile Number <span className="text-red-500">*</span></>}
                     placeHolder='Mobile Number'
-                    data={data}
-                    value={data.ofwmobile}
-                    receive={(e) => receive({ name: 'ofwmobile', value: e })}
+                    data={getAppDetails}
+                    value={getAppDetails.ofwmobile}
+                    receive={(e) => updateAppDetails({ name: 'ofwmobile', value: e })}
                     category={'marketing'}
                     readOnly={isEdit}
                     isEdit={isEdit}
@@ -187,13 +283,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledInput_OfwContact
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={'Other Mobile Number'}
                         placeHolder='Other Mobile Number'
-                        data={data}
-                        value={data.ofwothermobile}
-                        receive={(e) => receive({ name: 'ofwothermobile', value: e })}
+                        data={getAppDetails}
+                        value={getAppDetails.ofwothermobile}
+                        receive={(e) => updateAppDetails({ name: 'ofwothermobile', value: e })}
                         category={'marketing'}
                         type='contact'
                         readOnly={isEdit}
@@ -201,297 +298,398 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                         required={false}
                     />)}
-                <LabeledInput_Email
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                <InputOpt
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Email Address <span className="text-red-500">*</span></>}
                     placeHolder='Email Address'
-                    value={data.ofwemail}
-                    receive={(e) => receive({ name: 'ofwemail', value: e })}
+                    value={getAppDetails.ofwemail}
+                    receive={(e) => updateAppDetails({ name: 'ofwemail', value: e })}
                     category={'marketing'}
                     isEdit={isEdit}
                     rendered={rendered}
+
+                    KeyName={'ofwemail'}
+                    format={'Default'}
+                    group={'Email'}
+                    compname={'Email'}
+
+                    EmptyMsg={'Email Required'}
+                    InvalidMsg={'Invalid Email'}
+
                 />
-                            {User === 'Credit' ? (
-                    <div className="mt-5 w-[18.75rem] h-[3.875rem">
-                        <label className="font-bold">Facebook Name / Profile <span className="text-red-500">*</span></label>
-                        <input
-                            type="text"
-                            className={`w-full p-2 border rounded-lg border-gray-300 ${
-                                !isEdit && data.ofwfblink && data.ofwfblink.startsWith('https://')
-                                    ? 'text-blue-500 underline'
-                                    : 'text-black'
+                {User === 'Credit' ? (<>
+                    <InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
+                        className_label={'font-bold'}
+                        className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && getAppDetails.ofwfblink
+                            ? 'text-blue-500 underline'
+                            : 'text-black'
                             }`}
-                            placeholder="Facebook Name / Profile"
-                            value={data.ofwfblink || ''}
-                            readOnly={isEdit}
-                            onClick={(e) => {
-                                if (!isEdit && data.ofwfblink && data.ofwfblink.startsWith('https://')) {
-                                    e.preventDefault();
-                                    window.open(
-                                        data.ofwfblink,
-                                        '_blank'
-                                    );
-                                }
-                            }}
-                            onChange={(e) => {
-                                if (!isEdit) {
-                                    const inputValue = e.target.value.trim();
-                                    const formattedValue = inputValue.startsWith('https://') 
-                                        ? inputValue 
-                                        : `https://www.facebook.com/${inputValue}`;
-                                    receive({ name: 'ofwfblink', value: formattedValue });
-                                }
-                            }}
-                        />
-                    </div>
+                        label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
+                        placeholder="Facebook Name / Profile"
+                        value={`https://www.facebook.com/${removeLinkFormat(getAppDetails.ofwfblink)}`}//just in case to remove existing data
+                        receive={(e) => updateAppDetails({ name: 'ofwfblink', value: e.slice(25) })}
+                        category={'marketing'}
+                        rendered={rendered}
+                        onClick={handleDoubleClick}
+
+                        KeyName={'ofwfblink'}
+                        format={'Http'}
+                        group={'FBLink'}
+                        compname={'Facebook Name / Profile'}
+
+                        EmptyMsg={'Facebook Name / Profile Required'}
+                        InvalidMsg={'Invalid Facebook Name / Profile'}
+                    /></>
+
                 ) : (
-                    <LabeledInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    <InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeHolder='Facebook Name / Profile'
-                        readOnly={isEdit}
-                        value={data.ofwfblink || ''}
-                        receive={(e) => {
-                            const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
-                            receive({ name: 'ofwfblink', value: formattedValue });
-                        }}
                         isEdit={isEdit}
+                        category={'marketing'}
+                        readOnly={isEdit}
                         rendered={rendered}
+                        value={removeLinkFormat(getAppDetails.ofwfblink)}
+                        receive={(e) => {
+                            const formattedValue = e.includes('https://www.facebook.com/') ? e : `https://www.facebook.com/${e}`;
+                            updateAppDetails({ name: 'ofwfblink', value:formattedValue  })
+                        }}
+
+                        KeyName={'ofwfblink'}
+                        group={'Default'}
+                        compname={'Facebook Name / Profile'}
+
+                        InvalidMsg='Invalid Facebook Name/Profile'
+                        EmptyMsg='Facebook Name/Profile Required'
                     />
+                    /*
+                         <LabeledInput
+                                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                                } w-[18.75rem] h-[3.875rem]`}
+                                            className_label={'font-bold'}
+                                            label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
+                                            placeHolder='Facebook Name / Profile'
+                                            readOnly={isEdit}
+                                            value={getAppDetails.ofwfblink || ''}
+                                            receive={(e) => {
+                                                const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
+                                                updateAppDetails({ name: 'ofwfblink', value: formattedValue });
+                                            }}
+                                            isEdit={isEdit}
+                                            rendered={rendered}
+                                        />*/
                 )}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    : (<InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
                         placeHolder='Group Chat'
-                        value={data.ofwgroupchat}
-                        receive={(e) => receive({ name: 'ofwgroupchat', value: e })}
+                        value={getAppDetails.ofwgroupchat}
+                        receive={(e) => updateAppDetails({ name: 'ofwgroupchat', value: e })}
                         category={'marketing'}
                         readOnly={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
+                        KeyName={'ofwgroupchat'}
+                        group={'Default'}
+                        compname={'Group Chat'}
+
                     />)}
-                {User === 'Credit' &&
-                    (<LabeledSelect_Relationship
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                        className_label={'font-bold'}
-                        label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
-                        placeHolder='Relationship to the Beneficiary'
-                        value={data.RelationshipBen}
-                        receive={(e) => receive({ name: 'RelationshipBen', value: e })}
-                        category={'marketing'}
-                        disabled={isEdit}
-                        isEdit={isEdit}
-                        rendered={rendered}
-                        showSearch
-                    />)}
-                 {(User === 'Credit' && addCoborrower )&& (
-                    <LabeledSelect_Relationship
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                {(User === 'Credit' && addCoborrower) && (
+                    <SelectOpt
+                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Relationship to Additional <span className="text-red-500">*</span></>}
+                        value={getAppDetails.benrelationship}
+                        rendered={rendered}
                         placeHolder='Relationship to Additional'
-                        value={data.RelationshipAdd}
-                        receive={(e) => receive({ name: 'RelationshipAdd', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
-                        rendered={rendered}
-                        showSearch
-                    />)}
+                        receive={(e) => updateAppDetails({ name: 'RelationshipAdd', value: e })}
+                        options={GET_RELATIONSHIP}
+
+                        EmptyMsg={'Relationship to Additional Required'}
+                        InvalidMsg={'Invalid Relationship to Additional'}
+                        KeyName={'RelationshipAdd'}
+                        group={'Default'}
+                        compname={'Relationship to Additional'}
+                    />
+
+                )}
                 {User === 'Credit' && (
+
                     <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label='font-bold'
                         label={<>Religion <span className="text-red-500">*</span></>}
                         placeHolder='Religion'
                         data={Religion()}
-                        value={data.Religion}
-                        receive={(e) => receive({ name: 'Religion', value: e })}
+                        value={getAppDetails.Religion}
+                        receive={(e) => updateAppDetails({ name: 'Religion', value: e })}
                         disabled={isEdit}
                         showSearch
                         rendered={rendered}
                     />)}
                 {User === 'Credit' && (
                     <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         data={Overseas()}
                         label={<>PEP <span className="text-red-500">*</span></>}
                         placeHolder='PEP'
                         readOnly={isEdit}
-                        value={data.PEP}
-                        receive={(e) => receive({ name: 'PEP', value: e })}
+                        value={getAppDetails.PEP}
+                        receive={(e) => updateAppDetails({ name: 'PEP', value: e })}
                         disabled={isEdit}
                         rendered={rendered}
                     />)}
                 <LabeledSelect
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Marital Status <span className="text-red-500">*</span></>}
                     placeHolder='Marital Status'
                     disabled={isEdit}
-                    value={data.ofwmstatus}
+                    value={getAppDetails.ofwmstatus}
                     data={MaritalStatus()}
-                    receive={(e) => receive({ name: 'ofwmstatus', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
-                {User === 'Credit' && (data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
-                    <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
-                    <Checkbox
-                            checked={data.MarriedPBCB}
-                            onClick={() => {
-                                receive({ name: 'MarriedPBCB', value: !data.MarriedPBCB });
-                            }}
-                            disabled={isEdit}
-                        >
-                            If the PB and CB are married to each other
-                        </Checkbox>
-                    </div>
-                )}
-                {(data.ofwmstatus === 2 || data.ofwmstatus === 5 || data.ofwmstatus === 6) && (
+                {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                    User === 'Credit' || User === 'MARKETING') && (getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
+                        <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
+                            <Checkbox
+                                checked={getAppDetails.MarriedPBCB}
+                                onClick={() => {
+                                    const newValue = !getAppDetails.MarriedPBCB;
+                                    updateAppDetails({ name: 'MarriedPBCB', value: !getAppDetails.MarriedPBCB });
+                                    //setBenDependents(false); //Turning on will have conflicts in re-trigger in PBCB Trigger Fields
+                                    //setBenDependents(!newValue); //Turning on will have conflicts in re-trigger in PBCB Trigger Fields
+                                }}
+                                disabled={isEdit}
+                            >
+                                If the PB and CB are married to each other
+                            </Checkbox>
+                        </div>
+                    ) : (<></>)
+                }
+                {(getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
                     User !== 'LC' && (
                         <>
-                            <LabeledInput_Fullname
-                                className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            <InputOpt
+                                className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                    } w-[18.75rem] h-[3.875rem]`}
                                 className_label={'font-bold'}
                                 label={<>Spouse Name <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Name'
                                 readOnly={isEdit}
-                                receive={(e) => receive({ name: 'ofwspouse', value: e })}
-                                value={data.ofwspouse}
+                                receive={(e) => updateAppDetails({ name: 'ofwspouse', value: e })}
+                                value={getAppDetails.ofwspouse}
                                 isEdit={isEdit}
                                 rendered={rendered}
-                                disabled={User === 'Credit' && data.MarriedPBCB}
-
+                                disabled={User === 'Credit' && OFW_IS_PRIM && getAppDetails.MarriedPBCB}
+                                KeyName={'ofwspouse'}
+                                group={'Uppercase'}
+                                compname={'Spouse Name'}
                             />
-                            <DatePicker_BDate
-                                className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+
+                            <DatePickerOpt
+                                className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                    } w-[18.75rem] h-[3.875rem]`}
                                 className_label={'font-bold'}
                                 label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                                 placeHolder='Spouse Birthdate'
-                                receive={(e) => receive({ name: 'ofwspousebdate', value: e })}
-                                value={data.ofwspousebdate}
+                                receive={(e) => updateAppDetails({ name: 'ofwspousebdate', value: e })}
+                                value={getAppDetails.ofwspousebdate}
                                 isEdit={isEdit}
                                 rendered={rendered}
-                                disabled={User === 'Credit' && data.MarriedPBCB}
+                                disabled={User === 'Credit' && OFW_IS_PRIM && getAppDetails.MarriedPBCB}
+                                category={'marketing'}
 
+                                KeyName={'ofwspousebdate'}
+                                EmptyMsg={'Birthdate Required'}
+                                InvalidMsg={'Invalid Birthdate'}
+                                group={'AgeLimit20'}
+                                compname={'Birthdate'}
                             />
                             {User === 'Credit' && (
                                 <LabeledSelect
-                                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                        } w-[18.75rem] h-[3.875rem]`}
                                     className_label={'font-bold'}
                                     label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
                                     placeHolder='Spouse Source of Income'
                                     disabled={isEdit}
-                                    value={data.SpSrcIncome}
+                                    value={getAppDetails.SpSrcIncome}
                                     data={SpouseSourceIncome()}
-                                    receive={(e) => receive({ name: 'SpSrcIncome', value: e })}
+                                    receive={(e) => updateAppDetails({ name: 'SpSrcIncome', value: e })}
                                     rendered={rendered}
                                 />)}
                             {User === 'Credit' && (
-                                <LabeledInput_Salary
-                                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                                <InputOpt
+                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                        } w-[18.75rem] h-[3.875rem]`}
                                     className_label={'font-bold'}
                                     label={<>Spouse Income <span className="text-red-500">*</span></>}
                                     placeHolder='Spouse Income'
                                     readOnly={isEdit}
-                                    value={data.SpIncome}
-                                    receive={(e) => receive({ name: 'SpIncome', value: e })}
-                                    category={'direct'}
+                                    value={getAppDetails.SpIncome}
+                                    receive={(e) => updateAppDetails({ name: 'SpIncome', value: e })}
+                                    category={'marketing'}
                                     rendered={rendered}
-                                    triggered={data.MarriedPBCB}
+                                    KeyName={'SpIncome'}
+                                    format={'Currency'}
+                                    group={'Rent_Amort'}
+                                    compname={'Spouse Income'}
                                 />)}
                         </>
                     )
                 )}
+                {User === 'Credit' &&
+                    (<SelectOpt
+                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_label={'font-bold'}
+                        label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
+                        value={getAppDetails.RelationshipBen}
+                        rendered={rendered}
+                        placeHolder='Relationship to the Beneficiary'
+                        category={'marketing'}
+                        disabled={getAppDetails.MarriedPBCB}
+                        showSearch
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'RelationshipBen', value: e })}
+                        options={GET_RELATIONSHIP}
 
-                {
+                        EmptyMsg={'Relationship to the Beneficiary Required'}
+                        InvalidMsg={'Invalid Relationship to the Beneficiary'}
+                        KeyName={'RelationshipBen'}
+                        group={'Default'}
+                        compname={'Relationship to the Beneficiary'}
+                    />
+                    )}
+                {User !== 'LC' && (
+                    <Form.Item
+                        label="Dependents"
+                        colon={false}
+                        wrapperCol={{ span: 24 }}
+                        className="w-[18.75rem] mt-4 font-bold"
+                    >
+                        <Input
+                            value={getAppDetails.ofwdependents || '0'}
+                            className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
+                            readOnly
+                            placeholder="No. of Dependents"
+                        />
+                    </Form.Item>
+                )}
+                {User === 'LC' && (
                     <LabeledInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         className_dsub={''}
                         label={"Dependents"}
-                        value={data.ofwdependents || '0'}
-                        receive={(e) => { receive({ name: 'ofwdependents', value: e }); }}
+                        value={getAppDetails.ofwdependents || '0'}
+                        receive={(e) => { updateAppDetails({ name: 'ofwdependents', value: e }); }}
                         digits={2}
                         placeHolder={'No.of Dependents'}
-                        readOnly={true}
                         isEdit={isEdit}
                         rendered={rendered}
                         required={false}
-
                     />
-                }
-                <div className="w-[68rem] mt-[2rem] mx-auto">
-                <RelativesTable BorrowerId={BorrowerId}  onUpdateCount={(count) => setRelativesCount(count)}  />
-                </div>
+                )}
+                {User !== 'LC' && (
+                    <div className="w-full mt-[2rem] mx-auto">
+                        <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={getAppDetails} isOfw={1} />
+                    </div>
+                )}
 
             </Flex>
 
-            <div className="mt-[13rem]">
+            <div className={`${User === 'LC' ? 'mt-[2rem]' : 'mt-[13rem]'}`}>
                 <SectionHeader title="Present Address" />
             </div>
             <Flex className='w-full' justify='center' gap='small' wrap>
-
                 <AddressGroup_Component
                     api={api}
-                    data={data}
-                    receive={(e) => receive(e)}
+                    data={getAppDetails}
+                    receive={(e) => updateAppDetails(e)}
                     presaddress={(e) => presaddress(e)}
                     type={"present"}
                     disabled={isEdit}
                     category={"marketing"}
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'}  w-full xs:w-[18.75rem] sm:w-[18.75rem] md:w-[18.75rem] lg:w-[18.75rem] xl:w-[18.75rem] ${User === 'Credit' || User === 'Lp' ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'} 3xl:w-[20.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     vertical_algin={true}
                     rendered={rendered}
-                    />
+                />
                 <LabeledSelect
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
-                    label={<>Type of Residences <span className="text-red-500">*</span></>}
-                    placeHolder='Type of Residences'
+                    label={<>Type of Residence <span className="text-red-500">*</span></>}
+                    placeHolder='Type of Residence'
                     disabled={isEdit}
-                    receive={(e) => receive({ name: 'ofwresidences', value: e })}
+                    receive={(e) => updateAppDetails({ name: 'ofwresidences', value: e })}
                     data={Residences()}
                     category={'marketing'}
-                    value={data.ofwresidences}
+                    value={getAppDetails.ofwresidences}
                     rendered={rendered}
                 />
-                {data.ofwresidences === 3 || data.ofwresidences === 2 ? (
-                    <LabeledCurrencyInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                {getAppDetails.ofwresidences === 3 || getAppDetails.ofwresidences === 2 ? (
+                    <InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
-                        label={<>{data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
-                        value={data.ofwrent}
-                        receive={(e) => { receive({ name: 'ofwrent', value: e }) }}
+                        label={<>{getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
+                        value={getAppDetails.ofwrent}
+                        receive={(e) => { updateAppDetails({ name: 'ofwrent', value: e }) }}
                         category={'direct'}
-                        placeHolder={data.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
+                        placeHolder={getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         rendered={rendered}
+
+                        KeyName={'ofwrent'}
+                        format={'Currency'}
+                        group={'Rent_Amort'}
+                        compname={getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                     />
                 ) : null}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput_Fullname
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    : (<InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Landmark <span className="text-red-500">*</span></>}
                         placeHolder='Landmark'
                         isEdit={isEdit}
                         category={'marketing'}
                         readOnly={isEdit}
-                        value={data.landmark}
+                        value={getAppDetails.landmark}
                         rendered={rendered}
-                        receive={(e) => receive({ name: 'landmark', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'landmark', value: e })}
+
+                        KeyName={'landmark'}
+                        group={'Uppercase'}
+                        compname={'Landmark'}
                     />)}
                 {User === 'Credit' && (
-                    <LabeledInput_Fullname
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    <InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Proof of Billing Remarks <span className="text-red-500">*</span></>}
                         placeHolder='Remarks'
@@ -499,39 +697,44 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         readOnly={isEdit}
                         rendered={rendered}
-                        value={data.OfwPoBRemarks}
-                        receive={(e) => receive({ name: 'OfwPoBRemarks', value: e })}
+                        value={getAppDetails.OfwPoBRemarks}
+                        receive={(e) => updateAppDetails({ name: 'OfwPoBRemarks', value: e })}
+
+                        KeyName={'OfwPoBRemarks'}
+                        group={'Uppercase'}
+                        compname={'Proof of Billing Remarks'}
                     />)}
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledInput_LengthStay
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Length of Stay <span className="text-red-500">*</span></>}
                         disabled={isEdit}
                         category={'marketing'}
-                        value_year={data.ofwlosYear}
-                        value_month={data.ofwlosMonth}
-                        receiveY={(e) => receive({ name: 'ofwlosYear', value: e })}
-                        receiveM={(e) => receive({ name: 'ofwlosMonth', value: e })}
+                        value_year={getAppDetails.ofwlosYear}
+                        value_month={getAppDetails.ofwlosMonth}
+                        receiveY={(e) => updateAppDetails({ name: 'ofwlosYear', value: e })}
+                        receiveM={(e) => updateAppDetails({ name: 'ofwlosMonth', value: e })}
                         rendered={rendered}
-                        placeHolder={'Length of Stay'}
                     />)}
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledSelect_CollectionArea
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={'Collection Area'}
                         placeHolder='Collection Area'
                         category={'marketing'}
                         showSearch={true}
                         readOnly={isEdit}
-                        value_prov = {data.ofwPresProv}
-                        value_mun = {data.ofwPresMunicipality}
-                        value={data.collectionarea}
-                        get_presprov={data.ofwPresProv}
-                        receive={(e) => receive({ name: 'collectionarea', value: e })}
+                        value_prov={getAppDetails.ofwPresProv}
+                        value_mun={getAppDetails.ofwPresMunicipality}
+                        value={getAppDetails.collectionarea}
+                        get_presprov={getAppDetails.ofwPresProv}
+                        receive={(e) => updateAppDetails({ name: 'collectionarea', value: e })}
                         rendered={rendered}
                         disabled={true}
                     />)}
@@ -544,13 +747,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     ? (<></>)
                     : (<AddressGroup_Component
                         api={api}
-                        data={data}
-                        receive={(e) => receive(e)}
+                        data={getAppDetails}
+                        receive={(e) => updateAppDetails(e)}
                         presaddress={(e) => presaddress(e)}
                         type={"permanent"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`mt-5 xs1:mt-2 2xl:mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                            } 3xl:w-[20.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}
@@ -565,13 +769,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     ? (<></>)
                     : (<AddressGroup_Component
                         api={api}
-                        data={data}
-                        receive={(e) => receive(e)}
+                        data={getAppDetails}
+                        receive={(e) => updateAppDetails(e)}
                         presaddress={(e) => presaddress(e)}
                         type={"provincial"}
                         disabled={isEdit}
                         category={"marketing"}
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`mt-5 xs1:mt-2 2xl:mt-5 w-full xs:w-[8.75rem] sm:w-[8.75rem] md:w-[10.75rem] lg:w-[12.75rem] xl:w-[14.75rem] ${(User === 'Credit' || User === 'Lp') ? '2xl:w-[16.75rem]' : '2xl:w-[18.75rem]'
+                            } 3xl:w-[20.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         vertical_algin={true}
                         rendered={rendered}
@@ -584,158 +789,221 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<LabeledSelect_ValidId
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={'Valid ID Type'}
                         placeHolder='Valid ID Type'
                         disabled={isEdit}
-                        receive={(e) => receive({ name: 'ofwvalidid', value: e })}
+                        receive={(e) => updateAppDetails({ name: 'ofwvalidid', value: e })}
                         category={'marketing'}
-                        value={data.ofwvalidid}
+                        value={getAppDetails.ofwvalidid}
                         rendered={rendered}
                         required={false}
                         showSearch
                     />)}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    : (<InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={'ID Number'}
                         placeHolder='ID type Number'
                         readOnly={isEdit}
-                        receive={(e) => receive({ name: 'ofwidnumber', value: e })}
-                        value={data.ofwidnumber}
+                        receive={(e) => updateAppDetails({ name: 'ofwidnumber', value: e })}
+                        value={getAppDetails.ofwidnumber}
                         isEdit={isEdit}
                         rendered={rendered}
                         required={false}
+
+                        KeyName={'ofwidnumber'}
+                        group={'Uppercase'}
+                        compname={'ID Number'}
                     />)}
             </Flex>
             <SectionHeader title="Employment Details" />
             <Flex className='w-full' justify='center' gap='small' wrap>
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledSelect_Country
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem] mt-[-0.1rem]'}
+                    : (<SelectOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'} w-[18.75rem] h-[3.875rem] mt-[-0.1rem]`}
                         className_label={'font-bold'}
                         label={<>Country of Employment for OFW or Joining Port for SEAFARER <span className="text-red-500">*</span></>}
                         placeHolder='Country'
                         disabled={isEdit}
                         category={'marketing'}
-                        value={data.ofwcountry}
-                        receive={(e) => receive({ name: 'ofwcountry', value: e })}
+                        value={getAppDetails.ofwcountry}
+                        receive={(e) => updateAppDetails({ name: 'ofwcountry', value: e })}
                         rendered={rendered}
+                        showSearch
+                        options={get_country_list}
+
+                        EmptyMsg={'Relationship to the Beneficiary Required'}
+                        InvalidMsg={'Invalid Relationship to the Beneficiary'}
+                        KeyName={'ofwcountry'}
+                        group={'WithNegative'}
+                        compname={'Relationship to the Beneficiary'}
                     />)}
                 {User === 'LC' ? (
                     <></>
                 ) : (
                     User === 'Credit' ? (
-                        <LabeledSelect
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+
+                        <SelectOpt
+                            className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             label={<>Job Category <span className="text-red-500">*</span></>}
-                            placeHolder='Job Category'
-                            data={JobCategory()}
-                            value={data.JobCategory}
-                            receive={(e) => receive({ name: 'JobCategory', value: e })}
-                            disabled={isEdit}
+                            value={getAppDetails.JobCategory}
                             rendered={rendered}
+                            placeHolder='Job Category'
+                            category={'marketing'}
+                            disabled={isEdit}
+                            isEdit={isEdit}
+                            receive={(e) => updateAppDetails({ name: 'JobCategory', value: e })}
+                            options={JOB_CATEGORY}
+                            showSearch
+
+                            EmptyMsg={'Job Category Required'}
+                            InvalidMsg={'Invalid Job Category'}
+                            KeyName={'JobCategory'}
+                            group={'Default'}
+                            compname={'Job Category'}
                         />
                     ) : (
                         <LabeledInput_Fullname
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={<>Job Title / Position <span className="text-red-500">*</span></>}
                             readOnly={isEdit}
                             category={'marketing'}
-                            value={data.ofwjobtitle}
+                            value={getAppDetails.ofwjobtitle}
                             placeHolder='Job/Position'
-                            receive={(e) => receive({ name: 'ofwjobtitle', value: e })}
+                            receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
                             rendered={rendered}
                         />))}
                 {User === 'Credit' && (
-                    <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    <SelectOpt
+                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Position <span className="text-red-500">*</span></>}
-                        placeHolder='Position'
-                        data={JobTitle(data.JobCategory)}
-                        value={data.ofwjobtitle}
-                        receive={(e) => receive({ name: 'ofwjobtitle', value: e })}
-                        disabled={isEdit}
+                        value={getAppDetails.ofwjobtitle}
                         rendered={rendered}
-                    />)}
+                        placeHolder='Position'
+                        category={'marketing'}
+                        disabled={isEdit}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
+                        options={JOB_TITLE}
+                        notValidMsg={'Position Required'}
+                        KeyName={'ofwjobtitle'}
+                        group={'Default'}
+                        showSearch
+
+                        EmptyMsg={'Position Required'}
+                        InvalidMsg={'Invalid Position'}
+                        compname={'Position'}
+                    />
+                )}
                 {User === 'Credit' && (
-                    <LabeledSelect
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    <SelectOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-5'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Employment Status <span className="text-red-500">*</span></>}
-                        placeHolder='Employment Status'
-                        data={EmploymentStatus()}
-                        value={data.EmpStatus}
-                        receive={(e) => receive({ name: 'EmpStatus', value: e })}
-                        disabled={isEdit}
-                        showSearch
+                        value={getAppDetails.EmpStatus}
                         rendered={rendered}
-                    />)}
-                {User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL' ) && (
-                     <LabeledInput_Fullname
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        placeHolder='Position'
+                        category={'marketing'}
+                        disabled={isEdit}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'EmpStatus', value: e })}
+                        options={EmploymentStatus()}
+                        notValidMsg={'Position Required'}
+                        KeyName={'EmpStatus'}
+                        group={'Default'}
+                        showSearch
+
+                        EmptyMsg={'Position Required'}
+                        InvalidMsg={'Invalid Position'}
+                        compname={'Position'}
+                    />
+                )}
+                {User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL' || getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL') && (
+                    <InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Principal Employer <span className="text-red-500">*</span></>}
                         placeHolder='Principal Employer'
                         readOnly={isEdit}
-                        value={data.PEmployer}
-                        receive={(e) => receive({ name: 'PEmployer', value: e })}
+                        value={getAppDetails.PEmployer}
+                        receive={(e) => updateAppDetails({ name: 'PEmployer', value: e })}
                         rendered={rendered}
+
+                        KeyName={'PEmployer'}
+                        group={'Uppercase'}
+                        compname={'Principal Employer'}
                     />)}
-                {(User !== 'Credit' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL' || data.loanProd === '0303-VA' || data.loanProd === '0303-VL'))) && (
+                {(User !== 'Credit' || (User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL' || getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL'))) && (
                     User === 'LC'
                         ? (<></>)
-                        : (<LabeledSelectAgency
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                            className_label={'font-bold'}
-                            label={<>{User === 'Credit' ? 'Agency' : 'Company/ Employer / Agency Name'} <span className="text-red-500"> *</span></>}
-                            placeHolder={User === 'Credit' ? 'Agency Name' : 'Company/ Employer / Agency Name'}
-                            showSearch
-                            filterOption={(input, option) =>
-                                option?.label?.toString().toLowerCase().includes(input.toLowerCase())}
-                            disabled={isEdit}
-                            readOnly={User === 'Credit' ? isEdit : false}
-                            value={data.ofwcompany}
-                            receive={(e) => receive({ name: 'ofwcompany', value: e })}
-                            rendered={rendered}
-                        />))}
+                        : (
+                            <LabeledSelectAgency
+                                className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                    } w-[18.75rem] h-[3.875rem]`}
+                                className_label={'font-bold'}
+                                label={<>{User === 'Credit' ? 'Agency' : 'Company/ Employer / Agency Name'} <span className="text-red-500"> *</span></>}
+                                placeHolder={User === 'Credit' ? 'Agency Name' : 'Company/ Employer / Agency Name'}
+                                showSearch
+                                filterOption={(input, option) =>
+                                    option?.label?.toString().toLowerCase().includes(input.toLowerCase())}
+                                disabled={isEdit}
+                                readOnly={User === 'Credit' ? isEdit : false}
+                                value={getAppDetails.ofwcompany}
+                                receive={(e) => updateAppDetails({ name: 'ofwcompany', value: e })}
+                                rendered={rendered}
+                            />))}
                 {User === 'Credit' && (
                     <LabeledInput_ForeignCurrency
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Salary in Foreign Currency <span className="text-red-500">*</span></>}
                         placeHolder='Foreign Salary'
-                        data={data}
-                        receive={(e) => receive({ name: 'FCurrency', value: e })}
-                        receiveForeign={(e) => receive({ name: 'FSalary', value: e })}
-                        receiveConvert={(e) => receive({ name: 'PSalary', value: e })}
-                        receiveFCurValue={(e) => receive({ name: 'FCurValue', value: e })}
+                        data={getAppDetails}
+                        receive={(e) => updateAppDetails({ name: 'FCurrency', value: e })}
+                        receiveForeign={(e) => updateAppDetails({ name: 'FSalary', value: e })}
+                        receiveConvert={(e) => updateAppDetails({ name: 'PSalary', value: e })}
+                        receiveFCurValue={(e) => updateAppDetails({ name: 'FCurValue', value: e })}
                         category={'marketing'}
                         readOnly={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
                     />)}
-                {User !== 'Credit' && (<LabeledInput_Salary
-                    className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
-                    className_label={'font-bold'}
-                    label={<>Salary <span className="text-red-500">*</span></>}
-                    placeHolder='Salary'
-                    readOnly={isEdit}
-                    value={data.ofwsalary}
-                    receive={(e) => receive({ name: 'ofwsalary', value: e })}
-                    category={'direct'}
-                    rendered={rendered}
-                />)}
+                {User !== 'Credit' &&
+                    (<InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
+                        className_label={'font-bold'}
+                        label={<>Salary <span className="text-red-500">*</span></>}
+                        placeHolder='Salary'
+                        readOnly={isEdit}
+                        value={getAppDetails.ofwsalary}
+                        receive={(e) => updateAppDetails({ name: 'ofwsalary', value: e })}
+                        category={'direct'}
+                        rendered={rendered}
+
+                        KeyName={'ofwsalary'}
+                        group={'Income'}
+                        compname={'Salary'}
+                        format='Currency'
+                    />)}
                 {/*User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10' 
+                        } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={'Agency Address'}
                             placeHolder='Agency Address'
@@ -745,7 +1013,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10' 
+                        } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={'License Validity'}
                             placeHolder='License Validity'
@@ -755,7 +1024,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10' 
+                        } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={'Status'}
                             placeHolder='Status'
@@ -765,7 +1035,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10' 
+                        } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={'Contact Person'}
                             placeHolder='Contact Person'
@@ -775,7 +1046,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />)}
                     {User === 'Credit' && (
                         <LabeledInput
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10' 
+                        } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={'Designation'}
                             placeHolder='Designation'
@@ -784,26 +1056,35 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             receive={(e) => receive({ name: 'landmark', value: e })}
                         />)*/}
                 {User === 'Credit' && (
-                    <SelectDatePicker
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    <DatePickerOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Contract Date <span className="text-red-500">*</span></>}
                         placeHolder='Contract Date'
-                        receive={(e) => receive({ name: 'ContractDate', value: e })}
-                        value={data.ContractDate}
+                        receive={(e) => updateAppDetails({ name: 'ContractDate', value: e })}
+                        value={getAppDetails.ContractDate}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
                         rendered={rendered}
+
+                        KeyName={'ContractDate'}
+                        group={'Default'}
+                        compname={'Contract Date'}
+                        EmptyMsg={'Contract Date Required'}
+                        InvalidMsg={'Invalid Contract Date'}
+
                     />)}
                 {User === 'Credit' && (<>
                     <LabeledInput_Numeric
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Contract Duration <span className="text-red-500">*</span></>}
                         rendered={rendered}
-                        receive={(e) => receive({ name: 'ContractDuration', value: e })}
-                        value={data.ContractDuration}
+                        receive={(e) => updateAppDetails({ name: 'ContractDuration', value: e })}
+                        value={getAppDetails.ContractDuration}
                         placeHolder={'No. of Months'}
                         category={'marketing'}
                         digits={2}
@@ -826,29 +1107,35 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     <div className="col-span-6 flex justify-center items-center mt-8">
                         <Checkbox
                             disabled={isEdit}
-                            checked={data.UnliContract}
+                            checked={getAppDetails.UnliContract}
                             onChange={() => {
-                                receive({
+                                updateAppDetails({
                                     name: 'UnliContract',
-                                    value: !data.UnliContract,
+                                    value: !getAppDetails.UnliContract,
                                 });
                             }} />
                         <label className="ml-2 font-bold">Unlimited Contract</label>
                     </div>
                 </div>)}
             <Flex className='w-full' justify='center' gap='small' wrap>
-           
-                {(User === 'Credit' && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') ) && (
-                    <DatePicker_Deployment
+
+                {(User === 'Credit' && (getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')) && (
+                    <DatePickerOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
-                        className_label="font-bold"
-                        className_dsub=""
-                        label={<>Departure Date <span className="text-red-500">*</span></>}
-                        value={data.ofwDeptDate}
-                        receive={(e) => { receive({ name: 'ofwDeptDate', value: e }) }}
+                        className_label={'font-bold'}
+                        label={<>OFW Departure Date <span className="text-red-500">*</span></>}
+                        value={getAppDetails.ofwDeptDate}
+                        receive={(e) => { updateAppDetails({ name: 'ofwDeptDate', value: e }) }}
+                        //disabled={!isEdit && !(getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL')}
                         placeHolder="Departure Date"
                         disabledate={disableDate_deployment}
                         rendered={rendered}
+
+                        KeyName={'ofwDeptDate'}
+                        EmptyMsg={'OFW Departure Date Required'}
+                        InvalidMsg={'Invalid OFW Departure Date'}
+                        group={'TodayOnward'}
+                        compname={'OFW Departure Date'}
                     />)}
                 {User === 'Credit' && (
                     <LabeledSelect
@@ -858,99 +1145,135 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         placeHolder='Years as OFW or Seafarer'
                         disabled={isEdit}
                         category={'marketing'}
-                        value={data.YrsOfwSeafarer}
-                        receive={(e) => receive({ name: 'YrsOfwSeafarer', value: e })}
+                        value={getAppDetails.YrsOfwSeafarer}
+                        receive={(e) => updateAppDetails({ name: 'YrsOfwSeafarer', value: e })}
                         showSearch={true}
                         optionFilterProp="children"
                         filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         rendered={rendered}
                         data={generateYearOptions(50)}
                     />)}
-                {User === 'Credit' && (data.loanProd === '0303-VA' || data.loanProd === '0303-VL') && (
+                {User === 'Credit' && (getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL') && (
                     <>
-                        <LabeledInput_Fullname
+                        <InputOpt
                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>Name of Vessel <span className="text-red-500">*</span></>}
                             placeHolder='Name of Vessel'
                             readOnly={isEdit}
-                            value={data.VesselName}
-                            receive={(e) => receive({ name: 'VesselName', value: e })}
+                            value={getAppDetails.VesselName}
+                            receive={(e) => updateAppDetails({ name: 'VesselName', value: e })}
                             category={'direct'}
                             rendered={rendered}
+
+                            KeyName={'VesselName'}
+                            group={'Uppercase'}
+                            compname={'Name of Vessel'}
                         />
-                        <LabeledInput_Fullname
-                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                        <InputOpt
+                            className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>IMO Vessel <span className="text-red-500">*</span></>}
                             placeHolder='IMO Vessel'
                             readOnly={isEdit}
-                            value={data.VesselIMO}
-                            receive={(e) => receive({ name: 'VesselIMO', value: e })}
+                            value={getAppDetails.VesselIMO}
+                            receive={(e) => updateAppDetails({ name: 'VesselIMO', value: e })}
                             category={'direct'}
                             rendered={rendered}
+
+                            KeyName={'VesselIMO'}
+                            group={'Uppercase'}
+                            compname={'IMO Vessel'}
                         />
-                        <LabeledInput
-                             className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                        {getAppDetails.VesselIMO && (
+                            <div className="mt-8">
+                                <label className="font-bold block">Information of the Vessel</label>
+                                <ConfigProvider
+                                    theme={{
+                                        components: {
+                                            Input: {
+                                                controlHeight: 100,
+                                            },
+                                        },
+                                    }}
+                                >
+                                    <TextArea
+                                        className="w-[920px] h-[70vh] p-1 border border-gray-300 rounded-md resize-none"
+                                        value={getAppDetails.VesselInfo}
+                                        onChange={(e) => updateAppDetails({ name: 'VesselInfo', value: e.target.value })}
+                                        style={{
+                                            resize: 'none',
+                                        }}
+                                    // readOnly={!isEdit}
+                                    />
+                                </ConfigProvider>
+                            </div>
+                        )}
+                        <InputOpt
+                            className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                             className_label={'font-bold'}
                             label={<>Type of Vessel <span className="text-red-500">*</span></>}
                             placeHolder='Type of Vessel'
                             readOnly={isEdit}
-                            value={data.VesselType}
-                            receive={(e) => receive({ name: 'VesselType', value: e })}
+                            value={getAppDetails.VesselType}
+                            receive={(e) => updateAppDetails({ name: 'VesselType', value: e })}
                             category={'direct'}
                             rendered={rendered}
+
+                            KeyName={'VesselType'}
+                            group={'Uppercase'}
+                            compname={'Type of Vessel'}
                         />
-                        {data.VesselName && data.VesselIMO && data.VesselType && (
-                            <div className="mt-8">
-                                <label className="font-bold block ">Information of the Vessel</label>
-                                <TextArea
-                                    className="w-[920px] h-[62px] p-1 border border-gray-300 rounded-md resize-none "
-                                    value={data.VesselInfo}
-                                    onChange={(e) => receive({ name: 'VesselInfo', value: e.target.value })}
-                                    style={{
-                                        resize: 'none',
-                                    }}
-                                //readOnly={!isEdit}
-                                />
-                            </div>
-                        )}
 
                     </>
                 )}
-                {User === 'Credit' && data.loanProd === '0303-VA' && (
-                    <LabeledInput_NotRequired
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                {User === 'Credit' && getAppDetails.loanProd === '0303-VA' && (
+                    <InputOpt
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Exact Location'}
                         placeHolder='Exact Location'
                         readOnly={isEdit}
-                        value={data.ExactLocation}
-                        receive={(e) => receive({ name: 'ExactLocation', value: e })}
+                        value={getAppDetails.ExactLocation}
+                        receive={(e) => updateAppDetails({ name: 'ExactLocation', value: e })}
                         category={'marketing'}
+                        required={false}
+
+                        KeyName={'ExactLocation'}
+                        group={'Uppercase'}
+                        compname={'Exact Location'}
                     />)}
-                {User === 'Credit' && data.loanProd === '0303-WA' && (
-                    <LabeledInput_NotRequired
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                {User === 'Credit' && getAppDetails.loanProd === '0303-WA' && (
+                    <InputOpt
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={'Possible Vacation'}
                         placeHolder='Possible Vacation'
                         readOnly={isEdit}
-                        value={data.PossVacation}
-                        receive={(e) => receive({ name: 'PossVacation', value: e })}
+                        value={getAppDetails.PossVacation}
+                        receive={(e) => updateAppDetails({ name: 'PossVacation', value: e })}
                         category={'marketing'}
+                        required={false}
+
+                        KeyName={'PossVacation'}
+                        group={'Uppercase'}
+                        compname={'Possible Location'}
                     />)}
                 {User === 'Credit' && (
-                    <LabeledInput
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                    <InputOpt
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={<>Beneficiary or Allotment Name <span className="text-red-500">*</span></>}
                         placeHolder='Allotment Name'
                         readOnly={isEdit}
-                        value={data.AllotName}
-                        receive={(e) => receive({ name: 'AllotName', value: e })}
+                        value={getAppDetails.AllotName}
+                        receive={(e) => updateAppDetails({ name: 'AllotName', value: e })}
                         category={'direct'}
                         rendered={rendered}
+
+                        KeyName={'AllotName'}
+                        group={'Uppercase'}
+                        compname={'Beneficiary or Allotment Name'}
                     />)}
                 {/*User === 'Credit' &&  (
                             <LabeledSelect_Relationship
@@ -966,15 +1289,20 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 rendered={rendered}
                             />)*/}
                 {User === 'Credit' && (
-                    <LabeledCurrencyInput
-                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
+                    <InputOpt
+                        className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label="font-bold"
-                        value={data.AllotAmount}
-                        receive={(e) => receive({ name: 'AllotAmount', value: e })}
+                        value={getAppDetails.AllotAmount}
+                        receive={(e) => updateAppDetails({ name: 'AllotAmount', value: e })}
                         label={<>Remittance or Allotment Amount <span className="text-red-500">*</span></>}
                         placeHolder={'Amount'}
                         category={'marketing'}
                         rendered={rendered}
+
+                        format='Currency'
+                        KeyName={'AllotAmount'}
+                        group={'Allotment'}
+                        compname={'Remittance/Allotment Amount'}
                     />)}
                 {/*User === 'Credit' && (
                     <LabeledInput
@@ -995,8 +1323,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         label={<>Remittance / Allotment Channel (Gcash, Bank) <span className="text-red-500">*</span></>}
                         placeHolder='Allotment Channel'
                         data={AllotChannel()}
-                        value={data.AllotChannel}
-                        receive={(e) => receive({ name: 'AllotChannel', value: e })}
+                        value={getAppDetails.AllotChannel}
+                        receive={(e) => updateAppDetails({ name: 'AllotChannel', value: e })}
                         category={'marketing'}
                         disabled={isEdit}
                         isEdit={isEdit}
@@ -1007,41 +1335,54 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 ? (<></>)
                 : (<SectionHeader title="Educational Background" />)}
             <Flex className='w-full' justify='center' gap='small' wrap>
-                {(User === 'MARKETING' || (User === 'Credit' && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL'))) && (
+                {(User === 'MARKETING' || (User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL'))) && (
                     <>
                         <LabeledSelect
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={<>Highest Educational Attainment <span className="text-red-500">*</span></>}
                             placeHolder='Highest Educational Attainment'
                             disabled={isEdit}
                             data={EducationalAttainment()}
-                            value={data.ofwHighestEdu}
-                            receive={(e) => receive({ name: 'ofwHighestEdu', value: e })}
+                            value={getAppDetails.ofwHighestEdu}
+                            receive={(e) => updateAppDetails({ name: 'ofwHighestEdu', value: e })}
                             rendered={rendered}
                             showSearch={!isEdit}
                         />
-                        <LabeledInput_NotRequired
-                            className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                        <InputOpt
+                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={'Course'}
                             placeHolder='Course'
                             disabled={isEdit}
-                            value={data.ofwcourse}
-                            receive={(e) => { receive({ name: 'ofwcourse', value: e }); }}
+                            value={getAppDetails.ofwcourse}
+                            receive={(e) => { updateAppDetails({ name: 'ofwcourse', value: e }); }}
                             readOnly={isEdit}
+                            required={false}
+
+                            KeyName={'ofwcourse'}
+                            group={'Uppercase'}
+                            compname={'Course'}
                         /> </>)}
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledInput_NotRequired
-                        className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
+                    : (<InputOpt
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={'School'}
                         placeHolder='School'
                         readOnly={isEdit}
-                        value={data.ofwschool}
-                        receive={(e) => receive({ name: 'ofwschool', value: e })}
+                        value={getAppDetails.ofwschool}
+                        receive={(e) => updateAppDetails({ name: 'ofwschool', value: e })}
                         category={'marketing'}
+                        required={false}
+
+                        KeyName={'ofwschool'}
+                        group={'Uppercase'}
+                        compname={'School'}
                     />)}
             </Flex>
         </div>

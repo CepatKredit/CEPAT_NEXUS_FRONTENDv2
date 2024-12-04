@@ -23,7 +23,7 @@ function ResetPassword() {
     })
     const [getStatus, setStatus] = React.useState(1)
     async function checkURLValidity() {
-        await axios.post(`/validateURL/${id}`)
+        await axios.post(`/POST/P93VU/${id}`)
             .then((result) => {
                 setStatus(result.data.status)
                 if (result.data.status === 1) {
@@ -35,6 +35,7 @@ function ResetPassword() {
                 }
             })
             .catch(error => {
+                console.log(error)
                 api['error']({
                     message: 'Something went wrong',
                     description: error.message
@@ -50,7 +51,7 @@ function ResetPassword() {
         rePassword: ''
     })
 
-    let hasMinPass = getData.password.length >= 10
+    let hasMinPass = getData.password.length >= 8
     let hasLowerChar = /(.*[a-z].*)/.test(getData.password)
     let hasUpperChar = /(.*[A-Z].*)/.test(getData.password)
     let hasNumberChar = /(.*[0-9].*)/.test(getData.password)
@@ -90,7 +91,7 @@ function ResetPassword() {
             }
 
             let ctr_password = 0;
-            await axios.post(`/checkPassword/${getAccount.Id}`)
+            await axios.post(`/POST/P94CP/${getAccount.Id}`)
                 .then((result) => {
                     result.data.list?.map((x) => { if (decode(x.password) === getData.password) { ctr_password += 1 } })
                 })
@@ -101,7 +102,7 @@ function ResetPassword() {
                     })
                 })
             if (ctr_password === 0) {
-                await axios.post('/resetPassword', data)
+                await axios.post('/POST/P97RP', data)
                     .then((result) => {
                         api[result.data.status]({
                             message: result.data.message,
@@ -208,10 +209,10 @@ function ResetPassword() {
                                                 {hasMinPass ?
                                                     <small className='text-green-500'>
 
-                                                        <CheckOutlined /> be at least minimum of 10 and maximum of 15 characters long.
+                                                        <CheckOutlined /> be at least minimum of 8 and maximum of 15 characters long.
                                                     </small> :
                                                     <small className='text-rose-500'>
-                                                        <CloseOutlined /> be at least minimum of 10 and maximum of 15 characters long.
+                                                        <CloseOutlined /> be at least minimum of 8 and maximum of 15 characters long.
 
                                                     </small>}
                                             </div>

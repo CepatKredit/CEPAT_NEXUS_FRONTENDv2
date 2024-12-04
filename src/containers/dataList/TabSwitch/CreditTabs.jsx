@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Tabs, Space, Anchor, FloatButton, notification, ConfigProvider } from 'antd';
+import React, { useEffect, useRef } from 'react';
+import { Tabs, Space, Anchor, Button, notification, ConfigProvider, Modal, message } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { MdApproval } from "react-icons/md";
 import { MdOutlineUpdate } from "react-icons/md";
@@ -25,7 +25,6 @@ import EmploymentHistoryTable from '../TabList/EmploymentHistoryTable';
 import { ApplicationStatus } from '@hooks/ApplicationStatusController';
 import CreditHistory from '../TabList/CreditHistory';
 import AssetTable from '../TabList/OwnedAssetTable';
-import OwnedProperties from '../TabList/OwnedProperties';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -34,20 +33,50 @@ import { mmddyy } from '@utils/Converter';
 import { jwtDecode } from 'jwt-decode';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import StatusRemarks from '../TabList/StatusRemarks';
+import { FocusHook } from '@hooks/ComponentHooks';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import TriggerFields from '@utils/TriggerFields';
 
-function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading }) {
-    React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
+function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading, User }) {
+    //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
     const [isEdit, setEdit] = React.useState(false);
     const [relativesCount, setRelativesCount] = React.useState(0);
     const { GetStatus } = ApplicationStatus();
-    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || '');
+    const { getAppDetails, updateAppDetails, showSaveButtonContext } = React.useContext(LoanApplicationContext)
+    const [activeKey, setActiveKey] = React.useState(localStorage.getItem('activeTab') || 'deduplication');
     const navigate = useNavigate();
     const { id, tabs } = useParams();
+    const { confirm } = Modal;
+
     function onChangeTab(e) {
-        setActiveKey(e);
-        localStorage.setItem('activeTab', e);
-        navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
+        if (isEdit && e !== 'CRAM') {
+            confirm({
+                title: "Are you sure you want to cancel?",
+                content: "All unsaved changes will be lost if you proceed.",
+                okText: "Cancel Editing",
+                cancelText: "Continue Editing",
+                okType: "danger",
+                centered: true,
+                onOk() {
+                    message.success("All changes were canceled.");
+                    setActiveKey(e);
+                    localStorage.setItem('activeTab', e);
+                    navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
+                    setEdit(false);
+                },
+                onCancel() {
+                    message.info("Continue editing.");
+                },
+            });
+        } else {
+            // This executes only if the condition is not met (e.g., isEdit is false or e === 'CRAM')
+            setActiveKey(e);
+            localStorage.setItem('activeTab', e);
+            navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
+        }
     }
+
+
     const [addCoborrower, setAddCoborrower] = React.useState(false);
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
@@ -57,10 +86,12 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         setAddCoborrower(getValue);
     };
 
+
+
     const fetchRelativesAndUpdateCount = async () => {
         if (BorrowerId) {
             try {
-                const result = await GET_LIST(`/getRelatives/${BorrowerId}`);
+                const result = await GET_LIST(`/GET/G35R/${BorrowerId}`);
                 if (result?.list) {
                     const relativesCount = result.list.length;
                     setRelativesCount(relativesCount);
@@ -126,20 +157,22 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 ...(value.AcbPlanAbroad === 1 ? ['AcbRemarks'] : []),
             ] : []),
 
-
         ].some(field => {
-            console.log(`field: ${field}, value:`, value[field]);
+            // console.log(`field: ${field}, value:`, value[field]);
             const condition = value[field] === undefined || value[field] === '' || value[field] === false;
-            console.log(`result field ${field}:`, condition);
+            //console.log(`result field ${field}:`, condition);
             return condition;
         });
     };
 
+    const { focus } = React.useContext(LoanApplicationContext)
+
+
     const toggleEditMode = async () => {
         if (isEdit) { //Add validation
             //console.log(!Required())
-            if (true) {
-                //console.log('Peek ',value.benbdate)
+            if (true) { // Assuming validation passes for this example
+                //focus('ofwbdate') working na to
                 updateData();
             } else {
                 api['warning']({
@@ -147,6 +180,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                     description: 'Please complete all required details.',
                 });
             }
+            setEdit(false)
         } else {
             setEdit(true)
         }
@@ -154,6 +188,14 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
 
 
     async function updateData() {
+        if (getAppDetails.ofwfname === '' || getAppDetails.ofwlname === '' || getAppDetails.ofwbdate === '' || getAppDetails.ofwbdate === undefined) {
+            api['warning']({
+                message: 'Incomplete OFW Basic Information',
+                description: "OFW Details must have a First Name, Last Name and Birthdate before saving",
+            });
+            return;
+        }
+
         const data_loan = {
             LoanAppId: value.loanIdCode,
             BorrowersCode: value.ofwBorrowersCode,
@@ -166,48 +208,49 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             DepartureDate: value.ofwDeptDate ? mmddyy(value.ofwDeptDate) : '',
             LoanType: value.loanType,
             Purpose: value.loanPurpose,
-            Amount:value.loanAmount? parseFloat(value.loanAmount.toString().replaceAll(',', '')): 0.00,
+            Amount: value.loanAmount ? parseFloat(value.loanAmount.toString().replaceAll(',', '')) : 0.00,
             //Channel: value.channelId,
             //Consultant: value.consultName,
             //ConsultantNo: value.consultNumber,
             //ConsultantProfile: value.consultantfblink,
 
+            ModUser: jwtDecode(token).USRID,
         }
-
 
         const data_ofw = {
             LoanAppId: value.loanIdCode,
             BorrowersCode: value.ofwBorrowersCode,
             Tab: 2,
+            DuplicateChecker: false,
             FirstName: value.ofwfname,
             MiddleName: value.ofwmname || '',
             LastName: value.ofwlname,
             Suffix: value.ofwsuffix || null,
             BirthDay: value.ofwbdate ? mmddyy(value.ofwbdate) : '',
             Gender: value.ofwgender || null,
-            MobileNo: value.ofwmobile || null,
-            MobileNo2: value.ofwothermobile || null,
+            MobileNo: value.ofwmobile || '',
+            MobileNo2: value.ofwothermobile || '',
             Email: value.ofwemail || '',
             FbProfile: value.ofwfblink || '',
             GroupChat: value.ofwgroupchat || '',
             //Relationship: value.ofwrelationship || null,
-            Religion: value.Religion || null,
+            Religion: value.Religion || 0,
             PEP: value.PEP || null,
-            CivilStatus: value.ofwmstatus || null,
+            CivilStatus: value.ofwmstatus || 0,
             SpouseName: value.ofwspouse || '',
-            SpouseBirthday:value.ofwspousebdate? mmddyy(value.ofwspousebdate) : '',
-            SpSrcIncome: value.SpSrcIncome || null,
+            SpouseBirthday: value.ofwspousebdate ? mmddyy(value.ofwspousebdate) : '',
+            SpSrcIncome: value.SpSrcIncome || 0,
             SpIncome: value.SpIncome ? parseFloat(value.SpIncome.toString().replaceAll(',', '')) : 0.00,
             MarriedPBCB: value.MarriedPBCB ? 1 : 0,
-            RelationshipBen: value.RelationshipBen || null,
-            RelationshipAdd: value.RelationshipAdd || null, // if there is additional cb
+            RelationshipBen: value.RelationshipBen || 0,
+            RelationshipAdd: value.RelationshipAdd || 0, // if there is additional cb
             Dependent: value.ofwdependents,
 
             ProvinceId: value.ofwPresProv || '',
             MunicipalityId: value.ofwPresMunicipality || '',
             BarangayId: value.ofwPresBarangay || '',
             Address1: value.ofwPresStreet || '',
-            Ownership: value.ofwresidences || null,
+            Ownership: value.ofwresidences || 0,
             RentAmount: value.ofwrent ? parseFloat(value.ofwrent.toString().replaceAll(',', '')) : 0.00,
             Landmark: value.landmark || '',
             StayYears: value.ofwlosYear || 0,
@@ -216,30 +259,30 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             OfwPoBRemarks: value.OfwPoBRemarks || '',
 
             IsCurrPerm: value.ofwSameAdd ? 1 : 0,
-            PerProvinceId: value.ofwPermProv|| '',
-            PerMunicipalityId: value.ofwPermMunicipality|| '',
-            PerBarangayId: value.ofwPermBarangay|| '',
-            PerAddress1: value.ofwPermStreet|| '',
+            PerProvinceId: value.ofwPermProv || '',
+            PerMunicipalityId: value.ofwPermMunicipality || '',
+            PerBarangayId: value.ofwPermBarangay || '',
+            PerAddress1: value.ofwPermStreet || '',
 
             IsPermProv: value.ofwProvSameAdd ? 1 : 0,
-            ProAddress1: value.ofwprovStreet|| '',
-            ProBarangayId: value.ofwprovBarangay|| '',
-            ProMunicipalityId: value.ofwprovMunicipality|| '',
-            ProProvinceId: value.ofwprovProv|| '',
+            ProAddress1: value.ofwprovStreet || '',
+            ProBarangayId: value.ofwprovBarangay || '',
+            ProMunicipalityId: value.ofwprovMunicipality || '',
+            ProProvinceId: value.ofwprovProv || '',
 
-            ValidId: value.ofwvalidid ? parseInt(value.ofwvalidid) : null,
+            ValidId: value.ofwvalidid ? parseInt(value.ofwvalidid) : 0,
             ValidIdNo: value.ofwidnumber || '',
 
             Country: value.ofwcountry || '',
-            JobCategory: value.JobCategory || null,
+            JobCategory: value.JobCategory || 0,
             JobTitle: value.ofwjobtitle || '',
             PEmployer: value.PEmployer || '',
-            EmpStatus: value.EmpStatus || null,
+            EmpStatus: value.EmpStatus || 0,
             FCurrency: value.FCurrency || '',
-            FSalary: value.FSalary ? parseFloat(value.FSalary.toString().replaceAll(',', '')) : 0.00,
+            FSalary: getAppDetails.FSalary ? parseFloat(getAppDetails.FSalary.toString().replaceAll(',', '')) : 0.00,
             PSalary: value.PSalary ? parseFloat(value.PSalary.toString().replaceAll(',', '')) : 0.00,
             Salary: value.ofwsalary ? parseFloat(value.ofwsalary.toString().replaceAll(',', '')) : 0.00,
-            ContractDate: value.ContractDate ? mmddyy(value.ContractDate) : null,
+            ContractDate: value.ContractDate ? mmddyy(value.ContractDate) : '',
             ContractDuration: value.ContractDuration ? parseInt(value.ContractDuration) : null,
             UnliContract: value.UnliContract ? 1 : 0,//Use when checkbox
             //departure date in the loan details
@@ -253,12 +296,14 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             //+++++++++++++++++++++++++++++++
             AllotName: value.AllotName || null,
             AllotAmount: value.AllotAmount ? parseFloat(value.AllotAmount.toString().replaceAll(',', '')) : 0.00,
-            AllotChannel: value.AllotChannel || null,
+            AllotChannel: value.AllotChannel || 0,
             School: value.ofwschool || '',
             //Dont know if it is included
             Employer: value.ofwcompany || null,//agency
             EducationLevel: value.ofwHighestEdu || null,
             Course: value.ofwcourse || '',
+
+            ModUser: jwtDecode(token).USRID,
 
         }
         const data_bene = {
@@ -269,13 +314,13 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             BenMiddleName: value.benmname || '',
             BenLastName: value.benlname || '',
             BenSuffix: value.bensuffix || null,
-            BenBirthday:value.benbdate? mmddyy(value.benbdate) : '',
+            BenBirthday: value.benbdate ? mmddyy(value.benbdate) : '',
             BenGender: value.bengender || null,
             BenEmail: value.benemail || '',
             BenMobileNo: value.benmobile || null,
             BenMobileNo2: value.benothermobile || null,
             BenDependent: parseInt(value.bendependents) || 0,
-            BenCivilStatus: value.benmstatus || null,
+            BenCivilStatus: value.benmstatus || 0,
             BenSpouseName: value.benspouse || '',
             BenSpouseBirthday: mmddyy(value.benspousebdate),
             BenMarriedPBCB: value.BenMarriedPBCB == 1 ? 1 : 0,
@@ -283,7 +328,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             BenSpIncome: value.BenSpIncome ? parseFloat(value.BenSpIncome.toString().replaceAll(',', '')) : 0.00,
             BenFbProfile: value.benfblink || '',
             BenGrpChat: value.BenGrpChat || '',
-            BenRelationship: value.benrelationship || null,
+            BenRelationship: value.benrelationship || 0,
             BenSrcIncome: value.BenSrcIncome || null,
             BenReligion: value.BenReligion || null,
             BenFormerOFW: value.BenFormerOFW || null,
@@ -292,7 +337,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             BenRemarks: value.BenRemarks || null,
             BenPEP: value.BenPEP || null,
 
-            BenOwnership: value.benresidences || null,
+            BenOwnership: value.benresidences || 0,
             BenStayYears: value.benstayyears || 0,
             BenStayMonths: value.benstaymonths || 0,
             BenProvinceId: value.benpresprov || '',
@@ -317,29 +362,29 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 AcbMobileNo: value.coborrowmobile || null,
                 AcbMobileNo2: value.coborrowothermobile || null,
                 AcbDependent: value.coborrowdependents || 0,
-                AcbCivilStatus: value.coborrowmstatus || null,
+                AcbCivilStatus: value.coborrowmstatus || 0,
                 AcbSpouseName: value.coborrowspousename || null,
                 AcbSpouseBirthday: mmddyy(value.coborrowerspousebdate),
                 AcbSpSrcIncome: value.AcbSpSrcIncome || null,
                 AcbSpIncome: value.AcbSpIncome ? parseFloat(value.AcbSpIncome.toString().replaceAll(',', '')) : 0.00,
                 AcbFbProfile: value.coborrowfblink,
                 AcbGrpChat: value.AcbGrpChat || '',
-                AcbRelationship: value.AcbRelationship || null,
-                AcbSrcIncome: value.AcbSrcIncome || '',
-                AcbReligion: value.AcbReligion || '',
+                AcbRelationship: value.AcbRelationship || 0,
+                AcbSrcIncome: value.AcbSrcIncome || 0,
+                AcbReligion: value.AcbReligion || 0,
                 AcbFormerOFW: value.AcbFormerOFW ? 1 : 0,
                 AcbLastReturn: value.AcbLastReturn || '',
                 AcbPlanAbroad: value.AcbPlanAbroad ? (value.AcbPlanAbroad == 1 ? 1 : 0) : null,
                 AcbRemarks: value.AcbRemarks || '',
                 AcbPEP: value.AcbPEP ? 1 : 0,
 
-                AcbOwnership: value.coborrowresidences || null,
+                AcbOwnership: value.coborrowresidences || 0,
                 AcbAddress1: value.coborrowStreet || '',
                 AcbBarangay: value.coborrowBarangay || '',
                 AcbMunicipality: value.coborrowMunicipality || '',
                 AcbProvince: value.coborrowProv || '',
-                AcbStayMonths: value.AcbStayMonths,
-                AcbStayYears: value.AcbStayYears,
+                AcbStayMonths: value.AcbStayMonths || 0,
+                AcbStayYears: value.AcbStayYears || 0,
                 AcbLandMark: value.AcbLandMark || '',
                 AcbPoBRemarks: value.AcbPoBRemarks || '',
                 AcbRentAmount: value.AcbRentAmount ? parseFloat(value.AcbRentAmount.toString().replaceAll(',', '')) : 0.00,
@@ -353,17 +398,17 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             AcbMiddleName: value.coborrowmname || '',
             AcbLastName: value.coborrowlname || '',
             AcbSuffix: value.coborrowsuffix || 0,
-            AcbBirthday: value.coborrowbdate? mmddyy(value.coborrowbdate) : '',
-            AcbGender: value.coborrowgender || null,
-            AcbCivilStatus: value.coborrowmstatus || null,
+            AcbBirthday: value.coborrowbdate ? mmddyy(value.coborrowbdate) : '',
+            AcbGender: value.coborrowgender || 0,
+            AcbCivilStatus: value.coborrowmstatus || 0,
             AcbDependent: value.coborrowdependents || 0,
             AcbEmail: value.coborrowemail || '',
-            AcbMobileNo: value.coborrowmobile || null,
-            AcbMobileNo2: value.coborrowothermobile || null,
+            AcbMobileNo: value.coborrowmobile || '',
+            AcbMobileNo2: value.coborrowothermobile || '',
             AcbFbProfile: value.coborrowfblink || '',
             AcbSpouseName: value.coborrowspousename || '',
             AcbSpouseBirthday: value.coborrowerspousebdate ? mmddyy(value.coborrowerspousebdate) : '',
-            AcbOwnership: value.coborrowresidences || null,
+            AcbOwnership: value.coborrowresidences || 0,
             AcbAddress1: value.coborrowStreet || '',
             AcbBarangayId: value.coborrowBarangay || '',
             AcbMunicipalityId: value.coborrowMunicipality || '',
@@ -372,15 +417,16 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             AcbStayYears: value.AcbStayYears || 0,
             RecUser: jwtDecode(token).USRID
         };
+
         const checkLoan = {
             LoanAppId: value.loanIdCode,
             FirstName: value.ofwfname,
             LastName: value.ofwlname,
             Birthday: value.ofwbdate,
         }
-
+        console.log('Update ', data_loan, data_ofw)
         if (value.ofwfname !== null || value.ofwlname !== null) {
-            await axios.post('/checkLoan', checkLoan)
+            await axios.post('/POST/P47CL', checkLoan)
                 .then((result) => {
                     if (result.data.list != 0) {
                         api['info']({
@@ -396,23 +442,18 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 .catch((error) => {
                     console.log(error);
                     api['warning']({
-                        message: 'Error: Failed API',
+                        message: 'Error Check Duplicate: Failed API',
                         description: "Failed to Connect into API",
                     });
                     return; //stop the process
                 });
         }
 
-        console.log('Update...')
-        console.log('LOAN', data_loan)
-        console.log('OFW', data_ofw)
-        console.log('BENE', data_bene)
-
         if (!sepcoborrowfname && !addCoborrower) { //if no add coborrow and showaddcoborrow is true
             //Start to insert Acb and then update all
-            console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
+            //   console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
             try {
-                const result2 = await axios.post('/addAdditionalCoborrower', acb_data);
+                const result2 = await axios.post('/POST/P43AACB', acb_data);
                 api[result2.data.status]({
                     message: result2.data.message,
                     description: result2.data.description
@@ -421,7 +462,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
             } catch (error) {
                 console.log('Error ', error)
                 api['warning']({
-                    message: 'Error: Failed API',
+                    message: 'Error Insert ACB: Failed API',
                     description: "Failed to Connect into API",
                 });
                 return; //Important !!!
@@ -437,9 +478,7 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
                 });
 
             } else {
-                console.log('log in loan', resLoan)
-                console.log('log in ofw', resOFW)
-                console.log('log in bene & add', resBene)
+
                 api['warning']({
                     message: 'Update Failed.',
                     description: "Something went wrong.",
@@ -464,10 +503,10 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
         queryFn: async () => {
             if (!value || !value.VesselIMO || value.VesselIMO.length < 6) return null;
             try {
-                const result = await axios.get(`/shipvessel_Details/${value.VesselIMO}`);
-                receive({ name: 'VesselInfo', value: result.data });
+                const result = await axios.get(`/GET/G113SVD/${value.VesselIMO}`);
+                updateAppDetails({ name: 'VesselInfo', value: typeof result.data === 'string' ? result.data : 'No Gathered Data!' });
             } catch (error) {
-                receive({ name: 'VesselInfo', value: 'No Gathered Data!' });
+                updateAppDetails({ name: 'VesselInfo', value: 'No Gathered Data!' });
                 // console.log(error);
             }
             return null;
@@ -490,148 +529,374 @@ function CreditTabs({ receive, presaddress, BorrowerId, sepcoborrowfname, sepBen
     }, [value.VesselIMO]);
 
     React.useEffect(() => {
-        fetchRelativesAndUpdateCount();
+        if (BorrowerId !== '' || BorrowerId !== undefined) {
+            fetchRelativesAndUpdateCount();
+        }
     }, [BorrowerId]);
 
+    function DISABLE_STATUS(LOCATION) {
+        if (GetData('ROLE').toString() === '50' || GetData('ROLE').toString() === '55') {
+            {
+                if (LOCATION === '/ckfi/for-approval' || LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/under-lp'
+                    || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                    console.log('CRA')
+                    return true
+                }
+                else { return false }
+            }
+        }
+        else if (GetData('ROLE').toString() === '60') {
+            if (LOCATION === '/ckfi/approved' || LOCATION === '/ckfi/queue-bucket' || LOCATION === '/ckfi/under-lp'
+                || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined') {
+                console.log('CRO')
+                return true
+            }
+            else { return false }
+        }
+    }
     const disabledStatuses = [
         'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
         'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-        'RETURN TO CREDIT OFFICER', 'RELEASED'
+        'COMPLIED - LACK OF DOCUMENTS'
     ];
+
+
+    // Utility function for dynamic anchor items
+    const getAnchorItems = () => {
+        if (["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd)) {
+            // For specific loan products
+            return [
+                { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+                { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+            ];
+        } else {
+            // Default anchor items for other loan products
+            return [
+                { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
+                { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+                { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
+                { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
+                { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
+                { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
+                { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
+            ];
+        }
+    };
+
+
+    /*React.useEffect(() => {
+        console.log('jjjjjjjjjjjjjjjjjjjjjj', getAppDetails.MarriedPBCB)
+    },[getAppDetails])*/
+
+
+    //Trigger Fields
+    TriggerFields('CREDIT');
 
     const TabsItems = [
         {
-            label: <div className='flex flex-rows'><GrDuplicate style={{ fontSize: '20px', marginRight: 5 }} /><span>Deduplication</span></div>,
+            label: <div className='flex flex-row'><GrDuplicate style={{ fontSize: '20px', marginRight: 5 }} /><span>Deduplication</span></div>,
             key: 'deduplication',
             children: <Deduplication data={value} />,
         },
         {
-            label: <div className='flex flex-rows'><TbFileDescription style={{ fontSize: '20px', marginRight: 5 }} /><span>CRAM</span></div>,
+            label: (
+                <div className='flex flex-row'>
+                    <TbFileDescription style={{ fontSize: '20px', marginRight: 5 }} />
+                    <span>CRAM</span>
+                </div>
+            ),
             key: 'CRAM',
             children: (
-                <Space>
-                    <div className='h-[65vh] w-[75vw] overflow-y-auto'>
-                        <div className="sticky top-0 z-[1000] bg-white">
-                            <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
-                        </div>
-                        <div id='Loan-Details'>
-                            <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { receive(e); }} creditisEdit={isEdit} User={'Credit'} />
-                        </div>
-                        <div id='OFW-Details'>
-                            <OfwDetails loading={loading} isEditCRAM={isEdit} getTab={'ofw-details'} classname={'h-auto'} presaddress={presaddress} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} creditisEdit={isEdit} User={'Credit'} addCoborrower={addCoborrower} />
-                        </div>
-                        <div id="Employment-History" className="w-[70rem]">
-                            <EmploymentHistoryTable data={value} isEdit={isEdit} />
-                        </div>
-                        <div id='Credit-History' className="w-[70rem]">
-                            <CreditHistory data={value} receive={receive} isEdit={isEdit} />
-                        </div>
-                        <div id='Owned-Assets' className="w-[70rem]">
-                            <AssetTable data={value} receive={receive} isEdit={isEdit} />
-                        </div>
-                        <div id='Owned-Properties' className="w-[70rem]">
-                            <OwnedProperties data={value} receive={receive} isEdit={isEdit} />
-                        </div>
-                        <div id='Character-Reference' className="w-[70rem]">
-                            <CharacterReference loading={loading} BorrowerId={BorrowerId} Creator={Uploader} data={value} User={'Credit'} isEdit={isEdit} />
-                        </div>
-                        <div id='Beneficiary-Details'>
-                            <BeneficiaryDetails loading={loading} getTab={'beneficiary-details'} presaddress={presaddress} classname={'h-auto'} data={value} receive={(e) => { receive(e) }} BorrowerId={BorrowerId} User={'Credit'} creditisEdit={isEdit}
-                                sepcoborrowfname={sepcoborrowfname} sepBenfname={sepBenfname} setAddCoborrow={addCoborrow} />
-                        </div>
+                <div className='w-full flex flex-col'>
+                    <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
+                    <div className='flex flex-row'>
+                        <div
+                            id="scrollable-container"
+                            className={`w-full overflow-y-auto mx-2 mb-9 ${isEdit ? 'h-[70vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}
+                        >
+                            <div id='Loan-Details'>
+                                <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} creditisEdit={isEdit} User={'Credit'} />
+                            </div>
+                            {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                                <>
+                                    {/* Container A */}
+                                    <div id='OFW-Details'>
+                                        <OfwDetails
+                                            loading={loading}
+                                            isEditCRAM={isEdit}
+                                            getTab={'ofw-details'}
+                                            classname={'h-auto'}
+                                            presaddress={presaddress}
+                                            data={value}
+                                            receive={(e) => { updateAppDetails(e) }}
+                                            BorrowerId={BorrowerId}
+                                            creditisEdit={isEdit}
+                                            User={'Credit'}
+                                            addCoborrower={addCoborrower}
+                                        />
+                                        {/* Additional Sections inside Container A */}
+                                        <div id="Employment-History" className="w-full">
+                                            <EmploymentHistoryTable data={value} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Credit-History' className="w-full ">
+                                            <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Owned-Assets' className="w-full">
+                                            <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Character-Reference' className="w-full">
+                                            <CharacterReference
+                                                loading={loading}
+                                                BorrowerId={BorrowerId}
+                                                Creator={Uploader}
+                                                data={value}
+                                                User={'Credit'}
+                                                isEdit={isEdit}
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Container B */}
+                                    <div id='Beneficiary-Details'>
+                                        <BeneficiaryDetails
+                                            loading={loading}
+                                            getTab={'beneficiary-details'}
+                                            presaddress={presaddress}
+                                            classname={'h-auto'}
+                                            data={value}
+                                            receive={(e) => { updateAppDetails(e); }}
+                                            BorrowerId={BorrowerId}
+                                            User={'Credit'}
+                                            creditisEdit={isEdit}
+                                            sepcoborrowfname={sepcoborrowfname}
+                                            sepBenfname={sepBenfname}
+                                            setAddCoborrow={addCoborrow}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    {/* Switch positions */}
+                                    {/* Container B */}
+                                    <div id='Beneficiary-Details'>
+                                        <BeneficiaryDetails
+                                            loading={loading}
+                                            getTab={'beneficiary-details'}
+                                            presaddress={presaddress}
+                                            classname={'h-auto'}
+                                            data={value}
+                                            receive={(e) => { updateAppDetails(e); }}
+                                            BorrowerId={BorrowerId}
+                                            User={'Credit'}
+                                            creditisEdit={isEdit}
+                                            sepcoborrowfname={sepcoborrowfname}
+                                            sepBenfname={sepBenfname}
+                                            setAddCoborrow={addCoborrow}
+                                        />
+                                    </div>
+                                    {/* Container A */}
+                                    <div
+                                        id="OFW-Details"
+                                        style={{
+                                            marginTop: isEdit
+                                                ? getAppDetails?.MarriedPBCB === 1
+                                                    ? showSaveButtonContext
+                                                        ? '50rem'
+                                                        : '125rem'
+                                                    : getAppDetails?.MarriedPBCB !== 1
+                                                        ? showSaveButtonContext
+                                                            ? '77rem'
+                                                            : '152rem'
+                                                        : undefined
+                                                : undefined, // Fallback if isEdit is false
+                                            transition: 'margin-top 0.5s ease', // Smooth transition for marginTop
+                                        }}
+                                    >
 
-                    </div>
-                    <div className='h-[65vh] bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none'>
-                        <ConfigProvider
-                            theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
-                            <Anchor
-                                replace
-                                affix={false}
-                                items={[
-                                    { key: 'Loan-Details', href: '#Loan-Details', title: 'Loan Details' },
-                                    { key: 'OFW-Details', href: '#OFW-Details', title: 'OFW Details' },
-                                    { key: 'Employment-History', href: '#Employment-History', title: 'Employment History' },
-                                    { key: 'Credit-History', href: '#Credit-History', title: 'Credit History' },
-                                    { key: 'Owned-Assets', href: '#Owned-Assets', title: 'Owned Assets' },
-                                    { key: 'Owned-Properties', href: '#Owned-Properties', title: 'Owned Properties' },
-                                    { key: 'Character-Reference', href: '#Character-Reference', title: 'Character Reference' },
-                                    { key: 'Beneficiary-Details', href: '#Beneficiary-Details', title: 'Beneficiary Details' },
+                                        <OfwDetails
+                                            loading={loading}
+                                            isEditCRAM={isEdit}
+                                            getTab={'ofw-details'}
+                                            presaddress={presaddress}
+                                            data={value}
+                                            classname={'h-auto'}
+                                            receive={(e) => { updateAppDetails(e) }}
+                                            BorrowerId={BorrowerId}
+                                            creditisEdit={isEdit}
+                                            User={'Credit'}
+                                            addCoborrower={addCoborrower}
+                                        />
+                                        {/* Additional Sections inside Container A */}
+                                        <div id="Employment-History" className="w-full">
+                                            <EmploymentHistoryTable data={value} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Credit-History' className="w-full ">
+                                            <CreditHistory data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Owned-Assets' className="w-full">
+                                            <AssetTable data={value} receive={updateAppDetails} isEdit={isEdit} />
+                                        </div>
+                                        <div id='Character-Reference' className="w-full">
+                                            <CharacterReference
+                                                loading={loading}
+                                                BorrowerId={BorrowerId}
+                                                Creator={Uploader}
+                                                data={value}
+                                                User={'Credit'}
+                                                isEdit={isEdit}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
 
-                                ]}
-                            />
-                        </ConfigProvider>
+                        </div>
+                        <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${isEdit ? 'h-[40vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}>
+                            <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+
+                                <Anchor
+                                    replace
+                                    affix={false}
+                                    targetOffset={50}
+                                    getContainer={() => document.getElementById('scrollable-container')}
+                                    items={getAnchorItems()}
+                                />
+
+                            </ConfigProvider>
+                        </div>
                     </div>
-                </Space>
+                </div>
             ),
         },
         {
-            label: <div className='flex flex-rows'><MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>,
+            label: (<div className='flex flex-row'> <MdOutlineCalculate style={{ fontSize: '20px', marginRight: 5 }} /><span>NDI</span></div>),
             key: 'NDI',
-            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={GetData('ROLE').toString() === '60'} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />,
+            children: <NDI valueAmount={valueAmount} event={(e) => { event(e) }} isEdit={true} data={value} isReadOnly={true} activeKey={activeKey} sepcoborrowfname={sepcoborrowfname} />
         },
         {
-            label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
+            label: <div className='flex flex-row'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
             key: 'internal-checking',
-            children: <InternalChecking classname={'h-[65vh] w-[86vw] mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }}
-             sepcoborrowfname={sepcoborrowfname}  ClientId={ClientId} Uploader={Uploader}/>,
+            children: <InternalChecking classname={'h-[65vh] w-full mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} sepcoborrowfname={sepcoborrowfname} ClientId={ClientId} Uploader={Uploader} />,
         },
         {
-            label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
+            label: <div className='flex flex-row'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs Display={'USER'} classname={'h-[47vh] pt-[.5rem] overflow-y-hidden hover:overflow-y-auto'} 
-                ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} />,
+            children: <UploadDocs Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} ModUser={jwtDecode(token).USRID} />,
         },
         GetData('ROLE').toString() === '60' && {
-            label: <div className="flex flex-rows"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
+            label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
             key: 'approval-amount',
-            children: <ApprovalAmount loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { receive(e) }} />,
+            children: <ApprovalAmount classname={'h-[14rem]'} loading={loading} valueAmount={valueAmount} event={(e) => { event(e) }} data={value} receive={(e) => { updateAppDetails(e) }} />,
         },
         {
-            label: <div className='flex flex-rows'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
+            label: <div className='flex flex-row'><IoTrailSign style={{ fontSize: '20px', marginRight: 5 }} /><span>Audit Trail</span></div>,
             key: 'audit-trail',
             children: <AuditTrail />,
         },
         {
-            label: <div className='flex flex-rows'><MdOutlineUpdate style={{ fontSize: '20px', marginRight: 5 }} /><span>Update Status</span></div>,
+            label: <div className='flex flex-row'><MdOutlineUpdate style={{ fontSize: '20px', marginRight: 5 }} /><span>Update Status</span></div>,
             key: 'last-update-by',
-            children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} /></div>,
+            children: <div className="max-h-[80vh] overflow-y-auto"><LastUpdateBy isEdit={true} data={value} setActiveKey={setActiveKey} /></div>,
         },
     ].filter(Boolean);
-
+    /*
+        React.useEffect(() => {
+            setActiveKey(tabs || 'deduplication');
+        }, [tabs]);
+    */
     return (
-        <>
+        <div>
             {contextHolder}
-            <Tabs defaultActiveKey={tabs} type="card" size="middle" onChange={onChangeTab} items={TabsItems} />
-            {GetData('ROLE').toString() !== '60' && activeKey === 'CRAM' && value.loanIdCode !== '' && (
-                <FloatButton.Group shape="circle" style={{ right: 24, bottom: 24 }}>
-                    {isEdit ? (
-                        <>
-                            <FloatButton
-                                className="bg-green-500"
-                                icon={<SaveOutlined className="text-[#3b0764]" />}
-                                tooltip="Save"
-                                onClick={() => { toggleEditMode() }}
-                            />
-                            <FloatButton
-                                className="bg-red-500"
-                                icon={<CloseOutlined />}
-                                tooltip="Cancel"
-                                onClick={() => { setEdit(false) }}
-                            />
-                        </>
-                    ) : (
-                        <FloatButton
-                            className="bg-[#3b0764] text-white"
-                            icon={<EditOutlined className="text-[#1ad819]" />}
-                            tooltip="Edit"
-                            onClick={() => { toggleEditMode() }}
-                            disabled={disabledStatuses.includes(GetStatus)}
-                        />
-                    )}
-                </FloatButton.Group>
-            )}
-        </>
+            <div className="w-full">
+                <Tabs
+                    defaultActiveKey={tabs}
+                    activeKey={activeKey}
+                    type="card"
+                    size="middle"
+                    onChange={onChangeTab}
+                    items={TabsItems}
+                />
+                {activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
+                    <ConfigProvider
+                        theme={{
+                            token: {
+                                fontSize: 14,
+                                borderRadius: 8,
+                                fontWeightStrong: 600,
+                                colorText: '#ffffff',
+                            },
+                        }}
+                    >
+                        <div className="flex justify-center items-center mr-40 mb-2 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 3xl:mb-16 space-x-2 xs:space-x-2 sm:space-x-3 md:space-x-4 lg:space-x-5 xl:space-x-6 2xl:space-x-8">
+                            {isEdit ? (
+                                <>
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#2b972d',
+                                                colorPrimaryHover: '#34b330',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<SaveOutlined />}
+                                            onClick={toggleEditMode}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            SAVE
+                                        </Button>
+                                    </ConfigProvider>
+                                    <ConfigProvider
+                                        theme={{
+                                            token: {
+                                                colorPrimary: '#dc3545',
+                                                colorPrimaryHover: '#f0aab1',
+                                            },
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            icon={<CloseOutlined />}
+                                            onClick={() => { setEdit(false); queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true }); }}
+                                            size="large"
+                                            className="-mt-5"
+                                        >
+                                            CANCEL
+                                        </Button>
+                                    </ConfigProvider>
+                                </>
+                            ) : (
+                                <ConfigProvider
+                                    theme={{
+                                        token: {
+                                            colorPrimary: '#3b0764', // Purple color for EDIT button
+                                            colorPrimaryHover: '#6b21a8', // Darker purple on hover
+                                        },
+                                    }}
+                                >
+                                    <Button
+                                        type="primary"
+                                        icon={<EditOutlined />}
+                                        onClick={toggleEditMode}
+                                        size="large"
+                                        className="-mt-5"
+                                    >
+                                        EDIT
+                                    </Button>
+                                </ConfigProvider>
+                            )}
+                        </div>
+                    </ConfigProvider>
+                )}
+            </div>
+        </div>
     );
 }
 
