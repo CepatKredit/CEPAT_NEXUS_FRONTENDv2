@@ -27,6 +27,7 @@ import axios from "axios";
 import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 import { useQueryClient } from "@tanstack/react-query";
 import { toDecrypt } from "@utils/Converter";
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 
 function SideNav() {
   //   const handleFilterChange = (e) => {
@@ -76,7 +77,7 @@ function SideNav() {
 
   const getRightPosition = () => {
     if (width < 768) {
-      return 'right-2'; 
+      return 'right-2';
     }
     if (width < 1024) {
       return 'right-2';
@@ -84,7 +85,7 @@ function SideNav() {
     if (width < 1280) {
       return 'right-2';
     }
-    return 'right-5'; 
+    return 'right-5';
   };
   const handleSearchClick = () => {
     const token = localStorage.getItem("UTK");
@@ -122,6 +123,12 @@ function SideNav() {
     return () => window.removeEventListener("resize", updateButtonPosition);
   }, []);
 
+
+  const [isVisible, setIsVisible] = React.useState(true); // State to toggle visibility
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible); // Toggle the visibility
+  };
   return (
     <SessionTimeout>
       <Layout>
@@ -180,7 +187,7 @@ function SideNav() {
               </ConfigProvider>
             </div>
             <div className={`text-center p-2 fixed bottom-0 transition-all duration-300 ease-in-out ${collapsed ? "w-[4vw]" : "w-[12vw]"}`}    >
-              <span className="text-xs text-gray-600">v2.0.6</span>
+              <span className="text-xs text-gray-600">v2.0.7</span>
             </div>
           </div>
         </Sider>
@@ -244,18 +251,45 @@ function SideNav() {
               </div>
             </div>
           </Header>
-          <Content className="bg-white h-full overflow-hidden">
-            {mini_dash !== "/ckfi/dashboard" ? (
-              <center>
-                <div className="h-[7rem] w-[85vw] pt-[.5em] overflow-x-hidden hover:overflow-x-auto">
-                  <DashMini />
-                </div>
-              </center>
-            ) : (
-              <></>
-            )}
-            <Outlet />
-          </Content>
+          <ConfigProvider
+            theme={{
+              components: {
+                Button: {
+                  defaultHoverBg: "rgba(255,255,255,0)",
+                  onlyIconSize: 25,
+                 // primaryColor: "rgb(84,84,146)",
+                },
+              },
+            }}
+          >
+            <Content className="bg-white h-full overflow-hidden">
+              <div
+                className={`transition-all duration-500 ease-in-out overflow-hidden ${isVisible ? "max-h-[500px]" : "max-h-0"}`}
+              >
+                <center>
+                  <div className="relative h-[7rem] w-[85vw] pt-[.5em] overflow-x-hidden hover:overflow-x-auto">
+                    {isVisible && mini_dash !== "/ckfi/dashboard" ? (
+                      <DashMini />
+                    ) : (
+                      <></>
+                    )}
+                    <Button
+                      shape="circle"
+                      onClick={toggleVisibility}
+                      className={`ml-[48rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
+                      icon={isVisible ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    />
+
+
+                  </div>
+                </center>
+              </div>
+
+              <Outlet />
+            </Content>
+          </ConfigProvider>
+
+
         </Layout>
       </Layout>
 
