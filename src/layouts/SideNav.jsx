@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Layout,
   Menu,
@@ -124,6 +123,12 @@ function SideNav() {
     return () => window.removeEventListener("resize", updateButtonPosition);
   }, []);
 
+
+  const [isVisible, setIsVisible] = React.useState(true); // State to toggle visibility
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible); // Toggle the visibility
+  };
   return (
     <SessionTimeout>
       <Layout>
@@ -209,72 +214,82 @@ function SideNav() {
                   }}
                 />
               )}
-              <div className="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0">
-                <div className="mx-2 my-[4px]">
-                  <span className="font-bold text-base xs1:text-[12px] sm:text-lg text-stone-100">
-                    Search
-                  </span>
+              {width >= 640 && (
+                <div className="flex flex-row items-center">
+                  <div className="mx-2 my-[4px]">
+                    <span className="font-bold text-lg md:text-sm lg:text-lg text-stone-100">
+                      Search
+                    </span>
+                  </div>
+                  <Space.Compact>
+                    <Select
+                      placeholder="filter search"
+                      className="w-[110px] md:w-[110px] lg:w-[140px] xl:w-[160px] 2xl:w-[110px]"
+                      options={[
+                        { label: "Loan ID", value: "loanID" },
+                        { label: "Full Name", value: "name" },
+                      ]}
+                    />
+
+                    <Input
+                      placeholder="search..."
+                      allowClear
+                      value={searchValue}
+                      onChange={(e) => setSearchValue(e.target.value)}
+                      className="w-[170px] md:w-[110px] lg:w-[150px] xl:w-[170px] 2xl:w-[170px]"
+                    />
+                    <Button
+                      type="default"
+                      onClick={handleSearchClick}
+                      icon={<SearchOutlined />}
+                    />
+                  </Space.Compact>
                 </div>
-                <Space.Compact className="flex flex-wrap xs:flex-nowrap">
-                  <Select
-                    placeholder="Filter"
-                    className="w-[100px] xs1:w-[90px] lg:w-[140px] xl:w-[160px]"
-                    options={[
-                      { label: "Loan ID", value: "loanID" },
-                      { label: "Full Name", value: "name" },
-                    ]}
-                  />
-                  <Input
-                    placeholder="Search..."
-                    allowClear
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    className="w-[120px] xs1:w-[120px] lg:w-[170px] xl:w-[190px]"
-                  />
-                  <Button
-                    type="default"
-                    onClick={handleSearchClick}
-                    icon={<SearchOutlined />}
-                    className="w-full xs:w-auto"
-                  />
-                </Space.Compact>
-              </div>
+              )}
               <div className={`my-[1.3rem] absolute ${getRightPosition()}`}>
                 <AccountSettings />
               </div>
             </div>
           </Header>
-          <Content className="bg-white h-full overflow-hidden">
-            <div className="p-4">
-              <motion.button
-                whileHover={{ scale: 1.1, opacity: 0.9 }}
-                whileTap={{ scale: 0.95, opacity: 1 }}
-                onClick={toggleVisibility}
-                className="px-4 py-2 rounded text-white bg-[#3b0764] transition-all duration-300"
+          <ConfigProvider
+            theme={{
+              components: {
+                Button: {
+                  defaultHoverBg: "rgba(255,255,255,0)",
+                  onlyIconSize: 25,
+                 // primaryColor: "rgb(84,84,146)",
+                },
+              },
+            }}
+          >
+            <Content className="bg-white h-full overflow-hidden">
+              <div
+                className={`transition-all duration-500 ease-in-out overflow-hidden ${isVisible ? "max-h-[500px]" : "max-h-0"}`}
               >
-                {isVisible ? "Hide" : "Show"} Dashboard
-              </motion.button>
-            </div>
-            <AnimatePresence mode="wait">
-              {mini_dash !== "/ckfi/dashboard" && isVisible && (
-                <motion.div
-                  key="dashMini"
-                  initial={{ opacity: 0, y: -30, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -30, scale: 0.9 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                >
-                  <center>
-                    <div className="h-[7rem] w-[85vw] pt-[.5em] overflow-x-hidden hover:overflow-x-auto">
+                <center>
+                  <div className="relative h-[7rem] w-[85vw] pt-[.5em] overflow-x-hidden hover:overflow-x-auto">
+                    {isVisible && mini_dash !== "/ckfi/dashboard" ? (
                       <DashMini />
-                    </div>
-                  </center>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    ) : (
+                      <></>
+                    )}
+                    <Button
+                      shape="circle"
+                      onClick={toggleVisibility}
+                      className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
+                      icon={isVisible ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    />
 
-            <Outlet />
-          </Content>
+
+                  </div>
+                </center>
+              </div>
+
+              <Outlet />
+            </Content>
+          </ConfigProvider>
+
+
         </Layout>
       </Layout>
 
