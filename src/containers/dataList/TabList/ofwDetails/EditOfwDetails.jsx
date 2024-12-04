@@ -45,7 +45,15 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const { TextArea } = Input;
     const [api, contextHolder] = notification.useNotification();
     const [relativesCount, setRelativesCount] = useState(0);
-    const { getAppDetails, updateAppDetails, setBenDependents } = useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails, setBenDependents, showBenDependents } = useContext(LoanApplicationContext)
+
+    useEffect(() => {
+        if (getAppDetails.MarriedPBCB !== undefined) {
+            // Set the state of setBenDependents based on the value of MarriedPBCB
+            setBenDependents(getAppDetails.MarriedPBCB === 0); // true if 0 (unchecked), false if 1 (checked)
+        }
+        //console.log('hahahahahaha', getAppDetails.MarriedPBCB)
+    }, [getAppDetails]);
 
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
@@ -468,7 +476,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
-                {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                {getAppDetails.loanProd !== '0303-DHW' || getAppDetails.loanProd !== '0303-VL' || getAppDetails.loanProd !== '0303-WL' ? (
                     User === 'Credit' || User === 'MARKETING') && (getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
                         <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
                             <Checkbox
