@@ -22,7 +22,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     const { setCount } = getDependentsCount();
     const saveButtonRef = React.useRef();
     const token = localStorage.getItem('UTK');
-    const [api, contextHolder] = notification.useNotification()
+    const [api, contextHolder] = notification.useNotification();
     const queryClient = useQueryClient();
     const { GetStatus } = ApplicationStatus();
     const [editingKey, setEditingKey] = React.useState('');
@@ -73,8 +73,16 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
                 });
 
                 const updatedCount = dataList.length;
-                updateAppDetails({ name: 'ofwdependents', value: updatedCount - 1 })
-                onUpdateCount(updatedCount);
+                // updateAppDetails({ name: 'ofwdependents', value: updatedCount - 1 })
+                // Update both ofwdependents and bendependents based on isOfw value
+                if (isOfw === 1) {
+                    updateAppDetails({ name: 'ofwdependents', value: updatedCount - 1 });
+                } else if (isOfw === 2) {
+                    updateAppDetails({ name: 'bendependents', value: updatedCount - 1 });
+                }
+               /* onUpdateCount(updatedCount);
+                setCountBen(updatedCount);*/
+
                 SET_LOADING_INTERNAL('DependentsTABLE', false);
                 return dataList;
             } catch (error) {

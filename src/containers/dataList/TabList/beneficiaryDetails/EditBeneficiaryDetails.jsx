@@ -61,10 +61,6 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
         }
     }, [Sepcoborrowfname]);
 
-  /*  React.useEffect(() => {
-        console.log('bene dependents...............', showBenDependents)
-    },[getAppDetails])*/
-
     let rendered = sepBenfname ? true : false;
     const [getAcbAge, setAcbAge] = useState(CheckDateValid(getAppDetails.coborrowbdate) ? Age(getAppDetails.coborrowbdate) : 0)
     const [getBenAge, setBenAge] = useState(CheckDateValid(getAppDetails.benbdate) ? Age(getAppDetails.benbdate) : 0);
@@ -194,8 +190,6 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
             });
         }
     };
-
-    let OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
 
     return (
         <div className='h-[65vh]'>
@@ -432,8 +426,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     compname={'Marital Status'}
 
                 />
-                {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
-                    <></>) :
+                {/*{getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
+                    <></>) :*/
                     (User === 'Credit' || User === 'MARKETING') && (getAppDetails.benmstatus === 2 || getAppDetails.benmstatus === 5 || getAppDetails.benmstatus === 6) && (
                         <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
                             <Checkbox
@@ -446,7 +440,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 If the PB and CB are married to each other
                             </Checkbox>
                         </div>
-                    )};
+                    ) /* }*/}
 
 
                 {(data.benmstatus === 2 || data.benmstatus === 5 || data.benmstatus === 6) ? (
@@ -461,7 +455,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             value={data.benspouse}
                             isEdit={isEdit}
                             rendered={rendered}
-                            disabled={User === 'Credit' && OFW_IS_PRIM && data.MarriedPBCB}
+                            disabled={User === 'Credit' && data.MarriedPBCB}
                             KeyName={'benspouse'}
                             group={'Uppercase'}
                             compname={'Spouse Name'}
@@ -476,7 +470,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             label={<>Spouse Birthdate <span className="text-red-500">*</span></>}
                             placeHolder='Enter Birthdate'
                             receive={(e) => { updateAppDetails({ name: 'benspousebdate', value: e }) }}
-                            disabled={User === 'Credit' && OFW_IS_PRIM && data.MarriedPBCB}
+                            disabled={User === 'Credit' && data.MarriedPBCB}
 
                             value={data.benspousebdate}
                             isEdit={isEdit}
@@ -556,29 +550,20 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     />
 
                 ) : (
-                    <InputOpt
+                    <LabeledInput
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                         className_label={'font-bold'}
                         label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
                         placeHolder='Facebook Name / Profile'
-                        isEdit={isEdit}
-                        category={'marketing'}
                         readOnly={isEdit}
-                        rendered={rendered}
-                        value={removeLinkFormat(getAppDetails.benfblink)}
+                        value={data.benfblink || ''}
                         receive={(e) => {
-                            const formattedValue = e.includes('https://www.facebook.com/') ? e : `https://www.facebook.com/${e}`;
-                            updateAppDetails({ name: 'benfblink', value:formattedValue  })
+                            const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
+                            updateAppDetails({ name: 'benfblink', value: formattedValue });
                         }}
-
-                        KeyName={'benfblink'}
-                        group={'Default'}
-                        compname={'Facebook Name / Profile'}
-
-                        InvalidMsg='Invalid Facebook Name/Profile'
-                        EmptyMsg='Facebook Name/Profile Required'
+                        isEdit={isEdit}
+                        rendered={rendered}
                     />
-
                 )}
                 {/*User === 'Credit' && (
                     <LabeledInput
@@ -741,13 +726,15 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         className="w-[18.75rem] mt-4 font-bold"
                     >
                         <Input
-                            value={data.bendependents || '0'}
+                            value={getAppDetails.bendependents || '0'}
                             className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
                             readOnly
                             placeholder="No. of Dependents"
                         />
                     </Form.Item>
                 )}
+
+
 
                 {User === 'LC' && (
                     <LabeledInput_Numeric
@@ -763,7 +750,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     />
                 )}
                 {/* dito ibabato ang check galing context upang gamitin sa condition na pag display ng relativetavle na once 1 ang makuha sa context ididisplay nya ito realtime then pag naman 0 hindi */}
-                {getAppDetails?.MarriedPBCB !== 1/* && showBenDependents */&& (User !== 'LC' && (
+                {getAppDetails?.MarriedPBCB !== 1 && (User !== 'LC' && (
                     <div className="w-full mt-[2rem] mx-auto">
                         <RelativesTable BorrowerId={BorrowerId} onUpdateCount={(count) => setRelativesCount(count)} data={data} isOfw={2} />
                     </div>
