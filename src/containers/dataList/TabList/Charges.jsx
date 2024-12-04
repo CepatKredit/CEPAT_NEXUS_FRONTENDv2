@@ -671,7 +671,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails?.ApprvAmount}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.ApprvAmount)}
                                         readOnly
                                     />
                                 </div>
@@ -693,7 +693,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.ProcessingFee}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.ProcessingFee)}
                                         readOnly
                                     />
                                 </div>
@@ -702,7 +702,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.CRF}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.CRF)}
                                         readOnly
                                     />
                                 </div>
@@ -711,7 +711,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.Notarial}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.Notarial)}
                                         readOnly
                                     />
                                 </div>
@@ -720,7 +720,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.PNDST}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.PNDST)}
                                         readOnly
                                     />
                                 </div>
@@ -728,7 +728,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.ServiceFee}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.ServiceFee)}
                                         readOnly
                                     />
                                 </div>
@@ -736,16 +736,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.DocuSign}
-                                        readOnly
-                                    />
-                                </div>
-                            </Space>
-
-                            <Space className="w-full mb-2 justify-center items-center">
-                                <div className="w-[15rem]">
-                                    <Input
-                                        value={getAppDetails.IBFTFee}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.DocuSign)}
                                         readOnly
                                     />
                                 </div>
@@ -754,7 +745,16 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.Others}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.IBFTFee)}
+                                        readOnly
+                                    />
+                                </div>
+                            </Space>
+
+                            <Space className="w-full mb-2 justify-center items-center">
+                                <div className="w-[15rem]">
+                                    <Input
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.Others)}
                                         readOnly
                                     />
                                 </div>
@@ -763,7 +763,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="pt-6 w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.TotalCharges}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.TotalCharges)}
                                         readOnly
                                     />
                                 </div>
@@ -772,7 +772,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.PNValue}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.PNValue)}
                                         readOnly
                                     />
                                 </div>
@@ -781,7 +781,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.NetProceeds}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.NetProceeds)}
                                         readOnly
                                     />
                                 </div>
@@ -789,7 +789,7 @@ function Charges({ LoanAppId, data, User, }) {
                             <Space className="w-full mb-2 justify-center items-center">
                                 <div className="w-[15rem]">
                                     <Input
-                                        value={getAppDetails.MonthlyAmortization}
+                                        value={formatNumberWithCommasReadOnly(getAppDetails.MonthlyAmortization)}
                                         readOnly
                                     />
                                 </div>
