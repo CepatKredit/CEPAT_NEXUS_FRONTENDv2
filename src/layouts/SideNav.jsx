@@ -281,9 +281,13 @@ function SideNav() {
                 {!isDashboard && width >= 640 && (
                   <Button
                     shape="circle"
-                    onClick={toggleVisibility}
+                    onClick={() => {
+                      toggleVisibility(); 
+                      toggleRedSectionVisibility(); 
+                    }}
                     className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
                     icon={isVisible ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    aria-label={isVisible ? 'Collapse' : 'Expand'}
                   />
                 )}
               </div>

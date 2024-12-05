@@ -85,6 +85,11 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             }
         };
     })();
+    useEffect(() => {
+        if (getAppDetails.ofwresidences !== 3 || getAppDetails.ofwresidences !== 2) {
+          updateAppDetails({ name: 'ofwrent', value: '0' });  
+        }
+      }, [getAppDetails.ofwresidences]); 
 
     const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX } = useDataContainer();
 
@@ -367,7 +372,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         value={removeLinkFormat(getAppDetails.ofwfblink)}
                         receive={(e) => {
                             const formattedValue = e.includes('https://www.facebook.com/') ? e : `https://www.facebook.com/${e}`;
-                            updateAppDetails({ name: 'ofwfblink', value:formattedValue  })
+                            updateAppDetails({ name: 'ofwfblink', value: formattedValue })
                         }}
 
                         KeyName={'ofwfblink'}
@@ -664,11 +669,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         className_label={'font-bold'}
                         label={<>{getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}<span className="text-red-500"> *</span></>}
                         value={getAppDetails.ofwrent}
-                        receive={(e) => { updateAppDetails({ name: 'ofwrent', value: e }) }}
+                        receive={(e) => {
+                            if (getAppDetails.ofwresidences === 3 || getAppDetails.ofwresidences === 2) {
+                                updateAppDetails({ name: 'ofwrent', value: e });
+                            }
+                        }}
                         category={'direct'}
                         placeHolder={getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
                         rendered={rendered}
-
                         KeyName={'ofwrent'}
                         format={'Currency'}
                         group={'Rent_Amort'}
@@ -835,7 +843,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<SelectOpt
-                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'} w-[18.75rem] h-[3.875rem] mt-[-0.1rem]`}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10 3xl:mt-5'} w-[18.75rem] h-[3.875rem] mt-[-0.1rem]`}
                         className_label={'font-bold'}
                         label={<>Country of Employment for OFW or Joining Port for SEAFARER <span className="text-red-500">*</span></>}
                         placeHolder='Country'

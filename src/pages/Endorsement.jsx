@@ -114,7 +114,7 @@ function Endorsement() {
             direct={direct}
             code={getDetails}
         />
-        <div className="h-[67vh] xs:h-[60vh] lg:h-[35vh] 2xl:h-[67vh] overflow-y-auto overflow-x-hidden mt-[2%] xs1:mt-[-30%] md:mt-[0%]">
+        <div className="h-[67vh] xs:h-[60vh] lg:h-[35vh] xl:h-[60vh] 2xl:h-[70vh] overflow-y-auto overflow-x-hidden mt-[2%] xs1:mt-[-30%] md:mt-[0%]">
             <div className="flex items-center justify-center mx-auto ">
             <div className="flex flex-col items-center justify-center mx-auto mt-[2%]">
                 <div className="flex items-center justify-center w-[80vw] ">

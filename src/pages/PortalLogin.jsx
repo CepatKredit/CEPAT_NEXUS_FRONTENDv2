@@ -16,7 +16,8 @@ import FullScreenBackground from "@assets/images/LoginBG.jpg";
 import LoginBackground from "@assets/images/side.jpg";
 import { useNavigate, useLocation } from "react-router-dom";
 //import Logo from "@assets/images/WHITE.svg";
-import Logo from "@assets/images/Nexus_v3a.png";
+import Logo from "@assets/images/Nexus_v3a2.png";
+import CepatNexus from "@assets/images/Nexus_v3c.png";
 import Datos from "@assets/images/datos.png";
 import ResponsiveModal from "@components/global/ResponsiveModal";
 import {
@@ -41,6 +42,8 @@ import { decode } from "@utils/Secure";
 import { toEncrypt } from "@utils/Converter";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { useAuth } from "@auth/AuthProvider";
+import { motion } from "framer-motion";
+
 
 function PortalLogin() {
   const {
@@ -412,7 +415,32 @@ function PortalLogin() {
           </a>
         </div>
         <center>
-          <img src={Logo} alt="logo" className="h-[60px] xs1:h-[60px] xs2:h-[70px] xs:h-[80px] sm:h-[100px] md:h-[120px] lg:h-[130px] xl:h-[135px] 2xl:h-[180px] mt-[8%] xs1:mt-[3%] sm:mt-[4%] md:mt-[5%] lg:mt-[6%] xl:mt-[9%] mx-auto" />
+          <div className="relative flex items-center justify-center shine-effect">
+            <motion.img
+              src={Logo}
+              alt="Logo"
+              className="h-[60px] xs1:h-[60px] xs2:h-[70px] xs:h-[80px] sm:h-[100px] md:h-[120px] lg:h-[130px] xl:h-[135px] 2xl:h-[180px] mt-[8%] xs1:mt-[3%] sm:mt-[4%] md:mt-[5%] lg:mt-[6%] xl:mt-[9%] mx-[-10px]"
+              initial={{ x: 60 }}
+              animate={{ x: -10 }}
+              transition={{
+                duration: 1,
+                ease: "easeInOut",
+              }}
+              style={{ zIndex: 2 }}
+            />
+            <motion.img
+              src={CepatNexus}
+              alt="Cepat Nexus"
+              className="h-[60px] xs1:h-[60px] xs2:h-[70px] xs:h-[80px] sm:h-[100px] md:h-[120px] lg:h-[130px] xl:h-[135px] 2xl:h-[180px] mt-[8%] xs1:mt-[3%] sm:mt-[4%] md:mt-[5%] lg:mt-[6%] xl:mt-[9%] mx-[-10px]"
+              initial={{ x: -60 }}
+              animate={{ x: 10 }}
+              transition={{
+                duration: 1,
+                ease: "easeInOut",
+              }}
+              style={{ zIndex: 1 }}
+            />
+          </div>
           <div className="font-sans font-bold text-4xl xs1:text-xs xs:text-xs sm:text-sm md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl text-stone-100 drop-shadow-[0_5px_5px_rgba(0,0,0,.7)] text-center">
             <span>Loan Origination System</span>
           </div>
@@ -472,7 +500,7 @@ function PortalLogin() {
             </ConfigProvider>
           </div>
         </center>
-      </div>
+      </div >
       <div
         className="h-full xs1:h-[35%] xs2:h-[35%] xs:h-[35%] sm:h-[50%] md:h-[50%] lg:h-[53%] xl:h-[100%] 2xl:h-[100%] 3xl:h-[100%] 
         w-full xs1:w-full sm:w-[42%] md:w-[31%] lg:w-[28%] xl:w-[30%] 2xl:w-[30%] 3xl:w-[28%] bg-left drop-shadow-[0_5px_5px_rgba(0,0,0,.5)]"
@@ -668,7 +696,7 @@ function PortalLogin() {
           </strong>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
