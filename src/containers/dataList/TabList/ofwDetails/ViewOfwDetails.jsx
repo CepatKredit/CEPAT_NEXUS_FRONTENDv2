@@ -166,7 +166,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
                     (country) => country.code === data.ofwcountry || country.label === data.ofwcountry)?.description || ''}</span>),
         },
         User !== 'LC' && {
-            key: '44', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>{(User === 'Credit' || User === 'Lp') ? 'Job Category' : 'Job Title / Position'}</span>),
+            key: '44', label: (<span className={`font-semibold ${data.JobCategory ? 'text-black' : 'text-red-600'}`}>{(User === 'Credit' || User === 'Lp') ? 'Job Category' : 'Job Title / Position'}</span>),
             children: (User === 'Credit' || User === 'Lp') ? JobCategory()?.find(jobcategory => jobcategory.value === data.JobCategory)?.label || '' : data.ofwjobtitle || ''
         },
         (User === 'Credit' || User === 'Lp') && { key: '45', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>Position</span>), children: JobTitle(data.JobCategory)?.find(ofwjobtitle => ofwjobtitle.value === data.ofwjobtitle)?.label || '' },
