@@ -198,7 +198,7 @@ function TriggerFields(ROLE) {
                 updateAppDetails({ name, value });
             });
         } else {
-      
+
         }
     }, [getAppDetails.ofwmstatus]);
 
@@ -250,10 +250,11 @@ function TriggerFields(ROLE) {
 
     React.useEffect(() => {
         if (!getRendered) return;
+        const OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
+        const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
+        const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
 
-        if (getAppDetails.MarriedPBCB) {
-            const spouseBenName = `${getAppDetails.benfname || ''} ${getAppDetails.benlname || ''}`.trim();
-            const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
+        if (OFW_IS_PRIM && getAppDetails.MarriedPBCB) {
 
             setAppDetails((prev) => ({
                 ...prev,
@@ -269,7 +270,7 @@ function TriggerFields(ROLE) {
                 RelationshipBen: getRelationship(getAppDetails.ofwmstatus),
                 benrelationship: getRelationship(getAppDetails.ofwmstatus),
             }));
-        } else {
+        } else if (OFW_IS_PRIM && !getAppDetails.MarriedPBCB) {
             setAppDetails((prev) => ({
                 ...prev,
                 ofwspouse: '',
@@ -281,6 +282,38 @@ function TriggerFields(ROLE) {
                 BenSpSrcIncome: '',
                 BenSpIncome: '',
                 benmstatus: '',
+                RelationshipBen: '',
+                benrelationship: '',
+                BenSrcIncome: '',
+                BenIncome: '',
+            }));
+        } else if (!OFW_IS_PRIM && getAppDetails.MarriedPBCB) {
+            setAppDetails((prev) => ({
+                ...prev,
+                ofwspouse: spouseBenName,
+                ofwspousebdate: getAppDetails.benbdate,
+                SpSrcIncome: '',
+                SpIncome: '',
+                benspouse: spouseOfwName,
+                benspousebdate: getAppDetails.ofwbdate,
+                BenSpSrcIncome: 1,
+                BenSpIncome: getAppDetails.PSalary,
+                benmstatus: getAppDetails.ofwmstatus,
+                RelationshipBen: getRelationship(getAppDetails.ofwmstatus),
+                benrelationship: getRelationship(getAppDetails.ofwmstatus),
+            }));
+        } else if (!OFW_IS_PRIM && !getAppDetails.MarriedPBCB) {
+            setAppDetails((prev) => ({
+                ...prev,
+                ofwspouse: '',
+                ofwspousebdate: '',
+                SpSrcIncome: '',
+                SpIncome: '',
+                benspouse: '',
+                benspousebdate: '',
+                BenSpSrcIncome: '',
+                BenSpIncome: '',
+                //  benmstatus: '',
                 RelationshipBen: '',
                 benrelationship: '',
                 BenSrcIncome: '',

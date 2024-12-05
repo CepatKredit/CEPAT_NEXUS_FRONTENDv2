@@ -155,7 +155,7 @@ function BeneficiaryDetails({ getTab, classname, data, receive, presaddress, Use
     if (User === 'Credit') {
         React.useEffect(() => {
             setAddCoborrow(showCoBorrower);
-            // console.log('Check Acb', showCoBorrower);
+             console.log('Check Acb', showCoBorrower);
         }, [showCoBorrower]);
     }
     const toggleEditMode = async () => {

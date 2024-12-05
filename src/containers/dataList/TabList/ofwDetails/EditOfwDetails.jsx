@@ -481,9 +481,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
                 />
-                {getAppDetails.loanProd !== '0303-DHW' || getAppDetails.loanProd !== '0303-VL' || getAppDetails.loanProd !== '0303-WL' ? (
+                {OFW_IS_PRIM ? (
                     User === 'Credit' || User === 'MARKETING') && (getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
-                        <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
+                        <div className="mt-12 w-[18.75rem] h-[3.875rem] flex items-center">
                             <Checkbox
                                 checked={getAppDetails.MarriedPBCB}
                                 onClick={() => {

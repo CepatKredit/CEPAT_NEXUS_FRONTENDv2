@@ -273,13 +273,27 @@ export function DateComponentHook(value, rendered, receive, KeyName, setRendered
   };
 }
 
-export function InputComponentHook(initialValue, receive, rendered, KeyName, comp_name, format, group, isDisabled, isFocused, InvalidMsg, EmptyMsg, readOnly) {
+export function InputComponentHook(
+  initialValue,
+  receive,
+  rendered,
+  KeyName,
+  comp_name,
+  format,
+  group,
+  isDisabled,
+  isFocused,
+  InvalidMsg,
+  EmptyMsg,
+  readOnly
+) {
   const [inputValue, setInputValue] = useState(initialValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
   const latestValueRef = useRef(initialValue);
   const latestValueRef2 = useRef(initialValue);
+  const inputRef = useRef(null); // For cursor position
 
   const debouncedReceive = useMemo(
     () =>
@@ -308,56 +322,65 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     }
   };
 
-  const immediateValidation = (valid, val, error, update, delay_def) => {
-    if (valid) {
-      setStatus('');
-      setErrorMessage('');
-      setInputValue(val); // Keep the valid value in the input field
-      receive(val, delay_def); // Pass the custom delay
-    } else {
-      setStatus('error');
-      setErrorMessage(error);
-      setInputValue(val); // Keep the valid value in the input field
-      if (update) {
-        receive('', delay_def); // Pass an empty string only to the receiver
-      }
-    }
-  };
-
   const handleChange = (e) => {
-    let value = e;
+    const selectionStart = e.target.selectionStart; // Get the cursor position
+    const selectionEnd = e.target.selectionEnd; // In case of selections
+    let value = e.target.value;
     const maxchar = CharacterLimit(group, format);
     if (maxchar && value.length > maxchar) {
       value = value.slice(0, maxchar);
     }
+
     // Only format the value if necessary
     if (format === 'Http' && value.startsWith('https://www.facebook.com/')) {
       const res = value.slice(25); // Remove existing prefix for reprocessing
       value = `https://www.facebook.com/${res}`;
     }
+    if (format === '+639') {
+      if (value.startsWith('09')) {
+        const res = value.slice(2);
+        value = `${format}${res}`;
+      } else if (value.startsWith('639')) {
+        const res = value.slice(3);
+        value = `${format}${res}`;
+      } else if (value.startsWith('9')) {
+        const res = value.slice(1);
+        value = `${format}${res}`;
+      }
+    }
 
     const res = hookInputValid(KeyName, value, comp_name, format, group, InvalidMsg, EmptyMsg);
     statusValidation(res.valid, res.value, res.errmsg, true, 800);
-  }
+
+    // Update cursor position
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.setSelectionRange(selectionStart, selectionEnd);
+      }
+    }, 0);
+  };
 
   const handleBlur = () => {
     setIconVisible(true);
     const res = hookInputValid(KeyName, inputValue, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(res.valid, (format === 'Currency' ? (res.value ? FormatCurrency(Uppercase(res.value).replaceAll(',', '')) : '') : res.value), res.errmsg, false, 100);
+    statusValidation(
+      res.valid,
+      format === 'Currency'
+        ? res.value
+          ? FormatCurrency(Uppercase(res.value).replaceAll(',', ''))
+          : ''
+        : res.value,
+      res.errmsg,
+      false,
+      100
+    );
   };
 
   useEffect(() => {
-    if (rendered && initialValue !== latestValueRef2.current) {
+    if (rendered && !isFocused && initialValue !== latestValueRef2.current && group !== 'ContactNo') {
+      // Group !== 'ContactNo' is only temporary fix, if this related fields need to repopulate, need to add strict condition
       setIconVisible(true);
-      setInputValue(initialValue || ''); // Update inputValue directly
-      const res = hookInputValid(KeyName, initialValue || '', comp_name, format, group, InvalidMsg, EmptyMsg);
-      immediateValidation(
-        res.valid,
-        format === 'Currency' ? FormatCurrency(Uppercase(res.value || '').replaceAll(',', '')) : res.value,
-        res.errmsg,
-        true,
-        100
-      );
+      handleChange({ target: { value: initialValue || '', selectionStart: 0, selectionEnd: 0 } });
       latestValueRef2.current = initialValue; // Update reference
     }
   }, [initialValue, rendered]);
@@ -379,6 +402,7 @@ export function InputComponentHook(initialValue, receive, rendered, KeyName, com
     handleChange,
     handleBlur,
     errorMessage,
+    inputRef,
   };
 }
 

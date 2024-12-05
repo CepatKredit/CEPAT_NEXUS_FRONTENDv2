@@ -29,7 +29,7 @@ import { GET_LIST } from '@api/base-api/BaseApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { mmddyy } from '@utils/Converter';
+import { ChangeText, mmddyy } from '@utils/Converter';
 import { jwtDecode } from 'jwt-decode';
 import { UpdateLoanDetails } from '@utils/LoanDetails';
 import StatusRemarks from '../TabList/StatusRemarks';
@@ -75,7 +75,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         navigate(`${localStorage.getItem('SP')}/${id}/${e}`);
     }
 
-
     const [addCoborrower, setAddCoborrower] = React.useState(false);
     const token = localStorage.getItem('UTK')
     const queryClient = useQueryClient();
@@ -84,8 +83,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     const addCoborrow = (getValue) => {
         setAddCoborrower(getValue);
     };
-
-
 
     const fetchRelativesAndUpdateCount = async () => {
         if (BorrowerId) {
@@ -231,7 +228,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             MobileNo: value.ofwmobile || '',
             MobileNo2: value.ofwothermobile || '',
             Email: value.ofwemail || '',
-            FbProfile: value.ofwfblink || '',
+            FbProfile: value.ofwfblink? ChangeText(value.ofwfblink)  : '',
             GroupChat: value.ofwgroupchat || '',
             //Relationship: value.ofwrelationship || null,
             Religion: value.Religion || 0,
@@ -313,29 +310,29 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             BenFirstName: value.benfname || '',
             BenMiddleName: value.benmname || '',
             BenLastName: value.benlname || '',
-            BenSuffix: value.bensuffix || null,
+            BenSuffix: value.bensuffix || 0,
             BenBirthday: value.benbdate ? mmddyy(value.benbdate) : '',
-            BenGender: value.bengender || null,
+            BenGender: value.bengender || 0,
             BenEmail: value.benemail || '',
-            BenMobileNo: value.benmobile || null,
-            BenMobileNo2: value.benothermobile || null,
+            BenMobileNo: value.benmobile || '',
+            BenMobileNo2: value.benothermobile || '',
             BenDependent: parseInt(value.bendependents) || 0,
             BenCivilStatus: value.benmstatus || 0,
             BenSpouseName: value.benspouse || '',
             BenSpouseBirthday: mmddyy(value.benspousebdate),
             BenMarriedPBCB: value.BenMarriedPBCB == 1 ? 1 : 0,
-            BenSpSrcIncome: value.BenSpSrcIncome || null,
+            BenSpSrcIncome: value.BenSpSrcIncome || 0,
             BenSpIncome: value.BenSpIncome ? parseFloat(value.BenSpIncome.toString().replaceAll(',', '')) : 0.00,
-            BenFbProfile: value.benfblink || '',
+            BenFbProfile: value.benfblink? ChangeText(value.benfblink) : '',
             BenGrpChat: value.BenGrpChat || '',
             BenRelationship: value.benrelationship || 0,
-            BenSrcIncome: value.BenSrcIncome || null,
-            BenReligion: value.BenReligion || null,
-            BenFormerOFW: value.BenFormerOFW || null,
-            BenLastReturn: value.BenLastReturn || null,
-            BenPlanAbroad: value.BenPlanAbroad || null,
-            BenRemarks: value.BenRemarks || null,
-            BenPEP: value.BenPEP || null,
+            BenSrcIncome: value.BenSrcIncome || 0,
+            BenReligion: value.BenReligion || 0,
+            BenFormerOFW: value.BenFormerOFW || 0,
+            BenLastReturn: value.BenLastReturn || '',
+            BenPlanAbroad: value.BenPlanAbroad || 0,
+            BenRemarks: value.BenRemarks || '',
+            BenPEP: value.BenPEP || 0,
 
             BenOwnership: value.benresidences || 0,
             BenStayYears: value.benstayyears || 0,
@@ -367,7 +364,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                 AcbSpouseBirthday: mmddyy(value.coborrowerspousebdate),
                 AcbSpSrcIncome: value.AcbSpSrcIncome || null,
                 AcbSpIncome: value.AcbSpIncome ? parseFloat(value.AcbSpIncome.toString().replaceAll(',', '')) : 0.00,
-                AcbFbProfile: value.coborrowfblink,
+                AcbFbProfile: value.coborrowfblink? ChangeText( value.coborrowfblink) : '',
                 AcbGrpChat: value.AcbGrpChat || '',
                 AcbRelationship: value.AcbRelationship || 0,
                 AcbSrcIncome: value.AcbSrcIncome || 0,
@@ -405,7 +402,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             AcbEmail: value.coborrowemail || '',
             AcbMobileNo: value.coborrowmobile || '',
             AcbMobileNo2: value.coborrowothermobile || '',
-            AcbFbProfile: value.coborrowfblink || '',
+            AcbFbProfile: value.coborrowfblink? ChangeText( value.coborrowfblink) : '',
             AcbSpouseName: value.coborrowspousename || '',
             AcbSpouseBirthday: value.coborrowerspousebdate ? mmddyy(value.coborrowerspousebdate) : '',
             AcbOwnership: value.coborrowresidences || 0,
@@ -448,7 +445,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     return; //stop the process
                 });
         }
-
+        console.log('CHECK AUTO: ',!sepcoborrowfname,!addCoborrower)
         if (!sepcoborrowfname && !addCoborrower) { //if no add coborrow and showaddcoborrow is true
             //Start to insert Acb and then update all
             //   console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
@@ -470,7 +467,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         }
 
         try {
-            const [resLoan, resOFW, resBene] = await Promise.all([UpdateLoanDetails(data_loan), UpdateLoanDetails(data_ofw), UpdateLoanDetails(data_bene)]);
+            const [resLoan, resOFW, resBene] = await Promise.all([UpdateLoanDetails(data_loan), UpdateLoanDetails(data_ofw)]);
             if (resLoan.data.status === "success" && resOFW.data.status === "success" && resBene.data.status === "success") {
                 api[resLoan.data.status]({
                     message: resLoan.data.message,

@@ -7,6 +7,7 @@ import { mmddyy, ReturnText } from '@utils/Converter';
 import { Gender, MaritalStatus, Residences, EducationalAttainment, Overseas, SpouseSourceIncome, Religion, AllotChannel, JobTitle, JobCategory } from '@utils/FixedData';
 import { useDataContainer } from '@context/PreLoad';
 import { GetData } from '@utils/UserData';
+import { removeLinkFormat } from '@utils/Formatting';
 
 
 function ViewOfwDetails({ data, User, RelativesCount, receive }) {
@@ -95,12 +96,12 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         User !== 'Credit' && { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: ReturnText(data.ofwfblink) || '' },
         User === 'Credit' && { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.ofwfblink ? (
                 <a
-                    href={`https://www.facebook.com/${ReturnText(data.ofwfblink)}`}
+                    href={`https://www.facebook.com/${removeLinkFormat(ReturnText(data.ofwfblink))}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 underline"
                 >
-                    {`https://www.facebook.com/${ReturnText(data.ofwfblink)}`}
+                    {`https://www.facebook.com/${removeLinkFormat(ReturnText(data.ofwfblink))}`}
                 </a>
             ) : ''
         },

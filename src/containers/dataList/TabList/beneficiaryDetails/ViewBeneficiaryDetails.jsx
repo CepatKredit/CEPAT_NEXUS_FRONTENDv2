@@ -8,6 +8,7 @@ import { mmddyy, ReturnText } from '@utils/Converter';
 import { GetData } from '@utils/UserData';
 import { getDependentsCount } from '@hooks/DependentsController';
 import { useStore } from 'zustand';
+import { removeLinkFormat } from '@utils/Formatting';
 
 
 function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
@@ -76,12 +77,12 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
         User !== 'Credit' && { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.benfblink || '' },
         User === 'Credit' && { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.benfblink ? (
             <a
-                href={`https://www.facebook.com/${ReturnText(data.benfblink)}`}
+                href={`https://www.facebook.com/${removeLinkFormat(ReturnText(data.benfblink))}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 underline"
             >
-                {`https://www.facebook.com/${ReturnText(data.benfblink)}`}
+                {`https://www.facebook.com/${removeLinkFormat(ReturnText(data.benfblink))}`}
             </a>
         ) : ''
     },
@@ -146,12 +147,12 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
         User !== 'Credit' && { key: '11', label: <span className={`font-semibold ${data.coborrowfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.coborrowfblink || '' },
         User === 'Credit' && { key: '11', label: <span className={`font-semibold ${data.coborrowfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.coborrowfblink ? (
             <a
-                href={`https://www.facebook.com/${ReturnText(data.coborrowfblink)}`}
+                href={`https://www.facebook.com/${removeLinkFormat(ReturnText(data.coborrowfblink))}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 underline"
             >
-                {`https://www.facebook.com/${ReturnText(data.coborrowfblink)}`}
+                {`https://www.facebook.com/${removeLinkFormat(ReturnText(data.coborrowfblink))}`}
             </a>
         ) : ''
     },

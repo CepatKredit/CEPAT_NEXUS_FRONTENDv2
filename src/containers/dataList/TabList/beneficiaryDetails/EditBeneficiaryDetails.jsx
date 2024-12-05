@@ -191,6 +191,9 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
         }
     };
 
+    let OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
+
+
     return (
         <div className='h-[65vh]'>
             {contextHolder}
@@ -426,10 +429,9 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     compname={'Marital Status'}
 
                 />
-                {/*{getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
-                    <></>) :*/
-                    (User === 'Credit' || User === 'MARKETING') && (getAppDetails.benmstatus === 2 || getAppDetails.benmstatus === 5 || getAppDetails.benmstatus === 6) && (
-                        <div className="mt-6 w-[18.75rem] h-[3.875rem] flex items-center">
+                {
+                    !OFW_IS_PRIM && (User === 'Credit' || User === 'MARKETING') && (getAppDetails.benmstatus === 2 || getAppDetails.benmstatus === 5 || getAppDetails.benmstatus === 6) && (
+                        <div className="mt-7 w-[18.75rem] h-[3.875rem] flex items-center">
                             <Checkbox
                                 checked={getAppDetails.MarriedPBCB}
                                 onClick={() => {
@@ -440,7 +442,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 If the PB and CB are married to each other
                             </Checkbox>
                         </div>
-                    ) /* }*/}
+                    )}
 
 
                 {(data.benmstatus === 2 || data.benmstatus === 5 || data.benmstatus === 6) ? (
@@ -488,19 +490,18 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
                                 label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
-                                value={getAppDetails.BenSpSrcIncome}
+                                value={OFW_IS_PRIM ? getAppDetails.BenSpSrcIncome : getAppDetails.SpSrcIncome}
                                 rendered={rendered}
                                 placeHolder='Spouse Source of Income'
                                 showSearch
-                                receive={(e) => updateAppDetails({ name: 'BenSpSrcIncome', value: e })}
+                                receive={(e) => updateAppDetails({ name: OFW_IS_PRIM ? 'BenSpSrcIncome' : 'SpSrcIncome', value: e })}
                                 options={SpouseSourceIncome()}
 
                                 EmptyMsg={'Spouse Source of Income Required'}
                                 InvalidMsg={'Invalid Spouse Source of Income'}
-                                KeyName={'BenSpSrcIncome'}
+                                KeyName={OFW_IS_PRIM ? 'BenSpSrcIncome' : 'SpSrcIncome'}
                                 group={'Default'}
                                 compname={'Spouse Source of Income'}
-
                             />
                         )}
                         {User === 'Credit' && (
@@ -518,14 +519,77 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 format={'Currency'}
                                 group={'Income'}
                                 compname={'Spouse Income'}
-                                disabled={User === 'Credit' && data.MarriedPBCB}
+                                disabled={User === 'Credit' && !OFW_IS_PRIM && data.MarriedPBCB}
+                            //required={User === 'Credit' && !OFW_IS_PRIM && data.MarriedPBCB? false: true}
+
                             />
                         )}
                     </>
                 ) : null}
+
+                {/*User === 'Credit' && (
+                    <LabeledInput
+                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_label={'font-bold'}
+                        label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
+                        placeHolder='Group Chat'
+                        value={data.BenGrpChat}
+                        receive={(e) => updateAppDetails({ name: 'BenGrpChat', value: e })}
+                        category={'marketing'}
+                        readOnly={isEdit}
+                        isEdit={isEdit}
+                        rendered={rendered}
+                    />)*/}
+                {User === 'LC'
+                    ? (<></>)
+                    : (
+                        <SelectOpt
+                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_label={'font-bold'}
+                            label={<>Relationship to the OFW <span className="text-red-500">*</span></>}
+                            value={OFW_IS_PRIM ? getAppDetails.benrelationship : getAppDetails.RelationshipBen}
+                            rendered={rendered}
+                            placeHolder='Relationship to the OFW'
+                            category={'marketing'}
+                            disabled={data.MarriedPBCB && OFW_IS_PRIM}
+                            isEdit={isEdit}
+                            receive={(e) => updateAppDetails({ name: OFW_IS_PRIM ? 'benrelationship' : 'RelationshipBen', value: e })}
+                            options={GET_RELATIONSHIP}
+                            showSearch
+
+                            EmptyMsg={'Relationship to the OFW Required'}
+                            InvalidMsg={'Invalid Relationship to the OFW'}
+                            KeyName={OFW_IS_PRIM ? 'benrelationship' : 'RelationshipBen'}
+                            group={'Default'}
+                            compname={'Relationship to the OFW'}
+                        />
+                    )}
+                {User === 'Credit' && (
+                    <SelectOpt
+                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_label={'font-bold'}
+                        label={<>Source of Income <span className="text-red-500">*</span></>}
+                        value={data.BenSrcIncome}
+                        rendered={rendered}
+                        placeHolder='Source of Income'
+                        category={'marketing'}
+                        disabled={data.MarriedPBCB && OFW_IS_PRIM}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'BenSrcIncome', value: e })}
+                        options={SpouseSourceIncome()}
+                        showSearch
+
+                        EmptyMsg={'Source of Income Required'}
+                        InvalidMsg={'Invalid Source of Income'}
+                        KeyName={'BenSrcIncome'}
+                        group={'Default'}
+                        compname={'Source of Income'}
+                    />
+
+                )}
                 {User === 'Credit' ? (
                     <InputOpt
-                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-5'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         className_component={`w-full p-2 border rounded-lg border-gray-300 ${!isEdit && getAppDetails.benfblink
@@ -565,66 +629,6 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         rendered={rendered}
                     />
                 )}
-                {/*User === 'Credit' && (
-                    <LabeledInput
-                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                        className_label={'font-bold'}
-                        label={<>Group Chat (Name or URL) <span className="text-red-500">*</span></>}
-                        placeHolder='Group Chat'
-                        value={data.BenGrpChat}
-                        receive={(e) => updateAppDetails({ name: 'BenGrpChat', value: e })}
-                        category={'marketing'}
-                        readOnly={isEdit}
-                        isEdit={isEdit}
-                        rendered={rendered}
-                    />)*/}
-                {User === 'LC'
-                    ? (<></>)
-                    : (
-                        <SelectOpt
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                            className_label={'font-bold'}
-                            label={<>Relationship to the OFW <span className="text-red-500">*</span></>}
-                            value={data.benrelationship}
-                            rendered={rendered}
-                            placeHolder='Relationship to the OFW'
-                            category={'marketing'}
-                            disabled={data.MarriedPBCB}
-                            isEdit={isEdit}
-                            receive={(e) => updateAppDetails({ name: 'benrelationship', value: e })}
-                            options={GET_RELATIONSHIP}
-                            showSearch
-
-                            EmptyMsg={'Relationship to the OFW Required'}
-                            InvalidMsg={'Invalid Relationship to the OFW'}
-                            KeyName={'benrelationship'}
-                            group={'Default'}
-                            compname={'Relationship to the OFW'}
-                        />
-                    )}
-                {User === 'Credit' && (
-                    <SelectOpt
-                        className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                        className_label={'font-bold'}
-                        label={<>Source of Income <span className="text-red-500">*</span></>}
-                        value={data.BenSrcIncome}
-                        rendered={rendered}
-                        placeHolder='Source of Income'
-                        category={'marketing'}
-                        disabled={data.MarriedPBCB}
-                        isEdit={isEdit}
-                        receive={(e) => updateAppDetails({ name: 'BenSrcIncome', value: e })}
-                        options={SpouseSourceIncome()}
-                        showSearch
-
-                        EmptyMsg={'Source of Income Required'}
-                        InvalidMsg={'Invalid Source of Income'}
-                        KeyName={'BenSrcIncome'}
-                        group={'Default'}
-                        compname={'Source of Income'}
-                    />
-
-                )}
                 {User === 'Credit' && (
                     <SelectOpt
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
@@ -634,7 +638,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         rendered={rendered}
                         placeHolder='Select Religion'
                         category={'marketing'}
-                        disabled={data.MarriedPBCB}
+                        disabled={data.MarriedPBCB && OFW_IS_PRIM}
                         isEdit={isEdit}
                         receive={(e) => updateAppDetails({ name: 'BenReligion', value: e })}
                         options={Religion()}

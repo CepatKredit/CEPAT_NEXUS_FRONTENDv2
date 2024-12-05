@@ -1,7 +1,8 @@
 import { Input } from 'antd'
 import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { InputComponentHook } from '@hooks/ComponentHooks';
-import { useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function InputOpt({
     rendered,
@@ -26,9 +27,17 @@ function InputOpt({
     InvalidMsg = 'Input is not Valid',
     EmptyMsg = `${compname} Required`,
 }) {
+    
+   // const inputRef = useRef(null);
+  //  const { setfocus } = useContext(LoanApplicationContext)
+  
+  //  useEffect(() => {
+  ///    setfocus(KeyName, inputRef.current);
+  //  }, [KeyName, setfocus])
+
 
     const [isFocused, setIsFocused] = useState();
-    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, isFocused, InvalidMsg, EmptyMsg, readOnly);
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage, inputRef } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, isFocused, InvalidMsg, EmptyMsg, readOnly);
     const isValidationEnabled = !readOnly && required;
 
     return (
@@ -39,11 +48,12 @@ function InputOpt({
                 onFocus={() => { setIsFocused(false); }}
             >
                 <Input
+                    ref={inputRef}
                     disabled={disabled}
                     className={group !== 'FBLink' ? `w-full ${readOnly ? 'bg-[#f5f5f5]' : 'bg-[#ffffff]'}` : className_component}
                     readOnly={readOnly}
                     value={inputValue}
-                    onChange={(e) => { handleChange(e.target.value, true) }}
+                    onChange={ handleChange }
                     size="large"
                     placeholder={placeHolder}
                     autoComplete="off"
