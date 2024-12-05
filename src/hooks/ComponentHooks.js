@@ -291,103 +291,94 @@ export function InputComponentHook(
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
-  const latestValueRef = useRef(initialValue);
-  const latestValueRef2 = useRef(initialValue);
-  const inputRef = useRef(null); // For cursor position
+
+  const inputRef = useRef(null); // Reference to the input element
+  const latestValueRef = useRef(initialValue); // Track the latest value
+  const cursorPosition = useRef(null); // Track cursor position
 
   const debouncedReceive = useMemo(
     () =>
-      debouncef((value, delay) => {
+      debouncef((value) => {
         if (latestValueRef.current !== value) {
           receive(value);
           latestValueRef.current = value;
         }
-      }), // The debounce function itself will handle the delay
+      }, 800), // Debounce with 800ms delay
     [receive]
   );
 
-  const statusValidation = (valid, val, error, update, delay_def) => {
+  const statusValidation = (valid, val, error) => {
     if (valid) {
       setStatus('');
       setErrorMessage('');
-      setInputValue(val); // Keep the valid value in the input field
-      debouncedReceive(val, delay_def); // Pass the custom delay
+      setInputValue(val);
+      debouncedReceive(val);
     } else {
       setStatus('error');
       setErrorMessage(error);
-      setInputValue(val); // Keep the valid value in the input field
-      if (update) {
-        debouncedReceive('', delay_def); // Pass an empty string only to the receiver
-      }
+      setInputValue(val);
     }
   };
 
   const handleChange = (e) => {
-    const selectionStart = e.target.selectionStart; // Get the cursor position
-    const selectionEnd = e.target.selectionEnd; // In case of selections
-    let value = e.target.value;
+    const { value, selectionStart, selectionEnd } = e.target;
+
+    // Save initial cursor position
+    let cursorOffset = selectionStart;
+
+    let processedValue = value;
     const maxchar = CharacterLimit(group, format);
+
+    // Limit character length if needed
     if (maxchar && value.length > maxchar) {
-      value = value.slice(0, maxchar);
+      processedValue = value.slice(0, maxchar);
+    }
+    // Handle specific formatting (e.g., currency or phone number)
+    if (format === 'Currency') {
+      const rawValue = value.replace(/,/g, ''); // Remove all existing commas
+      const selectionStartRaw = selectionStart - (value.slice(0, selectionStart).match(/,/g)?.length || 0); // Cursor in raw value
+      processedValue = FormatComma(rawValue); // Format the value and add commas
+      // Count commas added up to the previous cursor position
+      const newCursorOffset = processedValue.slice(0, selectionStartRaw).match(/,/g)?.length || 0;
+      // Update cursor offset considering added commas
+      cursorOffset = selectionStartRaw + newCursorOffset;
+    } else if (format === '+639') {
+      processedValue = formatPhoneNumber(value, format);
     }
 
-    // Only format the value if necessary
-    if (format === 'Http' && value.startsWith('https://www.facebook.com/')) {
-      const res = value.slice(25); // Remove existing prefix for reprocessing
-      value = `https://www.facebook.com/${res}`;
-    }
-    if (format === '+639') {
-      if (value.startsWith('09')) {
-        const res = value.slice(2);
-        value = `${format}${res}`;
-      } else if (value.startsWith('639')) {
-        const res = value.slice(3);
-        value = `${format}${res}`;
-      } else if (value.startsWith('9')) {
-        const res = value.slice(1);
-        value = `${format}${res}`;
-      }
-    }
+    // Validate the processed value
+    const validation = hookInputValid(KeyName, processedValue, comp_name, format, group, InvalidMsg, EmptyMsg);
 
-    const res = hookInputValid(KeyName, value, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(res.valid, res.value, res.errmsg, true, 800);
+    // Update status and value based on validation
+    statusValidation(validation.valid, validation.value, validation.errmsg);
 
-    // Update cursor position
+    // Restore adjusted cursor position after formatting
     setTimeout(() => {
       if (inputRef.current) {
-        inputRef.current.setSelectionRange(selectionStart, selectionEnd);
+        inputRef.current.setSelectionRange(cursorOffset, cursorOffset);
       }
     }, 0);
   };
 
   const handleBlur = () => {
     setIconVisible(true);
-    const res = hookInputValid(KeyName, inputValue, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(
-      res.valid,
-      format === 'Currency'
-        ? res.value
-          ? FormatCurrency(Uppercase(res.value).replaceAll(',', ''))
-          : ''
-        : res.value,
-      res.errmsg,
-      false,
-      100
-    );
+
+    const validation = hookInputValid(KeyName, inputValue, comp_name, format, group, InvalidMsg, EmptyMsg);
+    statusValidation(validation.valid, validation.value, validation.errmsg);
   };
 
   useEffect(() => {
-    if (rendered && !isFocused && initialValue !== latestValueRef2.current && group !== 'ContactNo') {
-      // Group !== 'ContactNo' is only temporary fix, if this related fields need to repopulate, need to add strict condition
-      setIconVisible(true);
-      handleChange({ target: { value: initialValue || '', selectionStart: 0, selectionEnd: 0 } });
-      latestValueRef2.current = initialValue; // Update reference
+    if (rendered && initialValue !== latestValueRef.current) {
+      setInputValue(initialValue || '');
+      latestValueRef.current = initialValue;
     }
   }, [initialValue, rendered]);
 
   useEffect(() => {
-    handleBlur();
-  }, []);
+    if (inputRef.current && cursorPosition.current) {
+      inputRef.current.setSelectionRange(cursorPosition.current.start, cursorPosition.current.end);
+    }
+  }, [inputValue]);
 
   useEffect(() => {
     return () => {
@@ -404,6 +395,14 @@ export function InputComponentHook(
     errorMessage,
     inputRef,
   };
+}
+
+// Utility function for phone number formatting
+function formatPhoneNumber(value, format) {
+  if (value.startsWith('09')) return `${format}${value.slice(2)}`;
+  if (value.startsWith('639')) return `${format}${value.slice(3)}`;
+  if (value.startsWith('9')) return `${format}${value.slice(1)}`;
+  return value;
 }
 
 //Focus to Required/Invalid Field

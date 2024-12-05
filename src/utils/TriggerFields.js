@@ -255,7 +255,7 @@ function TriggerFields(ROLE) {
         const spouseOfwName = `${getAppDetails.ofwfname || ''} ${getAppDetails.ofwlname || ''}`.trim();
 
         if (OFW_IS_PRIM && getAppDetails.MarriedPBCB) {
-
+            console.log('Trigg1')
             setAppDetails((prev) => ({
                 ...prev,
                 ofwspouse: spouseBenName,
@@ -271,6 +271,7 @@ function TriggerFields(ROLE) {
                 benrelationship: getRelationship(getAppDetails.ofwmstatus),
             }));
         } else if (OFW_IS_PRIM && !getAppDetails.MarriedPBCB) {
+            console.log('Trigg2')
             setAppDetails((prev) => ({
                 ...prev,
                 ofwspouse: '',
@@ -288,6 +289,7 @@ function TriggerFields(ROLE) {
                 BenIncome: '',
             }));
         } else if (!OFW_IS_PRIM && getAppDetails.MarriedPBCB) {
+            console.log('Trigg3')
             setAppDetails((prev) => ({
                 ...prev,
                 ofwspouse: spouseBenName,
@@ -303,6 +305,7 @@ function TriggerFields(ROLE) {
                 benrelationship: getRelationship(getAppDetails.ofwmstatus),
             }));
         } else if (!OFW_IS_PRIM && !getAppDetails.MarriedPBCB) {
+            console.log('Trigg4')
             setAppDetails((prev) => ({
                 ...prev,
                 ofwspouse: '',

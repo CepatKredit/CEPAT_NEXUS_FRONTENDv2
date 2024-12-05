@@ -5,7 +5,11 @@ import { Divider, Typography, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons';
 import AnimatedCard from '@components/global/AnimatedCard';
 import { toDecrypt } from '@utils/Converter';
+import { useDataContainer } from '@context/PreLoad';
+import { useQueryClient } from '@tanstack/react-query';
 function Dashboard() {
+    const { SET_REFRESH_TILE_COUNTER } = useDataContainer()
+    const queryClient = useQueryClient();
 
     const navigate = useNavigate()
     const [spinning, setSpinning] = React.useState(false);
@@ -39,6 +43,12 @@ function Dashboard() {
         })
         return path
     }
+    //Re-Trigger when go to dashboard for refresh status 
+    React.useEffect(()=>{
+        console.log('START ME')
+        SET_REFRESH_TILE_COUNTER(1)
+    },[])
+
 
     return (
         <center>

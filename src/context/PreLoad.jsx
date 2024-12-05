@@ -2,6 +2,7 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GET_LIST } from "@api/base-api/BaseApi";
 import { ComponentPreloads } from "@components/api-service";
+import { jwtDecode } from "jwt-decode";
 
 const DataContext = React.createContext();
 function PreLoad({ children }) {
@@ -61,7 +62,7 @@ function PreLoad({ children }) {
     queryKey: ["PRELOAD_DISBURSEMENT", GET_LOAN_APPLICATION_NUMBER],
     queryFn: async () => {
       let total = 0;
-      if(GET_LOAN_APPLICATION_NUMBER === '') return [];
+      if (GET_LOAN_APPLICATION_NUMBER === '') return [];
       const result = await GET_LIST(
         `/GET/G106DL/${GET_LOAN_APPLICATION_NUMBER}/${"NP"}`
       );
@@ -88,6 +89,7 @@ function PreLoad({ children }) {
 
   const [GET_DATA_COUNTER, setDataCounter] = React.useState([]);
   const [getRefreshTileCounter, setRefreshTileCounter] = React.useState(0);
+  /*
   const TileCountListQuery = useQuery({
     queryKey: ["TileCountListQuery"],
     queryFn: async () => {
@@ -100,14 +102,35 @@ function PreLoad({ children }) {
     retryDelay: 1000,
     staleTime: 5 * 1000,
   });
+*/
+  const token = localStorage.getItem('UTK')
+  const TileCountListQuery = useQuery({
+    queryKey: ["TileCountListQuery"],
+    queryFn: async () => {
+      console.log('Fetch Counter')
+      const userid = jwtDecode(token)?.USRID || null; //Just in case if there is no USERID
+      if (userid === null || userid === '' || userid === undefined) return [];
+      const result = await GET_LIST(`/GET/G150TCR/${userid}`);
+      setDataCounter(result.list);
+      return result.list;
+    },
+    enabled: true,
+    refetchInterval: 60 * 1000,
+    retryDelay: 1000,
+    staleTime: 5 * 1000,
+  });
+
   function SET_REFRESH_TILE_COUNTER(value) {
     setRefreshTileCounter(value);
   }
+  
 
   React.useEffect(() => {
-    TileCountListQuery.refetch();
-    SET_REFRESH_TILE_COUNTER(0);
-  }, [getRefreshTileCounter]);
+    if (getRefreshTileCounter) {
+      TileCountListQuery.refetch(); // Only refetch if refresh is needed
+      SET_REFRESH_TILE_COUNTER(0); // Reset refresh trigger
+    }
+  }, [getRefreshTileCounter]); // Dependency array ensures effect runs only when counter changes
 
   //REFETCH FOR PRELOAD DATA
   React.useEffect(() => {
