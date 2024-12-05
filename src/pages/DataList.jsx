@@ -62,7 +62,7 @@ function DataList() {
     setCurrentPage(page);
   };
   const userRole = GetData('ROLE')?.toString();
-  const [isRedSectionVisible, setRedSectionVisible] = React.useState(true);
+  
 
   return (
     <div className="mx-[1%] my-[2%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[2%] overflow-hidden">
@@ -135,7 +135,6 @@ function DataList() {
                       "Seafarer Loan - In the Philippines": "SBP",
                     };
                     const isRoleValid = ["20", "10"].includes(userRole);
-  
                     return {
                       key: i, 
                       NO: i + 1, 

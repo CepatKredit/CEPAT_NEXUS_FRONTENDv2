@@ -87,9 +87,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     })();
     useEffect(() => {
         if (getAppDetails.ofwresidences !== 3 || getAppDetails.ofwresidences !== 2) {
-          updateAppDetails({ name: 'ofwrent', value: '0' });  
+            updateAppDetails({ name: 'ofwrent', value: '0' });
         }
-      }, [getAppDetails.ofwresidences]); 
+    }, [getAppDetails.ofwresidences]);
 
     const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX } = useDataContainer();
 
@@ -553,7 +553,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 />)}
                             {User === 'Credit' && (
                                 <InputOpt
-                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10 2xl:mt-5'
                                         } w-[18.75rem] h-[3.875rem]`}
                                     className_label={'font-bold'}
                                     label={<>Spouse Income <span className="text-red-500">*</span></>}
@@ -843,7 +843,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 {User === 'LC'
                     ? (<></>)
                     : (<SelectOpt
-                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10 3xl:mt-5'} w-[18.75rem] h-[3.875rem] mt-[-0.1rem]`}
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10 2xl:mt-5 3xl:mt-5'} w-[18.75rem] h-[3.875rem] mt-[-0.1rem]`}
                         className_label={'font-bold'}
                         label={<>Country of Employment for OFW or Joining Port for SEAFARER <span className="text-red-500">*</span></>}
                         placeHolder='Country'
@@ -867,7 +867,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     User === 'Credit' ? (
 
                         <SelectOpt
-                            className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
+                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={<>Job Category <span className="text-red-500">*</span></>}
                             value={getAppDetails.JobCategory}
@@ -901,7 +902,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         />))}
                 {User === 'Credit' && (
                     <SelectOpt
-                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                            } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Position <span className="text-red-500">*</span></>}
                         value={getAppDetails.ofwjobtitle}
@@ -924,7 +926,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'Credit' && (
                     <SelectOpt
-                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-5'
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Employment Status <span className="text-red-500">*</span></>}

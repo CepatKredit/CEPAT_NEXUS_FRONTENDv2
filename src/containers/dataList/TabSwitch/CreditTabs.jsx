@@ -622,7 +622,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                             </div>
                             {getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL' ? (
                                 <>
-                                    {/* Container A */}
                                     <div id='OFW-Details'>
                                         <OfwDetails
                                             loading={loading}
@@ -637,7 +636,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                             User={'Credit'}
                                             addCoborrower={addCoborrower}
                                         />
-                                        {/* Additional Sections inside Container A */}
                                         <div id="Employment-History" className="w-full">
                                             <EmploymentHistoryTable data={value} isEdit={isEdit} />
                                         </div>
@@ -658,7 +656,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                             />
                                         </div>
                                     </div>
-                                    {/* Container B */}
                                     <div id='Beneficiary-Details'>
                                         <BeneficiaryDetails
                                             loading={loading}
@@ -678,8 +675,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                 </>
                             ) : (
                                 <>
-                                    {/* Switch positions */}
-                                    {/* Container B */}
                                     <div id='Beneficiary-Details'>
                                         <BeneficiaryDetails
                                             loading={loading}
@@ -696,7 +691,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                             setAddCoborrow={addCoborrow}
                                         />
                                     </div>
-                                    {/* Container A */}
                                     <div
                                         id="OFW-Details"
                                         style={{
@@ -714,7 +708,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                             transition: 'margin-top 0.5s ease', // Smooth transition for marginTop
                                         }}
                                     >
-
                                         <OfwDetails
                                             loading={loading}
                                             isEditCRAM={isEdit}
@@ -728,7 +721,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                             User={'Credit'}
                                             addCoborrower={addCoborrower}
                                         />
-                                        {/* Additional Sections inside Container A */}
                                         <div id="Employment-History" className="w-full">
                                             <EmploymentHistoryTable data={value} isEdit={isEdit} />
                                         </div>
@@ -763,7 +755,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                     getContainer={() => document.getElementById('scrollable-container')}
                                     items={getAnchorItems()}
                                 />
-
                             </ConfigProvider>
                         </div>
                     </div>
@@ -783,7 +774,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         {
             label: <div className='flex flex-row'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} ModUser={jwtDecode(token).USRID} />,
+            children: <UploadDocs Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[45vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} ModUser={jwtDecode(token).USRID} />,
         },
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
