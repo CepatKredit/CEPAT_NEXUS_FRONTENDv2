@@ -664,7 +664,7 @@ function PortalLogin() {
             type="vertical"
           />
         </ConfigProvider>
-        <div className="pl-[1%] xs1:pl-[3%] lg:pl-[1%] text-white w-full xs1:w-[30%] xs:w-[35%] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[25%] 2xl:w-[30%] 
+        <div className="pl-[1%] xs1:pl-[3%] lg:pl-[1%] text-white w-full xs1:w-[30%] xs:w-[35%] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[25%] 2xl:w-[25%] 3xl:w-[30%] 
         text-[6px] xs1:text-[5.6px] sm:text-[9px] md:text-[9px] lg:text-[9px] xl:text-[10px] 2xl:text-[10px] 3xl:text-[12px]">
           <strong>
             <h5>CONTACT DETAILS</h5>

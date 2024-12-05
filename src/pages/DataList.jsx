@@ -64,9 +64,6 @@ function DataList() {
   const userRole = GetData('ROLE')?.toString();
   const [isRedSectionVisible, setRedSectionVisible] = React.useState(true);
 
-  const toggleRedSectionVisibility = () => {
-    setRedSectionVisible(!isRedSectionVisible);
-  };
   return (
     <div className="mx-[1%] my-[2%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[2%] overflow-hidden">
       <div className="flex flex-wrap items-center justify-between mb-4">
@@ -123,7 +120,6 @@ function DataList() {
               handlePageChange={handlePageChange}
             />
           ) : (
-            isRedSectionVisible && (
               <div className="w-full">
                 <ResponsiveTable
                   columns={ColumnList(3)}
@@ -184,7 +180,6 @@ function DataList() {
                   })}
                 />
               </div>
-            )
           )}
         </Spin>
       </ConfigProvider>
