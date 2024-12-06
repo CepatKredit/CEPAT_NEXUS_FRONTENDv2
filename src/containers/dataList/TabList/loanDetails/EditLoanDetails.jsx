@@ -90,9 +90,9 @@ function EditLoanDetails({ data, receive, User }) {
                 receive={(e) => updateAppDetails({ name: 'loanBranchId', value: e })}
                 label={User === 'Credit' ? 'Loan Branch' : 'Assigned Branch'}
                 category={User !== 'Credit' ? 'MARKETING' : undefined}
-                options={branchFilter(User !== 'Credit' && GetData('ROLE').toString() === '20')}
+                options={branchFilter((User === 'LC' ?false:true)) }
                 rendered={rendered}
-                disabled={User !== 'LC' ? true : false}
+                disabled={User !== 'LC' || getAppDetails.loanBranchId === 11}
 
                 KeyName={'loanBranchId'}
                 EmptyMsg={'Loan Branch Required'}

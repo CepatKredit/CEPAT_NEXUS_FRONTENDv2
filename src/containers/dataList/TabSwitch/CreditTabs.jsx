@@ -445,7 +445,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     return; //stop the process
                 });
         }
-        console.log('CHECK AUTO: ',!sepcoborrowfname,!addCoborrower)
         if (!sepcoborrowfname && !addCoborrower) { //if no add coborrow and showaddcoborrow is true
             //Start to insert Acb and then update all
             //   console.log('Insert ACB', !sepcoborrowfname, !addCoborrower, acb_data)
@@ -467,7 +466,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         }
 
         try {
-            const [resLoan, resOFW, resBene] = await Promise.all([UpdateLoanDetails(data_loan), UpdateLoanDetails(data_ofw)]);
+            const [resLoan, resOFW, resBene] = await Promise.all([UpdateLoanDetails(data_loan), UpdateLoanDetails(data_ofw), UpdateLoanDetails(data_bene)]);
             if (resLoan.data.status === "success" && resOFW.data.status === "success" && resBene.data.status === "success") {
                 api[resLoan.data.status]({
                     message: resLoan.data.message,

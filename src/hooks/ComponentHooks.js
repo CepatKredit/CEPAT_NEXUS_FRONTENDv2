@@ -7,7 +7,6 @@ import { checkAgeisValid, CheckAmountValid, CheckContactNo, CheckDateValid, chec
 import dayjs from 'dayjs';
 import { useState, useMemo, useCallback, useEffect, useRef, useContext } from 'react';
 
-
 function hookDateValid(KeyName, date) {
   if (KeyName === 'ofwDeptDate' || KeyName === 'loanDateDep') { return checkDeployisValid(date); }
   else if (KeyName === 'ofwbdate' || KeyName === 'ofwspousebdate' || KeyName === "benbdate" || KeyName === "coborrowerspousebdate" || KeyName === "coborrowbdate" || KeyName === "benspousebdate") { return checkAgeisValid(date) }

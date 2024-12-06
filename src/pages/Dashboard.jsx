@@ -45,7 +45,6 @@ function Dashboard() {
     }
     //Re-Trigger when go to dashboard for refresh status 
     React.useEffect(()=>{
-        console.log('START ME')
         SET_REFRESH_TILE_COUNTER(1)
     },[])
 

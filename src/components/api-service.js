@@ -137,7 +137,41 @@ export function ComponentPreloads() {
     retryDelay: 1000,
   });
 
+  const [getSeaBasedJC, setSeaBasedJC] = React.useState([]);
+  useQuery({
+    queryKey: ['SeaBaseJobCategory'],
+    queryFn: async () => {
+      const result = await GET_LIST('/GET/G151SB');
+      setSeaBasedJC(result.list);
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
 
+  const [getJC, setJC] = React.useState([]);
+  useQuery({
+    queryKey: ['JobCategory'],
+    queryFn: async () => {
+      const result = await GET_LIST('/GET/G30JC');
+      setJC(result.list);
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
+  const [getPosition, setPosition] = React.useState([]);
+  useQuery({
+    queryKey: ['JobPosition'],
+    queryFn: async () => {
+      const result = await GET_LIST('/GET/G31P');
+      setPosition(result.list);
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
   //////////////////////////////////
   //const { getAppDetails } = useContext(LoanApplicationContext)
   // const data = getAppDetails
@@ -180,6 +214,9 @@ export function ComponentPreloads() {
     GET_CURRENCY_LIST: getCurrency,
     GET_COLLECTION_AREA_LIST: getCollectionArea,
     GET_LOAN_CONSULTANT: getConsultant,
+    GET_SEABASED_JOBCATEGORY: getSeaBasedJC,
+    GET_JOB_CATEGORY: getJC,
+    GET_JOB_POSITION: getPosition,
     //     GET_MUNICIPALITY: getMunicipalityList,
   };
 }

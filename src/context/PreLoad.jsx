@@ -19,6 +19,9 @@ function PreLoad({ children }) {
     GET_CURRENCY_LIST,
     GET_COLLECTION_AREA_LIST,
     GET_LOAN_CONSULTANT,
+    GET_SEABASED_JOBCATEGORY,
+    GET_JOB_CATEGORY,
+    GET_JOB_POSITION,
   } = ComponentPreloads();
   //const GET_PROVINCE_LIST = ProvinceList();
 
@@ -107,10 +110,10 @@ function PreLoad({ children }) {
   const TileCountListQuery = useQuery({
     queryKey: ["TileCountListQuery"],
     queryFn: async () => {
-      console.log('Fetch Counter')
       const userid = jwtDecode(token)?.USRID || null; //Just in case if there is no USERID
       if (userid === null || userid === '' || userid === undefined) return [];
       const result = await GET_LIST(`/GET/G150TCR/${userid}`);
+    //  console.log('Check',userid,result.list)
       setDataCounter(result.list);
       return result.list;
     },
@@ -154,6 +157,9 @@ function PreLoad({ children }) {
         GET_CURRENCY_LIST,
         GET_COLLECTION_AREA_LIST,
         GET_LOAN_CONSULTANT,
+        GET_SEABASED_JOBCATEGORY,
+        GET_JOB_CATEGORY,
+        GET_JOB_POSITION,
         //Accounting
         getBank,
         getPurpose,

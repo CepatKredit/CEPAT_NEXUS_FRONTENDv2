@@ -48,12 +48,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const { getAppDetails, updateAppDetails, setBenDependents, showBenDependents } = useContext(LoanApplicationContext)
 
     useEffect(() => {
-        if (getAppDetails.MarriedPBCB !== undefined) {
+        if (getAppDetails.MarriedPBCB !== undefined || !getAppDetails.MarriedPBCB) {
             // Set the state of setBenDependents based on the value of MarriedPBCB
             setBenDependents(getAppDetails.MarriedPBCB === 0); // true if 0 (unchecked), false if 1 (checked)
         }
         //console.log('hahahahahaha', getAppDetails.MarriedPBCB)
-    }, [getAppDetails]);
+    }, [getAppDetails.MarriedPBCB]);
 
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
@@ -91,13 +91,16 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
         }
     }, [getAppDetails.ofwresidences]);
 
-    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX } = useDataContainer();
+    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX, GET_SEABASED_JOBCATEGORY, GET_JOB_CATEGORY, GET_JOB_POSITION } = useDataContainer();
 
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
     const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
-    const JOB_CATEGORY = JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
-    const JOB_TITLE = JobTitle(getAppDetails.JobCategory) ? JobTitle(getAppDetails.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
+    //const JOB_CATEGORY = JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
+    const JOB_CATEGORY = GET_JOB_CATEGORY?.map(x => ({ label: x.name, value: x.code, })) || [];
+    //const JOB_TITLE = JobTitle(getAppDetails.JobCategory) ? JobTitle(getAppDetails.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];
     const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
+    const JOB_SEABASED_CATEGORY = GET_SEABASED_JOBCATEGORY?.map(x => ({ label: x.name, value: x.code, })) || [];
+    const JOB_POSITION = GET_JOB_POSITION?.map(x => ({ label: x.name, value: x.code, })) || [];
 
     //Shortening For Disabling Fields
     let OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
@@ -382,22 +385,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         InvalidMsg='Invalid Facebook Name/Profile'
                         EmptyMsg='Facebook Name/Profile Required'
                     />
-                    /*
-                         <LabeledInput
-                                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
-                                                } w-[18.75rem] h-[3.875rem]`}
-                                            className_label={'font-bold'}
-                                            label={<>Facebook Name / Profile <span className="text-red-500">*</span></>}
-                                            placeHolder='Facebook Name / Profile'
-                                            readOnly={isEdit}
-                                            value={getAppDetails.ofwfblink || ''}
-                                            receive={(e) => {
-                                                const formattedValue = e.includes('https://') ? e : `https://www.facebook.com/${e}`;
-                                                updateAppDetails({ name: 'ofwfblink', value: formattedValue });
-                                            }}
-                                            isEdit={isEdit}
-                                            rendered={rendered}
-                                        />*/
+
                 )}
                 {User === 'LC'
                     ? (<></>)
@@ -878,7 +866,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             disabled={isEdit}
                             isEdit={isEdit}
                             receive={(e) => updateAppDetails({ name: 'JobCategory', value: e })}
-                            options={JOB_CATEGORY}
+                            options={getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-VA'? JOB_SEABASED_CATEGORY :  JOB_CATEGORY}
                             showSearch
 
                             EmptyMsg={'Job Category Required'}
@@ -913,7 +901,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         disabled={isEdit}
                         isEdit={isEdit}
                         receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
-                        options={JOB_TITLE}
+                        options={JOB_POSITION}
                         notValidMsg={'Position Required'}
                         KeyName={'ofwjobtitle'}
                         group={'Default'}
