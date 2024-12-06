@@ -12,7 +12,7 @@ function SelectIncome({ data, event, excludeItems }) {
     const NDIIncomeListQuery = useQuery({
         queryKey: ['NDIIncomeList'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getNDI/${parseInt(23)}`);
+            const result = await GET_LIST(`/GET/G24N/${parseInt(23)}`);
             return result.list;
         },
         refetchInterval: (data) => {
@@ -61,7 +61,7 @@ function SelectIncome({ data, event, excludeItems }) {
     const handleScroll = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setScrollCount((prevCount) => {
-                if (prevCount + 1 >= 15) {
+                if (prevCount + 1 >= 5) {
                     if (selectRef.current) {
                         selectRef.current.blur(); 
                     }

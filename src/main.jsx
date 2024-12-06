@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConfigProvider } from 'antd'
-import PreLoad from '@containers/PreLoad.jsx'
+import PreLoad from '@context/PreLoad.jsx'
 
 
 

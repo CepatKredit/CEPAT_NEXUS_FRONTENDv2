@@ -3,7 +3,6 @@ import {
   generateLoanDataDirect,
   generateLoanDataLc,
 } from "@utils/InsertValues";
-import createInitialAppDetails from "@utils/IntialValues";
 import React, { useContext } from "react";
 
 export const useAppDetailsEffects = (getAppDetails, setAppDetails) => {

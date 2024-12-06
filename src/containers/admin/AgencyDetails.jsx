@@ -104,7 +104,7 @@ function AgencyDetails({ option }) {
         };
 
         console.log(data);
-        await axios.post('/addAgency', data)
+        await axios.post('/POST/P44AA', data)
             .then((result) => {
                 api[result.data.status]({
                     message: result.data.message,
@@ -158,7 +158,7 @@ function AgencyDetails({ option }) {
         };
 
         try {
-            const result = await axios.post('/editAgency', data);
+            const result = await axios.post('/POST/P45UA', data);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description

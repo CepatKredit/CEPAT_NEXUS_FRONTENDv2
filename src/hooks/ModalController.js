@@ -60,3 +60,8 @@ export const AvailableModal = create((set) => ({
     modalStatus: false,
     setStatus: (modal) => set(() => ({ modalStatus: modal })),
 }))
+
+export const BankGeneration = create((set) => ({
+    modalStatus: false,
+    setStatus: (modal) => set(() => ({ modalStatus: modal })),
+}))

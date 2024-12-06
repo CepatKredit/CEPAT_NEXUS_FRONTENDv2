@@ -20,7 +20,7 @@ function CheckerDocument({ data, ClientId, Uploader }) {
     const DocListICQuery = useQuery({
         queryKey: ['DocListICQuery'],
         queryFn: async () => {
-            const result = await GET_LIST(`/getFileType/${'IC'}`)
+            const result = await GET_LIST(`/GET/G16FT/${'IC'}`)
             return result.list
         },
         enabled: true,
@@ -187,12 +187,12 @@ function CheckerDocument({ data, ClientId, Uploader }) {
             key: 'nm',
             editable: true
         },
-        {
-            title: 'Remarks',
-            dataIndex: 'remarks',
-            key: 'remarks',
-            editable: true
-        },
+        // {
+        //     title: 'Remarks',
+        //     dataIndex: 'remarks',
+        //     key: 'remarks',
+        //     editable: true
+        // },
         {
             title: 'Action',
             dataIndex: 'action',
@@ -426,7 +426,7 @@ function CheckerDocument({ data, ClientId, Uploader }) {
                 })
             }
             else {
-                await axios.post(`/uploadFileFin`, formData, {
+                await axios.post(`/POST/P67UFF`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -455,6 +455,16 @@ function CheckerDocument({ data, ClientId, Uploader }) {
         file: ''
     })
 
+    const fcNmValueChecker = () => {
+        const hasInvalidValues = fileList.some((file) => {
+            const isInvalid = file.fc === 'Please select category' || file.nm === 'Please select name';
+    
+            return isInvalid;
+        });
+
+        return hasInvalidValues;
+    }; 
+       
     return (
         <div className='pt-2 h-[100%]'>
             {contextHolder}
@@ -478,8 +488,13 @@ function CheckerDocument({ data, ClientId, Uploader }) {
                             onConfirm={() => { onClickSaveFile.mutate(''); }}
                             okText="Yes"
                             cancelText="Cancel" >
-                            <Button className='float-right bg-[#166534]' type='primary' disabled={CheckList.data}
-                                loading={onClickSaveFile.isPending} hidden={checkFiles} icon={<SaveOutlined />}>Save</Button>
+                            <Button className='float-right bg-[#166534]' 
+                                type='primary' 
+                                disabled={fcNmValueChecker()}
+                                loading={onClickSaveFile.isPending} 
+                                hidden={checkFiles} 
+                                icon={<SaveOutlined />}
+                                >Save</Button>
                         </Popconfirm>
                     </ConfigProvider>
                 </div>

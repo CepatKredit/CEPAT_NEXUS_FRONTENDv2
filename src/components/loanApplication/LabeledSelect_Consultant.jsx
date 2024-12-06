@@ -30,10 +30,16 @@ function LabeledSelect_Consultant({
   const [icon, setIcon] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(getAppDetails[fieldName] || '');
 
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+    setSelectedValue("")
+  }, [!getAppDetails.dataPrivacy])
+
   const { data: consultantData } = useQuery({
     queryKey: ["getLoanConsultant"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanConsultant");
+      const result = await GET_LIST("/GET/G21LC");
       return result.list;
     },
     refetchInterval: 30 * 1000,
