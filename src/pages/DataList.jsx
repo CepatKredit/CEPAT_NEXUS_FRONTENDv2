@@ -14,6 +14,7 @@ import { toEncrypt } from '@utils/Converter';
 import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 import MobDataListView from '@containers/mobileView/MobDataListView';
 import { GetData } from '@utils/UserData';
+import { SideNavState } from '@hooks/MiniDashController';
 
 function DataList() {
   const { width } = useWindowDimensions();
@@ -24,6 +25,8 @@ function DataList() {
   const navigate = useNavigate();
   const token = localStorage.getItem('UTK');
   const queryClient = useQueryClient();
+  const { isTableExpanded } = SideNavState();
+  const tableHeight = isTableExpanded ? "calc(125vh - 505px)" : "calc(110vh - 505px)";
 
   React.useEffect(() => { AppDataListQuery.refetch() }, [localStorage.getItem('SP')]);
 
@@ -123,7 +126,7 @@ function DataList() {
               <div className="w-full">
                 <ResponsiveTable
                   columns={ColumnList(3)}
-                  height="calc(110vh - 505px)"
+                  height={tableHeight}
                   width="100%"
                   rows={filteredData?.map((x, i) => {
                     const loanProductMap = {

@@ -9,7 +9,6 @@ import { useDataContainer } from '@context/PreLoad';
 import { GetData } from '@utils/UserData';
 import { removeLinkFormat } from '@utils/Formatting';
 
-
 function ViewOfwDetails({ data, User, RelativesCount, receive }) {
     useEffect(() => {
         if (User != 'LC' && (data.ofwdependents !== RelativesCount)) {
@@ -90,21 +89,13 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         (User === 'Credit' || User === 'Lp') && { key: '6', label: <span className={`font-semibold ${data.ofwbdate ? 'text-black' : 'text-red-600'}`}>Age</span>, children: data.ofwbdate ? calculateAge(data.ofwbdate) : '' },
         { key: '7', label: <span className={`font-semibold ${data.ofwgender ? 'text-black' : 'text-red-600'}`}>Gender</span>, children: Gender().find(gender => gender.value === data.ofwgender)?.label || '' },
         { key: '8', label: <span className={`font-semibold ${data.ofwmobile ? 'text-black' : 'text-red-600'}`}>Mobile Number</span>, children: data.ofwmobile ? data.ofwmobile.replace('/', '-') : '' },
-
         User !== 'LC' && { key: '9', label: <span className="font-semibold text-black">Other Mobile Number</span>, children: data.ofwothermobile || '' },
         { key: '10', label: <span className={`font-semibold ${data.ofwemail ? 'text-black' : 'text-red-600'}`}>Email Address</span>, children: data.ofwemail || '' },
         User !== 'Credit' && { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: ReturnText(data.ofwfblink) || '' },
         User === 'Credit' && { key: '11', label: <span className={`font-semibold ${data.ofwfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.ofwfblink ? (
-                <a
-                    href={`https://www.facebook.com/${removeLinkFormat(ReturnText(data.ofwfblink))}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 underline"
-                >
+                <a href={`https://www.facebook.com/${removeLinkFormat(ReturnText(data.ofwfblink))}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
                     {`https://www.facebook.com/${removeLinkFormat(ReturnText(data.ofwfblink))}`}
-                </a>
-            ) : ''
-        },
+                </a>) : '' },
         User !== 'LC' && { key: '12', label: <span className={`font-semibold ${data.ofwgroupchat ? 'text-black' : 'text-red-600'}`}>Group Chat</span>, children: data.ofwgroupchat || '' },
         (User === 'Credit' || User === 'Lp') && { key: '13', label: <span className={`font-semibold ${data.RelationshipBen ? 'text-black' : 'text-red-600'}`}>Relationship to Beneficiary</span>, children: relationshipOptions?.find(relationship => relationship.code === data.RelationshipBen)?.description || '' },
         (User === 'Credit' || User === 'Lp') && data.sepcoborrowfname && { key: '14', label: <span className={`font-semibold ${data.RelationshipAdd ? 'text-black' : 'text-red-600'}`}>Relationship to Additional Co Borrower</span>, children: relationshipOptions?.find(relationship => relationship.code === data.RelationshipAdd)?.description || '' },
@@ -159,22 +150,17 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
     const idItems = [
         User !== 'LC' && { key: '41', label: <span className="font-semibold text-black">Valid ID Type</span>, children: IDtypeOption?.find(idtype => idtype.id === data.ofwvalidid)?.name || '' },
         User !== 'LC' && { key: '42', label: <span className="font-semibold text-black">ID Number</span>, children: data.ofwidnumber || '' },
-        User !== 'LC' && {
-            key: '43', label: (<span className={`font-semibold ${data.ofwcountry ? 'text-black' : 'text-red-600'}`}>Country of Employment</span>), children: (<span className={`${GET_COUNTRY_LIST?.find((country) => country.code === data.ofwcountry || country.label === data.ofwcountry
+        User !== 'LC' && { key: '43', label: (<span className={`font-semibold ${data.ofwcountry ? 'text-black' : 'text-red-600'}`}>Country of Employment</span>), children: (<span className={`${GET_COUNTRY_LIST?.find((country) => country.code === data.ofwcountry || country.label === data.ofwcountry
             )?.isNegative ? ' font-bold text-[#e8000d]' : 'text-black'}`}>
                 {GET_COUNTRY_LIST?.find(
-                    (country) => country.code === data.ofwcountry || country.label === data.ofwcountry)?.description || ''}</span>),
-        },
+                    (country) => country.code === data.ofwcountry || country.label === data.ofwcountry)?.description || ''}</span>)},
         User !== 'LC' && {
             key: '44', label: (<span className={`font-semibold ${data.JobCategory ? 'text-black' : 'text-red-600'}`}>{(User === 'Credit' || User === 'Lp') ? 'Job Category' : 'Job Title / Position'}</span>),
-            children: (User === 'Credit' || User === 'Lp') ? JobCategory()?.find(jobcategory => jobcategory.value === data.JobCategory)?.label || '' : data.ofwjobtitle || ''
-        },
+            children: (User === 'Credit' || User === 'Lp') ? JobCategory()?.find(jobcategory => jobcategory.value === data.JobCategory)?.label || '' : data.ofwjobtitle || ''},
         (User === 'Credit' || User === 'Lp') && { key: '45', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>Position</span>), children: JobTitle(data.JobCategory)?.find(ofwjobtitle => ofwjobtitle.value === data.ofwjobtitle)?.label || '' },
         (User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL') && { key: '46', label: <span className={`font-semibold ${data.PEmployer ? 'text-black' : 'text-red-600'}`}>Principal Employer</span>, children: data.PEmployer || '' },
         (User !== 'LC' && ((User !== 'Credit' && User !== 'Lp') || ((User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL')))) && {
-            key: '47', label: <span className={`font-semibold ${data.ofwcompany ? 'text-black' : 'text-red-600'}`}>
-                {(User === 'Credit' || User === 'Lp') ? 'Agency' : 'Company/Employer/Agency Name'}</span>, children: data.ofwcompany || ''
-        },
+            key: '47', label: <span className={`font-semibold ${data.ofwcompany ? 'text-black' : 'text-red-600'}`}> {(User === 'Credit' || User === 'Lp') ? 'Agency' : 'Company/Employer/Agency Name'}</span>, children: data.ofwcompany || '' },
         // User === 'Credit' && { key: '45', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-red-600'}`}>Agency Address</span>, children: data.agencyaddress || '' },
         // User === 'Credit' && { key: '46', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-red-600'}`}>License Validity</span>, children: data.license || '' },
         // User === 'Credit' && { key: '47', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-red-600'}`}>Status</span>, children: data.ofwstatus || '' },
@@ -205,8 +191,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
                 { key: '60', label: <span className="font-semibold text-black">Course</span>, children: data.ofwcourse || '' },
                 { key: '61', label: <span className="font-semibold text-black">School</span>, children: data.ofwschool || '' }
             );
-        }
-    }
+        }}
 
     const vesselItems = [
         (User === 'Credit' || User === 'Lp') && { key: '62', label: <span className={`font-semibold ${data.VesselName ? 'text-black' : 'text-red-600'}`}>Name of Vessel</span>, children: data.VesselName || '' },
@@ -214,11 +199,9 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         (User === 'Credit' || User === 'Lp') && { key: '64', label: <span className="font-semibold text-black">Exact Location</span>, children: data.ExactLocation || '' },
         (User === 'Credit' || User === 'Lp') && { key: '66', label: <span className={`font-semibold ${data.VesselIMO ? 'text-black' : 'text-red-600'}`}>IMO Vessel</span>, children: data.VesselIMO || '' },
         (User === 'Credit' || User === 'Lp') && data.VesselIMO && { key: '67', label: <span className="font-semibold text-black">Information of the Vessel</span>, children: data.VesselInfo || '' },
-
     ];
 
     const filteredVesselItems = vesselItems.filter(field => field.children && field.children !== '');
-
     return (
         <div className="w-full mx-auto mt-1 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg">
             <Descriptions title={<div className="text-center">
@@ -279,6 +262,5 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         </div>
     );
 }
-
 export default ViewOfwDetails;
 

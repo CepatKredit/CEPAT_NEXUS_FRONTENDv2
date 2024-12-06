@@ -29,6 +29,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toDecrypt } from "@utils/Converter";
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import { motion, AnimatePresence } from "framer-motion";
+import { SideNavState } from "@hooks/MiniDashController";
 
 
 function SideNav() {
@@ -125,7 +126,7 @@ function SideNav() {
     return () => window.removeEventListener("resize", updateButtonPosition);
   }, []);
 
-
+  const { isTableExpanded, toggleTableHeight  } = SideNavState();
   const [isVisible, setIsVisible] = React.useState(true);
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -283,11 +284,11 @@ function SideNav() {
                     shape="circle"
                     onClick={() => {
                       toggleVisibility(); 
-                      toggleRedSectionVisibility(); 
+                      toggleTableHeight(); 
                     }}
                     className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
-                    icon={isVisible ? <CaretUpOutlined /> : <CaretDownOutlined />}
-                    aria-label={isVisible ? 'Collapse' : 'Expand'}
+                    icon={isTableExpanded  ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    aria-label={isTableExpanded  ? 'Collapse' : 'Expand'}
                   />
                 )}
               </div>

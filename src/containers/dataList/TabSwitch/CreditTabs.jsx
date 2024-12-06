@@ -36,6 +36,7 @@ import StatusRemarks from '../TabList/StatusRemarks';
 import { FocusHook } from '@hooks/ComponentHooks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import TriggerFields from '@utils/TriggerFields';
+import { SideNavState } from '@hooks/MiniDashController';
 
 function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, value, valueAmount, ClientId, FileType, loading, User }) {
     //React.useEffect(() => { console.log(ClientId+' = CLientTabs.jsx') }, [ClientId])
@@ -228,7 +229,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             MobileNo: value.ofwmobile || '',
             MobileNo2: value.ofwothermobile || '',
             Email: value.ofwemail || '',
-            FbProfile: value.ofwfblink? ChangeText(value.ofwfblink)  : '',
+            FbProfile: value.ofwfblink ? ChangeText(value.ofwfblink) : '',
             GroupChat: value.ofwgroupchat || '',
             //Relationship: value.ofwrelationship || null,
             Religion: value.Religion || 0,
@@ -323,7 +324,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             BenMarriedPBCB: value.BenMarriedPBCB == 1 ? 1 : 0,
             BenSpSrcIncome: value.BenSpSrcIncome || 0,
             BenSpIncome: value.BenSpIncome ? parseFloat(value.BenSpIncome.toString().replaceAll(',', '')) : 0.00,
-            BenFbProfile: value.benfblink? ChangeText(value.benfblink) : '',
+            BenFbProfile: value.benfblink ? ChangeText(value.benfblink) : '',
             BenGrpChat: value.BenGrpChat || '',
             BenRelationship: value.benrelationship || 0,
             BenSrcIncome: value.BenSrcIncome || 0,
@@ -364,7 +365,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                 AcbSpouseBirthday: mmddyy(value.coborrowerspousebdate),
                 AcbSpSrcIncome: value.AcbSpSrcIncome || null,
                 AcbSpIncome: value.AcbSpIncome ? parseFloat(value.AcbSpIncome.toString().replaceAll(',', '')) : 0.00,
-                AcbFbProfile: value.coborrowfblink? ChangeText( value.coborrowfblink) : '',
+                AcbFbProfile: value.coborrowfblink ? ChangeText(value.coborrowfblink) : '',
                 AcbGrpChat: value.AcbGrpChat || '',
                 AcbRelationship: value.AcbRelationship || 0,
                 AcbSrcIncome: value.AcbSrcIncome || 0,
@@ -402,7 +403,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             AcbEmail: value.coborrowemail || '',
             AcbMobileNo: value.coborrowmobile || '',
             AcbMobileNo2: value.coborrowothermobile || '',
-            AcbFbProfile: value.coborrowfblink? ChangeText( value.coborrowfblink) : '',
+            AcbFbProfile: value.coborrowfblink ? ChangeText(value.coborrowfblink) : '',
             AcbSpouseName: value.coborrowspousename || '',
             AcbSpouseBirthday: value.coborrowerspousebdate ? mmddyy(value.coborrowerspousebdate) : '',
             AcbOwnership: value.coborrowresidences || 0,
@@ -554,7 +555,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         'FOR APPROVAL', 'RELEASED', 'CANCELLED', 'DECLINED', 'FOR RE-APPLICATION',
         'FOR DOCUSIGN', 'OK FOR DOCUSIGN', 'TAGGED FOR RELEASE', 'ON WAIVER',
         'CONFIRMATION', 'CONFIRMED', 'UNDECIDED', 'FOR DISBURSEMENT', 'RETURN TO LOANS PROCESSOR', 'APPROVED (TRANS-OUT)',
-         'COMPLIED - LACK OF DOCUMENTS'
+        'COMPLIED - LACK OF DOCUMENTS'
     ];
 
 
@@ -624,6 +625,24 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
 
     //Trigger Fields
     TriggerFields('CREDIT');
+    const { isTableExpanded } = SideNavState();
+    const tableHeight = isTableExpanded
+        ? "h-[125vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[72vh] 3xl:h-[65vh]"
+        : "h-[110vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]";
+
+    const tableHeight1 = isTableExpanded
+        ? "h-[125vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[62vh] 3xl:h-[57vh]"
+        : "h-[110vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]";
+
+    const tableHeight2 = isTableExpanded
+        ? "h-[125vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[58vh] 3xl:h-[52vh]"
+        : "h-[110vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[45vh] 3xl:h-[52vh]";
+
+    const tableHeight3 = isTableExpanded
+        ? "h-[125vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]"
+        : "h-[110vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]";
+
+
 
     const TabsItems = [
         {
@@ -645,7 +664,10 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     <div className='flex flex-row'>
                         <div
                             id="scrollable-container"
-                            className={`w-full overflow-y-auto mx-2 mb-9 ${isEdit ? 'h-[70vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}
+                            className={`w-full overflow-y-auto mx-2 mb-9 ${isEdit
+                                ? `${tableHeight}`
+                                : `${tableHeight1}`
+                                }`}
                         >
                             <div id='Loan-Details'>
                                 <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} creditisEdit={isEdit} User={'Credit'} />
@@ -770,7 +792,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                             )}
 
                         </div>
-                        <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${isEdit ? 'h-[40vh] xs:h-[40vh] sm:h-[43vh] md:h-[45vh] lg:h-[48vh] xl:h-[52vh] 2xl:h-[58vh] 3xl:h-[65vh]' : 'h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]'}`}>
+                        <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${isEdit ? `${tableHeight}` : `${tableHeight1}`}`}>
                             <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
 
                                 <Anchor
@@ -799,7 +821,8 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         {
             label: <div className='flex flex-row'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[45vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} ModUser={jwtDecode(token).USRID} />,
+            children: <UploadDocs Display={'USER'} classname={`${tableHeight2} pt-[.3rem] overflow-y-hidden hover:overflow-y-auto`}
+            ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} ModUser={jwtDecode(token).USRID} />,
         },
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
@@ -835,7 +858,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     onChange={onChangeTab}
                     items={TabsItems}
                 />
-                { activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
+                {activeKey === 'CRAM' && value.loanIdCode !== '' && !DISABLE_STATUS(localStorage.getItem('SP')) && !disabledStatuses.includes(GetStatus) && (
                     <ConfigProvider
                         theme={{
                             token: {
