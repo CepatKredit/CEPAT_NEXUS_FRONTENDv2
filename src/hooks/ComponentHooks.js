@@ -376,15 +376,11 @@ export function InputComponentHook(
 
   const handleBlur = () => {
     setIconVisible(true);
-
     const validation = hookInputValid(KeyName, inputValue, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(validation.valid, validation.value, validation.errmsg, 100);
+    statusValidation(validation.valid, format === 'Currency'? FormatCurrency(validation.value) : validation.value, validation.errmsg, 100);
   };
 
   useEffect(() => {
-    if(KeyName === 'CRAApprvRec'){
-      console.log(initialValue, latestValueRef.current)
-    }
     if (rendered && initialValue !== latestValueRef.current) {
       setInputValue(initialValue || '');
       handleBlur()

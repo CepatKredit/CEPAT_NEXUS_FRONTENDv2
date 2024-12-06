@@ -19,7 +19,7 @@ export function FormatComma(num) {
 }
 
 export function FormatCurrency(num) { //Comma and Decimal
-    const dec = parseFloat(num.replaceAll(',', '')).toFixed(2)
+    const dec = parseFloat(num? num.toString().replaceAll(',', '') : 0).toFixed(2)
     const parts = dec.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas
     return parts.join('.');
