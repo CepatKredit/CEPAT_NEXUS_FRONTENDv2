@@ -292,30 +292,31 @@ export function InputComponentHook(
   const [iconVisible, setIconVisible] = useState(false);
 
   const inputRef = useRef(null); // Reference to the input element
-  const latestValueRef = useRef(initialValue); // Track the latest value
+  const latestValueRef = useRef(); // Track the latest value
   const cursorPosition = useRef(null); // Track cursor position
 
   const debouncedReceive = useMemo(
     () =>
-      debouncef((value) => {
+      debouncef((value, delay) => {
         if (latestValueRef.current !== value) {
           receive(value);
           latestValueRef.current = value;
         }
-      }, 800), // Debounce with 800ms delay
+      }), // The debounce function itself will handle the delay
     [receive]
   );
 
-  const statusValidation = (valid, val, error) => {
+  const statusValidation = (valid, val, error, delay_def) => {
     if (valid) {
       setStatus('');
       setErrorMessage('');
       setInputValue(val);
-      debouncedReceive(val);
+      debouncedReceive(val, delay_def); // Pass the custom delay
     } else {
       setStatus('error');
       setErrorMessage(error);
       setInputValue(val);
+      debouncedReceive('', delay_def); // Pass the custom delay
     }
   };
 
@@ -327,10 +328,10 @@ export function InputComponentHook(
 
     let processedValue = value;
     const maxchar = CharacterLimit(group, format);
-
     // Limit character length if needed
     if (maxchar && value.length > maxchar) {
       processedValue = value.slice(0, maxchar);
+      return;
     }
     // Handle specific formatting (e.g., currency or phone number)
     if (format === 'Currency') {
@@ -342,14 +343,28 @@ export function InputComponentHook(
       // Update cursor offset considering added commas
       cursorOffset = selectionStartRaw + newCursorOffset;
     } else if (format === '+639') {
-      processedValue = formatPhoneNumber(value, format);
+      const prefix = '+639';
+      const isBackspace = selectionStart < cursorOffset; // Detect backspace
+
+      if (value.startsWith(prefix)) {
+        if (isBackspace && selectionStart <= prefix.length) {
+          // Prevent removing the prefix
+          cursorOffset = prefix.length;
+        } else {
+          processedValue = formatPhoneNumber(value, format);
+        }
+      } else {
+        // Automatically re-add prefix if it's missing
+        processedValue = prefix + formatPhoneNumber(value.slice(prefix.length), format);
+        cursorOffset = processedValue.length; // Move cursor to the end
+      }
     }
 
     // Validate the processed value
     const validation = hookInputValid(KeyName, processedValue, comp_name, format, group, InvalidMsg, EmptyMsg);
 
     // Update status and value based on validation
-    statusValidation(validation.valid, validation.value, validation.errmsg);
+    statusValidation(validation.valid, validation.value, validation.errmsg, 500);
 
     // Restore adjusted cursor position after formatting
     setTimeout(() => {
@@ -363,12 +378,16 @@ export function InputComponentHook(
     setIconVisible(true);
 
     const validation = hookInputValid(KeyName, inputValue, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(validation.valid, validation.value, validation.errmsg);
+    statusValidation(validation.valid, validation.value, validation.errmsg, 100);
   };
 
   useEffect(() => {
+    if(KeyName === 'CRAApprvRec'){
+      console.log(initialValue, latestValueRef.current)
+    }
     if (rendered && initialValue !== latestValueRef.current) {
       setInputValue(initialValue || '');
+      handleBlur()
       latestValueRef.current = initialValue;
     }
   }, [initialValue, rendered]);

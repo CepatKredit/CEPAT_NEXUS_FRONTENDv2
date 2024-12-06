@@ -597,20 +597,24 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     </Form.Item>
                 )}
                 {User === 'LC' && (
-                    <LabeledInput
+                    <InputOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
-                        className_dsub={''}
                         label={"Dependents"}
+                        placeHolder='Dependents'
+                        readOnly={isEdit}
                         value={getAppDetails.ofwdependents || '0'}
                         receive={(e) => { updateAppDetails({ name: 'ofwdependents', value: e }); }}
-                        digits={2}
-                        placeHolder={'No.of Dependents'}
-                        isEdit={isEdit}
+                        category={'marketing'}
                         rendered={rendered}
+                        KeyName={'ofwdependents'}
+                        format={'2_Digit'}
+                        group={'Default'}
+                        compname={'Dependents'}
                         required={false}
                     />
+
                 )}
                 {User !== 'LC' && (
                     <div className="w-full mt-[2rem] mx-auto">
@@ -866,7 +870,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             disabled={isEdit}
                             isEdit={isEdit}
                             receive={(e) => updateAppDetails({ name: 'JobCategory', value: e })}
-                            options={getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-VA'? JOB_SEABASED_CATEGORY :  JOB_CATEGORY}
+                            options={getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-VA' ? JOB_SEABASED_CATEGORY : JOB_CATEGORY}
                             showSearch
 
                             EmptyMsg={'Job Category Required'}
@@ -876,18 +880,24 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             compname={'Job Category'}
                         />
                     ) : (
-                        <LabeledInput_Fullname
+                        <InputOpt
                             className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                                 } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={<>Job Title / Position <span className="text-red-500">*</span></>}
+                            placeHolder='ID type Number'
                             readOnly={isEdit}
-                            category={'marketing'}
-                            value={getAppDetails.ofwjobtitle}
-                            placeHolder='Job/Position'
                             receive={(e) => updateAppDetails({ name: 'ofwjobtitle', value: e })}
+                            value={getAppDetails.ofwjobtitle}
+                            isEdit={isEdit}
                             rendered={rendered}
-                        />))}
+                            required={false}
+
+                            KeyName={'ofwjobtitle'}
+                            group={'Uppercase'}
+                            compname={'Job Title / Position'}
+                        />
+                    ))}
                 {User === 'Credit' && (
                     <SelectOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'

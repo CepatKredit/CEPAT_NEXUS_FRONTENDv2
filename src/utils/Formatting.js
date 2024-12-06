@@ -6,10 +6,10 @@ function FormatWithComma(num) { //Comma
     return parts.join('.');
 }
 
-export function removeLinkFormat(text){
-    if(text.startsWith('https://www.facebook.com/')){
+export function removeLinkFormat(text) {
+    if (text.startsWith('https://www.facebook.com/')) {
         return text.slice(25);
-    }else{
+    } else {
         return text;
     }
 }
@@ -40,7 +40,7 @@ function DecimalLimit(number) { //1 decimal and 2 digit after decimal
     return num;
 }
 
-export const disableDate_deployment = (current) =>{
+export const disableDate_deployment = (current) => {
     return current && current < dayjs().startOf('day');
 };
 
@@ -64,14 +64,17 @@ export const inputFormat = (format, input) => {
         const result = input ? input.toString().replace(/[^0-9.]/g, '') : ''; //number only
         const res = DecimalLimit(result); //decimal trigger
         return (FormatWithComma(res ? res.replaceAll(',', '') : '')); //format with comma(s)
-    }else if (format === '+639') {
+    } else if (format === '+639') {
+        if (input.startsWith('09')) {
+            return `${format}${input.slice(2)}`;
+        }
         if (!input || !input.startsWith('+639')) {
             input = '+639';
         }
-        const sanitizedInput = input.slice(4).replace(/[^0-9]/g, ''); 
+        const sanitizedInput = input.slice(4).replace(/[^0-9]/g, '');
         return `+639${sanitizedInput}`;
-    }else if(format === 'Http'){
-        if(!input || !input.startsWith('https://www.facebook.com/')) {
+    } else if (format === 'Http') {
+        if (!input || !input.startsWith('https://www.facebook.com/')) {
             input = 'https://www.facebook.com/'
         }
         const res = input.slice(25);
