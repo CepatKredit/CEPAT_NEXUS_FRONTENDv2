@@ -126,7 +126,7 @@ function SideNav() {
     return () => window.removeEventListener("resize", updateButtonPosition);
   }, []);
 
-  const { isTableExpanded, toggleTableHeight  } = SideNavState();
+  const { isTableExpanded, toggleTableHeight } = SideNavState();
   const [isVisible, setIsVisible] = React.useState(true);
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -190,8 +190,10 @@ function SideNav() {
                 />
               </ConfigProvider>
             </div>
-            <div className={`text-center p-2 fixed bottom-0 transition-all duration-300 ease-in-out ${collapsed ? "w-[4vw]" : "w-[12vw]"}`}    >
-              <span className="text-xs text-gray-600">v2.0.8</span>
+            <div className="flex flex-col justify-between">
+              <div className="text-center">
+                <span className="text-xs text-gray-600">v2.0.8</span>
+              </div>
             </div>
           </div>
         </Sider>
@@ -283,12 +285,12 @@ function SideNav() {
                   <Button
                     shape="circle"
                     onClick={() => {
-                      toggleVisibility(); 
-                      toggleTableHeight(); 
+                      toggleVisibility();
+                      toggleTableHeight();
                     }}
                     className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
-                    icon={isTableExpanded  ? <CaretUpOutlined /> : <CaretDownOutlined />}
-                    aria-label={isTableExpanded  ? 'Collapse' : 'Expand'}
+                    icon={isTableExpanded ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    aria-label={isTableExpanded ? 'Collapse' : 'Expand'}
                   />
                 )}
               </div>
