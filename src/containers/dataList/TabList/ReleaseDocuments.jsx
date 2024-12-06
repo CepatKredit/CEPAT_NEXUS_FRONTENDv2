@@ -11,6 +11,8 @@ import StatusRemarks from './StatusRemarks';
 import moment from 'moment'
 import { jwtDecode } from 'jwt-decode';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
+import { SideNavState } from '@hooks/MiniDashController';
+
 
 function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, LoanStatus }) {
     const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext);
@@ -61,12 +63,12 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
         staleTime: 5 * 1000
     })
 
-   /* React.useEffect(() => {
-        if (!data.loanIdCode) {
-            SET_LOADING_INTERNAL('ReleaseFile', true)
-            FileListQuery.refetch();
-        }
-    }, [data]);*/
+    /* React.useEffect(() => {
+         if (!data.loanIdCode) {
+             SET_LOADING_INTERNAL('ReleaseFile', true)
+             FileListQuery.refetch();
+         }
+     }, [data]);*/
 
 
     function GetFile(id, command) {
@@ -159,6 +161,10 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
         })
         return data
     }
+    const { isTableExpanded } = SideNavState();
+    const tableHeight = isTableExpanded
+        ? "h-[58vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[65vh] 3xl:h-[52vh]"
+        : "h-[58vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[50vh] 3xl:h-[52vh]";
 
     return (
         <div>
@@ -175,7 +181,7 @@ function ReleaseDocuments({ ClientId, FileType, Uploader, User, data, isEdit, Lo
                             <Button size='large' className='ml-6 mb-2 bg-[#3b0764]' type='primary' onClick={() => { setModalStatus(true) }}>Upload Document</Button>
                         </ConfigProvider>)
                 }
-                <div className='xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[45vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'>
+                <div className={`${tableHeight} pt-[.3rem] overflow-y-hidden hover:overflow-y-auto`}>
                     <div className='mr-[.5rem]'>
                         <Collapse items={CollapseList()} />
                     </div>

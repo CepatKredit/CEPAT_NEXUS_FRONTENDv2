@@ -12,6 +12,8 @@ import { useQueryClient, useMutation } from '@tanstack/react-query'
 import StatusRemarks from './StatusRemarks'
 import { ApplicationStatus } from '@hooks/ApplicationStatusController'
 import { GetData } from '@utils/UserData';
+import { SideNavState } from '@hooks/MiniDashController';
+
 
 function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
     const [loading, setLoading] = React.useState(true);
@@ -53,7 +55,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
             if (LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/approved'
                 || LOCATION === '/ckfi/confirmation' || LOCATION === '/ckfi/confirmed' || LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/returned/credit-officer'
-                || LOCATION === '/ckfi/reassessed/credit-officer'  || LOCATION === '/ckfi/undecided') { return true }
+                || LOCATION === '/ckfi/reassessed/credit-officer' || LOCATION === '/ckfi/undecided') { return true }
             else { return false }
         }
         else if (GetData('ROLE').toString() === '80') {
@@ -61,7 +63,7 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
             if (LOCATION === '/ckfi/for-disbursement' || LOCATION === '/ckfi/released' || LOCATION === '/ckfi/reassessed/credit-officer'
                 || LOCATION === '/ckfi/on-waiver' || LOCATION === '/ckfi/cancelled' || LOCATION === '/ckfi/declined' || LOCATION === '/ckfi/approved'
                 || LOCATION === '/ckfi/confirmation' || LOCATION === '/ckfi/confirmed' || LOCATION === '/ckfi/for-docusign' || LOCATION === '/ckfi/returned/credit-officer'
-                || LOCATION === '/ckfi/reassessed/credit-officer'  || LOCATION === '/ckfi/undecided') { return true }
+                || LOCATION === '/ckfi/reassessed/credit-officer' || LOCATION === '/ckfi/undecided') { return true }
             else { return false }
         }
         else { return false }
@@ -399,6 +401,14 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                     : null;
     }
 
+    const { isTableExpanded } = SideNavState();
+    const tableHeight = isTableExpanded
+        ? "h-[125vh] xs:h-[38vh] sm:h-[38vh] md:h-[40vh] lg:h-[42vh] xl:h-[44vh] 2xl:h-[65vh] 3xl:h-[59vh]"
+        : "h-[110vh] xs:h-[38vh] sm:h-[38vh] md:h-[40vh] lg:h-[42vh] xl:h-[44vh] 2xl:h-[53vh] 3xl:h-[59vh]";
+
+    const tableHeight2 = isTableExpanded
+        ? "h-[125vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[60vh] 3xl:h-[65vh]"
+        : "h-[110vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]";
 
 
     return (
@@ -409,10 +419,8 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                 <div className="flex flex-row mt-4">
                     <div
                         id="scrollable-container"
-                        className={`w-full mb-8 overflow-y-auto px-4 mx-2 ${GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80' ? 
-                            'h-[45vh] xs:h-[38vh] sm:h-[38vh] md:h-[40vh] lg:h-[42vh] xl:h-[44vh] 2xl:h-[50vh] 3xl:h-[59vh]' : 
-                            'h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]'}`}
-                    >
+                        className={`w-full mb-8 overflow-y-auto px-4 mx-2 ${GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80' ?
+                            `${tableHeight}` : `${tableHeight2}`}`}>
                         <div className="w-full">
                             {data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL' ? (
                                 <>
@@ -509,10 +517,9 @@ function NDI({ event, data, isReadOnly, User, activeKey, sepcoborrowfname }) {
                             </div>
                         </div>
                     </div>
-                    <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80' 
-                        ? 'h-[45vh] xs:h-[38vh] sm:h-[38vh] md:h-[40vh] lg:h-[42vh] xl:h-[44vh] 2xl:h-[50vh] 3xl:h-[59vh]' 
-                        : 'h-[58vh] xs:h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[43vh] xl:h-[45vh] 2xl:h-[47vh] 3xl:h-[56vh]'}`}>
-                    <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
+                    <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${GetData('ROLE').toString() === '70' || GetData('ROLE').toString() === '80'
+                        ?  `${tableHeight}` : `${tableHeight2}`}`}>
+                        <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
                             <Anchor
                                 replace
                                 affix={false}

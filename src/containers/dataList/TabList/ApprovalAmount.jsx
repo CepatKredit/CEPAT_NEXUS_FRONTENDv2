@@ -14,6 +14,7 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { mmddyy } from '@utils/Converter';
 import dayjs, { Dayjs } from 'dayjs';
 import { GET_LIST } from '@api/base-api/BaseApi';
+import { SideNavState } from '@hooks/MiniDashController';
 
 
 function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, loading }) {
@@ -262,20 +263,20 @@ function ApprovalAmount({ getTab, classname, data, receive, User, creditisEdit, 
         else { return false }
     }
     //const shouldHideApproveButton = data.CremanBy && data.CremanDate;
+    const { isTableExpanded } = SideNavState();
+    const tableHeight = isTableExpanded
+    ? "h-[63vh]" 
+    : ((GetData('ROLE') === '70' || GetData('ROLE') === '80')
+        ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[49vh] 3xl:h-[60vh]'
+        : ((!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
+            ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
+            : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]'));
 
     return (
         <div className={classname}>
             <StatusRemarks isEdit={!isEdit} User={User} data={data} />
 
-            <div
-                className={`w-full overflow-y-auto ${((GetData('ROLE') === '70' || GetData('ROLE') === '80') ?
-                    'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[49vh] 3xl:h-[60vh]' :
-                    ((!isEdit && User !== 'Credit') || (User === 'Credit' && !creditisEdit)
-                        ? 'h-[30vh] sm:h-[35vh] md:h-[38vh] lg:h-[40vh] xl:h-[45vh] 2xl:h-[40vh] 3xl:h-[35vh]'
-                        : 'h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[50vh] xl:h-[55vh] 2xl:h-[51vh] 3xl:h-[55vh]')
-                )
-                    }`}
-            >
+            <div className={`w-full overflow-y-auto ${tableHeight}`}>
                 {(User == 'Credit' && !creditisEdit) || (User !== 'Credit' && !isEdit) ? (
                     <ViewApprovalAmount loading={loading} data={data} User={User} />
                 ) : (

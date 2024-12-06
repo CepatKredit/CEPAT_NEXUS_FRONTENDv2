@@ -32,6 +32,8 @@ import ReleaseDocuments from '../TabList/ReleaseDocuments';
 import StatusRemarks from '../TabList/StatusRemarks';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 import { jwtDecode } from 'jwt-decode';
+import { SideNavState } from '@hooks/MiniDashController';
+
 
 
 function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uploader, FileType, value, valueAmount, LoanStatus, ClientId }) {
@@ -184,8 +186,8 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
     }
 
 
-     // Utility function for dynamic anchor items
-     const getAnchorItems = () => {
+    // Utility function for dynamic anchor items
+    const getAnchorItems = () => {
         if (["0303-DHW", "0303-VL", "0303-WL"].includes(getAppDetails.loanProd)) {
             // For specific loan products
             return [
@@ -210,11 +212,21 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
             ];
         }
     };
-
-    
     React.useEffect(() => {
         fetchRelativesAndUpdateCount();
     }, [BorrowerId]);
+
+    const { isTableExpanded } = SideNavState();
+    const tableHeight = isTableExpanded
+        ? "h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[68vh] 3xl:h-[70vh]"
+        : "h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[51vh] 3xl:h-[57vh]";
+    const tableHeight2 = isTableExpanded
+        ? "h-[125vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[65vh] 3xl:h-[52vh]"
+        : "h-[110vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[50vh] 3xl:h-[52vh]";
+    const tableHeight3 = isTableExpanded
+        ? "h-[78vh]"
+        : "h-[65vh]";
+
     const TabsItems = [
         {
             label: <div className='flex flex-rows'><GrDuplicate style={{ fontSize: '20px', marginRight: 5 }} /><span>Deduplication</span></div>,
@@ -228,10 +240,7 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
                 <div className='w-full flex flex-col'>
                     <StatusRemarks isEdit={!isEdit} User={'Credit'} data={value} />
                     <div className='flex flex-row'>
-                        <div
-                            id="scrollable-container"
-                            className="h-[58vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[51vh] 3xl:h-[57vh] w-full overflow-y-auto mx-2 mb-9"
-                        >
+                        <div id="scrollable-container" className={`${tableHeight} w-full overflow-y-auto mx-2 mb-9`}>
                             <div id='Loan-Details'>
                                 <LoanDetails getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} User={'Lp'} />
                             </div>
@@ -285,7 +294,7 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
 
 
                         </div>
-                        <div className="bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none h-[30vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[51vh] 3xl:h-[57vh]">
+                        <div className={`bg-[#f0f0f0] p-2 rounded-lg rounded-tr-none rounded-br-none ${tableHeight}`}>
                             <ConfigProvider theme={{ token: { colorSplit: 'rgba(60,7,100,0.55)', colorPrimary: 'rgb(52,179,49)' } }}>
 
                                 <Anchor
@@ -309,13 +318,13 @@ function LoanTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Uplo
         {
             label: <div className='flex flex-rows'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
             key: 'internal-checking',
-            children: <InternalChecking classname={'h-[65vh] w-full mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} ClientId={ClientId} FileType={FileType} Uploader={Uploader} />,
+            children: <InternalChecking classname={`${tableHeight3} w-full mx-auto overflow-y-auto`} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} ClientId={ClientId} FileType={FileType} Uploader={Uploader} />,
 
         },
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
-            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} Display={'USER'} classname={'xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[48vh] 3xl:h-[52vh] pt-[.3rem] overflow-y-hidden hover:overflow-y-auto'} ModUser={jwtDecode(token).USRID} />,
+            children: <UploadDocs ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={LoanStatus} User={'Lp'} Display={'USER'} classname={`${tableHeight2} pt-[.3rem] overflow-y-hidden hover:overflow-y-auto`} ModUser={jwtDecode(token).USRID} />,
         },
         {
             label: <div className='flex flex-rows'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Release Documents</span></div>,

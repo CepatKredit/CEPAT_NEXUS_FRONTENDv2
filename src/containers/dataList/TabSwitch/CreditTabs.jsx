@@ -587,9 +587,9 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     };
 
 
-   /* React.useEffect(() => {
-        console.log('jjjjjjjjjjjjjjjjjjjjjj', getAppDetails.MarriedPBCB)
-    },[getAppDetails])*/
+    /* React.useEffect(() => {
+         console.log('jjjjjjjjjjjjjjjjjjjjjj', getAppDetails.MarriedPBCB)
+     },[getAppDetails])*/
 
     const getMarginTop = (loanProd, isEdit, marriedPBCB, showSaveButtonContext) => {
         if (loanProd === '0303-DH') {
@@ -621,7 +621,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     : '150rem';
         }
     };
-    
+
 
     //Trigger Fields
     TriggerFields('CREDIT');
@@ -637,12 +637,9 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     const tableHeight2 = isTableExpanded
         ? "h-[125vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[58vh] 3xl:h-[52vh]"
         : "h-[110vh] xs:h-[35vh] sm:h-[50vh] md:h-[50vh] lg:h-[55vh] xl:h-[50vh] 2xl:h-[45vh] 3xl:h-[52vh]";
-
     const tableHeight3 = isTableExpanded
-        ? "h-[125vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]"
-        : "h-[110vh] xs:h-[30vh] sm:h-[33vh] md:h-[35vh] lg:h-[38vh] xl:h-[42vh] 2xl:h-[48vh] 3xl:h-[57vh]";
-
-
+        ? "h-[78vh]"
+        : "h-[65vh]";
 
     const TabsItems = [
         {
@@ -664,11 +661,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     <div className='flex flex-row'>
                         <div
                             id="scrollable-container"
-                            className={`w-full overflow-y-auto mx-2 mb-9 ${isEdit
-                                ? `${tableHeight}`
-                                : `${tableHeight1}`
-                                }`}
-                        >
+                            className={`w-full overflow-y-auto mx-2 mb-9 ${isEdit ? `${tableHeight}` : `${tableHeight1}`}`} >
                             <div id='Loan-Details'>
                                 <LoanDetails loading={loading} getTab={'loan-details'} classname={'h-auto'} data={value} receive={(e) => { updateAppDetails(e); }} creditisEdit={isEdit} User={'Credit'} />
                             </div>
@@ -816,13 +809,13 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
         {
             label: <div className='flex flex-row'><AiOutlineAudit style={{ fontSize: '20px', marginRight: 5 }} /><span>Internal Checking</span></div>,
             key: 'internal-checking',
-            children: <InternalChecking classname={'h-[65vh] w-full mx-auto overflow-y-auto'} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} sepcoborrowfname={sepcoborrowfname} ClientId={ClientId} Uploader={Uploader} />,
+            children: <InternalChecking classname={`${tableHeight3} w-full mx-auto overflow-y-auto`} data={value} activeKey={activeKey} valueAmount={valueAmount} event={(e) => { event(e) }} sepcoborrowfname={sepcoborrowfname} ClientId={ClientId} Uploader={Uploader} />,
         },
         {
             label: <div className='flex flex-row'><MdOutlineUploadFile style={{ fontSize: '20px', marginRight: 5 }} /><span>Upload Documents</span></div>,
             key: 'upload-documents',
             children: <UploadDocs Display={'USER'} classname={`${tableHeight2} pt-[.3rem] overflow-y-hidden hover:overflow-y-auto`}
-            ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} ModUser={jwtDecode(token).USRID} />,
+                ClientId={ClientId} FileType={FileType} Uploader={Uploader} data={value} LoanStatus={GetStatus} User={'Credit'} ModUser={jwtDecode(token).USRID} />,
         },
         GetData('ROLE').toString() === '60' && {
             label: <div className="flex flex-row"><MdApproval style={{ fontSize: '20px', marginRight: 5 }} /><span>Approval Amount</span> </div>,
