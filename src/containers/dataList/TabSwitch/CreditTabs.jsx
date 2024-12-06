@@ -587,10 +587,41 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
     };
 
 
-    /*React.useEffect(() => {
+   /* React.useEffect(() => {
         console.log('jjjjjjjjjjjjjjjjjjjjjj', getAppDetails.MarriedPBCB)
     },[getAppDetails])*/
 
+    const getMarginTop = (loanProd, isEdit, marriedPBCB, showSaveButtonContext) => {
+        if (loanProd === '0303-DH') {
+            if (!isEdit) return undefined;
+            return marriedPBCB
+                ? showSaveButtonContext
+                    ? '55rem'
+                    : '128rem'
+                : showSaveButtonContext
+                    ? '80rem'
+                    : '155rem';
+        } else if (loanProd === '0303-VA') {
+            if (!isEdit) return undefined;
+            return marriedPBCB
+                ? showSaveButtonContext
+                    ? '54rem'
+                    : '128rem'
+                : showSaveButtonContext
+                    ? '74rem'
+                    : '148rem';
+        } else {
+            if (!isEdit) return undefined;
+            return marriedPBCB
+                ? showSaveButtonContext
+                    ? '54rem'
+                    : '128rem'
+                : showSaveButtonContext
+                    ? '73rem'
+                    : '150rem';
+        }
+    };
+    
 
     //Trigger Fields
     TriggerFields('CREDIT');
@@ -694,18 +725,13 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                                     <div
                                         id="OFW-Details"
                                         style={{
-                                            marginTop: isEdit
-                                                ? getAppDetails?.MarriedPBCB === 1
-                                                    ? showSaveButtonContext
-                                                        ? '74rem'
-                                                        : '150rem'
-                                                    : getAppDetails?.MarriedPBCB !== 1
-                                                        ? showSaveButtonContext
-                                                            ? '50rem'
-                                                            : '125rem'
-                                                        : undefined
-                                                : undefined, // Fallback if isEdit is false
-                                            transition: 'margin-top 0.5s ease', // Smooth transition for marginTop
+                                            marginTop: getMarginTop(
+                                                getAppDetails.loanProd,
+                                                isEdit,
+                                                getAppDetails?.MarriedPBCB,
+                                                showSaveButtonContext
+                                            ),
+                                            transition: 'margin-top 0.5s ease',
                                         }}
                                     >
                                         <OfwDetails
