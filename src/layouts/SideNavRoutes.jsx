@@ -52,11 +52,6 @@ function SideNavRoutes(isChatbotVisible) {
         key: '/ckfi/dashboard',
         icon: <AiFillDashboard style={{ fontSize: '18px' }} />,
         label: 'Dashboard',
-    },
-    {
-        key: "chatbot", // No need to add a full path here
-        label: isChatbotVisible ? "Peace Out, Patsy!!!" : "Ask Patsy!!!" ,
-        icon: <RobotOutlined />,
     })
 
     if (GetData('ROLE')?.toString() === '20' || GetData('ROLE')?.toString() === '30' || GetData('ROLE')?.toString() === '40') {
