@@ -192,7 +192,7 @@ function SideNav() {
             </div>
             <div className="flex flex-col justify-between">
               <div className="text-center">
-                <span className="text-xs text-gray-600">v2.0.8</span>
+                <span className="text-xs text-gray-600">v2.0.9</span>
               </div>
             </div>
           </div>
