@@ -326,7 +326,7 @@ function AnimatedCard({ path }) {
     function LOAD_COUNT() {
         let count = '0'
         GET_DATA_COUNTER?.filter((x) => {
-       /*     if(x.status==='FOR CREDIT ASSESSMENT'){
+          /*  if(x.status==='FOR CREDIT ASSESSMENT'){
                 console.log('Checking item:',x.status.includes(CHECK_TILE_NAME(path))); // Log each item being checked
             }*/
             return x.status.includes(CHECK_TILE_NAME(path));

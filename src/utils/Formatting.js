@@ -85,7 +85,7 @@ export const inputFormat = (format, input) => {
 }
 
 
-export const CharacterLimit = (Group, Format) => { //Decimal places will be disregard
+export const CharacterLimit = (Group, Format, Value) => { //Decimal places will be disregard
     switch (Group) {
         case 'ContactNo':
             if (Format === '+639') return 13;
@@ -93,6 +93,7 @@ export const CharacterLimit = (Group, Format) => { //Decimal places will be disr
         case 'Rent_Amort':
         case 'Income':
         case 'Amount-30,000':
+            if(/\./.test(Value)) return 13; 
             return 10; // till 99,999,999
         case 'Number':
             return 2;

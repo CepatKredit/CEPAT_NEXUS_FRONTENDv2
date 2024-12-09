@@ -2,7 +2,7 @@ import { Input, Select } from "antd";
 
 import { ExclamationCircleFilled, CheckCircleFilled } from "@ant-design/icons";
 
-import React from "react";
+import React, { useRef } from "react";
 import { toUpperText } from "@utils/Converter";
 
 function LabeledTextArea_Street({
@@ -27,12 +27,22 @@ function LabeledTextArea_Street({
   const [getItem, setItem] = React.useState(value || '')
   // let getItem = value ? value : "";
   const [hasMounted, setHasMounted] = React.useState(false);
+  const inputRef = React.useRef(null);
+  const cursorPosition = React.useRef(null); // Track cursor position
 
   const onChangeSelect = (e) => {
-    const upper = toUpperText(e.target.value); 
+    const { value, selectionStart, selectionEnd } = e.target;
+    cursorPosition.current = {
+      start: selectionStart,
+      end: selectionEnd,
+    };
+
+    const upper = toUpperText(value); 
     setItem(upper);
     receive(upper);
     validateSelection(upper); 
+
+
   };
 
   const validateSelection = (selectedValue) => {
@@ -67,7 +77,13 @@ function LabeledTextArea_Street({
 
   React.useEffect(() => {
     setItem(value || ""); 
-  }, [value]); 
+    if (inputRef && inputRef.current && cursorPosition.current) {
+      const textArea = inputRef.current.resizableTextArea?.textArea; // Access the native textarea element
+      if (textArea) {
+        textArea.setSelectionRange(cursorPosition.current.start, cursorPosition.current.end);
+      }
+    }
+  }, [value]);
 
 
   return (
@@ -75,6 +91,7 @@ function LabeledTextArea_Street({
       <label className={className_label}>{label}</label>
       <div className={className_dsub} style={{ position: "relative" }}>
           <Input.TextArea
+          ref={inputRef}
           autoComplete="new-password"
             showCount
             placeholder={placeHolder}

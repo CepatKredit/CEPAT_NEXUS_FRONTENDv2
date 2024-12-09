@@ -286,7 +286,6 @@ export function InputComponentHook(
   EmptyMsg,
   readOnly
 ) {
-  const { getAppDetails } = useContext(LoanApplicationContext)
   const [inputValue, setInputValue] = useState(initialValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
@@ -322,14 +321,13 @@ export function InputComponentHook(
   };
 
   const handleChange = (e) => {
-    if (!isFocused) return;
     const { value, selectionStart, selectionEnd } = e.target;
 
     // Save initial cursor position
     let cursorOffset = selectionStart;
 
     let processedValue = value;
-    const maxchar = CharacterLimit(group, format);
+    const maxchar = CharacterLimit(group, format, value);
     // Limit character length if needed
     if (maxchar && value.length > maxchar) {
       processedValue = value.slice(0, maxchar);
@@ -376,39 +374,21 @@ export function InputComponentHook(
     }, 0);
   };
 
-  const handleBlur = (check = true) => {
+  const handleBlur = (chk) => {
     setIconVisible(true);
-    const validation = hookInputValid(KeyName, check ? inputValue : initialValue, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(validation.valid, format === 'Currency' ? FormatCurrency(validation.value) : validation.value, validation.errmsg, 100);
+    const validation = hookInputValid(KeyName,chk? inputValue : initialValue, comp_name, format, group, InvalidMsg, EmptyMsg);
+    statusValidation(validation.valid, format === 'Currency'? FormatCurrency(validation.value) : validation.value, validation.errmsg, 100);
   };
 
   useEffect(() => {
-    if (!isFocused) {
-      setInputValue(initialValue);
+    if ( initialValue !== latestValueRef.current && !isFocused) {
+      setInputValue(initialValue || '');
+      handleBlur(false)
+      latestValueRef.current = initialValue;
     }
-  }, [initialValue]);
+  }, [initialValue, rendered]);
 
   useEffect(() => {
-    if (rendered && !isFocused) {
-      setIconVisible(true)
-      if (inputValue === '') {
-        setStatus('error');
-        setErrorMessage(EmptyMsg);
-        debouncedReceive('', 250);
-        return;
-      }
-      const validation = hookInputValid(
-        KeyName,
-        inputValue,
-        comp_name,
-        format,
-        group,
-        InvalidMsg,
-        EmptyMsg
-      );
-
-      statusValidation(validation.valid, validation.value, validation.errmsg, 500);
-    }
     if (inputRef.current && cursorPosition.current) {
       inputRef.current.setSelectionRange(cursorPosition.current.start, cursorPosition.current.end);
     }

@@ -192,6 +192,7 @@ function TriggerFields(ROLE) {
                 ofwspousebdate: '',
                 SpSrcIncome: '',
                 SpIncome: '',
+                RelationshipBen: '',
             };
 
             Object.entries(updates).forEach(([name, value]) => {
