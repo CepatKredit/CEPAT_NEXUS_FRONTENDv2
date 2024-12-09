@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { FcGoogle } from "react-icons/fc";
 import { Descriptions, Checkbox } from 'antd';
 import { useQuery } from '@tanstack/react-query';
@@ -8,8 +8,11 @@ import { Gender, MaritalStatus, Residences, EducationalAttainment, Overseas, Spo
 import { useDataContainer } from '@context/PreLoad';
 import { GetData } from '@utils/UserData';
 import { removeLinkFormat } from '@utils/Formatting';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function ViewOfwDetails({ data, User, RelativesCount, receive }) {
+    const { getAppDetails, updateAppDetails, setBenDependents, showBenDependents } = useContext(LoanApplicationContext)
+
     useEffect(() => {
         if (User != 'LC' && (data.ofwdependents !== RelativesCount)) {
             receive({ name: 'ofwdependents', value: RelativesCount });
@@ -48,8 +51,12 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         enabled: true,
         retryDelay: 1000,
     });
-    const { GET_CURRENCY_LIST } = useDataContainer();
-    const { GET_COUNTRY_LIST } = useDataContainer();
+    const { GET_COUNTRY_LIST, GET_JOB_POSITION, GET_CURRENCY_LIST, GET_JOB_CATEGORY, GET_SEABASED_JOBCATEGORY } = useDataContainer();
+    
+    const JOB_CATEGORY = GET_JOB_CATEGORY?.map(x => ({ label: x.name, value: x.code, })) || [];
+    const JOB_SEABASED_CATEGORY = GET_SEABASED_JOBCATEGORY?.map(x => ({ label: x.name, value: x.code, })) || [];
+    const JOB_POSITION = GET_JOB_POSITION?.map(x => ({ label: x.name, value: x.code, })) || [];
+
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({
         value: x.code,
         label: x.description,
@@ -156,8 +163,8 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
                     (country) => country.code === data.ofwcountry || country.label === data.ofwcountry)?.description || ''}</span>)},
         User !== 'LC' && {
             key: '44', label: (<span className={`font-semibold ${data.JobCategory ? 'text-black' : 'text-red-600'}`}>{(User === 'Credit' || User === 'Lp') ? 'Job Category' : 'Job Title / Position'}</span>),
-            children: (User === 'Credit' || User === 'Lp') ? JobCategory()?.find(jobcategory => jobcategory.value === data.JobCategory)?.label || '' : data.ofwjobtitle || ''},
-        (User === 'Credit' || User === 'Lp') && { key: '45', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>Position</span>), children: JobTitle(data.JobCategory)?.find(ofwjobtitle => ofwjobtitle.value === data.ofwjobtitle)?.label || '' },
+            children: (User === 'Credit' || User === 'Lp') ? (getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-VA' ? JOB_SEABASED_CATEGORY : JOB_CATEGORY)?.find(jobcategory => jobcategory.value === data.JobCategory)?.label || '' : data.ofwjobtitle || ''},
+        (User === 'Credit' || User === 'Lp') && { key: '45', label: (<span className={`font-semibold ${data.ofwjobtitle ? 'text-black' : 'text-red-600'}`}>Position</span>), children: JOB_POSITION?.find(ofwjobtitle => ofwjobtitle.value === data.ofwjobtitle)?.label || '' },
         (User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL') && { key: '46', label: <span className={`font-semibold ${data.PEmployer ? 'text-black' : 'text-red-600'}`}>Principal Employer</span>, children: data.PEmployer || '' },
         (User !== 'LC' && ((User !== 'Credit' && User !== 'Lp') || ((User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-WA' || data.loanProd === '0303-WL')))) && {
             key: '47', label: <span className={`font-semibold ${data.ofwcompany ? 'text-black' : 'text-red-600'}`}> {(User === 'Credit' || User === 'Lp') ? 'Agency' : 'Company/Employer/Agency Name'}</span>, children: data.ofwcompany || '' },

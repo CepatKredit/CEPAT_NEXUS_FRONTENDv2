@@ -403,6 +403,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
 
                     EmptyMsg={'Mobile No. Required'}
                     InvalidMsg={'Invalid Mobile No.'}
+                    required={false}
                 />
 
                 <SelectOpt
@@ -502,7 +503,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             <InputOpt
                                 className_dmain={'mt-5 w-[18.75rem] h-[3.875rem]'}
                                 className_label={'font-bold'}
-                                label={<>Spouse Income <span className="text-red-500">*</span></>}
+                                label={'Spouse Income' }
                                 placeHolder='Spouse Income'
                                 readOnly={isEdit}
                                 value={data.BenSpIncome}
@@ -514,7 +515,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 group={'Income'}
                                 compname={'Spouse Income'}
                                 disabled={User === 'Credit' && !OFW_IS_PRIM && data.MarriedPBCB}
-                            //required={User === 'Credit' && !OFW_IS_PRIM && data.MarriedPBCB? false: true}
+                                required={false}
 
                             />
                         )}
@@ -1173,6 +1174,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                         receive={(e) => updateAppDetails({ name: 'AcbSpIncome', value: e })}
                                         category={'direct'}
                                         rendered={rendered}
+                                        required={false}
                                     />)}
                             </>
                         ) : null}

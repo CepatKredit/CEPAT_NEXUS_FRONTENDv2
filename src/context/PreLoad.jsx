@@ -113,7 +113,7 @@ function PreLoad({ children }) {
       const userid = jwtDecode(token)?.USRID || null; //Just in case if there is no USERID
       if (userid === null || userid === '' || userid === undefined) return [];
       const result = await GET_LIST(`/GET/G150TCR/${userid}`);
-    //  console.log('Check',userid,result.list)
+     // console.log('Check',userid,result.list)
       setDataCounter(result.list);
       return result.list;
     },
