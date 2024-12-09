@@ -1,31 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Flex, notification, Checkbox, Input, Form, ConfigProvider } from 'antd';
-import LabeledInput from '@components/marketing/LabeledInput';
-import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
-import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
-import LabeledSelect_Suffix from '@components/marketing/LabeledSelect_Suffix';
-import DatePicker_BDate from '@components/marketing/DatePicker_BDate';
-import LabeledSelect from '@components/marketing/LabeledSelect';
-import SelectDatePicker from '@components/marketing/SelectDatePicker';
 import LabeledInput_OfwContact from '@components/marketing/LabeledInput_OfwContact';
-import LabeledInput_Email from '@components/marketing/LabeledInput_Email';
 import {
     MaritalStatus, Residences, Gender, EducationalAttainment, JobCategory, JobTitle,
     EmploymentStatus, SpouseSourceIncome, Overseas, Religion, AllotChannel
 } from '@utils/FixedData';
-import LabeledSelect_Relationship from '@components/marketing/LabeledSelect_Relationship';
 import LabeledInput_Numeric from '@components/marketing/LabeledInput_Numeric'
 import SectionHeader from '@components/validation/SectionHeader';
 import AddressGroup_Component from '@components/marketing/AddressGroup_Component';
 import LabeledInput_LengthStay from '@components/marketing/LabeledInput_LengthStay';
-import LabeledInput_Salary from '@components/marketing/LabeledInput_Salary';
-import LabeledSelect_ValidId from '@components/marketing/LabeledSelect_ValidId';
-import LabeledSelect_Country from '@components/marketing/LabeledSelect_Country';
 import LabeledSelectAgency from '@components/marketing/LabeledSelectAgency';
 import dayjs from 'dayjs';
-import LabeledInput_NotRequired from '@components/marketing/LabeledInput_NotRequired';
 import LabeledSelect_CollectionArea from '@components/marketing/LabeledSelect_CollectionArea';
-import DatePicker_Deployment from '@components/marketing/DatePicker_Deployment';
 import LabeledInput_ForeignCurrency from '@components/marketing/LabeledInput_ForeignCurrency';
 import RelativesTable from '@containers/dataList/TabList/RelativesTable';
 import { getDependentsCount } from '@hooks/DependentsController';
@@ -91,7 +77,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
         }
     }, [getAppDetails.ofwresidences]);
 
-    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX, GET_SEABASED_JOBCATEGORY, GET_JOB_CATEGORY, GET_JOB_POSITION } = useDataContainer();
+    const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX, GET_SEABASED_JOBCATEGORY, GET_JOB_CATEGORY, GET_JOB_POSITION, GET_VALID_ID_LIST } = useDataContainer();
 
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
     const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
@@ -101,6 +87,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
     const JOB_SEABASED_CATEGORY = GET_SEABASED_JOBCATEGORY?.map(x => ({ label: x.name, value: x.code, })) || [];
     const JOB_POSITION = GET_JOB_POSITION?.map(x => ({ label: x.name, value: x.code, })) || [];
+    const VALID_ID = GET_VALID_ID_LIST?.map(x => ({ label: x.name, value: x.id, })) || [];
 
     //Shortening For Disabling Fields
     let OFW_IS_PRIM = getAppDetails.loanProd === '0303-DHW' || getAppDetails.loanProd === '0303-VL' || getAppDetails.loanProd === '0303-WL'
@@ -279,7 +266,6 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     KeyName={'ofwgender'}
                     group={'Default'}
                     compname={'Gender'}
-
                 />
 
                 <LabeledInput_OfwContact
@@ -425,50 +411,79 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         KeyName={'RelationshipAdd'}
                         group={'Default'}
                         compname={'Relationship to Additional'}
+                        showSearch
                     />
 
                 )}
                 {User === 'Credit' && (
-
-                    <LabeledSelect
+                    <SelectOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label='font-bold'
                         label={<>Religion <span className="text-red-500">*</span></>}
-                        placeHolder='Religion'
-                        data={Religion()}
                         value={getAppDetails.Religion}
-                        receive={(e) => updateAppDetails({ name: 'Religion', value: e })}
-                        disabled={isEdit}
-                        showSearch
                         rendered={rendered}
-                    />)}
+                        placeHolder='Religion'
+                        category={'marketing'}
+                        disabled={isEdit}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'Religion', value: e })}
+                        options={Religion()}
+
+                        EmptyMsg={'Religion Required'}
+                        InvalidMsg={'Invalid Religion'}
+                        KeyName={'Religion'}
+                        group={'Default'}
+                        compname={'Religion'}
+                        showSearch
+                    />
+
+                )}
                 {User === 'Credit' && (
-                    <LabeledSelect
+                    <SelectOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
-                        data={Overseas()}
                         label={<>PEP <span className="text-red-500">*</span></>}
-                        placeHolder='PEP'
-                        readOnly={isEdit}
                         value={getAppDetails.PEP}
-                        receive={(e) => updateAppDetails({ name: 'PEP', value: e })}
-                        disabled={isEdit}
                         rendered={rendered}
-                    />)}
-                <LabeledSelect
+                        placeHolder='PEP'
+                        category={'marketing'}
+                        disabled={isEdit}
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'PEP', value: e })}
+                        options={Overseas()}
+
+                        EmptyMsg={'PEP Required'}
+                        InvalidMsg={'Invalid PEP'}
+                        KeyName={'PEP'}
+                        group={'Default'}
+                        compname={'PEP'}
+                        showSearch
+                    />
+
+                )}
+                <SelectOpt
                     className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                         } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Marital Status <span className="text-red-500">*</span></>}
-                    placeHolder='Marital Status'
-                    disabled={isEdit}
                     value={getAppDetails.ofwmstatus}
-                    data={MaritalStatus()}
-                    receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
                     rendered={rendered}
+                    placeHolder='Marital Status'
+                    category={'marketing'}
+                    disabled={isEdit}
+                    isEdit={isEdit}
+                    receive={(e) => updateAppDetails({ name: 'ofwmstatus', value: e })}
+                    options={MaritalStatus()}
+
+                    EmptyMsg={'Marital Status Required'}
+                    InvalidMsg={'Invalid Marital Status'}
+                    KeyName={'ofwmstatus'}
+                    group={'Default'}
+                    compname={'Marital Status'}
                 />
+
                 {OFW_IS_PRIM ? (
                     User === 'Credit' || User === 'MARKETING') && (getAppDetails.ofwmstatus === 2 || getAppDetails.ofwmstatus === 5 || getAppDetails.ofwmstatus === 6) && (
                         <div className="mt-12 w-[18.75rem] h-[3.875rem] flex items-center">
@@ -527,17 +542,25 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 compname={'Birthdate'}
                             />
                             {User === 'Credit' && (
-                                <LabeledSelect
+                                <SelectOpt
                                     className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10 2xl:mt-5'
                                         } w-[18.75rem] h-[3.875rem]`}
                                     className_label={'font-bold'}
                                     label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
-                                    placeHolder='Spouse Source of Income'
-                                    disabled={isEdit}
                                     value={getAppDetails.SpSrcIncome}
-                                    data={SpouseSourceIncome()}
-                                    receive={(e) => updateAppDetails({ name: 'SpSrcIncome', value: e })}
                                     rendered={rendered}
+                                    placeHolder='Spouse Source of Income'
+                                    category={'marketing'}
+                                    disabled={isEdit}
+                                    isEdit={isEdit}
+                                    receive={(e) => updateAppDetails({ name: 'SpSrcIncome', value: e })}
+                                    options={SpouseSourceIncome()}
+
+                                    EmptyMsg={'Spouse Source of Income Required'}
+                                    InvalidMsg={'Invalid Spouse Source of Income'}
+                                    KeyName={'SpSrcIncome'}
+                                    group={'Default'}
+                                    compname={'Spouse Source of Income'}
                                 />)}
                             {User === 'Credit' && (
                                 <InputOpt
@@ -641,19 +664,27 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     vertical_algin={true}
                     rendered={rendered}
                 />
-                <LabeledSelect
+                <SelectOpt
                     className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                         } w-[18.75rem] h-[3.875rem]`}
                     className_label={'font-bold'}
                     label={<>Type of Residence <span className="text-red-500">*</span></>}
                     placeHolder='Type of Residence'
-                    disabled={isEdit}
-                    receive={(e) => updateAppDetails({ name: 'ofwresidences', value: e })}
-                    data={Residences()}
-                    category={'marketing'}
                     value={getAppDetails.ofwresidences}
                     rendered={rendered}
+                    category={'marketing'}
+                    showSearch
+                    isEdit={isEdit}
+                    receive={(e) => updateAppDetails({ name: 'ofwresidences', value: e })}
+                    options={Residences()}
+
+                    EmptyMsg={'Type of Residence Required'}
+                    InvalidMsg={'Invalid Type of Residence'}
+                    KeyName={'ofwresidences'}
+                    group={'Default'}
+                    compname={'Type of Residence'}
                 />
+
                 {getAppDetails.ofwresidences === 3 || getAppDetails.ofwresidences === 2 ? (
                     <InputOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
@@ -673,6 +704,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         format={'Currency'}
                         group={'Rent_Amort'}
                         compname={getAppDetails.ofwresidences === 3 ? 'Rent Amount' : 'Monthly Amortization'}
+                        EmptyMsg={getAppDetails.ofwresidences === 3 ? 'Rent Amount Required' : 'Monthly Amortization Required'}
+                        InvalidMsg={getAppDetails.ofwresidences === 3 ? 'Invalid Rent Amount' : 'Invalid Monthly Amortization'}
                     />
                 ) : null}
                 {User === 'LC'
@@ -693,6 +726,9 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         KeyName={'landmark'}
                         group={'Uppercase'}
                         compname={'Landmark'}
+                        EmptyMsg='Landmark Required'
+                        InvalidMsg='Invalid Landmark'
+
                     />)}
                 {User === 'Credit' && (
                     <InputOpt
@@ -700,7 +736,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Proof of Billing Remarks <span className="text-red-500">*</span></>}
-                        placeHolder='Remarks'
+                        placeHolder='Proof of Billing Remarks'
                         isEdit={isEdit}
                         category={'marketing'}
                         readOnly={isEdit}
@@ -711,6 +747,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         KeyName={'OfwPoBRemarks'}
                         group={'Uppercase'}
                         compname={'Proof of Billing Remarks'}
+                        EmptyMsg='Proof of Billing Remarks Required'
+                        InvalidMsg='Invalid Proof of Billing Remarks'
                     />)}
                 {User === 'LC'
                     ? (<></>)
@@ -796,20 +834,30 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             <Flex className='w-full' justify='center' gap='small' wrap>
                 {User === 'LC'
                     ? (<></>)
-                    : (<LabeledSelect_ValidId
-                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
-                            } w-[18.75rem] h-[3.875rem]`}
-                        className_label={'font-bold'}
-                        label={'Valid ID Type'}
-                        placeHolder='Valid ID Type'
-                        disabled={isEdit}
-                        receive={(e) => updateAppDetails({ name: 'ofwvalidid', value: e })}
-                        category={'marketing'}
-                        value={getAppDetails.ofwvalidid}
-                        rendered={rendered}
-                        required={false}
-                        showSearch
-                    />)}
+                    : (
+                        <SelectOpt
+                            className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                                } w-[18.75rem] h-[3.875rem]`}
+                            className_label={'font-bold'}
+                            label={'Valid ID Type'}
+                            placeHolder='Valid ID Type'
+                            value={getAppDetails.ofwvalidid}
+                            rendered={rendered}
+                            category={'marketing'}
+                            showSearch
+                            isEdit={isEdit}
+                            receive={(e) => updateAppDetails({ name: 'ofwvalidid', value: e })}
+                            options={VALID_ID}
+                            required={false}
+
+
+                            EmptyMsg={'Valid ID Type Required'}
+                            InvalidMsg={'Invalid Valid ID Type'}
+                            KeyName={'ofwvalidid'}
+                            group={'Default'}
+                            compname={'Valid ID Type'}
+                        />
+                    )}
                 {User === 'LC'
                     ? (<></>)
                     : (<InputOpt
@@ -1105,17 +1153,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         category={'marketing'}
                         digits={2}
                     />
-                    {/*
-                    <div className="relative mt-[2.7rem] w-[300px]">
-                        <label className="absolute -top-5 bg-white px-1 text-sm font-bold text-gray-600">Contract Duration</label>
-                        <LabeledSelect_DatePickerMonth
-                            placeHolder={'Select Month'}
-                            receive={(e) => receive({ name: 'ContractDuration', value: e })}
-                            value={data.ContractDuration}
-                            rendered={rendered}
-                        />
-                    </div>
-                    */}
+
                 </>)}
             </Flex>
             {User === 'Credit' && (
@@ -1154,21 +1192,26 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         compname={'OFW Departure Date'}
                     />)}
                 {User === 'Credit' && (
-                    <LabeledSelect
+                    <SelectOpt
                         className_dmain={'mt-8 w-[18.75rem] h-[3.875rem] pt-[.2rem]'}
                         className_label={'font-bold'}
                         label={<>Years as OFW or Seafarer <span className="text-red-500">*</span></>}
                         placeHolder='Years as OFW or Seafarer'
-                        disabled={isEdit}
-                        category={'marketing'}
                         value={getAppDetails.YrsOfwSeafarer}
-                        receive={(e) => updateAppDetails({ name: 'YrsOfwSeafarer', value: e })}
-                        showSearch={true}
-                        optionFilterProp="children"
-                        filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         rendered={rendered}
-                        data={generateYearOptions(50)}
-                    />)}
+                        category={'marketing'}
+                        showSearch
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'YrsOfwSeafarer', value: e })}
+                        options={generateYearOptions(50)}
+
+                        EmptyMsg={'Years as OFW or Seafarer Required'}
+                        InvalidMsg={'Invalid Years as OFW or Seafarer'}
+                        KeyName={'YrsOfwSeafarer'}
+                        group={'Default'}
+                        compname={'Years as OFW or Seafarer'}
+                    />
+                )}
                 {User === 'Credit' && (getAppDetails.loanProd === '0303-VA' || getAppDetails.loanProd === '0303-VL') && (
                     <>
                         <InputOpt
@@ -1333,19 +1376,27 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         rendered={rendered}
                     />)*/}
                 {User === 'Credit' && (
-                    <LabeledSelect
+                    <SelectOpt
                         className_dmain={'mt-2 w-[18.75rem] h-[3.875rem] pt-1'}
                         className_label={'font-bold'}
                         label={<>Remittance / Allotment Channel (Gcash, Bank) <span className="text-red-500">*</span></>}
                         placeHolder='Allotment Channel'
-                        data={AllotChannel()}
                         value={getAppDetails.AllotChannel}
-                        receive={(e) => updateAppDetails({ name: 'AllotChannel', value: e })}
-                        category={'marketing'}
-                        disabled={isEdit}
-                        isEdit={isEdit}
                         rendered={rendered}
-                    />)}
+                        category={'marketing'}
+                        showSearch
+                        isEdit={isEdit}
+                        receive={(e) => updateAppDetails({ name: 'AllotChannel', value: e })}
+                        options={AllotChannel()}
+
+                        EmptyMsg={'Allotment Channel Required'}
+                        InvalidMsg={'Invalid Allotment Channel'}
+                        KeyName={'AllotChannel'}
+                        group={'Default'}
+                        compname={'Allotment Channel'}
+                    />
+
+                )}
             </Flex>
             {User === 'LC'
                 ? (<></>)
@@ -1353,19 +1404,27 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
             <Flex className='w-full' justify='center' gap='small' wrap>
                 {(User === 'MARKETING' || (User === 'Credit' && (getAppDetails.loanProd === '0303-WA' || getAppDetails.loanProd === '0303-WL'))) && (
                     <>
-                        <LabeledSelect
+                        <SelectOpt
                             className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                                 } w-[18.75rem] h-[3.875rem]`}
                             className_label={'font-bold'}
                             label={<>Highest Educational Attainment <span className="text-red-500">*</span></>}
                             placeHolder='Highest Educational Attainment'
-                            disabled={isEdit}
-                            data={EducationalAttainment()}
                             value={getAppDetails.ofwHighestEdu}
-                            receive={(e) => updateAppDetails({ name: 'ofwHighestEdu', value: e })}
                             rendered={rendered}
-                            showSearch={!isEdit}
+                            category={'marketing'}
+                            showSearch
+                            isEdit={isEdit}
+                            receive={(e) => updateAppDetails({ name: 'ofwHighestEdu', value: e })}
+                            options={EducationalAttainment()}
+
+                            EmptyMsg={'Highest Educational Attainment Required'}
+                            InvalidMsg={'Invalid Highest Educational Attainment'}
+                            KeyName={'ofwHighestEdu'}
+                            group={'Default'}
+                            compname={'Highest Educational Attainment'}
                         />
+
                         <InputOpt
                             className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                                 } w-[18.75rem] h-[3.875rem]`}

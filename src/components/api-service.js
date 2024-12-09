@@ -90,7 +90,7 @@ export function ComponentPreloads() {
 
   const [getValidId, setValidId] = React.useState([]);
   useQuery({
-    queryKey: ["getValidIdSelect"],
+    queryKey: ["getValidIdList"],
     queryFn: async () => {
       const result = await GET_LIST("/GET/G27IT");
       setValidId(result.list);
@@ -172,36 +172,8 @@ export function ComponentPreloads() {
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
     retryDelay: 1000,
   });
-  //////////////////////////////////
-  //const { getAppDetails } = useContext(LoanApplicationContext)
-  // const data = getAppDetails
-  /*
-    const getProvCode = (type, data) => {
-        if (type === "present") return data.ofwPresProv;
-        if (type === "permanent")
-            return data.ofwSameAdd ? data.ofwPresProv : data.ofwPermProv;
-        if (type === "beneficiary")
-            return data.bensameadd ? data.ofwPresProv : data.benpresprov;
-        if (type === "provincial")
-            return data.ofwProvSameAdd ? data.ofwPermProv : data.ofwprovProv;
-        if (type === "coborrow")
-            return data.coborrowSameAdd ? data.ofwPresProv : data.coborrowProv;
-        return null;
-    };
 
-    const [getMunicipalityList, setMunicipalityList] = React.useState([]);
-    useQuery({
-        queryKey: ["getMunF", getProvCode(type, data)],
-        queryFn: async () => {
-            const provCode = getProvCode(type, data);
-            const result = await GET_LIST(`/getMuniArea/${provCode}`);
-            setMunicipalityList(result.list)
-            return result.list;
-        },
-        refetchInterval: (data) => (data?.length === 0 ? 500 : false),
-        retryDelay: 1000,
-    });
-*/
+
   return {
     GET_COUNTRY_LIST: getCountryList,
     GET_LOAN_PRODUCT_LIST: getLoanProdList,

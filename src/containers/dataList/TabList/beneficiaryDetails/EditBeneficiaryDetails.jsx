@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, ConfigProvider, Row, Col, Flex, notification, message, Form, Input, Checkbox } from 'antd';
-import LabeledInput_Fullname from '@components/marketing/LabeledInput_UpperCase';
-import LabeledInput_UpperCase from '@components/marketing/LabeledInput_UpperCase';
 import LabeledInput from '@components/marketing/LabeledInput';
 import LabeledInput_NotRequired from '@components/marketing/LabeledInput_NotRequired';
 import LabeledSelect from '@components/marketing/LabeledSelect';
-import DatePicker_BDate from '@components/marketing/DatePicker_BDate';
-import LabeledInput_Email from '@components/marketing/LabeledInput_Email';
 import LabeledInput_Contact from '@components/marketing/LabeledInput_Contact';
-import LabeledSelect_Suffix from '@components/marketing/LabeledSelect_Suffix';
 import LabeledInput_Numeric from '@components/marketing/LabeledInput_Numeric';
 import AddressGroup_Component from '@components/marketing/AddressGroup_Component';
 import LabeledInput_LengthStay from '@components/marketing/LabeledInput_LengthStay';
@@ -18,7 +13,6 @@ import SectionHeader from '@components/validation/SectionHeader';
 import { Gender, MaritalStatus, Residences, Suffix, mmddyy, SpouseSourceIncome, Overseas, Religion } from '@utils/FixedData';
 import axios from 'axios';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
-import { jwtDecode } from 'jwt-decode';
 import { toDecrypt } from '@utils/Converter';
 import LabeledCurrencyInput from '@components/marketing/LabeledCurrencyInput';
 import DatePickerOpt from '@components/optimized/DatePickerOpt';
@@ -86,7 +80,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
         };
     })();
 
-    /*
+    /* Don't Remove This, Just in case when the Addition Co-Borrower have a separate tab/content
         const handleDoubleClicks = ((borrower) => {
             let clickCount = 0;
             return (e) => {
@@ -698,15 +692,28 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             rendered={rendered}
                         />
                         {data.BenPlanAbroad === 1 && (
-                            <LabeledInput_NotRequired
+                            <InputOpt
                                 className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                 className_label={'font-bold'}
                                 label={'Remarks'}
                                 placeHolder='Remarks'
+                                isEdit={isEdit}
+                                category={'marketing'}
                                 readOnly={isEdit}
-                                value={data.BenRemarks}
+                                rendered={rendered}
+                                value={getAppDetails.BenRemarks}
                                 receive={(e) => updateAppDetails({ name: 'BenRemarks', value: e })}
-                            />)}</>)}
+
+                                KeyName={'BenRemarks'}
+                                group={'Uppercase'}
+                                compname={'Remarks'}
+                                required={false}
+
+                                EmptyMsg='Remarks Required'
+                                InvalidMsg='Invalid Remarks'
+
+                            />
+                        )}</>)}
                 {User === 'Credit' && (
                     <LabeledSelect
                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
@@ -1020,32 +1027,27 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             triggerValidation={triggerValidation}
                             rendered={rendered}
                         />
-                        <LabeledInput_Email
+                        <InputOpt
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
                             label={<>Email Address <span className="text-red-500">*</span></>}
                             placeHolder='Email Address'
-                            readOnly={isEdit}
-                            value={data.coborrowemail}
-                            receive={(e) => { updateAppDetails({ name: 'coborrowemail', value: e }) }}
+                            value={getAppDetails.coborrowemail}
+                            receive={(e) => updateAppDetails({ name: 'coborrowemail', value: e })}
                             category={'marketing'}
-                            triggerValidation={triggerValidation}
+                            isEdit={isEdit}
                             rendered={rendered}
+
+                            KeyName={'coborrowemail'}
+                            format={'Default'}
+                            group={'Email'}
+                            compname={'Email'}
+
+                            EmptyMsg={'Email Required'}
+                            InvalidMsg={'Invalid Email'}
+
                         />
-                        {/* <LabeledInput_Contact
-                            className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                            className_label={'font-bold'}
-                            className_dsub={''}
-                            label={<>Mobile Number <span className="text-red-500">*</span></>}
-                            placeHolder='Mobile Number'
-                            readOnly={isEdit}
-                            value={data.coborrowmobile}
-                            receive={(e) => { updateAppDetails({ name: 'coborrowmobile', value: e }) }}
-                            category={'marketing'}
-                            triggerValidation={triggerValidation}
-                            rendered={rendered}
-                        />*/}
 
                         <InputOpt
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
@@ -1107,19 +1109,24 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             rendered={rendered}
                         />
                         {(data.coborrowmstatus === 2 || data.coborrowmstatus === 5 || data.coborrowmstatus === 6) ? (
-                            <>
-                                <LabeledInput_Fullname
-                                    className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
-                                    className_label={'font-bold'}
-                                    label={<>Spouse Name <span className="text-red-500">*</span></>}
-                                    placeHolder='Spouse Name'
-                                    readOnly={isEdit}
-                                    category={'marketing'}
-                                    receive={(e) => updateAppDetails({ name: 'coborrowspousename', value: e })}
-                                    value={data.coborrowspousename}
-                                    triggerValidation={triggerValidation}
-                                    rendered={rendered}
-                                />
+                            <><InputOpt
+                                className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
+                                className_label={'font-bold'}
+                                label={<>Spouse Name <span className="text-red-500">*</span></>}
+                                value={getAppDetails.coborrowspousename}
+                                placeHolder='Spouse Name'
+                                receive={(e) => updateAppDetails({ name: 'coborrowspousename', value: e })}
+                                category={'marketing'}
+                                readOnly={isEdit}
+                                isEdit={isEdit}
+                                rendered={rendered}
+                                KeyName={'coborrowspousename'}
+                                format={'Default'}
+                                group={'Uppercase'}
+                                compname={'Spouse Name'}
+                                EmptyMsg={'Spouse Name Required'}
+                                InvalidMsg={'Invalid Spouse Name'}
+                            />
 
                                 <DatePickerOpt
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
@@ -1312,6 +1319,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                     rendered={rendered}
                                 />
                                 {data.AcbPlanAbroad === 1 && (
+                                    
                                     <LabeledInput_NotRequired
                                         className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                         className_label={'font-bold'}
@@ -1398,45 +1406,47 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                         />
                         {User === 'Credit' && (
                             <>
-                                <LabeledInput_UpperCase
+                                <InputOpt
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label={'font-bold'}
                                     label={<>Landmark <span className="text-red-500">*</span></>}
                                     placeHolder='Landmark'
+                                    isEdit={isEdit}
+                                    category={'marketing'}
                                     readOnly={isEdit}
-                                    value={data.AcbLandMark}
-                                    receive={(e) => updateAppDetails({ name: 'AcbLandMark', value: e })}
+                                    value={getAppDetails.AcbLandMark}
                                     rendered={rendered}
+                                    receive={(e) => updateAppDetails({ name: 'AcbLandMark', value: e })}
+
+                                    format={'Default'}
+                                    KeyName={'AcbLandMark'}
+                                    group={'Uppercase'}
+                                    compname={'Landmark'}
+                                    EmptyMsg={'Landmark Required'}
+                                    InvalidMsg={'Invalid Landmark'}
                                 />
-                                <LabeledInput_UpperCase
+                                <InputOpt
                                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                                     className_label={'font-bold'}
                                     label={<>Proof of Billing Remarks <span className="text-red-500">*</span></>}
                                     placeHolder='Remarks'
+                                    isEdit={isEdit}
+                                    category={'marketing'}
                                     readOnly={isEdit}
-                                    value={data.AcbPoBRemarks}
-                                    receive={(e) => updateAppDetails({ name: 'AcbPoBRemarks', value: e })}
                                     rendered={rendered}
+                                    value={getAppDetails.AcbPoBRemarks}
+                                    receive={(e) => updateAppDetails({ name: 'AcbPoBRemarks', value: e })}
+
+                                    format={'Default'}
+                                    KeyName={'AcbPoBRemarks'}
+                                    group={'Uppercase'}
+                                    compname={'Proof of Billing Remarks'}
+                                    EmptyMsg={'Proof of Billing Remarks Required'}
+                                    InvalidMsg={'Invalid Proof of Billing Remarks'}
                                 />
                             </>
                         )}
                     </Flex>
-                    {/*showSaveButton && (
-                        <center>
-                            <div className="text-center mt-4 mb-4 w-[200px]">
-                                <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                                    <Button
-                                        onClick={handleAddCoborrower}
-                                        className="bg-[#3ba0764] w-full"
-                                        size='large'
-                                        type='primary'
-                                    >
-                                        Add Co-Borrower
-                                    </Button>
-                                </ConfigProvider>
-                            </div>
-                        </center>
-                    )*/}
                     {!showSaveButton && (
                         <center>
                             <div className="text-center mt-4 mb-4 w-[12.5rem]">
