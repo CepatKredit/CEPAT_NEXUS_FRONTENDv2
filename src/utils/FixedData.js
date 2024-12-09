@@ -554,10 +554,7 @@ export const Religion = () => {
             value: 7,
             label: 'Church of Latter Day Saints / Mormon'
         },
-        {
-            value: 8,
-            label: 'Muslim'
-        }
+  
     ]
     return dataList;
 }

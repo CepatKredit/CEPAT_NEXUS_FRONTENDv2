@@ -27,14 +27,6 @@ function InputOpt({
     InvalidMsg = 'Input is not Valid',
     EmptyMsg = `${compname} Required`,
 }) {
-    
-   // const inputRef = useRef(null);
-  //  const { setfocus } = useContext(LoanApplicationContext)
-  
-  //  useEffect(() => {
-  ///    setfocus(KeyName, inputRef.current);
-  //  }, [KeyName, setfocus])
-
 
     const [isFocused, setIsFocused] = useState();
     const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage, inputRef } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, isFocused, InvalidMsg, EmptyMsg, readOnly);

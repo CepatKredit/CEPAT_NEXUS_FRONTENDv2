@@ -132,7 +132,7 @@ export const CHECK_TILE_NAME = (path) => {
     else if (path === '/ckfi/under-credit') { name = 'UNDER CREDIT' }
     else if (path === '/ckfi/approved') { name = 'APPROVED (TRANS-OUT)' }
     else if (path === '/ckfi/special-lane') { name = 'SPECIAL LANE' }
-    else if (path === '/ckfi/assessement/credit') { name = 'FOR CREDIT ASSESSEMENT' }
+    else if (path === '/ckfi/assessement/credit') { name = 'FOR CREDIT ASSESSMENT' }
     else if (path === '/ckfi/queue-bucket') { name = 'QUEUE BUCKET' }
     else if (path === '/ckfi/for-verification') { name = 'FOR VERIFICATION' }
     else if (path === '/ckfi/pre-check') { name = 'PRE-CHECK' }

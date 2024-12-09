@@ -148,7 +148,7 @@ function AnimatedCard({ path }) {
             return value
         }
         else if (path === '/ckfi/assessement/credit') {
-            name = 'FOR CREDIT ASSESSEMENT'
+            name = 'FOR CREDIT ASSESSMENT'
             let value = {
                 icon: <MdOutlineAssessment className="text-4xl xs1:text-[40px] xs:text-[40px] sm:text-[40px] md:text-5xl lg:text-6xl xl:text-[80px] text-white"  />,
                 color: colorList[11]
@@ -325,8 +325,14 @@ function AnimatedCard({ path }) {
 
     function LOAD_COUNT() {
         let count = '0'
-        GET_DATA_COUNTER?.filter((x) => x.status.includes(CHECK_TILE_NAME(path))).map((x) => { count = x.statusCount.toString(); })
-        return count
+        GET_DATA_COUNTER?.filter((x) => {
+       /*     if(x.status==='FOR CREDIT ASSESSMENT'){
+                console.log('Checking item:',x.status.includes(CHECK_TILE_NAME(path))); // Log each item being checked
+            }*/
+            return x.status.includes(CHECK_TILE_NAME(path));
+        }).map((x) => { 
+            count = x.statusCount.toString(); 
+        });        return count
     }
 
     return (

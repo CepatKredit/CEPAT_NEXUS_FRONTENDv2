@@ -184,7 +184,7 @@ function TriggerFields(ROLE) {
         if (!getRendered) return;
 
         const isInvalidRole = (ROLE === 'CREDIT');
-        const isInvalidStatus = ![2, 5, 6].includes(getAppDetails.ofwmstatus);
+        const isInvalidStatus = [2, 5, 6].includes(getAppDetails.ofwmstatus);
 
         if (isInvalidRole && isInvalidStatus) {
             const updates = {

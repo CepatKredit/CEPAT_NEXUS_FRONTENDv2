@@ -286,6 +286,7 @@ export function InputComponentHook(
   EmptyMsg,
   readOnly
 ) {
+  const { getAppDetails } = useContext(LoanApplicationContext)
   const [inputValue, setInputValue] = useState(initialValue || '');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
@@ -321,6 +322,7 @@ export function InputComponentHook(
   };
 
   const handleChange = (e) => {
+    if (!isFocused) return;
     const { value, selectionStart, selectionEnd } = e.target;
 
     // Save initial cursor position
@@ -374,21 +376,39 @@ export function InputComponentHook(
     }, 0);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (check = true) => {
     setIconVisible(true);
-    const validation = hookInputValid(KeyName, inputValue, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(validation.valid, format === 'Currency'? FormatCurrency(validation.value) : validation.value, validation.errmsg, 100);
+    const validation = hookInputValid(KeyName, check ? inputValue : initialValue, comp_name, format, group, InvalidMsg, EmptyMsg);
+    statusValidation(validation.valid, format === 'Currency' ? FormatCurrency(validation.value) : validation.value, validation.errmsg, 100);
   };
 
   useEffect(() => {
-    if (rendered && initialValue !== latestValueRef.current) {
-      setInputValue(initialValue || '');
-      handleBlur()
-      latestValueRef.current = initialValue;
+    if (!isFocused) {
+      setInputValue(initialValue);
     }
-  }, [initialValue, rendered]);
+  }, [initialValue]);
 
   useEffect(() => {
+    if (rendered && !isFocused) {
+      setIconVisible(true)
+      if (inputValue === '') {
+        setStatus('error');
+        setErrorMessage(EmptyMsg);
+        debouncedReceive('', 250);
+        return;
+      }
+      const validation = hookInputValid(
+        KeyName,
+        inputValue,
+        comp_name,
+        format,
+        group,
+        InvalidMsg,
+        EmptyMsg
+      );
+
+      statusValidation(validation.valid, validation.value, validation.errmsg, 500);
+    }
     if (inputRef.current && cursorPosition.current) {
       inputRef.current.setSelectionRange(cursorPosition.current.start, cursorPosition.current.end);
     }

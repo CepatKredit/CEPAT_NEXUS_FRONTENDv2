@@ -32,14 +32,14 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const [api, contextHolder] = notification.useNotification();
     const [relativesCount, setRelativesCount] = useState(0);
     const { getAppDetails, updateAppDetails, setBenDependents, showBenDependents } = useContext(LoanApplicationContext)
-
+/*
     useEffect(() => {
         if (getAppDetails.MarriedPBCB !== undefined || !getAppDetails.MarriedPBCB) {
             // Set the state of setBenDependents based on the value of MarriedPBCB
             setBenDependents(getAppDetails.MarriedPBCB === 0); // true if 0 (unchecked), false if 1 (checked)
         }
         //console.log('hahahahahaha', getAppDetails.MarriedPBCB)
-    }, [getAppDetails.MarriedPBCB]);
+    }, [getAppDetails.MarriedPBCB]);*/
 
     const disableDate_deployment = React.useCallback((current) => {
         return current && current < dayjs().startOf('day');
@@ -604,7 +604,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         compname={'Relationship to the Beneficiary'}
                     />
                     )}
-                {User !== 'LC' && (
+                {/*User !== 'LC' && (
                     <Form.Item
                         label="Dependents"
                         colon={false}
@@ -614,12 +614,12 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                         <Input
                             value={getAppDetails.ofwdependents || '0'}
                             className="h-[2.5rem] border border-gray-300 rounded-lg mt-[-.3rem]"
-                            readOnly
+                            disabled
                             placeholder="No. of Dependents"
                         />
                     </Form.Item>
-                )}
-                {User === 'LC' && (
+                )*/}
+                {/*User === 'LC'*/ true && (
                     <InputOpt
                         className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                             } w-[18.75rem] h-[3.875rem]`}

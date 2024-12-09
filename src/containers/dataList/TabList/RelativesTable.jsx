@@ -17,8 +17,8 @@ import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
-    const { SET_LOADING_INTERNAL, getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext);
-    const suffixRef = React.useRef();
+    const { SET_LOADING_INTERNAL, getAppDetails, updateAppDetails, setAppDetails } = React.useContext(LoanApplicationContext);
+    const suffixRef = React.useRef(); 
     const { setCount } = getDependentsCount();
     const saveButtonRef = React.useRef();
     const token = localStorage.getItem('UTK');
@@ -45,50 +45,57 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
     }, [BorrowerId]);
 
     const getRelatives = useQuery({
-        queryKey: ['getRelatives', BorrowerId, isOfw],
+        queryKey: ['getRelativesTable', BorrowerId, isOfw],
         queryFn: async () => {
-            try {
-                const result = await axios.get(`/GET/G35R/${BorrowerId}/${isOfw}`);
-                let dataList = [{
-                    key: 0,
-                    no: '',
-                    FullName: '',
-                    Suffix: '',
-                    ContactNo: '',
-                    Birthdate: '',
-                    WorkEducStatus: '',
-                    Relationship: '',
-                }];
-                result.data.list?.map((x, i) => {
-                    dataList.push({
-                        key: x.code,
-                        no: i + 1,
-                        FullName: x.fullName,
-                        Suffix: x.suffix,
-                        ContactNo: x.contactNo,
-                        Birthdate: x.birthdate,
-                        WorkEducStatus: x.workEducStatus,
-                        Relationship: x.relationship,
+            if (BorrowerId === undefined || BorrowerId === '') return[];
+                try {
+                    const result = await axios.get(`/GET/G35R/${BorrowerId}/${isOfw}`);
+                    let dataList = [{
+                        key: 0,
+                        no: '',
+                        FullName: '',
+                        Suffix: '',
+                        ContactNo: '',
+                        Birthdate: '',
+                        WorkEducStatus: '',
+                        Relationship: '',
+                    }];
+                    result.data.list?.map((x, i) => {
+                        dataList.push({
+                            key: x.code,
+                            no: i + 1,
+                            FullName: x.fullName,
+                            Suffix: x.suffix,
+                            ContactNo: x.contactNo,
+                            Birthdate: x.birthdate,
+                            WorkEducStatus: x.workEducStatus,
+                            Relationship: x.relationship,
+                        });
                     });
-                });
 
-                const updatedCount = dataList.length;
-                // updateAppDetails({ name: 'ofwdependents', value: updatedCount - 1 })
-                // Update both ofwdependents and bendependents based on isOfw value
-                if (isOfw === 1) {
-                    updateAppDetails({ name: 'ofwdependents', value: updatedCount - 1 });
-                } else if (isOfw === 2) {
-                    updateAppDetails({ name: 'bendependents', value: updatedCount - 1 });
+                    const updatedCount = dataList.length;
+                    // updateAppDetails({ name: 'ofwdependents', value: updatedCount - 1 })
+                    // Update both ofwdependents and bendependents based on isOfw value
+                    if (isOfw === 1) {
+                        setAppDetails((prev) => ({
+                            ...prev,
+                            ofwdependents: updatedCount - 1,
+                        }));
+                    } else if (isOfw === 2) {
+                        setAppDetails((prev) => ({
+                            ...prev,
+                            bendependents: updatedCount - 1,
+                        }));
+                    }
+                    /* onUpdateCount(updatedCount);
+                     setCountBen(updatedCount);*/
+
+                    SET_LOADING_INTERNAL('DependentsTABLE', false);
+                    return dataList;
+                } catch (error) {
+                    console.error(error);
+                    SET_LOADING_INTERNAL('PropertiesTABLE', false);
                 }
-               /* onUpdateCount(updatedCount);
-                setCountBen(updatedCount);*/
-
-                SET_LOADING_INTERNAL('DependentsTABLE', false);
-                return dataList;
-            } catch (error) {
-                console.error(error);
-                SET_LOADING_INTERNAL('PropertiesTABLE', false);
-            }
             return null;
         },
         refetchInterval: (data) => {

@@ -42,7 +42,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
     const { Count } = useStore(getDependentsCount);
 
     useEffect(() => {
-        receive({ name: 'bendependents', value: Count - 1 });
+        updateAppDetails({ name: 'bendependents', value: Count - 1 });
     }, [Count]);
 
     useEffect(() => {
@@ -709,8 +709,8 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                                 compname={'Remarks'}
                                 required={false}
 
-                                EmptyMsg='Remarks Required'
-                                InvalidMsg='Invalid Remarks'
+                                //EmptyMsg='Remarks Required'
+                                //InvalidMsg='Invalid Remarks'
 
                             />
                         )}</>)}

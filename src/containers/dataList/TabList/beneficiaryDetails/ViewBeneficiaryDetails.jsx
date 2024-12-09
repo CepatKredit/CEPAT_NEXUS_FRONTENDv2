@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FcGoogle } from "react-icons/fc";
 import { Descriptions } from 'antd';
 import { useQuery } from '@tanstack/react-query';
@@ -9,13 +9,15 @@ import { GetData } from '@utils/UserData';
 import { getDependentsCount } from '@hooks/DependentsController';
 import { useStore } from 'zustand';
 import { removeLinkFormat } from '@utils/Formatting';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
+    const { getAppDetails, updateAppDetails, showBenDependents } = useContext(LoanApplicationContext)
     const { Count } = useStore(getDependentsCount);
 
     React.useEffect(() => {
-        receive({ name: 'bendependents', value: Count - 1 });
+        updateAppDetails({ name: 'bendependents', value: Count - 1 });
     }, [Count]);
 
 
