@@ -13,7 +13,7 @@ function LabeledSelect_Relationship({ rendered, showSearch, required, placeHolde
     const { data: relationshipOptions, isLoading } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
-            const result = await GET_LIST('/getListRelationship');
+            const result = await GET_LIST('/GET/G33RR');
             return result.list;
         },
         refetchInterval: 30 * 1000,
@@ -49,6 +49,10 @@ function LabeledSelect_Relationship({ rendered, showSearch, required, placeHolde
             onBlur()
         }
     }, []);
+
+    React.useEffect(()=>{
+        setSelectedValue(value);
+    },[value])
 
     return (
         <div className={className_dmain}>

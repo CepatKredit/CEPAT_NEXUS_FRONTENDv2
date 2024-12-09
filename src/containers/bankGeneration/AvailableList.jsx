@@ -64,7 +64,7 @@ function AvailableList({ Data }) {
             if (x.checker === true) {
                 Total += parseFloat(x.amount)
                 Count += 1
-                await axios.post(`/setBatchList/${Data.key}/${jwtDecode(token).USRID}/${x.id} `)
+                await axios.post(`/POST/P116UBD/${Data.key}/${jwtDecode(token).USRID}/${x.id} `)
                     .catch((error) => {
                         console.log(error)
                     })
@@ -80,7 +80,7 @@ function AvailableList({ Data }) {
             AMT: parseFloat(Total),
         }
         console.log(container)
-        await axios.post('/additionalDisbursement', container)
+        await axios.post('/POST/P118GAD', container)
             .then((result) => {
                 SetTotalAmount(parseFloat(Total))
                 SetTotalCount(parseInt(Count))

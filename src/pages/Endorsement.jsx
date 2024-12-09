@@ -16,9 +16,9 @@ import { isValidLoanDetails, isValidLoanDetailsLc, isValidOFWDetails, isValidOFW
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { useDirectLoan } from "@hooks/LoanApplicationHooks";
 
-    function Endorsement() {
+function Endorsement() {
     const direct = false // Control if it is direct / lc / marketing
-    const { getAppDetails } = React.useContext(LoanApplicationContext);
+    const { getAppDetails, resetAppDetails } = React.useContext(LoanApplicationContext);
     document.title = "Loan Application Form";
     const USRNAME = toDecrypt(localStorage.getItem("USRFN"));
     const token = localStorage.getItem("UTK");
@@ -38,10 +38,16 @@ import { useDirectLoan } from "@hooks/LoanApplicationHooks";
 
     const lc_ofwdetails =  !isValidOFWDetailsLc(getAppDetails);
 
+    React.useEffect(() => {
+        if (getAppDetails.dataPrivacy === 0) {
+          resetAppDetails();
+        }
+      }, [getAppDetails.dataPrivacy]);
+
+
     async function insertDirect() {
 
         directLoan(direct);
-    
 /*
         const data_lc = {
             LoanAppId: toUpperText(uuidv4()),
@@ -108,8 +114,8 @@ import { useDirectLoan } from "@hooks/LoanApplicationHooks";
             direct={direct}
             code={getDetails}
         />
-        <div className="h-[70vh] overflow-y-auto">
-            <div className="flex items-center justify-center mx-auto mt-[2%] ">
+        <div className="h-[67vh] xs:h-[60vh] lg:h-[35vh] xl:h-[60vh] 2xl:h-[68vh] overflow-y-auto overflow-x-hidden mt-[2%] xs1:mt-[-30%] md:mt-[0%]">
+            <div className="flex items-center justify-center mx-auto ">
             <div className="flex flex-col items-center justify-center mx-auto mt-[2%]">
                 <div className="flex items-center justify-center w-[80vw] ">
                 <LoanDetails

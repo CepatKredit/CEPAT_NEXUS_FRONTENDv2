@@ -38,6 +38,10 @@ function LabeledInput({ rendered, required, label, placeHolder, value, receive, 
         }
     }
 
+    React.useEffect(()=>{
+        setInputValue(value);
+    },[value])
+
     React.useEffect(() => {
         if (rendered || triggerValidation) {
             setIcon(false)
