@@ -25,6 +25,7 @@ import { GetData } from "@utils/UserData";
 import DataList from "./DataList";
 import dayjs from "dayjs";
 import axios from "axios";
+import { SideNavState } from '@hooks/MiniDashController';
 
 function DataList_AssignToCra() {
   const [getSearch, setSearch] = React.useState("");
@@ -32,6 +33,8 @@ function DataList_AssignToCra() {
   const token = localStorage.getItem("UTK");
   const queryClient = useQueryClient();
   const [api, contextHolder] = notification.useNotification();
+  const { isTableExpanded } = SideNavState();
+  const tableHeight = isTableExpanded ? "calc(120vh - 505px)" : "calc(105vh - 505px)";
 
   React.useEffect(() => {
     AppDataListQuery.refetch();
@@ -108,7 +111,6 @@ function DataList_AssignToCra() {
             {PathName(localStorage.getItem("SP"))}
           </Typography.Title>
         </div>
-        <Divider />
         <Button
           type="primary"
           onClick={() => {
@@ -142,7 +144,7 @@ function DataList_AssignToCra() {
           >
             <ResponsiveTable
               columns={ColumnList("11", AppDataListQuery)}
-              height={"calc(95vh - 505px)"}
+              height={tableHeight}
               width={"100%"}
               rows={AppDataListQuery.data
                 ?.filter(

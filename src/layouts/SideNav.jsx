@@ -311,9 +311,9 @@ function SideNav() {
                       toggleVisibility();
                       toggleTableHeight();
                     }}
-                    className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
-                    icon={isTableExpanded ? <IoArrowUpCircle className="text-purple-900 text-4xl" />
-                      : <IoArrowDownCircle className="text-purple-900 text-4xl" />}
+                    className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[4.2rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
+                    icon={isTableExpanded ? <IoArrowDownCircle  className="text-purple-900 text-2xl" />
+                      : <IoArrowUpCircle className="text-purple-900 text-2xl" />}
                     aria-label={isTableExpanded ? 'Collapse' : 'Expand'}
                   />
                 )}
