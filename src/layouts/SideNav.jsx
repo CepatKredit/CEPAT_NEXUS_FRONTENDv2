@@ -27,7 +27,7 @@ import axios from "axios";
 import { useWindowDimensions } from "@hooks/GetWindowScreenSize";
 import { useQueryClient } from "@tanstack/react-query";
 import { toDecrypt } from "@utils/Converter";
-import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { IoArrowDownCircle, IoArrowUpCircle } from "react-icons/io5";
 import { motion, AnimatePresence } from "framer-motion";
 import { SideNavState } from "@hooks/MiniDashController";
 
@@ -289,7 +289,8 @@ function SideNav() {
                       toggleTableHeight();
                     }}
                     className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[3.7rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
-                    icon={isTableExpanded ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    icon={isTableExpanded ? <IoArrowUpCircle className="text-purple-900 text-4xl" />
+                      : <IoArrowDownCircle className="text-purple-900 text-4xl" />}
                     aria-label={isTableExpanded ? 'Collapse' : 'Expand'}
                   />
                 )}
