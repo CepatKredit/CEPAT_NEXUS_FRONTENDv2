@@ -15,6 +15,8 @@ import { GetData } from "@utils/UserData";
 import { isValidLoanDetails, isValidLoanDetailsLc, isValidOFWDetails, isValidOFWDetailsLc } from "@utils/Validations";
 import { LoanApplicationContext } from "@context/LoanApplicationContext";
 import { useDirectLoan } from "@hooks/LoanApplicationHooks";
+import { SideNavState } from '@hooks/MiniDashController';
+
 
 function Endorsement() {
     const direct = false // Control if it is direct / lc / marketing
@@ -32,6 +34,11 @@ function Endorsement() {
     const [loadings, setLoadings] = React.useState(false);
     const [getDetails, setDetails] = React.useState();
     const { directLoan } = useDirectLoan(setDetails, setLoadings, setIsModalOpen);
+    const { isTableExpanded } = SideNavState();
+    const tableHeight = isTableExpanded
+        ? "h-[67vh] xs:h-[60vh] lg:h-[35vh] xl:h-[60vh] 2xl:h-[82vh]"
+        : "h-[67vh] xs:h-[60vh] lg:h-[35vh] xl:h-[60vh] 2xl:h-[68vh]";
+
 
     const lc_loandetails =
         !getAppDetails.dataPrivacy ||  !isValidLoanDetailsLc(getAppDetails);
@@ -114,7 +121,7 @@ function Endorsement() {
             direct={direct}
             code={getDetails}
         />
-        <div className="h-[67vh] xs:h-[60vh] lg:h-[35vh] xl:h-[60vh] 2xl:h-[68vh] overflow-y-auto overflow-x-hidden mt-[2%] xs1:mt-[-30%] md:mt-[0%]">
+        <div className={`${tableHeight} overflow-y-auto overflow-x-hidden mt-[2%] xs1:mt-[-30%] md:mt-[0%]`}>
             <div className="flex items-center justify-center mx-auto ">
             <div className="flex flex-col items-center justify-center mx-auto mt-[2%]">
                 <div className="flex items-center justify-center w-[80vw] ">

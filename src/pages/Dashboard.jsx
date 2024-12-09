@@ -60,7 +60,7 @@ function Dashboard() {
                     </Typography.Title>               
                 </div>
                 <Divider />
-                <div className='flex flex-wrap justify-center gap-1 h-[60vh] xs1:h-[63vh] md:h-[60vh] overflow-y-auto '>
+                <div className='flex flex-wrap justify-center gap-1 h-[60vh] xs1:h-[63vh] md:h-[60vh] 2xl:h-[71vh] overflow-y-auto '>
                     {pathList()?.map((x, i) => (<AnimatedCard key={i} path={x} />))}
                 </div>
             </div>

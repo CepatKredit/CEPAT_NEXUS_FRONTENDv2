@@ -53,7 +53,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
         rendered={ofwrendered}
       />
       <div className={`${classname_main} flex items-center `}>
-        <label className="mb-5 xs1:mb-1 sm:mb-5 lg:mb-1 2xl:mb-7 xs1:mr-1 sm:mr-4 w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[210px] lg:w-[482px] 2xl:w-[210px]">
+        <label className="mb-5 xs1:mb-1 sm:mb-5 md:mb-1 lg:mb-1 2xl:mb-7 xs1:mr-1 sm:mr-4 w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[210px] md:w-[483px] lg:w-[482px] 2xl:w-[210px]">
           Middle Name
         </label>
         <ConfigProvider
@@ -65,7 +65,7 @@ function PersonalInfo({ ofwrendered, receive, presaddress, direct }) {
             },
           }}
         >
-          <div className="relative flex items-center w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[420px] lg:w-[500px] 2xl:w-[350px] mb-5 xs1:mb-1 sm:mb-5 lg:mb-1 2xl:mb-5">
+          <div className="relative flex items-center w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[500px] lg:w-[500px] 2xl:w-[350px] mb-5 xs1:mb-1 sm:mb-5 md:mb-1 lg:mb-1 2xl:mb-5">
             <Input
               className="w-full"
               fieldName="ofwmname"
