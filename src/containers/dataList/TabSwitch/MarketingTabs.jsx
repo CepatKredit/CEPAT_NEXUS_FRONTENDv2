@@ -150,7 +150,7 @@ function MarketingTabs({
       key: "internal-checking",
       children: (
         <InternalChecking
-          classname={"h-[65vh] w-[80vw] mx-auto overflow-y-auto"}
+          classname={"h-[65vh] w-[85vw] mx-auto overflow-y-auto"}
           data={value}
           isEdit={isEdit}
           ClientId={ClientId}

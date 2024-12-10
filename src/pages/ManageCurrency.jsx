@@ -19,7 +19,7 @@ function ManageCurrency() {
     const [getSearch, setSearch] = React.useState('');
     const [api, contextHolder] = notification.useNotification();
     const { isTableExpanded } = SideNavState();
-    const tableHeight = isTableExpanded ? "calc(120vh - 505px)" : "calc(100vh - 505px)";
+    const tableHeight = isTableExpanded ? "calc(120vh - 505px)" : "calc(112vh - 505px)";
     const queryClient = useQueryClient();
     const column = [
         {
@@ -139,7 +139,6 @@ function ManageCurrency() {
                 <MdOutlineManageSearch style={{ fontSize: '40px', color: '#483d8b' }} />
                 <Typography.Title level={2}>Manage Foreign Currency</Typography.Title>
             </div>
-            <Divider />
             {GetData('ROLE').toString() === '60' && (<ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
                 <Button icon={<GiGlobe style={{ fontSize: '18px' }} />} className='bg-[#3b0764] pb-2 w-[180px]'
                     onClick={() => {
