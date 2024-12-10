@@ -26,7 +26,7 @@ function DataList() {
   const token = localStorage.getItem('UTK');
   const queryClient = useQueryClient();
   const { isTableExpanded } = SideNavState();
-  const tableHeight = isTableExpanded ? "calc(127vh - 505px)" : "calc(111vh - 505px)";
+  const tableHeight = isTableExpanded ? "calc(127vh - 505px)" : "calc(119vh - 505px)";
 
   React.useEffect(() => { AppDataListQuery.refetch() }, [localStorage.getItem('SP')]);
 
@@ -126,7 +126,7 @@ function DataList() {
             <div className="w-full">
               <ResponsiveTable
                 columns={ColumnList(3)}
-                // height={tableHeight}
+                height={tableHeight}
                 width="100%"
                 rows={filteredData?.map((x, i) => {
                   const loanProductMap = {
