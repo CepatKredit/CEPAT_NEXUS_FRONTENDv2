@@ -38,6 +38,7 @@ function WildSearch() {
             render: (loanAppCode, record) => {
                 return (
                     <Button
+                    className='h-5'
                     key={record.key}    
                         onClick={() => {
                                 localStorage.setItem("SIDC", toEncrypt(record.loanAppId));
@@ -81,11 +82,13 @@ function WildSearch() {
 
 
   return (
-    <ConfigProvider theme={{ token: { colorPrimary: "rgb(86,191,84)"} }}>
+    <div className="h-[40rem] ">
+    <ConfigProvider theme={{ token: { colorPrimary: "rgb(86,191,84)", fontSize: 12, padding: 10} }}>
     <div className="p-[2%] ">
         <Table dataSource={getData} columns={columns} loading={isFetching} />
     </div>
     </ConfigProvider>
+    </div>
   )
 }
 
