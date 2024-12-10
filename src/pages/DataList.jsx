@@ -68,8 +68,8 @@ function DataList() {
 
 
   return (
-    <div className="mx-[1%] my-[2%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[2%] overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between mb-4">
+    <div className="mx-[1%] my-[1%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[1%] overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between">
         <div className="flex items-center gap-3">
           <MdOutlineManageAccounts
             style={{ fontSize: "40px", color: "#483d8b" }}
@@ -83,7 +83,7 @@ function DataList() {
           <Input
             addonAfter={<SearchOutlined />}
             placeholder="Search"
-            size="large"
+            //size="large"
             className="w-full h-[50px] px-4"
             onChange={(e) => {
               setSearch(e.target.value.toUpperCase());
@@ -126,7 +126,7 @@ function DataList() {
             <div className="w-full">
               <ResponsiveTable
                 columns={ColumnList(3)}
-                 height={tableHeight}
+                // height={tableHeight}
                 width="100%"
                 rows={filteredData?.map((x, i) => {
                   const loanProductMap = {
@@ -155,6 +155,7 @@ function DataList() {
                     NO: i + 1,
                     LAN: (
                       <Button
+                        className='h-7'
                         key={i}
                         onClick={() => {
                           localStorage.setItem(
