@@ -13,7 +13,7 @@ function hookDateValid(KeyName, date) {
   else { return CheckDateValid(date) }
 }
 
-function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, EmptyMsg) {
+function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, EmptyMsg, isFocused) {
   //LETTERS
   if (group === 'Email' && CheckEmailValid(input)) {//For Email
     return { valid: true, value: input, errmsg: '' }; //As-is
@@ -30,8 +30,8 @@ function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, Em
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
   } else if (group === 'Amount-30,000' && input !== '' && CheckAmountValid(input)) { // 30,000.00
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
-  } else if ((group === 'Rent_Amort' || group === 'Allotment') && input !== '' && CheckRentAmortValid(input)) { // !0
-    return { valid: true, value: inputFormat(format, input), errmsg: '' };
+  } else if ((group === 'Rent_Amort' || group === 'Allotment') && CheckRentAmortValid(input)) { // !0
+    return { valid:input === '' && isFocused? false : true, value: inputFormat(format, input), errmsg: input === '' && isFocused? inputMessage(group, 'Empty', comp_name, InvalidMsg, EmptyMsg) : '' };
     /* } else if ((group === 'Number' ) && input !== '' && CheckNumberValid()) { // !0
        return { valid: true, value: inputFormat(format, input), errmsg: '' };*/
     //NUMBER
@@ -281,7 +281,6 @@ export function InputComponentHook(
   format,
   group,
   isDisabled,
-  isFocused,
   InvalidMsg,
   EmptyMsg,
   readOnly
@@ -290,6 +289,7 @@ export function InputComponentHook(
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('');
   const [iconVisible, setIconVisible] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const inputRef = useRef(null); // Reference to the input element
   const latestValueRef = useRef(); // Track the latest value
@@ -361,7 +361,7 @@ export function InputComponentHook(
     }
 
     // Validate the processed value
-    const validation = hookInputValid(KeyName, processedValue, comp_name, format, group, InvalidMsg, EmptyMsg);
+    const validation = hookInputValid(KeyName, processedValue, comp_name, format, group, InvalidMsg, EmptyMsg, isFocused);
 
     // Update status and value based on validation
     statusValidation(validation.valid, validation.value, validation.errmsg, 500);
@@ -374,19 +374,27 @@ export function InputComponentHook(
     }, 0);
   };
 
-  const handleBlur = (chk) => {
+  const handleBlur = (chk = true) => {
     setIconVisible(true);
-    const validation = hookInputValid(KeyName,chk? inputValue : initialValue, comp_name, format, group, InvalidMsg, EmptyMsg);
-    statusValidation(validation.valid, format === 'Currency'? FormatCurrency(validation.value) : validation.value, validation.errmsg, 100);
+    const validation = hookInputValid(KeyName, chk ? inputValue : initialValue, comp_name, format, group, InvalidMsg, EmptyMsg, false);
+    statusValidation(validation.valid, format === 'Currency' ? FormatCurrency(validation.value) : validation.value, validation.errmsg, 100);
   };
 
   useEffect(() => {
-    if ( initialValue !== latestValueRef.current && !isFocused) {
+    if (initialValue !== latestValueRef.current && !isFocused) {
       setInputValue(initialValue || '');
       handleBlur(false)
       latestValueRef.current = initialValue;
     }
-  }, [initialValue, rendered]);
+  }, [initialValue]);
+
+  useEffect(() => {
+    if (initialValue !== latestValueRef.current && rendered) {
+      setInputValue(initialValue || '');
+      handleBlur(false)
+      latestValueRef.current = initialValue;
+    }
+  }, [rendered]);
 
   useEffect(() => {
     if (inputRef.current && cursorPosition.current) {
@@ -408,6 +416,7 @@ export function InputComponentHook(
     handleBlur,
     errorMessage,
     inputRef,
+    setIsFocused,
   };
 }
 

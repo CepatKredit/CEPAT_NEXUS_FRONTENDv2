@@ -79,12 +79,12 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
                     if (isOfw === 1) {
                         setAppDetails((prev) => ({
                             ...prev,
-                            ofwdependents: updatedCount - 1,
+                            ofwdependents: (updatedCount - 1) > 0? updatedCount - 1 : 0,
                         }));
                     } else if (isOfw === 2) {
                         setAppDetails((prev) => ({
                             ...prev,
-                            bendependents: updatedCount - 1,
+                            bendependents: (updatedCount - 1) > 0? updatedCount - 1 : 0,
                         }));
                     }
                     /* onUpdateCount(updatedCount);

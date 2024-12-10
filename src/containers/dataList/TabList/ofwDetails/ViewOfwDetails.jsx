@@ -11,7 +11,7 @@ import { removeLinkFormat } from '@utils/Formatting';
 import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function ViewOfwDetails({ data, User, RelativesCount, receive }) {
-    const { getAppDetails, updateAppDetails, setBenDependents, showBenDependents } = useContext(LoanApplicationContext)
+    const { getAppDetails, updateAppDetails } = useContext(LoanApplicationContext)
 
     useEffect(() => {
         if (User != 'LC' && (data.ofwdependents !== RelativesCount)) {
@@ -180,7 +180,7 @@ function ViewOfwDetails({ data, User, RelativesCount, receive }) {
         (User === 'Credit' && { key: '73', label: <span className={`font-semibold ${data.ContractDate ? 'text-black' : 'text-red-600'}`}>Contract Date</span>, children: data.ContractDate ? mmddyy(data.ContractDate) : '' }),
         (User === 'Credit' || User === 'Lp') && { key: '52', label: <span className={`font-semibold ${data.ContractDuration ? 'text-black' : 'text-red-600'}`}>Contract Duration</span>, children: data.ContractDuration ? data.ContractDuration : '' },
         (User === 'Credit' || User === 'Lp') && (data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL') && { key: '53', label: <span className={`font-semibold ${data.ofwDeptDate ? 'text-black' : 'text-red-600'}`}>Departure Date</span>, children: data.ofwDeptDate ? mmddyy(data.ofwDeptDate) : '' },
-        (User === 'Credit' || User === 'Lp') && { key: '54', label: <span className="font-semibold text-black w-[8rem]">Unlimited Contract</span>, children: (<span>{data.UnliContract ? 'YES' : 'NO'}</span>) },
+        (User === 'Credit' && (getAppDetails.loanProd !== '0303-VA' && getAppDetails.loanProd !== '0303-VL')) && { key: '54', label: <span className="font-semibold text-black w-[8rem]">Unlimited Contract</span>, children: (<span>{data.UnliContract ? 'YES' : 'NO'}</span>) },
         (User === 'Credit' || User === 'Lp') && { key: '55', label: <span className={`font-semibold ${data.YrsOfwSeafarer ? 'text-black' : 'text-red-600'}`}>Years as OFW or Seafarer</span>, children: data.YrsOfwSeafarer || '' },
         (User === 'Credit' || User === 'Lp') && { key: '56', label: <span className={`font-semibold ${data.AllotName ? 'text-black' : 'text-red-600'}`}>Beneficiary or Allotment Name</span>, children: data.AllotName || '' },
         //User === 'Credit' && { key: '60', label: <span className={`font-semibold ${data.SpIncome ? 'text-black' : 'text-red-600'}`}>Relationship to the OFW</span>, children: data.landmark || '' },

@@ -162,7 +162,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                     InvalidMsg='Invalid Middle Name'
                     EmptyMsg='Middle Name Required'
 
-                    required={User === 'Credit'? true : false}
+                    required={User === 'Credit' ? true : false}
 
                 //EmptyMsg={'First Name Required'}
                 //InvalidMsg={'Invalid First Name'}
@@ -1161,7 +1161,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
 
                 </>)}
             </Flex>
-            {User === 'Credit' && (
+            {(User === 'Credit' && (getAppDetails.loanProd !== '0303-VA' && getAppDetails.loanProd !== '0303-VL')) && (
                 <div className="grid grid-cols-6 gap-4">
                     <div className="col-span-6 flex justify-center items-center mt-8">
                         <Checkbox

@@ -28,16 +28,15 @@ function InputOpt({
     EmptyMsg = `${compname} Required`,
 }) {
 
-    const [isFocused, setIsFocused] = useState();
-    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage, inputRef } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, isFocused, InvalidMsg, EmptyMsg, readOnly);
+    const { inputValue, status, iconVisible, handleChange, handleBlur, errorMessage, inputRef, setIsFocused } = InputComponentHook(value, receive, rendered, KeyName, compname, format, group, disabled, InvalidMsg, EmptyMsg, readOnly);
     const isValidationEnabled = !readOnly && required;
 
     return (
         <div className={className_dmain}>
             {label && <label className={className_label}>{label}</label>}
             <div className={className_dsub}
-                onBlur={() => { setIsFocused(true); }}
-                onFocus={() => { setIsFocused(false); }}
+                onBlur={() => { setIsFocused(false); }}
+                onFocus={() => { setIsFocused(true); }}
             >
                 <Input
                     ref={inputRef}
