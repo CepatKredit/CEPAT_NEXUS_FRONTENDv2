@@ -140,12 +140,12 @@ function DataList() {
 
 
                   const loanProductMapEmployee = {
-                    "OFW Loan - Abroad": "LB-WA",
-                    "OFW Loan - In the Philippines": "LB-WL",
-                    "DH - Abroad": "LB-WA-DH",
-                    "DH - In the Philippines": "LB-WL-DH",
-                    "Seafarer Loan - Deployed": "SB-VA",
-                    "Seafarer Loan - In the Philippines": "SB-VL",
+                    "OFW Loan - Abroad": "LBA",
+                    "OFW Loan - In the Philippines": "LBP",
+                    "DH - Abroad": "DHA",
+                    "DH - In the Philippines": "DHP",
+                    "Seafarer Loan - Deployed": "SBA",
+                    "Seafarer Loan - In the Philippines": "SBP",
                   };
 
                   const isRoleValid = ["20", "10"].includes(userRole);
