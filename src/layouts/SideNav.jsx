@@ -58,6 +58,7 @@ function SideNav() {
   const { Header, Sider, Content } = Layout;
   const [collapsed, setCollapsed] = React.useState(false);
   const [isModalOpen, setModalOpen] = React.useState(false);
+  const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
   const [buttonPosition, setButtonPosition] = React.useState({
     top: 0,
@@ -65,23 +66,23 @@ function SideNav() {
   });
   const [isChatbotVisible, setChatbotVisible] = React.useState(false);
 
- /* const handleMenuClick = ({ key }) => {
-    if (key === "chatbot") {
-      setChatbotVisible(true); // Show the ChatbotButton
-    } else {
-      setChatbotVisible(false); // Hide the ChatbotButton if any other menu item is clicked
-      navigate(key); // Navigate only if it's not the chatbot
-    }
-  };*/
+  /* const handleMenuClick = ({ key }) => {
+     if (key === "chatbot") {
+       setChatbotVisible(true); // Show the ChatbotButton
+     } else {
+       setChatbotVisible(false); // Hide the ChatbotButton if any other menu item is clicked
+       navigate(key); // Navigate only if it's not the chatbot
+     }
+   };*/
 
   const [searchValue, setSearchValue] = React.useState("");
   const queryClient = useQueryClient();
 
   const { width } = useWindowDimensions();
 
-/*React.useEffect(() => {
-  console.log('chatbot.....', isChatbotVisible)
-},[])*/
+  /*React.useEffect(() => {
+    console.log('chatbot.....', isChatbotVisible)
+  },[])*/
   React.useEffect(() => {
     if (width <= 768) {
       setCollapsed(true);
@@ -166,7 +167,7 @@ function SideNav() {
                 </div>
               </center>
             )}
-            <div className="overflow-y-hidden hover:overflow-y-auto h-[110vh] xs1:h-[86.1vh] xs:h-[89.1vh] 2xl:h-[88.1vh]">
+            <div className="overflow-y-hidden hover:overflow-y-auto h-[110vh] xs1:h-[86.1vh] xs:h-[78.1vh] 2xl:h-[78vh]">
               <ConfigProvider
                 theme={{
                   components: {
@@ -184,18 +185,11 @@ function SideNav() {
                 <Menu
                   className="mt-[5%] bg-stone-100"
                   onClick={({ key }) => {
-                    if (key === "chatbot") {
-                      setChatbotVisible((prev) => !prev);
-                    } else {
-                      // Handle other routes navigation
-                      navigate(key);
-                      localStorage.setItem("SP", key);
-                      queryClient.invalidateQueries(
-                        ["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))],
-                        { exact: true }
-                      );
-                      setChatbotVisible(false); // Ensure chatbot is hidden when navigating away
-                    }
+                    navigate(key);
+                    localStorage.setItem("SP", key);
+                    queryClient.invalidateQueries(
+                      ["ClientDataListQuery", toDecrypt(localStorage.getItem("SIDC"))],
+                      { exact: true })
                   }}
                   ref={menuRef}
                   mode="inline"
@@ -213,6 +207,47 @@ function SideNav() {
 
               </ConfigProvider>
             </div>
+
+            {GetData("ROLE").toString() !== "20" && (
+              <>
+                <div
+                  ref={chatbotButtonRef}
+                  onClick={isModalOpen ? closeModal : openModal}
+                  className="relative flex-col flex items-center cursor-pointer"
+                  style={{ zIndex: 1050 }} // Set a high z-index
+                  title="Open Chatbot"
+                >
+                  <img
+                    src={isModalOpen ? CepatChatbotOpen : CepatChatbot}
+                    alt="Chatbot Icon"
+                    className={`${isModalOpen ? "w-22 h-24 mt-[-1rem]" : "w-18 h-20"
+                      } transition-transform duration-200 hover:scale-105 hover:-translate-y-3`}
+                  />
+                </div>
+
+                <Modal
+                  // title="Chatbot"
+                  open={isModalOpen}
+                  onCancel={closeModal}
+                  footer={null}
+                  width={800}
+                  style={{
+                    position: "absolute",
+                    left: buttonPosition.left || 110, // Adjusted for right alignment
+                    top: buttonPosition.top - 520, // Adjust vertical position as needed
+                    zIndex: 999,
+                  }}
+                  className="adjusted-modal-position"
+                >
+                  <iframe
+                    src="https://www.chatbase.co/chatbot-iframe/1_4jLvllPreXa-Tx-aPRr"
+                    className="w-full h-[500px]"
+                    allowFullScreen
+                  />
+                </Modal>
+              </>
+            )}
+
             <div className="flex flex-col justify-between">
               <div className="text-center">
                 <span className="text-xs text-gray-600">v2.1.0</span>
@@ -312,7 +347,7 @@ function SideNav() {
                       toggleTableHeight();
                     }}
                     className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[4.2rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
-                    icon={isTableExpanded ? <IoArrowDownCircle  className="text-purple-900 text-2xl" />
+                    icon={isTableExpanded ? <IoArrowDownCircle className="text-purple-900 text-2xl" />
                       : <IoArrowUpCircle className="text-purple-900 text-2xl" />}
                     aria-label={isTableExpanded ? 'Collapse' : 'Expand'}
                   />
@@ -324,93 +359,6 @@ function SideNav() {
         </Layout>
       </Layout>
 
-      {GetData("ROLE").toString() !== "20" && isChatbotVisible && (
-        <>
-          <div
-            ref={chatbotButtonRef}
-            className="fixed flex items-center justify-center cursor-pointer"
-            style={{
-              zIndex: 1050,
-              position: "absolute",
-              bottom: "0px", // Fixed bottom position
-              left: buttonPosition.left || "calc(50% - 50px)", // Center horizontally by default
-            }}
-            title="Open Chatbot"
-            draggable={false} // Prevent default browser drag
-            onMouseDown={(e) => {
-              e.preventDefault();
-              const startX = e.clientX;
-              const startLeft = chatbotButtonRef.current.offsetLeft;
-              let isDragging = false; // Track if dragging occurred
-
-              const handleMouseMove = (moveEvent) => {
-                const dx = moveEvent.clientX - startX;
-                isDragging = true; // Set to true when a drag occurs
-
-                // Constrain movement to horizontal bounds
-                const newLeft = Math.max(
-                  10,
-                  Math.min(
-                    startLeft + dx,
-                    window.innerWidth - chatbotButtonRef.current.offsetWidth - 10
-                  )
-                );
-
-                setButtonPosition({
-                  left: newLeft,
-                });
-              };
-
-              const handleMouseUp = () => {
-                window.removeEventListener("mousemove", handleMouseMove);
-                window.removeEventListener("mouseup", handleMouseUp);
-
-                if (!isDragging) {
-                  // If no drag occurred, consider it a short click
-                  setModalOpen((prev) => !prev);
-                }
-              };
-
-              window.addEventListener("mousemove", handleMouseMove);
-              window.addEventListener("mouseup", handleMouseUp);
-            }}
-          >
-            <img
-              src={isModalOpen ? CepatChatbotOpen : CepatChatbot}
-              alt="Chatbot Icon"
-              className={`
-          ${isModalOpen ? "w-22 h-24" : "w-18 h-20"} 
-          transition-transform duration-200 hover:scale-105 hover:-translate-y-3
-          ${buttonPosition.left < window.innerWidth / 2 ? "flip-horizontal" : ""}
-        `}
-              style={{
-                transform: buttonPosition.left < window.innerWidth / 2 ? "scaleX(-1)" : "scaleX(1)",
-              }}
-            />
-          </div>
-
-          <Modal
-            open={isModalOpen}
-            onCancel={closeModal}
-            footer={null}
-            width={800}
-            style={{
-              position: "absolute",
-              top: "calc(100vh - 600px)", // Align with button's bottom
-              left: buttonPosition.left < window.innerWidth / 2
-                ? buttonPosition.left + 100 // Modal on right side if button is left
-                : buttonPosition.left - 700, // Modal on left side if button is right
-            }}
-            className="adjusted-modal-position"
-          >
-            <iframe
-              src="https://www.chatbase.co/chatbot-iframe/1_4jLvllPreXa-Tx-aPRr"
-              className="w-full h-[500px]"
-              allowFullScreen
-            />
-          </Modal>
-        </>
-      )}
 
 
 

@@ -43,10 +43,9 @@ import { MdApproval } from "react-icons/md";
 import { AiOutlineSignature } from "react-icons/ai";
 import { TbArrowBackUpDouble } from "react-icons/tb";
 import { LuDatabaseBackup } from "react-icons/lu";
-import { RobotOutlined } from '@ant-design/icons';
 
 
-function SideNavRoutes(isChatbotVisible) {
+function SideNavRoutes() {
     let PageAccess = []
     PageAccess.push({
         key: '/ckfi/dashboard',
@@ -118,12 +117,6 @@ function SideNavRoutes(isChatbotVisible) {
         else if (x === '/ckfi/cancelled') { PageAccess.push({ key: x, label: 'Cancelled', icon: <MdCancel style={{ fontSize: '18px' }} />, }) }
         else if (x === '/ckfi/declined') { PageAccess.push({ key: x, label: 'Declined', icon: <FaThumbsDown style={{ fontSize: '18px' }} />, }) }
         else { PageAccess.push({ key: x, label: 'For Re-Application', icon: <BiRedo style={{ fontSize: '18px' }} />, }) }
-    });
-     // Ensure Chatbot Button is always at the bottom
-     PageAccess.push({
-        key: 'chatbot',
-        label: isChatbotVisible ? "Peace Out, Patsy!!!" : "Ask Patsy!!!",
-        icon: <RobotOutlined />,
     });
     return PageAccess;
 }
