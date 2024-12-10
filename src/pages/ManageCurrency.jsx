@@ -12,11 +12,14 @@ import axios from 'axios'
 import React from 'react'
 import { GiGlobe } from 'react-icons/gi'
 import { MdOutlineManageSearch } from 'react-icons/md'
+import { SideNavState } from '@hooks/MiniDashController';
 
 function ManageCurrency() {
     const [loading, setLoading] = React.useState(true);
     const [getSearch, setSearch] = React.useState('');
     const [api, contextHolder] = notification.useNotification();
+    const { isTableExpanded } = SideNavState();
+    const tableHeight = isTableExpanded ? "calc(120vh - 505px)" : "calc(100vh - 505px)";
     const queryClient = useQueryClient();
     const column = [
         {
@@ -74,23 +77,25 @@ function ManageCurrency() {
             key: 'recdate',
             align: 'center'
         },
-        
+
     ]
-    
-    {GetData('ROLE').toString() === '60' && (column.push(
-        {
-            title: 'Action',
-            dataIndex: 'action',
-            key: 'action',
-            align: 'center'
-        }
-    ))}
+
+    {
+        GetData('ROLE').toString() === '60' && (column.push(
+            {
+                title: 'Action',
+                dataIndex: 'action',
+                key: 'action',
+                align: 'center'
+            }
+        ))
+    }
 
     const CurrencyListQuery = useQuery({
         queryKey: ['CurrencyListQuery'],
         queryFn: async () => {
             try {
-                const result = await GET_LIST('/getCurrencyTable')
+                const result = await GET_LIST('/GET/G104CT')
                 setLoading(false);
                 return result.list
             } catch (error) {
@@ -105,7 +110,7 @@ function ManageCurrency() {
 
     async function remove(Id) {
         try {
-            const result = await axios.post(`/delCurrency/${Id}`);
+            const result = await axios.post(`/POST/P119DC/${Id}`);
             api[result.data.status]({
                 message: result.data.message,
                 description: result.data.description
@@ -151,6 +156,7 @@ function ManageCurrency() {
                 <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
                     <ResponsiveTable
                         columns={column}
+                        height={tableHeight}
                         rows={CurrencyListQuery.data?.filter((x) =>
                             x.country?.includes(getSearch) ||
                             x.currencyName?.includes(getSearch) ||
@@ -184,8 +190,7 @@ function ManageCurrency() {
                                             icon={<EditFilled style={{ fontSize: '18px' }} />}
                                         />
                                     </Tooltip>
-
-                                    <Popconfirm
+                                    {/* <Popconfirm
                                         title="Are you sure you want to delete?"
                                         onConfirm={() => {
                                             remove(x.id)
@@ -201,14 +206,16 @@ function ManageCurrency() {
                                             />
                                         </Tooltip>
                                     </Popconfirm>
+                                    */}
+
                                 </Space>)
                             }))}  // Add the sample rows here
                     />
-                    </Spin>
-                    </ConfigProvider>
-                </div>
-            </>
-            )
+                </Spin>
+            </ConfigProvider>
+        </div>
+    </>
+    )
 }
 
-            export default ManageCurrency
+export default ManageCurrency

@@ -13,7 +13,7 @@ function AccountingLoanDetails({
   const loanProducts = useQuery({
     queryKey: ["getProductSelect"],
     queryFn: async () => {
-      const result = await GET_LIST("/getListLoanProduct");
+      const result = await GET_LIST("/GET/G19LLP");
       return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -34,7 +34,7 @@ function AccountingLoanDetails({
   const consultantData = useQuery({
     queryKey: ["getLoanConsultant"],
     queryFn: async () => {
-      const result = await GET_LIST("/getLoanConsultant");
+      const result = await GET_LIST("/GET/G21LC");
       return result.list;
     },
     refetchInterval: 30 * 1000,

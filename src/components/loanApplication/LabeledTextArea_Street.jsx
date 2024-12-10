@@ -2,7 +2,7 @@ import { Input, Select } from "antd";
 
 import { ExclamationCircleFilled, CheckCircleFilled } from "@ant-design/icons";
 
-import React from "react";
+import React, { useRef } from "react";
 import { toUpperText } from "@utils/Converter";
 
 function LabeledTextArea_Street({
@@ -24,31 +24,50 @@ function LabeledTextArea_Street({
 }) {
   const [getStatus, setStatus] = React.useState("");
   const [getIcon, setIcon] = React.useState(false);
-  //const [getItem, setItem] = React.useState(value || '')
-  let getItem = value ? value : "";
+  const [getItem, setItem] = React.useState(value || '')
+  // let getItem = value ? value : "";
+  const [hasMounted, setHasMounted] = React.useState(false);
+  const inputRef = React.useRef(null);
+  const cursorPosition = React.useRef(null); // Track cursor position
 
-  function onChangeSelect(e) {
-    let upper = e.target.value;
-    getItem = toUpperText(upper); //uppercase
-    if (!upper) {
-      setStatus("error");
+  const onChangeSelect = (e) => {
+    const { value, selectionStart, selectionEnd } = e.target;
+    cursorPosition.current = {
+      start: selectionStart,
+      end: selectionEnd,
+    };
+
+    const upper = toUpperText(value); 
+    setItem(upper);
+    receive(upper);
+    validateSelection(upper); 
+
+
+  };
+
+  const validateSelection = (selectedValue) => {
+    if (!selectedValue) {
+      setStatus("error"); 
       setIcon(true);
-      receive();
     } else {
       setStatus("");
       setIcon(true);
-      receive(toUpperText(upper));
     }
-  }
+  };
 
-  function onBlur() {
-    setIcon(true);
-    if (!getItem) {
-      setStatus("error");
-    } else {
-      setStatus("");
+  const onBlur = () => {
+    validateSelection(getItem);
+  };
+
+  React.useEffect(() => {
+    if (hasMounted) {
+      validateSelection(getItem);
     }
-  }
+  }, [getItem]);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   React.useEffect(() => {
     if (rendered) {
@@ -57,74 +76,70 @@ function LabeledTextArea_Street({
   }, []);
 
   React.useEffect(() => {
-    if (rendered) {
-      onBlur();
+    setItem(value || ""); 
+    if (inputRef && inputRef.current && cursorPosition.current) {
+      const textArea = inputRef.current.resizableTextArea?.textArea; // Access the native textarea element
+      if (textArea) {
+        textArea.setSelectionRange(cursorPosition.current.start, cursorPosition.current.end);
+      }
     }
-  }, [
-    data.ofwPresProv,
-    data.ofwPermProv,
-    data.benpresprov,
-    data.ofwSameAdd,
-    data.bensameadd,
-  ]); // Add dependencies here
+  }, [value]);
+
 
   return (
     <div className={className_dmain}>
       <label className={className_label}>{label}</label>
-      <div className={className_dsub}>
-        <Input.TextArea
-          showCount
-          placeholder={placeHolder}
-          maxLength={250}
-          style={{
-            height: 100,
-            resize: "none",
-          }}
-          onChange={(e) => {
-            onChangeSelect(e);
-          }}
-          autoComplete="off"
-          disabled={
-            (type === "permanent"
-              ? data.ofwSameAdd
-              : type === "beneficiary"
-              ? data.bensameadd
-              : type === "provincial"
-              ? data.ofwProvSameAdd
-              : type === "coborrow"
-              ? data.coborrowSameAdd
-              : null) ||
-            (disabled ? true : disabled == undefined ? true : false)
-          }
-          value={getItem}
-          status={getStatus}
-          /*
-                    suffixIcon={
+      <div className={className_dsub} style={{ position: "relative" }}>
+          <Input.TextArea
+          ref={inputRef}
+          autoComplete="new-password"
+            showCount
+            placeholder={placeHolder}
+            maxLength={250}
+            style={{
+              height: 100,
+              resize: "none",
+            }}
+            onChange={(e) => {
+              onChangeSelect(e);
+            }}
+            onBlur={onBlur}
+            // autoComplete="off"
+            disabled={
+              (type === "permanent"
+                ? data.ofwSameAdd
+                : type === "beneficiary"
+                ? data.bensameadd
+                : type === "provincial"
+                ? data.ofwProvSameAdd
+                : type === "coborrow"
+                ? data.coborrowSameAdd
+                : null) ||
+              (disabled ? true : disabled == undefined ? true : false)
+            }
+            value={getItem}
+            status={getStatus}          
+          />
+                  {getIcon && (
+          <span style={{ position: "absolute", right: "10px", top: "2px" }}>
+            {getStatus === "error" ? (
+              <ExclamationCircleFilled style={{ color: "#ff6767", fontSize: "12px" }} />
+            ) : (
+              <CheckCircleFilled style={{ color: "#00cc00", fontSize: "12px" }} />
+            )}
+          </span>
+        )}
 
-                        getIcon === true
-
-                            ? getStatus === 'error'
-
-                                ? (<ExclamationCircleFilled style={{ color: '#ff6767', fontSize: '12px' }} />)
-
-                                : (<CheckCircleFilled style={{ color: '#00cc00', fontSize: '12px' }} />)
-
-                            : (<></>)
-
-                    }
-*/
-        />
-
-        {required || required == undefined ? (
-          getStatus === "error" ? (
-            <div className="text-xs text-red-500 pt-1 pl-2">
-              {`${placeHolder} Required`}
-            </div>
-          ) : null
-        ) : null}
+          {required || required == undefined ? (
+            getStatus === "error" ? (
+              <div className="text-xs text-red-500 pt-1 pl-2">
+                {`${placeHolder} Required`}
+              </div>
+            ) : null
+          ) : null}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-export default LabeledTextArea_Street;
+  export default LabeledTextArea_Street;
