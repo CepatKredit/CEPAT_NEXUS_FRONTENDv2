@@ -61,7 +61,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
 
     //Preload Selects   
     const { GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX } = useDataContainer();
-    const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+    const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.name })) || [];
     const OFW_SUFFIX = GET_OFW_SUFFIX?.map(x => ({ label: x.description, value: x.code, })) || [];
 
     const handleDoubleClick = (() => {

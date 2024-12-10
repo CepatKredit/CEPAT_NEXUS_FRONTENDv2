@@ -20,8 +20,20 @@ export function ComponentPreloads() {
   useQuery({
     queryKey: ["RelationshipList"],
     queryFn: async () => {
-      const result = await GET_LIST("/GET/G33RR");
+      const result = await GET_LIST("/GET/G152RR");
       setRelationship(result.list)
+      return result.list;
+    },
+    refetchInterval: (data) => (data?.length === 0 ? 500 : false),
+    retryDelay: 1000,
+  });
+
+  const [getRelationship2, setRelationship2] = React.useState([])
+  useQuery({
+    queryKey: ["RelationshipList2"],
+    queryFn: async () => {
+      const result = await GET_LIST("/GET/G153LR");
+      setRelationship2(result.list)
       return result.list;
     },
     refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -183,6 +195,7 @@ export function ComponentPreloads() {
     GET_OFW_SUFFIX: getSuffix,
     GET_VALID_ID_LIST: getValidId,
     GET_RELATIONSHIP_LIST: getRelationship,
+    GET_RELATIONSHIP_ALL: getRelationship2,
     GET_CURRENCY_LIST: getCurrency,
     GET_COLLECTION_AREA_LIST: getCollectionArea,
     GET_LOAN_CONSULTANT: getConsultant,

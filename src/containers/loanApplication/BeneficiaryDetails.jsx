@@ -370,7 +370,7 @@ const className_dsub = "w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[50
             });
           }}
           options={GET_RELATIONSHIP_LIST.map((item) => ({
-            label: item.description,
+            label: item.name,
             value: item.code,
           }))}
           rendered={benrendered}

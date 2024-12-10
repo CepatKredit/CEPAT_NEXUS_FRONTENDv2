@@ -80,7 +80,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
     const { GET_COUNTRY_LIST, GET_RELATIONSHIP_LIST, GET_OFW_SUFFIX, GET_SEABASED_JOBCATEGORY, GET_JOB_CATEGORY, GET_JOB_POSITION, GET_VALID_ID_LIST } = useDataContainer();
 
     const get_country_list = GET_COUNTRY_LIST?.map(x => ({ value: x.code, label: x.description, negative: x.isNegative, name: x.description })) || [];
-    const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.description })) || [];
+    const GET_RELATIONSHIP = GET_RELATIONSHIP_LIST?.map(x => ({ value: x.code, label: x.name })) || [];
     //const JOB_CATEGORY = JobCategory()?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label }))
     const JOB_CATEGORY = GET_JOB_CATEGORY?.map(x => ({ label: x.name, value: x.code, })) || [];
     //const JOB_TITLE = JobTitle(getAppDetails.JobCategory) ? JobTitle(getAppDetails.JobCategory)?.map(x => ({ value: x.value, label: typeof x.label === 'string' ? x.label.toUpperCase() : x.label })) : [];

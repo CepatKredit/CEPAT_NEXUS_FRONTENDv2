@@ -46,6 +46,7 @@ function SelectOpt({
         selected,
         ErrorMsg,
         //ErrMessage,
+        setHighlightedIndex
     } = SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value, setRendered, InvalidMsg, EmptyMsg);
 
     const newOptions = useMemo(() => {
@@ -94,10 +95,18 @@ function SelectOpt({
     };
 
     useEffect(() => {
-        if (rendered) {
-            handleSelectChange(value);
+        if (rendered && value) {
+          const newIndex = filteredOptions.findIndex(option => option.value === value);
+          setHighlightedIndex(newIndex >= 0 ? newIndex : 0);
         }
-    }, [value]);
+      }, [value, filteredOptions]);
+      
+    useEffect(() => {
+        const index = filteredOptions.findIndex(option => option.value === value);
+        if (index !== -1) {
+            setHighlightedIndex(index);
+        }
+    }, [value, filteredOptions]);
 
     const [isHovered, setIsHovered] = useState(false);
     const [isFocused, setIsFocused] = useState(false);

@@ -31,7 +31,7 @@ function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, Em
   } else if (group === 'Amount-30,000' && input !== '' && CheckAmountValid(input)) { // 30,000.00
     return { valid: true, value: inputFormat(format, input), errmsg: '' };
   } else if ((group === 'Rent_Amort' || group === 'Allotment') && CheckRentAmortValid(input)) { // !0
-    return { valid:input === '' && isFocused? false : true, value: inputFormat(format, input), errmsg: input === '' && isFocused? inputMessage(group, 'Empty', comp_name, InvalidMsg, EmptyMsg) : '' };
+    return { valid: input === '' && isFocused ? false : true, value: inputFormat(format, input), errmsg: input === '' && isFocused ? inputMessage(group, 'Empty', comp_name, InvalidMsg, EmptyMsg) : '' };
     /* } else if ((group === 'Number' ) && input !== '' && CheckNumberValid()) { // !0
        return { valid: true, value: inputFormat(format, input), errmsg: '' };*/
     //NUMBER
@@ -41,13 +41,24 @@ function hookInputValid(KeyName, input, comp_name, format, group, InvalidMsg, Em
   }
 }
 
-export function SelectComponentHooks(search, receive, options, setSearchInput, KeyName, rendered, value = '', setRendered, InvalidMsg, EmptyMsg) {
+export function SelectComponentHooks(
+  search,
+  receive,
+  options,
+  setSearchInput,
+  KeyName,
+  rendered,
+  value = '',
+  setRendered,
+  InvalidMsg,
+  EmptyMsg
+) {
   const [status, setStatus] = useState('');
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1); // Default to no highlight
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selected, setselected] = useState(value);
+  const [selected, setSelected] = useState(value);
   const [debouncedInput, setDebouncedInput] = useState(selected);
-  const [ErrorMsg, setErrorMsg] = useState('EMPTY')
+  const [ErrorMsg, setErrorMsg] = useState('EMPTY');
 
   const debounceChange = useCallback((formattedValue) => {
     setDebouncedInput(formattedValue);
@@ -55,55 +66,69 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
 
   const filteredOptions = useMemo(() => {
     if (!options || options.length === 0) return [];
-    if (KeyName === 'ofwcountry') {
-      return options.filter(option =>
-        option.name.toLowerCase().includes(search ? search.toLowerCase() : '')
-      );
-    } else {
-      return options.filter(option =>
-        option.label.toLowerCase().includes(search ? search.toLowerCase() : '')
-      );
-    }
+    const searchLower = search ? search.toLowerCase() : '';
+    return KeyName === 'ofwcountry'
+      ? options.filter(option => option.name?.toLowerCase().includes(searchLower))
+      : options.filter(option => option.label?.toLowerCase().includes(searchLower));
   }, [search, options]);
 
   useEffect(() => {
-    setHighlightedIndex(0);
-  }, [search]);
+    if (rendered && !value && filteredOptions.length) {
+      setHighlightedIndex(0); // Default to the first item if no value is selected
+    } else if (value) {
+      const newIndex = filteredOptions.findIndex(option => option.value === value);
+      setHighlightedIndex(newIndex >= 0 ? newIndex : -1);
+    } else {
+      setHighlightedIndex(-1); // No highlight if no value and no options
+    }
+  }, [value, filteredOptions]);
 
   useEffect(() => {
     setStatus(debouncedInput ? '' : 'error');
-    setErrorMsg(debouncedInput ? '' : 'EMPTY')
+    setErrorMsg(debouncedInput ? '' : 'EMPTY');
     receive(debouncedInput);
-  }, [debouncedInput])
+  }, [debouncedInput]);
 
-  const handleSelectChange = useCallback((selectedValue) => {
-    setDropdownOpen(false)
-    setRendered(true)
-    debounceChange(selectedValue);
-    setselected(selectedValue)
-  }, [receive]); //Need monitor in this value
+  const handleSelectChange = useCallback(
+    (selectedValue) => {
+      setDropdownOpen(false);
+      setRendered(true);
+      debounceChange(selectedValue);
+      setSelected(selectedValue);
+    },
+    [receive]
+  );
 
-  const handleKeyDown = useCallback((event) => {
-    if (!filteredOptions.length) return;
-    if (event.key === 'ArrowDown') {
-      setHighlightedIndex((prevIndex) => (prevIndex + 1) % filteredOptions.length);
-    } else if (event.key === 'ArrowUp') {
-      setHighlightedIndex((prevIndex) =>
-        prevIndex === 0 ? filteredOptions.length - 1 : prevIndex - 1
-      );
-    } else if (event.key === 'Enter' || event.key === 'Tab') {
-      handleSelectChange(filteredOptions[highlightedIndex].value);
-      setSearchInput('')
-    }
-  }, [filteredOptions, highlightedIndex, handleSelectChange]);
+  const handleKeyDown = useCallback(
+    (event) => {
+      if (!filteredOptions.length) return;
+  
+      if (event.key === 'ArrowDown') {
+        setHighlightedIndex((prevIndex) => (prevIndex + 1) % filteredOptions.length);
+      } else if (event.key === 'ArrowUp') {
+        setHighlightedIndex((prevIndex) =>
+          prevIndex === 0 ? filteredOptions.length - 1 : prevIndex - 1
+        );
+      } else if ((event.key === 'Enter' || event.key === 'Tab')) {
+        const hlIndex = highlightedIndex === -1 ? 0 : highlightedIndex; // Default to the first item
+        const selectedOption = filteredOptions[hlIndex];
+        if (selectedOption) {
+          
+          handleSelectChange(selectedOption.value);
+          setSearchInput('');
+        }
+      }
+    },
+    [filteredOptions, highlightedIndex, handleSelectChange]
+  );
 
   useEffect(() => {
     if (rendered) {
       if (!value) {
-        setStatus("error")
-        setErrorMsg('EMPTY')
+        setStatus('error');
+        setErrorMsg('EMPTY');
       } else {
-        setStatus("")
+        setStatus('');
       }
     }
   }, []);
@@ -118,8 +143,11 @@ export function SelectComponentHooks(search, receive, options, setSearchInput, K
     setDropdownOpen,
     selected,
     ErrorMsg,
+    setHighlightedIndex,
   };
 }
+
+
 
 export function DateComponentHook(value, rendered, receive, KeyName, setRendered, InvalidMsg, EmptyMsg) {
   const { getAppDetails } = useContext(LoanApplicationContext)
