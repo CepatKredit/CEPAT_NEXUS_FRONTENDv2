@@ -8,10 +8,13 @@ import SelectOpt from '@components/optimized/SelectOpt';
 import InputOpt from '@components/optimized/InputOpt';
 import DatePickerOpt from '@components/optimized/DatePickerOpt';
 import { disableDate_deployment } from '@utils/Formatting';
+import { jwtDecode } from 'jwt-decode';
 function EditLoanDetails({ data, receive, User }) {
     const [isEdit, setEdit] = React.useState(false);
     const isFirstRender = React.useRef(true);
     const rendered = true;
+    const token = localStorage.getItem('UTK')
+    
     const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
 
     React.useEffect(() => {
@@ -90,7 +93,7 @@ function EditLoanDetails({ data, receive, User }) {
                 receive={(e) => updateAppDetails({ name: 'loanBranchId', value: e })}
                 label={User === 'Credit' ? 'Loan Branch' : 'Assigned Branch'}
                 category={User !== 'Credit' ? 'MARKETING' : undefined}
-                options={branchFilter((User === 'LC' ?false:true)) }
+                options={branchFilter((User === 'Credit' ?false:true)) }
                 rendered={rendered}
                 disabled={User !== 'LC' || getAppDetails.loanBranchId === 11}
 
@@ -270,12 +273,13 @@ function EditLoanDetails({ data, receive, User }) {
                         InvalidMsg={'Invalid How did you know about Cepat Kredit Financing'}
                     />
                 )}
-            {getAppDetails.channelId == 10 ? (<>
+            {User !== 'Credit' && getAppDetails.channelId == 10 ? (<>
                 <SelectOpt
                     className_dmain={'mt-10 xs1:mt-2 2xl:mt-10 w-[18.75rem] h-[4rem] pt-[0.4rem]'}
                     className_label="font-bold"
                     label={<>Loan Consultant <span className="text-red-500">*</span></>}
                     placeHolder={"Loan Consultant"}
+                    //value={User === 'LC'? jwtDecode(token)?.USRID : getAppDetails.consultName}
                     value={getAppDetails.consultName}
                     receive={(e) => updateAppDetails({ name: 'consultName', value: e })}
                     category={'marketing'}

@@ -216,7 +216,7 @@ function LoanApplicationInfo() {
                     { name: 'ContractDate', value: data?.OfwEmploymentDetails?.contractDate && new Date(data.OfwEmploymentDetails.contractDate) > NOT_ALLOW_DATE ? mmddyy(data.OfwEmploymentDetails.contractDate) : '' },
                     { name: 'ContractDuration', value: data?.OfwEmploymentDetails?.contractDuration || '' },
                     { name: 'UnliContract', value: data?.OfwEmploymentDetails?.contractUnli || '' },
-                    { name: 'JobCategory', value: data?.OfwEmploymentDetails?.jobCategory.toString() || '' },
+                    { name: 'JobCategory', value: data?.OfwEmploymentDetails?.jobCategory? data.OfwEmploymentDetails.jobCategory.toString() : '' },
                     { name: 'EmpStatus', value: data?.OfwEmploymentDetails?.employmentStatus || '' },
                     { name: 'FCurrency', value: data?.OfwEmploymentDetails?.foreignCurrency || '' },
                     { name: 'FSalary', value: data?.OfwEmploymentDetails?.salaryInForeign || '' },
