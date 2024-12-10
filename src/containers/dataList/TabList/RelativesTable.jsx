@@ -119,6 +119,7 @@ function Relatives({ BorrowerId, onUpdateCount, User, data, isOfw }) {
         queryFn: async () => {
             const result = await axios.get('/GET/G33RR');
             setReshipList(result.data.list)
+            console.log('relationship', result.data.list)
             return result.data.list;
         },
         refetchInterval: (data) => {

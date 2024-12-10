@@ -65,7 +65,7 @@ function DataList() {
     setCurrentPage(page);
   };
   const userRole = GetData('ROLE')?.toString();
-  
+
 
   return (
     <div className="mx-[1%] my-[1%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[1%] overflow-hidden">
@@ -123,66 +123,80 @@ function DataList() {
               handlePageChange={handlePageChange}
             />
           ) : (
-              <div className="w-full">
-                <ResponsiveTable
-                  columns={ColumnList(3)}
-                 // height={tableHeight}
-                  width="100%"
-                  rows={filteredData?.map((x, i) => {
-                    const loanProductMap = {
-                      "DH - Philippines": "DHP",
-                      "DH - Abroad": "DHA",
-                      "OFW Loan - Abroad": "LBA",
-                      "OFW Loan - In the Philippines": "LBP",
-                      "Seafarer Loan - Deployed": "SBA",
-                      "Seafarer Loan - In the Philippines": "SBP",
-                    };
-                    const isRoleValid = ["20", "10"].includes(userRole);
-                    return {
-                      key: i, 
-                      NO: i + 1, 
-                      LAN: (
-                        <Button
+            <div className="w-full">
+              <ResponsiveTable
+                columns={ColumnList(3)}
+                // height={tableHeight}
+                width="100%"
+                rows={filteredData?.map((x, i) => {
+                  const loanProductMap = {
+                    "DH - Philippines": "DHP",
+                    "DH - Abroad": "DHA",
+                    "OFW Loan - Abroad": "LBA",
+                    "OFW Loan - In the Philippines": "LBP",
+                    "Seafarer Loan - Deployed": "SBA",
+                    "Seafarer Loan - In the Philippines": "SBP",
+                  };
+
+
+                  const loanProductMapEmployee = {
+                    "OFW Loan - Abroad": "LB-WA",
+                    "OFW Loan - In the Philippines": "LB-WL",
+                    "DH - Abroad": "LB-WA-DH",
+                    "DH - In the Philippines": "LB-WL-DH",
+                    "Seafarer Loan - Deployed": "SB-VA",
+                    "Seafarer Loan - In the Philippines": "SB-VL",
+                  };
+
+                  const isRoleValid = ["20", "10"].includes(userRole);
+                  const isRoleValedEmployee = userRole === "30";
+                  return {
+                    key: i,
+                    NO: i + 1,
+                    LAN: (
+                      <Button
                         className='h-7'
-                          key={i}
-                          onClick={() => {
-                            localStorage.setItem(
-                              "SIDC",
-                              toEncrypt(x.loanAppId)
-                            );
-                            localStorage.setItem("activeTab", "deduplication");
-                            navigate(
-                              `${localStorage.getItem("SP")}/${x.loanAppCode}/deduplication`
-                            );
-                            queryClient.invalidateQueries(
-                              { queryKey: ["getRemarks", x.loanAppCode] },
-                              { exact: true }
-                            );
-                          }}
-                          type="link"
-                        >
-                          {x.loanAppCode}
-                        </Button>
-                      ),
-                      DOA: x.recDate
-                        ? moment(x.recDate).format("MM/DD/YYYY")
-                        : "N/A", 
-                      LP: isRoleValid
-                        ? loanProductMap[x.loanProduct] || x.loanProduct
+                        key={i}
+                        onClick={() => {
+                          localStorage.setItem(
+                            "SIDC",
+                            toEncrypt(x.loanAppId)
+                          );
+                          localStorage.setItem("activeTab", "deduplication");
+                          navigate(
+                            `${localStorage.getItem("SP")}/${x.loanAppCode}/deduplication`
+                          );
+                          queryClient.invalidateQueries(
+                            { queryKey: ["getRemarks", x.loanAppCode] },
+                            { exact: true }
+                          );
+                        }}
+                        type="link"
+                      >
+                        {x.loanAppCode}
+                      </Button>
+                    ),
+                    DOA: x.recDate
+                      ? moment(x.recDate).format("MM/DD/YYYY")
+                      : "N/A",
+                    LP: isRoleValid
+                      ? loanProductMap[x.loanProduct] || x.loanProduct
+                      : isRoleValedEmployee
+                        ? loanProductMapEmployee[x.loanProduct] || x.loanProduct
                         : x.loanProduct,
-                      OFW: x.borrowersFullName || "N/A", 
-                      OFWDD: x.departureDate || "N/A",
-                      BENE: x.beneficiaryFullName || "N/A", 
-                      LC: x.consultant || "N/A",
-                      LT: x.loanType || "N/A", 
-                      LB: x.branch || "N/A", 
-                      STAT: x.statusName || "N/A", 
-                      UB: x.modUser || "N/A", 
-                      LIR: x.remarksIn || "N/A", 
-                    };
-                  })}
-                />
-              </div>
+                    OFW: x.borrowersFullName || "N/A",
+                    OFWDD: x.departureDate || "N/A",
+                    BENE: x.beneficiaryFullName || "N/A",
+                    LC: x.consultant || "N/A",
+                    LT: x.loanType || "N/A",
+                    LB: x.branch || "N/A",
+                    STAT: x.statusName || "N/A",
+                    UB: x.modUser || "N/A",
+                    LIR: x.remarksIn || "N/A",
+                  };
+                })}
+              />
+            </div>
           )}
         </Spin>
       </ConfigProvider>
