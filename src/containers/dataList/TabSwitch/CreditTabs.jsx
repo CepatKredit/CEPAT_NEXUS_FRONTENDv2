@@ -177,7 +177,6 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
                     description: 'Please complete all required details.',
                 });
             }
-            setEdit(false)
         } else {
             setEdit(true)
         }
@@ -489,7 +488,7 @@ function CreditTabs({ presaddress, BorrowerId, sepcoborrowfname, sepBenfname, Up
             });
         }
         queryClient.invalidateQueries({ queryKey: ['ClientDataListQuery'] }, { exact: true });
-        setEdit(!isEdit);
+        setEdit(false)
     }
     const handleTabChange = (key) => {
         setActiveKey(key);

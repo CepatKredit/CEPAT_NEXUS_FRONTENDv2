@@ -236,7 +236,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                 <InputOpt
                     className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                     className_label='font-bold'
-                    label="Middle Name"
+                    label={User==='Credit' ? (<>Middle Name <span className="text-red-500">*</span></>) :'Middle Name'}
                     value={data.benmname}
                     placeHolder='Middle Name'
                     receive={(e) => updateAppDetails({ name: 'benmname', value: e })}
@@ -247,7 +247,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                     KeyName={'benmname'}
                     group={'Uppercase'}
                     compname={'Middle Name'}
-                    required={false}
+                    required={User==='Credit'? true : false}
                 />
 
                 <InputOpt
@@ -913,7 +913,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
                             className_label={'font-bold'}
                             className_dsub={''}
-                            label={'Middle Name'}
+                            label={User==='Credit' ? (<>Middle Name <span className="text-red-500">*</span></>) :'Middle Name'}
                             placeHolder='Middle Name'
                             readOnly={isEdit}
                             value={getAppDetails.coborrowmname}
@@ -926,7 +926,7 @@ function EditBeneficiaryDetails({ data, receive, presaddress, BorrowerId, Sepcob
 
                             EmptyMsg={'Middle Name Required'}
                             InvalidMsg={'Invalid Middle Name'}
-                            required={false}
+                            required={User === 'Credit'? true : false}
                         />
                         <InputOpt
                             className_dmain='mt-5 w-[18.75rem] h-[3.875rem]'
