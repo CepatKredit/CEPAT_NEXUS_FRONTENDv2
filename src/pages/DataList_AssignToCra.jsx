@@ -101,16 +101,16 @@ function DataList_AssignToCra() {
   return GetData("ROLE").toString() === "60" ? ( //FOR CRO Manual Assigning
     <>
       {contextHolder}
-      <div className="mx-[1%] my-[2%]">
-        <div className="flex flex-row gap-3">
+      <div className="mx-[1%] my-[1%] xs1:my-[-35%] xs:my-[-30%] sm:my-[0%] md:my-[1%] overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between">
           <MdOutlineManageAccounts
             style={{ fontSize: "40px", color: "#483d8b" }}
             hidden
           />
-          <Typography.Title level={2}>
+          <Typography.Title level={2} className="mb-0">
             {PathName(localStorage.getItem("SP"))}
           </Typography.Title>
-        </div>
+       
         <Button
           type="primary"
           onClick={() => {
@@ -120,18 +120,17 @@ function DataList_AssignToCra() {
         >
           TEST
         </Button>
-        <div className="flex justify-between items-center mb-1">
-          <div></div>
+       
           <div className="w-[400px]">
             <Input
               addonAfter={<SearchOutlined />}
               placeholder="Search"
-              size="large"
+              // size="large"
               className="w-full h-[50px] px-4"
               onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
               value={getSearch}
             />
-          </div>
+        </div>
         </div>
         <ConfigProvider
           theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}
@@ -144,7 +143,7 @@ function DataList_AssignToCra() {
           >
             <ResponsiveTable
               columns={ColumnList("11", AppDataListQuery)}
-              height={tableHeight}
+              // height={tableHeight}
               width={"100%"}
               rows={AppDataListQuery.data
                 ?.filter(
@@ -175,6 +174,7 @@ function DataList_AssignToCra() {
                     NO: i + 1,
                     LAN: (
                       <Button
+                      className='h-7'
                         key={i}
                         onClick={() => {
                           localStorage.setItem("SIDC", toEncrypt(x.loanAppId));
@@ -199,13 +199,13 @@ function DataList_AssignToCra() {
                         value={x.assignedCra}
                         onChange={(craId) => OnChange(craId, x.loanAppId)}
                         options={CraListOption}
-                        className="w-full"
+                        className="w-full h-7"
                         optionRender={(options) => (
                           <Space>
                             <div
                               className={`h-2 w-2 mr-2 rounded-full ${options.data.isOnline
-                                  ? "bg-green-500"
-                                  : "bg-gray-400"
+                                ? "bg-green-500"
+                                : "bg-gray-400"
                                 }`}
                             />
                             {options.data.label}

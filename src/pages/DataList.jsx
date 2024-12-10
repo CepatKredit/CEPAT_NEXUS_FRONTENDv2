@@ -75,7 +75,7 @@ function DataList() {
             style={{ fontSize: "40px", color: "#483d8b" }}
             hidden
           />
-          <Typography.Title level={2} className="mb-0">
+          <Typography.Title level={2}>
             {PathName(localStorage.getItem("SP"))}
           </Typography.Title>
         </div>
