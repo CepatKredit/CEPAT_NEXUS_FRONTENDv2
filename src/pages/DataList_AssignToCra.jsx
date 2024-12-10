@@ -121,18 +121,18 @@ function DataList_AssignToCra() {
           TEST
         </Button>
         <div className="flex justify-between items-center mb-1">
-        <div></div>
-        <div className="w-[400px]">
-          <Input
-            addonAfter={<SearchOutlined />}
-            placeholder="Search"
-            size="large"
-            className="w-full h-[50px] px-4"
-            onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
-            value={getSearch}
-          />
+          <div></div>
+          <div className="w-[400px]">
+            <Input
+              addonAfter={<SearchOutlined />}
+              placeholder="Search"
+              size="large"
+              className="w-full h-[50px] px-4"
+              onChange={(e) => { setSearch(e.target.value.toUpperCase()); }}
+              value={getSearch}
+            />
+          </div>
         </div>
-      </div>
         <ConfigProvider
           theme={{ components: { Spin: { colorPrimary: "rgb(86,191,84)" } } }}
         >
@@ -160,65 +160,74 @@ function DataList_AssignToCra() {
                     x.branch.toUpperCase().includes(getSearch) //||
                   // x.assignedCra.toUpperCase().includes(getSearch)
                 )
-                .map((x, i) => ({
-                  key: i,
-                  NO: i + 1,
-                  LAN: (
-                    <Button
-                      key={i}
-                      onClick={() => {
-                        localStorage.setItem("SIDC", toEncrypt(x.loanAppId));
-                        localStorage.setItem("activeTab", "deduplication");
-                        navigate(
-                          `${localStorage.getItem("SP")}/${
-                            x.loanAppCode
-                          }/deduplication`
-                        );
-                        queryClient.invalidateQueries(
-                          { queryKey: ["getRemarks", x.loanAppCode] },
-                          { exact: true }
-                        );
-                      }}
-                      type="link"
-                    >
-                      {x.loanAppCode}
-                    </Button>
-                  ),
-                  AC: (
-                    <Select
-                      placeholder={"Assign CRA"}
-                      value={x.assignedCra}
-                      onChange={(craId) => OnChange(craId, x.loanAppId)}
-                      options={CraListOption}
-                      className="w-full"
-                      optionRender={(options) => (
-                        <Space>
-                          <div
-                            className={`h-2 w-2 mr-2 rounded-full ${
-                              options.data.isOnline
-                                ? "bg-green-500"
-                                : "bg-gray-400"
-                            }`}
-                          />
-                          {options.data.label}
-                        </Space>
-                      )}
-                    />
-                  ),
-                  DOA: moment(x.recDate).format("MM/DD/YYYY"),
-                  LP: x.loanProduct,
-                  OFW: x.borrowersFullName,
-                  OFWDD: x.departureDate,
-                  BENE: x.beneficiaryFullName,
-                  LC: x.consultant,
-                  LT: x.loanType,
-                  LB: x.branch,
-                  STAT: x.statusName,
-                  UB: x.modUser,
-                  LIR: x.remarksIn,
-                  LU: "N/A",
-                  TID: "N/A",
-                }))}
+                .map((x, i) => {
+                  const loanProductMap = {
+                    "DH - Philippines": "DHP",
+                    "DH - Abroad": "DHA",
+                    "OFW Loan - Abroad": "LBA",
+                    "OFW Loan - In the Philippines": "LBP",
+                    "Seafarer Loan - Deployed": "SBA",
+                    "Seafarer Loan - In the Philippines": "SBP",
+                  };
+
+                  return {
+                    key: i,
+                    NO: i + 1,
+                    LAN: (
+                      <Button
+                        key={i}
+                        onClick={() => {
+                          localStorage.setItem("SIDC", toEncrypt(x.loanAppId));
+                          localStorage.setItem("activeTab", "deduplication");
+                          navigate(
+                            `${localStorage.getItem("SP")}/${x.loanAppCode
+                            }/deduplication`
+                          );
+                          queryClient.invalidateQueries(
+                            { queryKey: ["getRemarks", x.loanAppCode] },
+                            { exact: true }
+                          );
+                        }}
+                        type="link"
+                      >
+                        {x.loanAppCode}
+                      </Button>
+                    ),
+                    AC: (
+                      <Select
+                        placeholder={"Assign CRA"}
+                        value={x.assignedCra}
+                        onChange={(craId) => OnChange(craId, x.loanAppId)}
+                        options={CraListOption}
+                        className="w-full"
+                        optionRender={(options) => (
+                          <Space>
+                            <div
+                              className={`h-2 w-2 mr-2 rounded-full ${options.data.isOnline
+                                  ? "bg-green-500"
+                                  : "bg-gray-400"
+                                }`}
+                            />
+                            {options.data.label}
+                          </Space>
+                        )}
+                      />
+                    ),
+                    DOA: moment(x.recDate).format("MM/DD/YYYY"),
+                    LP: loanProductMap[x.loanProduct] || x.loanProduct,
+                    OFW: x.borrowersFullName,
+                    OFWDD: x.departureDate,
+                    BENE: x.beneficiaryFullName,
+                    LC: x.consultant,
+                    LT: x.loanType,
+                    LB: x.branch,
+                    STAT: x.statusName,
+                    UB: x.modUser,
+                    LIR: x.remarksIn,
+                    LU: "N/A",
+                    TID: "N/A",
+                  };
+                })}
             />
           </Spin>
         </ConfigProvider>

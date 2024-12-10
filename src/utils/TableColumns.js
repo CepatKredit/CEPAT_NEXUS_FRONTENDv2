@@ -13,7 +13,7 @@ export const ColumnList = (command) => {
       { title: 'Loan Consultant', dataIndex: 'LC', key: 'LC', width: '13rem', sorter: (a, b) => { return a?.LC?.localeCompare(b?.LC) }, align: 'center' },
       { title: 'Date of Application', dataIndex: 'DOA', key: 'DOA', width: '9rem', sorter: (a, b) => { return a.DOA.localeCompare(b.DOA) }, align: 'center' },
       { title: 'Loan Type', dataIndex: 'LT', key: 'LT', width: '6rem', sorter: (a, b) => { return a.LT.localeCompare(b.LT) }, align: 'center' },
-      { title: 'Status', dataIndex: 'STAT', key: 'STAT', width: '6rem', align: 'center', ellipsis: true,},
+      { title: 'Status', dataIndex: 'STAT', key: 'STAT', width: '6rem', align: 'center', ellipsis: true},
       { title: 'Updated By', dataIndex: 'UB', key: 'UB', width: '13rem', sorter: (a, b) => { return a?.UB?.localeCompare(b?.UB) }, align: 'center' },
       
      /* { title: 'OFW Departure Date', dataIndex: 'OFWDD', key: 'OFWDD', width: '180px', sorter: (a, b) => { return a?.OFWDD?.localeCompare(b?.OFWDD) }, align: 'center' },
@@ -45,32 +45,34 @@ export const ColumnList = (command) => {
     ]*/
 
   const column_Cro = [
-      { title: '#', dataIndex: 'NO', key: 'NO', width: '40px', align: 'center', fixed: 'left' },
+      { title: '#', dataIndex: 'NO', key: 'NO', width: '3rem', align: 'center', fixed: 'left' },
       {
-          title: 'Loan Application Number', dataIndex: 'LAN', key: 'LAN', width: '200px', align: 'center', sorter: (a, b, c) => {
+          title: 'Loan Application Number', dataIndex: 'LAN', key: 'LAN', width: '11rem', align: 'center', sorter: (a, b, c) => {
               return a.LAN.props.children.localeCompare(b.LAN.props.children)
           }, fixed: 'left'
       },
       {
-          title: 'Assigned CRA', dataIndex: 'AC', key: 'AC', width: '250px', align: 'center', sorter: (a, b, c) => {
+          title: 'Assigned CRA', dataIndex: 'AC', key: 'AC', width: '12rem', align: 'center', sorter: (a, b, c) => {
               return a.AC.props.children.localeCompare(b.AC.props.children)
           }, fixed: 'left'
       },
-      { title: 'Date of Application', dataIndex: 'DOA', key: 'DOA', width: '200px', sorter: (a, b) => { return a.DOA.localeCompare(b.DOA) }, align: 'center' },
-      { title: 'Loan Product', dataIndex: 'LP', key: 'LP', width: '250px', sorter: (a, b) => { return a.LP.localeCompare(b.LP) }, align: 'center' },
-      { title: 'OFW', dataIndex: 'OFW', key: 'OFW', width: '300px', sorter: (a, b) => { return a?.OFW?.localeCompare(b?.OFW) }, align: 'center' },
-      { title: 'OFW Departure Date', dataIndex: 'OFWDD', key: 'OFWDD', width: '180px', sorter: (a, b) => { return a?.OFWDD?.localeCompare(b?.OFWDD) }, align: 'center' },
+      { title: 'OFW', dataIndex: 'OFW', key: 'OFW', width: '10rem', sorter: (a, b) => { return a?.OFW?.localeCompare(b?.OFW) }, align: 'center',ellipsis: true },
+      { title: 'Loan Product', dataIndex: 'LP', key: 'LP', width: '7rem', sorter: (a, b) => { return a.LP.localeCompare(b.LP) }, align: 'center' },
+      { title: 'Loan Consultant', dataIndex: 'LC', key: 'LC', width: '9rem', sorter: (a, b) => { return a?.LC?.localeCompare(b?.LC) }, align: 'center' },
+      { title: 'Date of Application', dataIndex: 'DOA', key: 'DOA', width: '9rem', sorter: (a, b) => { return a.DOA.localeCompare(b.DOA) }, align: 'center' },
+      { title: 'Loan Type', dataIndex: 'LT', key: 'LT', width: '6rem', sorter: (a, b) => { return a.LT.localeCompare(b.LT) }, align: 'center' },
+      { title: 'Status', dataIndex: 'STAT', key: 'STAT', width: '6rem', align: 'center', ellipsis: true},
+      { title: 'Updated By', dataIndex: 'UB', key: 'UB', width: '7rem', sorter: (a, b) => { return a?.UB?.localeCompare(b?.UB) }, align: 'center',ellipsis: true},
+     
+    
+    /*  { title: 'OFW Departure Date', dataIndex: 'OFWDD', key: 'OFWDD', width: '180px', sorter: (a, b) => { return a?.OFWDD?.localeCompare(b?.OFWDD) }, align: 'center' },
       { title: 'Co-Borrower', dataIndex: 'BENE', key: 'BENE', width: '300px', sorter: (a, b) => { return a.BENE.localeCompare(b.BENE) }, align: 'center' },
       { title: 'Additional Co-Borrower', dataIndex: 'ACB', key: 'ACB', width: '250px', sorter: (a, b) => { return a?.ACB?.localeCompare(b?.ACB) }, align: 'center' },
-      { title: 'Loan Consultant', dataIndex: 'LC', key: 'LC', width: '300px', sorter: (a, b) => { return a?.LC?.localeCompare(b?.LC) }, align: 'center' },
-      { title: 'Loan Type', dataIndex: 'LT', key: 'LT', width: '100px', sorter: (a, b) => { return a.LT.localeCompare(b.LT) }, align: 'center' },
-      { title: 'Loan Branch', dataIndex: 'LB', key: 'LB', width: '150px', sorter: (a, b) => { return a.LB.localeCompare(b.LB) }, align: 'center' },
-      { title: 'Updated By', dataIndex: 'UB', key: 'UB', width: '250px', sorter: (a, b) => { return a?.UB?.localeCompare(b?.UB) }, align: 'center' },
-      { title: 'Latest Internal Remarks', dataIndex: 'LIR', key: 'LIR', sorter: (a, b) => { return a?.LIR?.localeCompare(b.LIR) }, width: '500px', align: 'center' },
+        { title: 'Loan Branch', dataIndex: 'LB', key: 'LB', width: '150px', sorter: (a, b) => { return a.LB.localeCompare(b.LB) }, align: 'center' },
+       { title: 'Latest Internal Remarks', dataIndex: 'LIR', key: 'LIR', sorter: (a, b) => { return a?.LIR?.localeCompare(b.LIR) }, width: '500px', align: 'center' },
       { title: 'Last Update', dataIndex: 'LU', key: 'LU', sorter: (a, b) => { return a?.LU?.localeCompare(b.LU) }, width: '200px', align: 'center' },
-      { title: 'Trans-In Date', dataIndex: 'TID', key: 'TID', sorter: (a, b) => { return a?.TID?.localeCompare(b.TID) }, width: '200px', align: 'center' },
-      { title: 'Status', dataIndex: 'STAT', key: 'STAT', width: '250px', align: 'center'},
-
+      { title: 'Trans-In Date', dataIndex: 'TID', key: 'TID', sorter: (a, b) => { return a?.TID?.localeCompare(b.TID) }, width: '200px', align: 'center' },*/
+      
 
   ]
 

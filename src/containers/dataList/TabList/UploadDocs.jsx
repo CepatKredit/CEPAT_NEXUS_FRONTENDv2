@@ -326,7 +326,7 @@ function UploadDocs({ classname, Display, ClientId, FileType, Uploader, User, da
 
             <DocxTable showModal={getModalStatus} Display={Display} closeModal={() => {
                 setModalStatus(false)
-                // clearFileList()
+                 clearFileList()
             }} docTypeList={DocListQuery.data} ClientId={ClientId} Uploader={Uploader} FileType={FileType} LoanStatus={GetStatus} />
             <div className="space-x-[1.5rem]">
                 {

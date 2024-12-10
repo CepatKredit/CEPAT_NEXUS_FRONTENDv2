@@ -88,12 +88,7 @@ function SideNav() {
 
   const { width } = useWindowDimensions();
 
-  /*React.useEffect(() => {
-    console.log('chatbot.....', isChatbotVisible)
-  },[])*/
-  /*React.useEffect(() => {
-    console.log('chatbot.....', isChatbotVisible)
-  },[])*/
+ 
   React.useEffect(() => {
     if (width <= 768) {
       setCollapsed(true);
@@ -101,6 +96,10 @@ function SideNav() {
       setCollapsed(false);
     }
   }, [width]);
+
+   /*React.useEffect(() => {
+    console.log('chatbot.....', collapsed)
+  },[collapsed])*/
 
   const getRightPosition = () => {
     if (width < 768) {
