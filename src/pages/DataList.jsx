@@ -149,7 +149,7 @@ function DataList() {
                   };
 
                   const isRoleValid = ["20", "10"].includes(userRole);
-                  const isRoleValedEmployee = userRole === "30";
+                  const isRoleValedEmployee = userRole !== "20" && userRole !== "10";
                   return {
                     key: i,
                     NO: i + 1,
