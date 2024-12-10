@@ -74,12 +74,23 @@ function SideNav() {
        navigate(key); // Navigate only if it's not the chatbot
      }
    };*/
+  /* const handleMenuClick = ({ key }) => {
+     if (key === "chatbot") {
+       setChatbotVisible(true); // Show the ChatbotButton
+     } else {
+       setChatbotVisible(false); // Hide the ChatbotButton if any other menu item is clicked
+       navigate(key); // Navigate only if it's not the chatbot
+     }
+   };*/
 
   const [searchValue, setSearchValue] = React.useState("");
   const queryClient = useQueryClient();
 
   const { width } = useWindowDimensions();
 
+  /*React.useEffect(() => {
+    console.log('chatbot.....', isChatbotVisible)
+  },[])*/
   /*React.useEffect(() => {
     console.log('chatbot.....', isChatbotVisible)
   },[])*/
@@ -346,10 +357,15 @@ function SideNav() {
                       toggleVisibility();
                       toggleTableHeight();
                     }}
-                    className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[4.2rem]"} z-10 bg-transparent border-none hover:bg-transparent`}
-                    icon={isTableExpanded ? <IoArrowDownCircle className="text-purple-900 text-2xl" />
-                      : <IoArrowUpCircle className="text-purple-900 text-2xl" />}
-                    aria-label={isTableExpanded ? 'Collapse' : 'Expand'}
+                    className={`ml-[6rem] fixed left-1/2 transform -translate-x-1/2 transition-all duration-300 ${isVisible ? "top-[11rem]" : "top-[4.2rem]"} z-10 bg-transparent border-none hover:bg-transparent opacity-50 hover:opacity-100`}
+                    icon={
+                      isTableExpanded ? (
+                        <IoArrowDownCircle className="text-purple-900 text-2xl" />
+                      ) : (
+                        <IoArrowUpCircle className="text-purple-900 text-2xl" />
+                      )
+                    }
+                    aria-label={isTableExpanded ? "Collapse" : "Expand"}
                   />
                 )}
               </div>

@@ -33,9 +33,9 @@ function BeneficiaryDetails({
 
   const { GET_OFW_SUFFIX, GET_RELATIONSHIP_LIST } = useDataContainer();
   const classname_main =
-    "flex flex-col xs1:flex-col 2xl:flex-row mt-2 xs1:mt-3 2xl:mt-2 w-full xs1:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs:h-auto 2xl:h-[60px]";
-  const className_label = "mb-2 xs1:mb-0 xs1:mr-4 w-full xs1:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
-  const className_dsub = "w-full xs1:w-[300px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[400px]";
+  "flex flex-col xs1:flex-col 2xl:flex-row mt-2 xs1:mt-3 2xl:mt-2 w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px] h-auto  xs1:h-auto 2xl:h-[60px]";
+const className_label = "mb-5 xs1:mb-1 sm:mb-1 md:mb-1 lg:mb-1 2xl:mb-7 mr-2 xs1:mr-1 sm:mr-4 w-full xs1:w-[200px]  xs2:w-[300px] sm:w-[250px] md:w-[300px] lg:w-[350px] xl:w-[400px] 2xl:w-[300px] 3xl:w-[500px]";
+const className_dsub = "w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[500px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] 3xl:w-[500px]";
   React.useEffect(() => {
     setbenrendered(true);
   }, [setbenrendered]);
@@ -65,10 +65,8 @@ function BeneficiaryDetails({
           category={"direct"}
           rendered={benrendered}
         />
-        <div className={`${classname_main} flex items-center `}>
-          <label className="mb-5 xs1:mb-1 sm:mb-5 xs1:mr-1 sm:mr-4 w-full sm:w-[252px]">
-            Middle Name
-          </label>
+        <div className={`${classname_main} flex items-center`}>
+          <label className={`${className_label} ml-2 xs1:ml-14 xs:ml-6 xl:ml-0 2xl:ml-0 sm:mr-4 xl:mr-24 2xl:mr-4  `}>Middle Name</label>
           <ConfigProvider
             theme={{
               components: {
@@ -78,9 +76,10 @@ function BeneficiaryDetails({
               },
             }}
           >
-            <div className="relative flex items-center w-full sm:w-[420px] mb-5 xs1:mb-1 sm:mb-5">
+            <div
+              className={`relative flex items-center w-full xs1:w-[200px] xs2:w-[250px] xs:w-[280px] sm:w-[280px] md:w-[500px] lg:w-[500px] xl:w-[500px] 2xl:w-[500px] mb-5 xs1:mb-1 sm:mb-1 md:mb-1 lg:mb-1 2xl:mb-5 ${className_dsub}`}
+            >
               <Input
-                className="w-full"
                 fieldName="benmname"
                 placeholder={
                   getAppDetails.withBenMName ? "No Middle Name" : "Middle Name"

@@ -547,7 +547,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                             />
                             {User === 'Credit' && (
                                 <SelectOpt
-                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10 2xl:mt-5'
+                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                                         } w-[18.75rem] h-[3.875rem]`}
                                     className_label={'font-bold'}
                                     label={<>Spouse Source of Income <span className="text-red-500">*</span></>}
@@ -569,7 +569,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                                 />)}
                             {User === 'Credit' && (
                                 <InputOpt
-                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10 2xl:mt-5'
+                                    className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
                                         } w-[18.75rem] h-[3.875rem]`}
                                     className_label={'font-bold'}
                                     label={'Spouse Income'}
@@ -589,7 +589,8 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )}
                 {User === 'Credit' &&
                     (<SelectOpt
-                        className_dmain='mt-5 xs1:mt-2 2xl:mt-5 w-[18.75rem] h-[3.875rem]'
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={<>Relationship to the Beneficiary <span className="text-red-500">*</span></>}
                         value={getAppDetails.RelationshipBen}
@@ -626,7 +627,7 @@ function EditOfwDetails({ data, receive, presaddress, User, RelativesCount, Borr
                 )*/}
                 {/*User === 'LC'*/ true && (
                     <InputOpt
-                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' : 'mt-10'
+                        className_dmain={`${User === 'LC' ? 'mt-5 xs1:mt-2 2xl:mt-5' :'mt-10 '
                             } w-[18.75rem] h-[3.875rem]`}
                         className_label={'font-bold'}
                         label={"Dependents"}
