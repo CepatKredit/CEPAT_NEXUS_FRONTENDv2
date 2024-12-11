@@ -466,7 +466,7 @@ function CheckerDocument({ data, ClientId, Uploader }) {
     }; 
        
     return (
-        <div className='pt-2 h-[100%]'>
+        <div className='h-[100%]'>
             {contextHolder}
             <ViewPdf showModal={modalStatus} closeModal={() => { setStatus(false) }} />
             <Image style={{ display: 'none' }} preview={{
@@ -498,7 +498,7 @@ function CheckerDocument({ data, ClientId, Uploader }) {
                         </Popconfirm>
                     </ConfigProvider>
                 </div>
-                <Table columns={columns} scroll={{ y: 'calc(100vh - 360px)', x: '100%' }}
+                <Table columns={columns} scroll={{ y: 'calc(85vh - 360px)', x: '100%' }}
                     components={components}
                     rowClassName={() => 'editable-row'}
                     dataSource={

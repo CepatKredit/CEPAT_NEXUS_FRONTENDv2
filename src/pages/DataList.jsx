@@ -26,7 +26,7 @@ function DataList() {
   const token = localStorage.getItem('UTK');
   const queryClient = useQueryClient();
   const { isTableExpanded } = SideNavState();
-  const tableHeight = isTableExpanded ? "calc(127vh - 505px)" : "calc(119vh - 505px)";
+  const tableHeight = isTableExpanded ? "calc(127vh - 505px)" : "calc(118vh - 505px)";
 
   React.useEffect(() => { AppDataListQuery.refetch() }, [localStorage.getItem('SP')]);
 
