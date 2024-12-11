@@ -28,8 +28,21 @@ function LabeledInput_UpperCase({
   );
   const [getStatus, setStatus] = React.useState("");
   const [getIcon, setIcon] = React.useState(false);
+  const inputRef = React.useRef(null);
+  const cursorPosition = React.useRef(null); // Track cursor position
+
+  React.useEffect(() => {
+    setStatus(null)
+    setIcon(false)
+  }, [!getAppDetails.dataPrivacy])
 
   function onChange(e) {
+    const { value, selectionStart, selectionEnd } = e.target;
+    // Update cursor position
+    cursorPosition.current = {
+      start: selectionStart,
+      end: selectionEnd,
+    };
     const newValue = e.target.value.replace(/[^a-zA-Z\s]/g, "").slice(0, 80);
     const upperValue = newValue.toUpperCase();
     updateAppDetails({ name: fieldName, value: upperValue });
@@ -41,20 +54,32 @@ function LabeledInput_UpperCase({
       setStatus("error");
       setIcon(true);
     }
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.setSelectionRange(cursorOffset, cursorOffset);
+      }
+    }, 0);
   }
 
   React.useEffect(() => {
     if (rendered) {
       setIcon(false);
       if (getAppDetails[fieldName]) {
-        setStatus(""); // Set checkmark icon when input is valid
-        setIcon(true); // Automatically close tooltip when input is valid
+        setStatus("");
+        setIcon(true);
       } else {
-        setStatus("error"); // Set error status when input is empty
-        setIcon(true); // Keep tooltip visible when input is empty
+        setStatus("error");
+        setIcon(true);
       }
     }
   }, []);
+
+  React.useEffect(() => {
+    if (inputRef && inputRef.current && cursorPosition.current) {
+      inputRef.current.setSelectionRange(cursorPosition.current.start, cursorPosition.current.end);
+    }
+  }, [getAppDetails[fieldName]]);
+
 
   return (
     <div className={className_dmain}>
@@ -68,7 +93,9 @@ function LabeledInput_UpperCase({
 
       <div className={className_dsub}>
         <Input
+          ref={inputRef}
           style={{ width: "100%" }}
+          autoComplete="new-password"
           size="large"
           value={
             fieldName === "consultName" && GetData("ROLE")?.toString() === "20"

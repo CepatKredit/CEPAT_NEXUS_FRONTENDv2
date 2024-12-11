@@ -4,19 +4,19 @@ import LabeledInput from '@components/marketing/LabeledInput'
 import ResponsiveTable from '@components/validation/ResponsiveTable'
 import StatusRemarks from './StatusRemarks';
 import SectionHeader from '@components/validation/SectionHeader'
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { mmddyy, toDecrypt } from '@utils/Converter';
 import dayjs from 'dayjs';
 import UploadRecord from './internalChecking/UploadRecord';
 import { generateKey } from '@utils/Generate';
 import LabelDisplay from '@components/marketing/LabelDisplay';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 
 function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey, sepcoborrowfname }) {
+    const { SET_LOADING_INTERNAL } = React.useContext(LoanApplicationContext)
     const [isEdit, setEdit] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-
     const columns = [
         {
             title: '#',
@@ -119,66 +119,117 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
         beneficiary: null,
         coborrow: null,
     })
+    // FETCH KAISER FROM DB
+    const FetchKaiser = useQuery({
+        queryKey: ['FetchKaiser'],
+        queryFn: async () => {
+            try {
+                const req = [
+                    axios.get(`/GET/G148GK/${data.loanIdCode}/${1}`),
+                    axios.get(`/GET/G148GK/${data.loanIdCode}/${2}`),
+                    axios.get(`/GET/G148GK/${data.loanIdCode}/${3}`)
+                ]
+                const results = await Promise.allSettled(req);
+                const ofwData = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data.list : [];
+                const beneficiaryData = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data.list : [];
+                const coborrowData = results[2].status === 'fulfilled' && !results[2].value.error ? results[2].value.data.list : [];
+
+                set(prevState => ({
+                    ...prevState,
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                }));
+                SET_LOADING_INTERNAL('KaiserOFW', false);
+                return {
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                };
+            } catch (err) {
+                console.log(err)
+                return {
+                    ofw: [],
+                    beneficiary: [],
+                    coborrow: [],
+                };
+            }
+        }
+    })
+    React.useEffect(() => {
+        if (data.loanIdCode != '' && gettrigger) {
+            set({
+                ofw: null,
+                beneficiary: null,
+                coborrow: null,
+            })
+            FetchKaiser.refetch();
+            settrigger(false);
+        }
+    }, [data.loanIdCode])
 
     async function getKaiser() {
-        const data1 = {
-            FullName: `${data.ofwfname} ${data.ofwlname}`,
-            IsOfw: 1,
-            LoanAppId: data.loanIdCode,
-            ModUser: USRNAME,
-        }
-        const data2 = {
-            FullName: `${data.benfname} ${data.benlname}`,
-            IsOfw: 2,
-            LoanAppId: data.loanIdCode,
-            ModUser: USRNAME,
-        }
-        const data3 = {
-            FullName: `${data.coborrowfname} ${data.coborrowlname}`,
-            IsOfw: 3,
-            LoanAppId: data.loanIdCode,
-            ModUser: USRNAME,
-        }
-
-        const requests = [
-            axios.post(`/getKaiser/`, data1),
-            axios.post(`/getKaiser/`, data2),
-            axios.post(`/getKaiser/`, data3)
-        ];
-        try {
-            const results = await Promise.allSettled(requests);
-            console.log(results[0], results[1], results[2])
-            const ofwData = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data.list : [];
-            const beneficiaryData = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data.list : [];
-            const coborrowData = results[2].status === 'fulfilled' && !results[2].value.error ? results[2].value.data.list : [];
-            console.log('Done Fetching Kaiser API...')
-            set(prevState => ({
-                ...prevState,
-                ofw: ofwData,
-                beneficiary: beneficiaryData,
-                coborrow: coborrowData,
-            }));
-            settrigger(false);
-            setLoading(false)
-            return {
-                ofw: ofwData,
-                beneficiary: beneficiaryData,
-                coborrow: coborrowData,
-            };
-        } catch (error) {
-            console.log(error)
-            return {
-                ofw: [],
-                beneficiary: [],
-                coborrow: [],
-            };
-        }
+        onClickKaiser.mutate();
     }
+
+    const onClickKaiser = useMutation({
+        mutationFn: async () => {
+            const data1 = {
+                FullName: `${data.ofwfname} ${data.ofwlname}`,
+                IsOfw: 1,
+                LoanAppId: data.loanIdCode,
+                ModUser: USRNAME,
+            }
+            const data2 = {
+                FullName: `${data.benfname} ${data.benlname}`,
+                IsOfw: 2,
+                LoanAppId: data.loanIdCode,
+                ModUser: USRNAME,
+            }
+            const data3 = {
+                FullName: `${data.coborrowfname} ${data.coborrowlname}`,
+                IsOfw: 3,
+                LoanAppId: data.loanIdCode,
+                ModUser: USRNAME,
+            }
+
+            const requests = [
+                axios.post(`/POST/P69GK`, data1),
+                axios.post(`/POST/P69GK`, data2),
+                axios.post(`/POST/P69GK`, data3)
+            ];
+            try {
+                const results = await Promise.allSettled(requests);
+                const ofwData = results[0].status === 'fulfilled' && !results[0].value.error ? results[0].value.data.list : [];
+                const beneficiaryData = results[1].status === 'fulfilled' && !results[1].value.error ? results[1].value.data.list : [];
+                const coborrowData = results[2].status === 'fulfilled' && !results[2].value.error ? results[2].value.data.list : [];
+                set(prevState => ({
+                    ...prevState,
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                }));
+                SET_LOADING_INTERNAL('KaiserOFW', false);
+                return {
+                    ofw: ofwData,
+                    beneficiary: beneficiaryData,
+                    coborrow: coborrowData,
+                };
+            } catch (error) {
+                console.log(error)
+                return {
+                    ofw: [],
+                    beneficiary: [],
+                    coborrow: [],
+                };
+            }
+        }
+    })
 
     function genKaiser() {
         if (data.loanIdCode !== '') {
             if (data.benfname.trim() !== '' || data.benlname.trim() !== '') {
-                setLoading(true);
+                SET_LOADING_INTERNAL('KaiserOFW', true);
                 getKaiser();
             } else {
                 api['warning']({
@@ -194,15 +245,11 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
             key: '1',
             label: 'Kaiser Check',
             children: (<>
-                {gettrigger && (<center><div >
+                <center>
                     <ConfigProvider theme={{ token: { colorPrimary: '#6b21a8' } }}>
-                        <Button
-                            onClick={() => { genKaiser() }}
-                            className='bg-[#3b0764] w-[8rem]'
-                            type='primary' > Load Kaiser
-                        </Button>
+                        <Button loading={onClickKaiser.isPending} size='large' className='mb-2 bg-[#3b0764]' type='primary' onClick={() => { genKaiser() }}  >Load Kaiser</Button>
                     </ConfigProvider>
-                </div></center>)}
+                </center>
                 {
                     data.loanProd === '0303-DHW' || data.loanProd === '0303-VL' || data.loanProd === '0303-WL'
                         ? (<div>
@@ -216,36 +263,40 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.ofw ? get.ofw.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
+                                <div className='mt-2 px-2 w-full'>
+                                    <ResponsiveTable
+                                        loading={onClickKaiser.isPending}
+                                        columns={columns}
+                                        height={300}
+                                        width={400}
+                                        rows={get.ofw ? get.ofw
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
+                                            : []}
+                                        locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                    />
                                     {/*  {emptyRows && (
                                         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 text-gray-600">
                                             No data available
@@ -263,36 +314,40 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
+                                <div className='mt-2 w-full px-2'>
+                                    <ResponsiveTable
+                                        loading={onClickKaiser.isPending}
+                                        columns={columns}
+                                        height={300}
+                                        width={400}
+                                        rows={get.beneficiary ? get.beneficiary
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
+                                            : []}
+                                        locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                    />
                                 </div>
                             </div>
                         </div>)
@@ -307,36 +362,40 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.beneficiary ? get.beneficiary.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
+                                <div className='mt-2 w-full px-2'>
+                                    <ResponsiveTable
+                                        loading={onClickKaiser.isPending}
+                                        columns={columns}
+                                        height={300}
+                                        width={400}
+                                        rows={get.beneficiary ? get.beneficiary
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
+                                            : []}
+                                        locale={get.beneficiary && get.beneficiary.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                    />
                                 </div>
                             </div>
                             <center>
@@ -349,36 +408,40 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                                 </div>
                             </center>
                             <div className='h-[400px]' key={generateKey()}>
-                                <div className='mt-2 w-[81rem]'>
-                                    <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                        <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                            <ResponsiveTable
-                                                columns={columns}
-                                                height={300}
-                                                width={400}
-                                                rows={get.ofw ? get.ofw.map((x, i) => ({
-                                                    key: generateKey(),
-                                                    num: i + 1,
-                                                    fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                                    deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                                    score: x.score || 'NO RECORDS FOUND',
-                                                    jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                                    ckby: x.checkedBy || USRNAME,
-                                                    ckdate: x.checkedDate || mmddyy(dayjs()),
-                                                }))
-                                                    : []}
-                                                locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                            />
-                                        </Spin>
-                                    </ConfigProvider>
+                                <div className='mt-2 w-full px-2'>
+                                    <ResponsiveTable
+                                        columns={columns}
+                                        loading={onClickKaiser.isPending}
+                                        height={300}
+                                        width={400}
+                                        rows={get.ofw ? get.ofw
+                                            .sort((a, b) => {
+                                                // Sorting by lastname alphabetically
+                                                const lnameA = a.firstname?.toUpperCase() || "";
+                                                const lnameB = b.firstname?.toUpperCase() || "";
+                                                return lnameA.localeCompare(lnameB);
+                                            })
+                                            .map((x, i) => ({
+                                                key: generateKey(),
+                                                num: i + 1,
+                                                fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                                suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                                bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                                deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                                category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                                urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                                dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                                subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                                score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                                jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                                ckby: x.checkedBy || USRNAME,
+                                                ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                            }))
+                                            : []}
+                                        locale={get.ofw && get.ofw.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                                    />
                                 </div>
                             </div>
                         </div>)
@@ -394,36 +457,40 @@ function InternalChecking({ classname, User, data, ClientId, Uploader, activeKey
                         </div>
                     </center>
                     <div className='h-[400px]'>
-                        <div className='mt-2 w-[81rem]'>
-                            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'rgb(86,191,84)' } } }}>
-                                <Spin spinning={loading} tip="Please wait..." className="flex justify-center items-center">
-                                    <ResponsiveTable
-                                        columns={columns}
-                                        height={300}
-                                        width={400}
-                                        rows={get.coborrow ? get.coborrow.map((x, i) => ({
-                                            key: generateKey(),
-                                            num: i + 1,
-                                            fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
-                                            suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
-                                            bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
-                                            deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
-                                            category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
-                                            urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
-                                            dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
-                                            subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
-                                            score: x.score || 'NO RECORDS FOUND',
-                                            jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
-                                            ckby: x.checkedBy || USRNAME,
-                                            ckdate: x.checkedDate || mmddyy(dayjs()),
-                                        }))
-                                            : []}
-                                        locale={ get.coborrow && get.coborrow.length === 0 ? { emptyText: 'No Record Found' } : {}}
-                                    />
-                                </Spin>
-                            </ConfigProvider>
+                        <div className='mt-2 w-full px-2'>
+                            <ResponsiveTable
+                                columns={columns}
+                                loading={onClickKaiser.isPending}
+                                height={300}
+                                width={400}
+                                rows={get.coborrow ? get.coborrow
+                                    .sort((a, b) => {
+                                        // Sorting by lastname alphabetically
+                                        const lnameA = a.firstname?.toUpperCase() || "";
+                                        const lnameB = b.firstname?.toUpperCase() || "";
+                                        return lnameA.localeCompare(lnameB);
+                                    })
+                                    .map((x, i) => ({
+                                        key: generateKey(),
+                                        num: i + 1,
+                                        fname: x.firstname?.toUpperCase() || 'NO RECORDS FOUND',
+                                        mname: x.midname?.toUpperCase() || 'NO RECORDS FOUND',
+                                        lname: x.lastname?.toUpperCase() || 'NO RECORDS FOUND',
+                                        suffix: x.suffix?.toUpperCase() || 'NO RECORDS FOUND',
+                                        bday: x.bday ? mmddyy(x.bday) : 'NO RECORDS FOUND',
+                                        deceased: x.deceased?.toUpperCase() || 'NO RECORDS FOUND',
+                                        category: x.category?.toUpperCase() || 'NO RECORDS FOUND',
+                                        urlNotes: x.notes?.toUpperCase() || 'NO RECORDS FOUND',
+                                        dtag: x.dtag?.toUpperCase() || 'NO RECORDS FOUND',
+                                        subj: x.subject?.toUpperCase() || 'NO RECORDS FOUND',
+                                        score: x.score ? parseFloat(x.score).toFixed(2) : 'NO RECORDS FOUND',
+                                        jurisdiction: x.jurisdiction || 'NO RECORDS FOUND',
+                                        ckby: x.checkedBy || USRNAME,
+                                        ckdate: x.checkedDate ? mmddyy(x.checkedDate) : mmddyy(dayjs()),
+                                    }))
+                                    : []}
+                                locale={get.coborrow && get.coborrow.length === 0 ? { emptyText: 'No Record Found' } : {}}
+                            />
                         </div>
                     </div>
                 </>)}

@@ -6,6 +6,7 @@ import { viewResetPasswordModal } from '@hooks/ModalController';
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query';
 import { code, decode } from '@utils/Secure';
+import { toUpperText } from '@utils/Converter';
 
 function ResetPassword() {
 
@@ -36,7 +37,7 @@ function ResetPassword() {
         setData({ ...getData, [e.target.name]: e.target.value })
     }
 
-    let hasMinPass = getData.password.length >= 10
+    let hasMinPass = getData.password.length >= 8
     let hasLowerChar = /(.*[a-z].*)/.test(getData.password)
     let hasUpperChar = /(.*[A-Z].*)/.test(getData.password)
     let hasNumberChar = /(.*[0-9].*)/.test(getData.password)
@@ -72,15 +73,16 @@ function ResetPassword() {
             }
             else if (getData.tempPassword !== getData.password) {
                 const passwordData = {
-                    Id: AccountId.id,
-                    Username: AccountId.username,
-                    Password: code(getData.password),
-                    Stat: 1,
+                    userId: toUpperText(AccountId.id),
+                    username: AccountId.username,
+                    password: code(getData.password),
+                    stat: 1,
                 }
 
                 let ctr_password = 0;
-                await axios.post(`/checkPassword/${AccountId.id}`)
+                await axios.post(`/POST/P94CP/${toUpperText(AccountId.id)}`)
                     .then((result) => {
+                        console.log(result)
                         result.data.list?.map((x) => { if (decode(x.password) === getData.password) { ctr_password += 1 } })
                     })
                     .catch((error) => {
@@ -91,9 +93,11 @@ function ResetPassword() {
                     })
 
                 if (ctr_password === 0) {
-                    await axios.post('/savePassword', passwordData)
-                    await axios.post('/user-management/resetPassword', passwordData)
+                    console.log("Password Data",passwordData)
+                    await axios.post('/POST/P96SP', passwordData)
+                    await axios.post('/POST/P97RP', passwordData)
                         .then(result => {
+                            console.log("success", result)
                             if (result.data.status === 'success') {
                                 setModalResetStatus(false);
                                 navigate('/')
@@ -104,6 +108,7 @@ function ResetPassword() {
                             }
                         })
                         .catch(error => {
+                            console.log(error)
                             api['error']({
                                 message: 'Something went wrong',
                                 description: error.message
@@ -212,10 +217,10 @@ function ResetPassword() {
                         {hasMinPass ?
                             <small className='text-green-500'>
 
-                                <CheckOutlined /> be at least minimum of 10 and maximum of 15 characters long.
+                                <CheckOutlined /> be at least minimum of 8 and maximum of 15 characters long.
                             </small> :
                             <small className='text-rose-500'>
-                                <CloseOutlined /> be at least minimum of 10 and maximum of 15 characters long.
+                                <CloseOutlined /> be at least minimum of 8 and maximum of 15 characters long.
 
                             </small>}
                     </div>

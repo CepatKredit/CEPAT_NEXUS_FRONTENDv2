@@ -1,16 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FcGoogle } from "react-icons/fc";
 import { Descriptions } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { GET_LIST } from '@api/base-api/BaseApi';
 import { Gender, MaritalStatus, Residences,Overseas,SpouseSourceIncome ,Religion } from '@utils/FixedData';
-import { mmddyy } from '@utils/Converter';
+import { mmddyy, ReturnText } from '@utils/Converter';
+import { GetData } from '@utils/UserData';
+import { getDependentsCount } from '@hooks/DependentsController';
+import { useStore } from 'zustand';
+import { removeLinkFormat } from '@utils/Formatting';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
-function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
+
+function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User, receive}) {
+    const { getAppDetails, updateAppDetails, showBenDependents } = useContext(LoanApplicationContext)
+    const { Count } = useStore(getDependentsCount);
+
+    React.useEffect(() => {
+        updateAppDetails({ name: 'bendependents', value: Count - 1 });
+    }, [Count]);
+
+
     const { data: suffixOption } = useQuery({
         queryKey: ['getSuffix'],
         queryFn: async () => {
-            const result = await GET_LIST('/OFWDetails/GetSuffix');
+            const result = await GET_LIST('/GET/G28S');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -31,7 +45,7 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
     const { data: relationshipOptions } = useQuery({
         queryKey: ['getRelationship'],
         queryFn: async () => {
-            const result = await GET_LIST('/getListRelationship');
+            const result = await GET_LIST('/GET/G152RR');
             return result.list;
         },
         refetchInterval: (data) => (data?.length === 0 ? 500 : false),
@@ -52,53 +66,73 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
    
     // Beneficiary Information
     const beneficiaryItems = [
-        { key: '1', label: <span className={`font-semibold ${data.benfname ? 'text-black' : 'text-orange-500'}`}>First Name</span>, children: data.benfname || '' },
+        { key: '1', label: <span className={`font-semibold ${data.benfname ? 'text-black' : 'text-red-600'}`}>First Name</span>, children: data.benfname || '' },
         { key: '2', label: <span className='font-semibold text-black'>Middle Name</span>, children: data.benmname || '' },
-        { key: '3', label: <span className={`font-semibold ${data.benlname ? 'text-black' : 'text-orange-500'}`}>Last Name</span>, children: data.benlname || '' },
-        { key: '4', label: <span className={`font-semibold ${data.bensuffix ? 'text-black' : 'text-orange-500'}`}>Suffix</span>, children: suffixOption?.find(suffix => suffix.code === data.bensuffix)?.description || '' },
-        { key: '5', label: <span className={`font-semibold ${data.benbdate ? 'text-black' : 'text-orange-500'}`}>Birthdate</span>, children: data.benbdate ? mmddyy(data.benbdate, 'MM-DD-YYYY') : '' },
-        (User === 'Credit' || User === 'Lp') && { key: '5', label: <span className={`font-semibold ${data.benbdate ? 'text-black' : 'text-orange-500'}`}>Age</span>, children: data.benbdate ? calculateAge(data.benbdate) : ''},
-        { key: '6', label: <span className={`font-semibold ${data.bengender ? 'text-black' : 'text-orange-500'}`}>Gender</span>, children: Gender().find(gender => gender.value === data.bengender)?.label || '' },
-        { key: '7', label: <span className={`font-semibold ${data.benemail ? 'text-black' : 'text-orange-500'}`}>Email Address</span>, children: data.benemail || '' },
-        { key: '8', label: <span className={`font-semibold ${data.benmobile ? 'text-black' : 'text-orange-500'}`}>Mobile Number</span>, children: data.benmobile || '' },
+        { key: '3', label: <span className={`font-semibold ${data.benlname ? 'text-black' : 'text-red-600'}`}>Last Name</span>, children: data.benlname || '' },
+        { key: '4', label: <span className={`font-semibold ${data.bensuffix ? 'text-black' : 'text-red-600'}`}>Suffix</span>, children: suffixOption?.find(suffix => suffix.code === data.bensuffix)?.description || '' },
+        { key: '5', label: <span className={`font-semibold ${data.benbdate ? 'text-black' : 'text-red-600'}`}>Birthdate</span>, children: data.benbdate ? mmddyy(data.benbdate, 'MM-DD-YYYY') : '' },
+        (User === 'Credit' || User === 'Lp') && { key: '5', label: <span className={`font-semibold ${data.benbdate ? 'text-black' : 'text-red-600'}`}>Age</span>, children: data.benbdate ? calculateAge(data.benbdate) : ''},
+        { key: '6', label: <span className={`font-semibold ${data.bengender ? 'text-black' : 'text-red-600'}`}>Gender</span>, children: Gender().find(gender => gender.value === data.bengender)?.label || '' },
+        { key: '7', label: <span className={`font-semibold ${data.benemail ? 'text-black' : 'text-red-600'}`}>Email Address</span>, children: data.benemail || '' },
+        { key: '8', label: <span className={`font-semibold ${data.benmobile ? 'text-black' : 'text-red-600'}`}>Mobile Number</span>, children: data.benmobile || '' },
         { key: '9', label: <span className='font-semibold text-black'>Other Number</span>, children: data.benothermobile || '' },
-        { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-orange-500'}`}>Facebook Name / Profile</span>, children: data.benfblink || '' },
-        (User === 'Credit' || User === 'Lp') && { key: '11', label: <span className={`font-semibold ${data.BenGrpChat ? 'text-black' : 'text-orange-500'}`}>Group Chat</span>, children: data.BenGrpChat || '' },
-         User !== 'LC' && { key: '12', label: <span className={`font-semibold ${data.benrelationship ? 'text-black' : 'text-orange-500'}`}>Relationship to OFW</span>, children: relationshipOptions?.find(relationship => relationship.code === data.benrelationship)?.description || '' },
-         (User === 'Credit' || User === 'Lp') && { key: '13', label: <span className={`font-semibold ${data.BenSrcIncome ? 'text-black' : 'text-orange-500'}`}>Source of Income</span>, children:SpouseSourceIncome().find(BenSrcIncome => BenSrcIncome.value === data.BenSrcIncome)?.label || '' },
-         (User === 'Credit' || User === 'Lp') && { key: '14', label: <span className={`font-semibold ${data.BenReligion ? 'text-black' : 'text-orange-500'}`}>Religion</span>,  children: Religion().find(x => x.value === data.BenReligion)?.label || '' },
-         (User === 'Credit' || User === 'Lp') && { key: '15', label: <span className={`font-semibold ${data.BenFormerOFW ? 'text-black' : 'text-orange-500'}`}>Former OFW (Overseas Filipino Worker)</span>, children: Overseas().find(BenFormerOFW => BenFormerOFW.value === data.BenFormerOFW)?.label || '' },
-         data.BenFormerOFW === 1 && (User === 'Credit' || User === 'Lp') && {key: '16', label: <span className={`font-semibold ${data.BenLastReturn ? 'text-black' : 'text-orange-500'}`}>When was your last return home?</span>, children: data.BenLastReturn || ''},
-         (User === 'Credit' || User === 'Lp') && { key: '17', label: <span className={`font-semibold ${data.BenPlanAbroad ? 'text-black' : 'text-orange-500'}`}>Plans to Abroad</span>, children: Overseas().find(BenPlanAbroad => BenPlanAbroad.value === data.BenPlanAbroad)?.label || '' },
+        User !== 'Credit' && { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.benfblink || '' },
+        User === 'Credit' && { key: '10', label: <span className={`font-semibold ${data.benfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.benfblink ? (
+            <a
+                href={`https://www.facebook.com/${removeLinkFormat(ReturnText(data.benfblink))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+            >
+                {`https://www.facebook.com/${removeLinkFormat(ReturnText(data.benfblink))}`}
+            </a>
+        ) : ''
+    },
+        User !== 'LC' && { key: '12', label: <span className={`font-semibold ${data.benrelationship ? 'text-black' : 'text-red-600'}`}>Relationship to OFW</span>, children: relationshipOptions?.find(relationship => relationship.code === data.benrelationship)?.description || '' },
+         (User === 'Credit' || User === 'Lp') && { key: '13', label: <span className={`font-semibold ${data.BenSrcIncome ? 'text-black' : 'text-red-600'}`}>Source of Income</span>, children:SpouseSourceIncome().find(BenSrcIncome => BenSrcIncome.value === data.BenSrcIncome)?.label || '' },
+         (User === 'Credit' || User === 'Lp') && { key: '14', label: <span className={`font-semibold ${data.BenReligion ? 'text-black' : 'text-red-600'}`}>Religion</span>,  children: Religion().find(x => x.value === data.BenReligion)?.label || '' },
+         (User === 'Credit' || User === 'Lp') && { key: '15', label: <span className={`font-semibold ${data.BenFormerOFW ? 'text-black' : 'text-red-600'}`}>Former OFW (Overseas Filipino Worker)</span>, children: Overseas().find(BenFormerOFW => BenFormerOFW.value === data.BenFormerOFW)?.label || '' },
+         data.BenFormerOFW === 1 && (User === 'Credit' || User === 'Lp') && {key: '16', label: <span className={`font-semibold ${data.BenLastReturn ? 'text-black' : 'text-red-600'}`}>When was your last return home?</span>, children: data.BenLastReturn || ''},
+         (User === 'Credit' || User === 'Lp') && { key: '17', label: <span className={`font-semibold ${data.BenPlanAbroad ? 'text-black' : 'text-red-600'}`}>Plans to go Abroad</span>, children: Overseas().find(BenPlanAbroad => BenPlanAbroad.value === data.BenPlanAbroad)?.label || '' },
          data.BenPlanAbroad === 1 && (User === 'Credit' || User === 'Lp') && {key: '18', label: <span className='font-semibold text-black'>Remarks</span>, children: data.BenRemarks || ''},
-         (User === 'Credit' || User === 'Lp') && { key: '19', label: <span className={`font-semibold ${data.BenPEP ? 'text-black' : 'text-orange-500'}`}>PEP</span>, children: Overseas().find(BenPEP => BenPEP.value === data.BenPEP)?.label || '' },
-        { key: '20', label: <span className={`font-semibold ${data.bendependents ? 'text-black' : 'text-orange-500'}`}>Dependents</span>, children: data.bendependents || '' },
-        { key: '21', label: <span className={`font-semibold ${data.benmstatus ? 'text-black' : 'text-orange-500'}`}>Marital Status</span>, children: MaritalStatus().find(status => status.value === data.benmstatus)?.label || '' },
+         (User === 'Credit' || User === 'Lp') && { key: '19', label: <span className={`font-semibold ${data.BenPEP ? 'text-black' : 'text-red-600'}`}>PEP</span>, children: Overseas().find(BenPEP => BenPEP.value === data.BenPEP)?.label || '' },
+        { key: '20', label: <span className='font-semibold text-black'>Dependents</span>, children: data.bendependents || 0 },
+        { key: '21', label: <span className={`font-semibold ${data.benmstatus ? 'text-black' : 'text-red-600'}`}>Marital Status</span>, children: MaritalStatus().find(status => status.value === data.benmstatus)?.label || '' },
     ].filter(Boolean);
-
 
     const beneficiaryAddressItems = [
-        { key: '26', label: <span className='font-semibold text-black'>Present Area/Province</span>, children: data.benpresprovname || '' },
-        { key: '27', label: <span className='font-semibold text-black'>Present City/Municipality</span>, children: data.benpresmunicipalityname || '' },
-        { key: '28', label: <span className='font-semibold text-black'>Present Barangay</span>, children: data.benpresbarangayname || '' },
-        { key: '29', label: <span className='font-semibold text-black'>Present Street</span>, children: data.benpresstreet || '' },
-        { key: '30', label: <span className={`font-semibold ${data.benstaymonths && benstayyears ? 'text-black' : 'text-orange-500'}`}>Length of Stay</span>, children: `${data.benstaymonths ? `${data.benstaymonths} months` : ''}${data.benstayyears ? ` and ${data.benstayyears} years` : ''}` },
-        { key: '31', label: <span className='font-semibold text-black'>Type of Residences</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
-        data.benresidences === 3 && { key: '32', label: <span className='font-semibold text-black'>Rent Amount</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenRentAmount)).toString() },
-        (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className='font-semibold text-black'>Landmark</span>, children: data.BenLandMark || '' },
-        (User === 'Credit' || User === 'Lp') && { key: '34', label: <span className='font-semibold text-black'>Proof of Billing Remarks</span>, children: data.BenPoBRemarks || '' },     
+        { key: '26', label: <span className={`font-semibold ${data.benpresprovname ? 'text-black' : 'text-red-600'}`}>Present Area/Province</span>, children: data.benpresprovname || '' },
+        { key: '27', label: <span className={`font-semibold ${data.benpresmunicipalityname ? 'text-black' : 'text-red-600'}`}>Present City/Municipality</span>, children: data.benpresmunicipalityname || '' },
+        { key: '28', label: <span className={`font-semibold ${data.benpresbarangayname ? 'text-black' : 'text-red-600'}`}>Present Barangay</span>, children: data.benpresbarangayname || '' },
+        { key: '29', label: <span className={`font-semibold ${data.benpresstreet ? 'text-black' : 'text-red-600'}`}>Present Street</span>, children: data.benpresstreet || '' },
+        { key: '30', label: (<span className={`font-semibold ${data.benstaymonths || data.benstayyears ? 'text-black' : 'text-red-600'}`}> Length of Stay</span> ),children: `${data.benstayyears > 0 ? `${data.benstayyears} Year(s)` : ''} ${data.benstayyears > 0 && data.benstaymonths > 0 ? ' / ' : ''}  ${data.benstaymonths > 0 ? `${data.benstaymonths} Month(s)` : ''}`},
+        { key: '31', label: <span className={`font-semibold ${data.benresidences ? 'text-black' : 'text-red-600'}`}>Type of Residence</span>, children: Residences().find(residence => residence.value === data.benresidences)?.label || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className={`font-semibold ${data.BenLandMark ? 'text-black' : 'text-red-600'}`}>Landmark</span>, children: data.BenLandMark || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '34', label: <span className={`font-semibold ${data.BenPoBRemarks ? 'text-black' : 'text-red-600'}`}>Proof of Billing Remarks</span>, children: data.BenPoBRemarks || '' },     
     ].filter(Boolean);
 
+    if (data.benresidences === 3) {
+        beneficiaryAddressItems.push({
+            key: '32',
+            label: <span className={`font-semibold ${data.BenRentAmount ? 'text-black' : 'text-red-600'}`}>Rent Amount</span>,
+            children: data.BenRentAmount ? formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenRentAmount.toString().replaceAll(',',''))) : '',
+        });
+    } else if (data.benresidences === 2) {
+        beneficiaryAddressItems.push({
+            key: '32',
+            label: <span className={`font-semibold ${data.BenRentAmount ? 'text-black' : 'text-red-600'}`}>Monthly Amortization</span>,
+            children: data.BenRentAmount ? formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenRentAmount.toString().replaceAll(',',''))) : '',
+        });
+    }
     if (data.benmstatus === 2 || data.benmstatus === 5 || data.benmstatus === 6) {
         beneficiaryItems.push(
-            { key: '22', label: <span className='font-semibold text-black'>Spouse Name</span>, children: data.benspouse || '' },
-            { key: '23', label: <span className='font-semibold text-black'>Spouse Birthdate</span>, children: data.benspousebdate ? mmddyy(data.benspousebdate, 'MM-DD-YYYY') : '' },
-            (User === 'Credit' || User === 'Lp') && { key: '24', label: <span className="font-semibold text-black">Spouse Source of Income</span>, children: SpouseSourceIncome().find(status => status.value === data.BenSpSrcIncome)?.label || '' },
-            (User === 'Credit' || User === 'Lp') && { key: '25', label: <span className="font-semibold text-black">Spouse Income</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenSpIncome)).toString() },
+            { key: '22', label: <span className={`font-semibold ${data.benspouse ? 'text-black' : 'text-red-600'}`}>Spouse Name</span>, children: data.benspouse || '' },
+            { key: '23', label: <span className={`font-semibold ${data.benspousebdate ? 'text-black' : 'text-red-600'}`}>Spouse Birthdate</span>, children: data.benspousebdate ? mmddyy(data.benspousebdate, 'MM-DD-YYYY') : '' },
+            (User === 'Credit' || User === 'Lp') && { key: '24', label: <span className={`font-semibold ${data.BenSpSrcIncome ? 'text-black' : 'text-red-600'}`}>Spouse Source of Income</span>, children: SpouseSourceIncome().find(status => status.value === data.BenSpSrcIncome)?.label || '' },
+            (User === 'Credit' || User === 'Lp') && { key: '25', label: <span className={`font-semibold ${data.BenSpIncome ? 'text-black' : 'text-red-600'}`}>Spouse Income</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.BenSpIncome)).toString() },
         );
     }
 
-    
     // Co-Borrower Information
     const coBorrowerItems = [
         { key: '1', label: <span className='font-semibold text-black'>First Name</span>, children: data.coborrowfname || '' },
@@ -111,17 +145,29 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         { key: '8', label: <span className='font-semibold text-black'>Mobile Number</span>, children: data.coborrowmobile ? data.coborrowmobile.replace('/','-') : '' },
         { key: '9', label: <span className='font-semibold text-black'>Other Mobile Number</span>, children: data.coborrowothermobile? data.coborrowothermobile.replace('/','-') : '' },
         { key: '10', label: <span className='font-semibold text-black'>Email Address</span>, children: data.coborrowemail || '' },
-        { key: '11', label: <span className='font-semibold text-black'>Facebook Name / Profile</span>, children: data.coborrowfblink || '' },
-        (User === 'Credit' || User === 'Lp') && { key: '12', label: <span className="font-semibold text-black">Group Chat</span>, children: data.AcbGrpChat || '' },
+       // { key: '11', label: <span className='font-semibold text-black'>Facebook Name / Profile</span>, children: data.coborrowfblink || '' },
+        User !== 'Credit' && { key: '11', label: <span className={`font-semibold ${data.coborrowfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.coborrowfblink || '' },
+        User === 'Credit' && { key: '11', label: <span className={`font-semibold ${data.coborrowfblink ? 'text-black' : 'text-red-600'}`}>Facebook Name / Profile</span>, children: data.coborrowfblink ? (
+            <a
+                href={`https://www.facebook.com/${removeLinkFormat(ReturnText(data.coborrowfblink))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+            >
+                {`https://www.facebook.com/${removeLinkFormat(ReturnText(data.coborrowfblink))}`}
+            </a>
+        ) : ''
+    },
+        {/*(User === 'Credit' || User === 'Lp') && { key: '12', label: <span className="font-semibold text-black">Group Chat</span>, children: data.AcbGrpChat || '' },*/},
         User !== 'LC' && { key: '13', label: <span className="font-semibold text-black">Relationship to OFW</span>, children: relationshipOptions?.find(relationship => relationship.code === data.AcbRelationship)?.description || '' },
         (User === 'Credit' || User === 'Lp') && { key: '14', label: <span className='font-semibold text-black'>Source of Income</span>, children: SpouseSourceIncome().find(AcbSrcIncome => AcbSrcIncome.value === data.AcbSrcIncome)?.label || '' },
         (User === 'Credit' || User === 'Lp') && { key: '15', label: <span className='font-semibold text-black'>Religion</span>, children: Religion().find(AcbReligion => AcbReligion.value === data.AcbReligion)?.label || '' },
         (User === 'Credit' || User === 'Lp') && { key: '16', label: <span className='font-semibold text-black'>Former OFW (Overseas Filipino Worker)</span>, children: Overseas().find(AcbFormerOFW => AcbFormerOFW.value === data.AcbFormerOFW)?.label || '' },
         data.AcbFormerOFW === 1 && (User === 'Credit' || User === 'Lp') && {key: '17', label: <span className='font-semibold text-black'>When was your last return home?</span>, children: data.AcbLastReturn || ''},
-        (User === 'Credit' || User === 'Lp') && { key: '18', label: <span className='font-semibold text-black'>Plans to Abroad</span>, children: Overseas().find(AcbPlanAbroad => AcbPlanAbroad.value === data.AcbPlanAbroad)?.label || '' },
+        (User === 'Credit' || User === 'Lp') && { key: '18', label: <span className='font-semibold text-black'>Plans to go Abroad</span>, children: Overseas().find(AcbPlanAbroad => AcbPlanAbroad.value === data.AcbPlanAbroad)?.label || '' },
         data.AcbPlanAbroad === 1 && (User === 'Credit' || User === 'Lp') && {key: '19', label: <span className='font-semibold text-black'>Remarks</span>, children: data.AcbRemarks || ''},
         (User === 'Credit' || User === 'Lp') && { key: '20', label: <span className='font-semibold text-black'>PEP</span>, children: Overseas().find(AcbPEP => AcbPEP.value === data.AcbPEP)?.label || '' },
-        { key: '21', label: <span className='font-semibold text-black'>Dependents</span>, children: data.coborrowdependents || '' },
+        { key: '21', label: <span className='font-semibold text-black'>Dependents</span>, children: data.coborrowdependents || 0 },
         { key: '22', label: <span className='font-semibold text-black'>Marital Status</span>, children: MaritalStatus().find(status => status.value === data.coborrowmstatus)?.label || '' }
     ].filter(Boolean);
 
@@ -139,11 +185,11 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
         { key: '28', label: <span className='font-semibold text-black'>Present City/Municipality</span>, children: data.coborrowMunicipalityname || '' },
         { key: '29', label: <span className='font-semibold text-black'>Present Barangay</span>, children: data.coborrowBarangayname || '' },
         { key: '30', label: <span className='font-semibold text-black'>Present Street</span>, children: data.coborrowStreet || '' },
-        { key: '31', label: <span className='font-semibold text-black'>Length of Stay</span>, children: `${data.AcbStayMonths ? `${data.AcbStayMonths} months` : ''}${data.AcbStayYears ? ` and ${data.AcbStayYears} years` : ''}` },
+        { key: '31', label: (<span className='font-semibold text-black'> Length of Stay</span> ),children: `${ data.AcbStayYears > 0 ? `${data.AcbStayYears} Year(s)` :`` } ${(data.AcbStayYears > 0 && data.AcbStayMonths >= 1 ) ? ' / ' : ``} ${data.AcbStayMonths > 0 ? `${data.AcbStayMonths} Month(s)` : ``}` },
         (User === 'Credit' || User === 'Lp') && { key: '32', label: <span className='font-semibold text-black'>Landmark</span>, children: data.AcbLandMark || '' },
         (User === 'Credit' || User === 'Lp') && { key: '33', label: <span className='font-semibold text-black'>Proof of Billing Remarks</span>, children: data.AcbPoBRemarks || '' },
-        { key: '34', label: <span className='font-semibold text-black'>Type of Residences</span>, children: Residences().find(residence => residence.value === data.coborrowresidences)?.label || '' },
-        data.coborrowresidences === 3 && { key: '35', label: <span className='font-semibold text-black'>Rent Amount</span>, children: formatNumberWithCommas(formatToTwoDecimalPlaces(data.AcbRentAmount)).toString() },
+        { key: '34', label: <span className='font-semibold text-black'>Type of Residence</span>, children: Residences().find(residence => residence.value === data.coborrowresidences)?.label || '' },
+        data.coborrowresidences === 3 && { key: '35', label: <span className='font-semibold text-black'>Rent Amount</span>, children: data.AcbRentAmount? formatNumberWithCommas(formatToTwoDecimalPlaces(data.AcbRentAmount.toString().replaceAll(',',''))).toString(): '' },
 
     ];
 
@@ -151,10 +197,13 @@ function ViewBeneficiaryDetails({ data, Sepcoborrowfname, User}) {
     const filteredCoBorrowerAddressItems = coBorrowerAddressItems.filter(field => field.children && field.children !== '');
 
     return (
-        <div className="container mt-1 mx-auto p-10 bg-white rounded-lg shadow-md w-[75vw]">
+        <div className="w-full mx-auto mt-1 mb-20 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 bg-white rounded-xl shadow-lg">
             <Descriptions title={<div className="text-center"><h2 className="text-2xl font-bold">Beneficiary Information</h2>
                 <div className="mt-2 flex justify-center">
-                <a href={`https://www.google.com/search?q=${encodeURIComponent(`${data.benfname} ${data.benmname} ${data.benlname}`)}`} target="_blank" rel="noopener noreferrer"><FcGoogle className="text-3xl" /></a></div></div>}
+                {GetData('ROLE').toString() === '60' && (
+                         <a href={`https://www.google.com/search?q=${encodeURIComponent(`${data.benfname} ${data.benmname} ${data.benlname}`)}`} target="_blank" rel="noopener noreferrer"><FcGoogle className="text-3xl" /></a>
+                    )} 
+                </div></div>}
                 column={{ xs: 1, sm: 2, lg: 3 }}
                 layout="horizontal" >
                 {beneficiaryItems.map((item, i) => (

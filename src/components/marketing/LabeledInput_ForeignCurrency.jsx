@@ -4,6 +4,7 @@ import { ExclamationCircleFilled, CheckCircleFilled } from '@ant-design/icons';
 import { debounce } from '@utils/Debounce';
 import { GET_LIST } from "@api/base-api/BaseApi";
 import { useQuery } from '@tanstack/react-query';
+import { LoanApplicationContext } from '@context/LoanApplicationContext';
 
 function LabeledInput_ForeignCurrency({
   receiveFCurValue,
@@ -24,11 +25,14 @@ function LabeledInput_ForeignCurrency({
   className_label,
   className_dsub
 }) {
+  const { getAppDetails, updateAppDetails } = React.useContext(LoanApplicationContext)
+
   const [getStatus, setStatus] = React.useState('');
   const [getIcon, setIcon] = React.useState(false);
-  const [getPref, setPref] = React.useState(data.FCurrency || '');
-  const [getItem, setItem] = React.useState(removeCommas(data.FSalary ? data.FSalary.toString() : '0') || '');
-  const [convertValue, setConvertValue] = React.useState(removeCommas(data.FCurValue ? data.FCurValue.toString() : '0') || 0);
+  const [getPref, setPref] = React.useState(getAppDetails.FCurrency || '');
+  const [getItem, setItem] = React.useState(removeCommas(getAppDetails.FSalary ? getAppDetails.FSalary.toString() : '0') || '');
+  const [convertValue, setConvertValue] = React.useState(removeCommas(getAppDetails.FCurValue ? getAppDetails.FCurValue.toString() : '0') || 0);
+  const [pesoSalary, setPesoSalary] = React.useState(0);
 
   const dReceive = React.useCallback(debounce((newValue) => {
     receive(newValue);
@@ -46,7 +50,7 @@ function LabeledInput_ForeignCurrency({
   const getCurrencyList = useQuery({
     queryKey: ['getCurrencyList'],
     queryFn: async () => {
-      const result = await GET_LIST('/getCurrencyList');
+      const result = await GET_LIST('/GET/G105CL');
       return result.list;
     },
     refetchInterval: (data) => {
@@ -114,21 +118,19 @@ function LabeledInput_ForeignCurrency({
   React.useEffect(() => {
     if (rendered) {
       if (getPref && parseFloat(getItem) > 0) {
-        const plainItem = removeCommas(getItem);
-        //setItem(formatNumberWithCommas(formatToTwoDecimalPlaces(plainItem)));
         setStatus('');
         setIcon(true);
       } else {
         setStatus('error');
         setIcon(true);
       }
-
     }
-
     if (getPref && getItem) {
       const plainItem = removeCommas(getItem);
       let converted = convertValue * parseFloat(plainItem || 0.0);
       dReceiveConvert(formatNumberWithCommas(formatToTwoDecimalPlaces(converted)));
+      setPesoSalary(formatNumberWithCommas(formatToTwoDecimalPlaces(converted)))
+      dReceiveForeign(getItem);
       onPrefChange(getPref, getCurrencyList.data?.find((cur) => cur.currencyCode === getPref));
     } else if (getItem === '') {
       dReceiveConvert('0.00');
@@ -215,7 +217,7 @@ function LabeledInput_ForeignCurrency({
         <div className={className_dsub}>
           <Input
             readOnly
-            value={data.PSalary || 0.00}
+            value={pesoSalary || 0.00}
             size='large'
             style={{ width: '100%' }}
             status={required || required === undefined ? getStatus : false}
